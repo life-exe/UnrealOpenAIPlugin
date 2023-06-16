@@ -19,10 +19,10 @@ All requests are available in both C++ and Blueprints:
 ```cpp
 void AAPIOverview::CreateImage()
 {
-    auto* Request = NewObject<UOpenAIProvider>();
-    Request->SetLogEnabled(false);
-    Request->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Request->OnCreateImageCompleted().AddLambda(
+    auto* Provider = NewObject<UOpenAIProvider>();
+    Provider->SetLogEnabled(false);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateImageCompleted().AddLambda(
         [](const FImageResponse& Response)
         {
             FString OutputString{};
@@ -36,7 +36,7 @@ void AAPIOverview::CreateImage()
     Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
     Image.N = 2;
 
-    Request->CreateImage(Image, Auth);
+    Provider->CreateImage(Image, Auth);
 }
 ```
 
@@ -53,7 +53,7 @@ void AAPIOverview::CreateImage()
 1. Create a new C++ project in Unreal Engine.
 2. Create a `Plugins` folder at the root of your project.
 3. Add the OpenAI plugin to your Unreal Engine `Plugins` folder.
-4. The easiest way to add plugins is by adding the current plugin as a submodule. Use the following command in th root folder of your project:
+4. The easiest way to add plugins is by adding the current plugin as a submodule. Use the following command in the root folder of your project:
 ```
 git submodule add https://github.com/life-exe/UnrealOpenAIPlugin Plugins/OpenAI
 ```
@@ -63,10 +63,11 @@ git submodule add https://github.com/life-exe/UnrealOpenAIPlugin Plugins/OpenAI
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/1.png)
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/2.png)
 
-7. Build your project and run Editor.
-8. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
-8. Restart the editor.
-9. Start using the plugin.
+7. [Do the authentication steps](#authentication)
+8. Build your project and run Editor.
+9. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
+10. Restart the editor.
+11. Start using the plugin.
 
 ## Blueprints
 
@@ -74,10 +75,11 @@ git submodule add https://github.com/life-exe/UnrealOpenAIPlugin Plugins/OpenAI
 2. Create a `Plugins` folder in the root of your project.
 3. Download precompiled plugin from the [Releases](https://github.com/life-exe/UnrealOpenAIPlugin/releases/).
 4. Unzip plugin to the `Plugins` folder, specifically to `Plugins/OpenAI`.
-5. Run the Editor `<YourProjectName>.uproject`
-6. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
-7. Restart the editor.
-8. Start using the plugin.
+5. [Do the authentication steps](#authentication)
+6. Run the Editor `<YourProjectName>.uproject`
+7. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
+8. Restart the editor.
+9. Start using the plugin.
 
 ## Authentication
 
