@@ -39,6 +39,7 @@ void AAPIOverview::CreateImage()
     Provider->CreateImage(Image, Auth);
 }
 ```
+
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/bp.png)
 
 ## Supported Unreal Engine Versions
@@ -63,10 +64,11 @@ git submodule add https://github.com/life-exe/UnrealOpenAIPlugin Plugins/OpenAI
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/2.png)
 
 7. [Do the authentication steps](#authentication)
-8. Build your project and run Editor.
-9. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
-10. Restart the editor.
-11. Start using the plugin.
+8. Generate Visual Studio project files.
+9. Build your project and run Editor.
+10. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
+11. Restart the editor.
+12. Start using the plugin.
 
 ## Blueprints
 
@@ -191,8 +193,9 @@ I highly recommend reading the OpenAI documentation for a better understanding o
 You can generate the plugin documentation locally by following these steps:
  1. Update all submodules. You can use the batch script located at the root of the plugin folder: `update_submodules.bat`
  2. Ensure that [Doxygen](https://www.doxygen.nl) is installed on your system.
- 3. Generate the documentation using the batch script at the root of the plugin folder: `generate_docs.bat`
- 4. After the generation process, the documentation will be available in the `Documentation` folder at the root of the plugin: `Documentation\html\index.html`
+ 3. Ensure that [Python](https://www.python.org) is installed on your system.
+ 4. Generate the documentation using the batch script at the root of the plugin folder: `generate_docs.bat`
+ 5. After the generation process, the documentation will be available in the `Documentation` folder at the root of the plugin: `Documentation\html\index.html`
 
 ## Tests
 

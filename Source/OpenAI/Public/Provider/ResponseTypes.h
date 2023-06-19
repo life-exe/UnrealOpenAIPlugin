@@ -30,7 +30,8 @@ struct FOpenAIError
     bool WasError{false};
 };
 
-USTRUCT(BlueprintType) struct FPermission
+USTRUCT(BlueprintType)
+struct FPermission
 {
     GENERATED_BODY()
 
