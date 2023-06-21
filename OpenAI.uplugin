@@ -8,7 +8,7 @@
   "CreatedBy": "LifeEXE",
   "CreatedByURL": "https://github.com/life-exe",
   "DocsURL": "https://life-exe.github.io/UnrealOpenAIPlugin",
-  "MarketplaceURL": "",
+  "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/97eaf1e101ab4f29b5acbf7dacbd4d16",
   "SupportURL": "",
   "CanContainContent": true,
   "IsBetaVersion": false,
@@ -19,19 +19,25 @@
       "Name": "OpenAI",
       "Type": "Runtime",
       "LoadingPhase": "PreLoadingScreen",
-      "WhitelistPlatforms": [ "Win64" ]
+      "PlatformAllowList": [
+        "Win64"
+      ]
     },
     {
       "Name": "OpenAIEditor",
       "Type": "Editor",
       "LoadingPhase": "Default",
-      "WhitelistPlatforms": [ "Win64" ]
+      "PlatformAllowList": [
+        "Win64"
+      ]
     },
     {
       "Name": "OpenAITestRunner",
       "Type": "Editor",
       "LoadingPhase": "Default",
-      "WhitelistPlatforms": [ "Win64" ]
+      "PlatformAllowList": [
+        "Win64"
+      ]
     }
   ]
 }
