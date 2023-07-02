@@ -19,7 +19,7 @@
       "Name": "OpenAI",
       "Type": "Runtime",
       "LoadingPhase": "PreLoadingScreen",
-      "WhitelistPlatforms": [
+      "PlatformAllowList": [
         "Win64"
       ]
     },
@@ -27,7 +27,7 @@
       "Name": "OpenAIEditor",
       "Type": "Editor",
       "LoadingPhase": "Default",
-      "WhitelistPlatforms": [
+      "PlatformAllowList": [
         "Win64"
       ]
     },
@@ -35,7 +35,7 @@
       "Name": "OpenAITestRunner",
       "Type": "Editor",
       "LoadingPhase": "Default",
-      "WhitelistPlatforms": [
+      "PlatformAllowList": [
         "Win64"
       ]
     }
