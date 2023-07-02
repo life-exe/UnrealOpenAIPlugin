@@ -76,7 +76,9 @@ enum class EAllModelEnum : uint8
     GPT_4,
     GPT_4_0314,
     GPT_4_32k,
-    GPT_4_32k_0314
+    GPT_4_32k_0314,
+    GPT_4_0613,
+    GPT_4_32k_0613
 };
 
 UENUM(BlueprintType)
@@ -88,7 +90,11 @@ enum class EMainModelEnum : uint8
     Text_Davinci_002,
     /* GPT-4 models not yet available to everyone: https://openai.com/waitlist/gpt-4-api */
     GPT_4,
-    GPT_4_32k
+    GPT_4_0314,
+    GPT_4_32k,
+    GPT_4_32k_0314,
+    GPT_4_0613,
+    GPT_4_32k_0613
 };
 
 UENUM(BlueprintType)
