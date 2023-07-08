@@ -114,8 +114,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Babbage__001).Equals("text-babbage:001"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4).Equals("gpt-4"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_32k).Equals("gpt-4-32k"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_32k_0314).Equals("gpt-4-32k-0314"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
                 });
 
             It("OpenAIMainModelToStringMightReturnCorrectValue",
@@ -126,7 +125,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::Text_Davinci_003).Equals("text-davinci-003"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::Text_Davinci_002).Equals("text-davinci-002"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4).Equals("gpt-4"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_32k).Equals("gpt-4-32k"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
                 });
 
             It("OpenAIImageSizeToStringMightReturnCorrectValue",

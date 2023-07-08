@@ -65,7 +65,8 @@ void UChatGPTWidget::MakeModelsComboBox()
     AddModel(EMainModelEnum::GPT_3_5_Turbo);
     AddModel(EMainModelEnum::GPT_3_5_Turbo_0301);
     AddModel(EMainModelEnum::GPT_4);
-    AddModel(EMainModelEnum::GPT_4_32k);
+    AddModel(EMainModelEnum::GPT_4_0314);
+    AddModel(EMainModelEnum::GPT_4_0613);
     ChatGPTModelComboBox->SetSelectedOption(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo));
 }
 

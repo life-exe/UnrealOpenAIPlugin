@@ -76,10 +76,7 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::Text_Babbage__001: return "text-babbage:001";
         case EAllModelEnum::GPT_4: return "gpt-4";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
-        case EAllModelEnum::GPT_4_32k: return "gpt-4-32k";
-        case EAllModelEnum::GPT_4_32k_0314: return "gpt-4-32k-0314";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
-        case EAllModelEnum::GPT_4_32k_0613: return "gpt-4-32k-0613";
     }
     checkNoEntry();
     return {};
@@ -95,10 +92,7 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::Text_Davinci_002: return "text-davinci-002";
         case EMainModelEnum::GPT_4: return "gpt-4";
         case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
-        case EMainModelEnum::GPT_4_32k: return "gpt-4-32k";
-        case EMainModelEnum::GPT_4_32k_0314: return "gpt-4-32k-0314";
         case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
-        case EMainModelEnum::GPT_4_32k_0613: return "gpt-4-32k-0613";
     }
     checkNoEntry();
     return {};
