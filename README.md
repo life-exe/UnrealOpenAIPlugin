@@ -48,6 +48,10 @@ void AAPIOverview::CreateImage()
 
 # Installation
 
+## Marketplace link
+
+- [Complete OpenAI API plugin](https://www.unrealengine.com/marketplace/en-US/product/complete-openai-api-plugin)
+
 ## C++
 
 1. Create a new C++ project in Unreal Engine.
