@@ -7,6 +7,7 @@
 #include "ResponseTypes.h"
 #include "RequestTypes.h"
 #include "Delegates.h"
+#include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
 class FJsonObject;

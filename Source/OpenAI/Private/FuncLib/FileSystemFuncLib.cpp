@@ -1,8 +1,8 @@
 // OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
 
 #include "FuncLib/FileSystemFuncLib.h"
-#include "DesktopPlatform/Public/IDesktopPlatform.h"
-#include "DesktopPlatform/Public/DesktopPlatformModule.h"
+#include "IDesktopPlatform.h"
+#include "DesktopPlatformModule.h"
 #include "FuncLib/ImageFuncLib.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"

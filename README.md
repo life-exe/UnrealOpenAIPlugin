@@ -44,7 +44,7 @@ void AAPIOverview::CreateImage()
 
 ## Supported Unreal Engine Versions
 
- - Unreal Engine 5.2
+ - Unreal Engine 5.3 (master), 5.2
 
 # Installation
 

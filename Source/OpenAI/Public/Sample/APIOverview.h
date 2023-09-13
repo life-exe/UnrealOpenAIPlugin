@@ -8,6 +8,8 @@
 #include "Provider/RequestTypes.h"
 #include "APIOverview.generated.h"
 
+class UOpenAIProvider;
+
 UCLASS()
 class OPENAI_API AAPIOverview : public AActor
 {
@@ -20,6 +22,9 @@ protected:
     virtual void BeginPlay() override;
 
 private:
+    UPROPERTY()
+    UOpenAIProvider* Provider;
+
     FOpenAIAuth Auth;
 
     void ListModels();

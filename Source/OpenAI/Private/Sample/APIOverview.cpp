@@ -19,6 +19,7 @@ void AAPIOverview::BeginPlay()
 {
     Super::BeginPlay();
 
+    Provider = NewObject<UOpenAIProvider>();
     Auth = UOpenAIFuncLib::LoadAPITokensFromFile(FPaths::ProjectDir().Append("OpenAIAuth.ini"));
 
     ListModels();
@@ -54,7 +55,6 @@ void AAPIOverview::BeginPlay()
 
 void AAPIOverview::ListModels()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnListModelsCompleted().AddLambda(
@@ -70,18 +70,16 @@ void AAPIOverview::ListModels()
 
 void AAPIOverview::RetrieveModel()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveModelCompleted().AddLambda([](const FRetrieveModelResponse& Response)
         { UE_LOG(LogAPIOverview, Display, TEXT("%s"), *UOpenAIFuncLib::OpenAIModelToString(Response)); });
     const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_003);
-    Provider->RetrieveModel("text-moderation-stable", Auth);
+    Provider->RetrieveModel("ada", Auth);
 }
 
 void AAPIOverview::CreateCompletionRequest()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateCompletionCompleted().AddLambda(
@@ -102,7 +100,6 @@ void AAPIOverview::CreateCompletionRequest()
 
 void AAPIOverview::CreateChatCompletionRequest()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateChatCompletionCompleted().AddLambda([](const FChatCompletionResponse& Response)  //
@@ -136,7 +133,6 @@ void AAPIOverview::CreateChatCompletionRequest()
 
 void AAPIOverview::CreateImage()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateImageCompleted().AddLambda(
@@ -158,7 +154,6 @@ void AAPIOverview::CreateImage()
 
 void AAPIOverview::CreateImageEdit()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
 
@@ -184,7 +179,6 @@ void AAPIOverview::CreateImageEdit()
 
 void AAPIOverview::CreateImageVariation()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateImageVariationCompleted().AddLambda(
@@ -207,7 +201,6 @@ void AAPIOverview::CreateImageVariation()
 
 void AAPIOverview::CreateModerations()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateModerationsCompleted().AddLambda(
@@ -227,7 +220,6 @@ void AAPIOverview::CreateModerations()
 
 void AAPIOverview::CreateEdit()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateEditCompleted().AddLambda(
@@ -249,7 +241,6 @@ void AAPIOverview::CreateEdit()
 
 void AAPIOverview::CreateEmbeddings()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateEmbeddingsCompleted().AddLambda(
@@ -267,7 +258,6 @@ void AAPIOverview::CreateEmbeddings()
 
 void AAPIOverview::CreateAudioTranscription()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
 
@@ -289,7 +279,6 @@ void AAPIOverview::CreateAudioTranscription()
 
 void AAPIOverview::CreateAudioTranslation()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
 
@@ -310,7 +299,6 @@ void AAPIOverview::CreateAudioTranslation()
 
 void AAPIOverview::UploadFile()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnUploadFileCompleted().AddLambda(
@@ -329,7 +317,6 @@ void AAPIOverview::UploadFile()
 
 void AAPIOverview::DeleteFile()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnDeleteFileCompleted().AddLambda(
@@ -345,7 +332,6 @@ void AAPIOverview::DeleteFile()
 
 void AAPIOverview::ListFiles()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnListFilesCompleted().AddLambda(
@@ -362,7 +348,6 @@ void AAPIOverview::ListFiles()
 
 void AAPIOverview::RetrieveFile()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveFileCompleted().AddLambda([](const FRetrieveFileResponse& Response)  //
@@ -376,7 +361,6 @@ void AAPIOverview::RetrieveFile()
 
 void AAPIOverview::RetrieveFileContent()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveFileContentCompleted().AddLambda(
@@ -392,7 +376,6 @@ void AAPIOverview::RetrieveFileContent()
 
 void AAPIOverview::CreateFineTune()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateFineTuneCompleted().AddLambda(
@@ -409,7 +392,6 @@ void AAPIOverview::CreateFineTune()
 
 void AAPIOverview::CancelFineTune()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCancelFineTuneCompleted().AddLambda(
@@ -425,7 +407,6 @@ void AAPIOverview::CancelFineTune()
 
 void AAPIOverview::DeleteFineTuneModel()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnDeleteFineTunedModelCompleted().AddLambda(
@@ -441,7 +422,6 @@ void AAPIOverview::DeleteFineTuneModel()
 
 void AAPIOverview::ListFineTune()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnListFineTunesCompleted().AddLambda(
@@ -456,7 +436,6 @@ void AAPIOverview::ListFineTune()
 
 void AAPIOverview::ListFineTuneEvents()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnListFineTuneEventsCompleted().AddLambda(
@@ -472,7 +451,6 @@ void AAPIOverview::ListFineTuneEvents()
 
 void AAPIOverview::RetrieveFineTune()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveFineTuneCompleted().AddLambda(

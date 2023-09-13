@@ -17,7 +17,7 @@ public:
     virtual FString GetHeader(const FString& HeaderName) const override { return FString(); }
     virtual TArray<FString> GetAllHeaders() const override { return TArray<FString>(); }
     virtual FString GetContentType() const override { return FString(); }
-    virtual int32 GetContentLength() const override { return int32(); }
+    virtual uint64 GetContentLength() const override { return uint64(); }
     virtual const TArray<uint8>& GetContent() const override
     {
         static TArray<uint8> None;
@@ -38,13 +38,13 @@ public:
     virtual FString GetHeader(const FString& HeaderName) const override { return FString(); }
     virtual TArray<FString> GetAllHeaders() const override { return TArray<FString>(); }
     virtual FString GetContentType() const override { return FString(); }
-    virtual int32 GetContentLength() const override { return int32(); }
+    virtual uint64 GetContentLength() const override { return uint64(); }
     virtual const TArray<uint8>& GetContent() const override
     {
         static TArray<uint8> None;
         return None;
     }
-    virtual FString GetVerb() const override { return FString(); }
+    virtual FString GetVerb() const override { return FString{}; }
     virtual void SetVerb(const FString& Verb) override {}
     virtual void SetURL(const FString& URL) override {}
     virtual void SetContent(const TArray<uint8>& ContentPayload) override {}
@@ -66,10 +66,16 @@ public:
     virtual FHttpRequestProgressDelegate& OnRequestProgress() override { return HttpRequestProgressDelegate; }
     virtual FHttpRequestHeaderReceivedDelegate& OnHeaderReceived() override { return HttpHeaderReceivedDelegate; }
     virtual void CancelRequest() override {}
-    virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type(); }
+    virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::NotStarted; }
     virtual const FHttpResponsePtr GetResponse() const override { return MakeShareable(new FFakeHttpResponse(ReponseData)); }
     virtual void Tick(float DeltaSeconds) override {}
-    virtual float GetElapsedTime() const override { return float(); }
+    virtual float GetElapsedTime() const override { return float{}; }
+    virtual bool SetResponseBodyReceiveStream(TSharedRef<FArchive> Stream) override { return false; }
+    virtual void SetDelegateThreadPolicy(EHttpRequestDelegateThreadPolicy InThreadPolicy) override {}
+    virtual EHttpRequestDelegateThreadPolicy GetDelegateThreadPolicy() const override
+    {
+        return EHttpRequestDelegateThreadPolicy::CompleteOnGameThread;
+    }
 
 public:
     FHttpRequestProgressDelegate HttpRequestProgressDelegate;

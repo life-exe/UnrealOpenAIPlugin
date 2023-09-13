@@ -373,16 +373,27 @@ void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Reque
         LogResponse(Response);
         CreateChatCompletionStreamProgresses.Broadcast(ParsedResponses);
     }
-    else
+    else if (Response)
     {
-        LogError("JSON deserialization error");
         LogError(Response->GetContentAsString());
         // RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+    }
+    else if (BytesReceived == 0)
+    {
+        // UE_5.3: on some reason OnRequestProgress() sends first time with Request = nullptr
+        // BytesReceived = 0 in this case, empty initial call ?
+        // Remove error message from log because nothing bad happened
+    }
+    else
+    {
+        LogError(FString::Format(TEXT("JSON deserialization error BytesSent:{0} BytesReceived:{1}"), {BytesSent, BytesReceived}));
     }
 }
 
 bool UOpenAIProvider::ParseChatCompletionStreamRequest(FHttpResponsePtr Response, TArray<FChatCompletionStreamResponse>& Responses)
 {
+    if (!Response) return false;
+
     TArray<FString> StringArray;
     Response->GetContentAsString().ParseIntoArrayLines(StringArray);
 

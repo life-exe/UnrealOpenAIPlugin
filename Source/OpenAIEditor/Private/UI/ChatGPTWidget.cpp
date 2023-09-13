@@ -104,6 +104,7 @@ void UChatGPTWidget::OnSendMessage()
     EnableControls(false);
     ChatScrollBox->SetConsumeMouseWheel(EConsumeMouseWheel::Never);
     ChatScrollBox->SetVisibility(ESlateVisibility::Visible);
+    ChatScrollBox->ScrollToEnd();
     StartVerticalBox->SetVisibility(ESlateVisibility::Collapsed);
 
     CreateChatCompletionRequest();

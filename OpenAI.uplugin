@@ -1,43 +1,43 @@
 {
-  "FileVersion": 3,
-  "Version": 1,
-  "VersionName": "1.0",
-  "FriendlyName": "OpenAI",
-  "Description": "OpenAI API",
-  "Category": "OpenAI",
-  "CreatedBy": "LifeEXE",
-  "CreatedByURL": "https://github.com/life-exe",
-  "DocsURL": "https://life-exe.github.io/UnrealOpenAIPlugin",
-  "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/97eaf1e101ab4f29b5acbf7dacbd4d16",
-  "SupportURL": "https://github.com/life-exe/UnrealOpenAIPlugin/issues",
-  "CanContainContent": true,
-  "IsBetaVersion": false,
-  "IsExperimentalVersion": false,
-  "Installed": true,
-  "Modules": [
-    {
-      "Name": "OpenAI",
-      "Type": "Runtime",
-      "LoadingPhase": "PreLoadingScreen",
-      "PlatformAllowList": [
-        "Win64"
-      ]
-    },
-    {
-      "Name": "OpenAIEditor",
-      "Type": "Editor",
-      "LoadingPhase": "Default",
-      "PlatformAllowList": [
-        "Win64"
-      ]
-    },
-    {
-      "Name": "OpenAITestRunner",
-      "Type": "Editor",
-      "LoadingPhase": "Default",
-      "PlatformAllowList": [
-        "Win64"
-      ]
-    }
-  ]
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.1",
+	"FriendlyName": "OpenAI",
+	"Description": "OpenAI API",
+	"Category": "OpenAI",
+	"CreatedBy": "LifeEXE",
+	"CreatedByURL": "https://github.com/life-exe",
+	"DocsURL": "https://life-exe.github.io/UnrealOpenAIPlugin",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/97eaf1e101ab4f29b5acbf7dacbd4d16",
+	"SupportURL": "https://github.com/life-exe/UnrealOpenAIPlugin/issues",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "OpenAI",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "OpenAIEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "OpenAITestRunner",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
+	]
 }
