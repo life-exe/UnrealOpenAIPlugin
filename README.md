@@ -69,10 +69,24 @@ git submodule add https://github.com/life-exe/UnrealOpenAIPlugin Plugins/OpenAI
 
 7. [Do the authentication steps](#authentication)
 8. Generate Visual Studio project files.
-9. Build your project and run Editor.
-10. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
-11. Restart the editor.
-12. Start using the plugin.
+9. Add `OpenAI` plugin to your `YourProject.Build.cs`:
+```cs
+public class YourProject : ModuleRules
+{
+    public YourProject(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "OpenAI" });
+
+        PublicIncludePaths.AddRange(new string[] { "YourProject" });
+    }
+}
+```
+10. Build your project and run Editor.
+11. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
+12. Restart the editor.
+13. Start using the plugin.
 
 ## Blueprints
 

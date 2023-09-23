@@ -246,7 +246,8 @@ struct FDelta
     FString Content{};
 };
 
-USTRUCT(BlueprintType) struct FChatStreamChoice
+USTRUCT(BlueprintType)
+struct FChatStreamChoice
 {
     GENERATED_BODY()
 
@@ -299,7 +300,8 @@ struct FEditResponse
     FUsage Usage;
 };
 
-USTRUCT(BlueprintType) struct FImageResponse
+USTRUCT(BlueprintType)
+struct FImageResponse
 {
     GENERATED_BODY()
 
