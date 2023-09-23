@@ -85,7 +85,6 @@ private:
     void HandleRequestCompletion();
     void UpdateAssistantCurrentMessage(const FString& Message, bool WasError = false);
 
-    FString MessageFromErrorCode(EOpenAIResponseError Code) const;
     FString GenerateFilePath() const;
 
     void EnableControls(bool Enabled);

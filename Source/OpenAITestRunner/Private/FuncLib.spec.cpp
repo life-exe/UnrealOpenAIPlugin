@@ -15,7 +15,7 @@ void FFuncLib::Define()
     Describe("OpenAIFuncLib",
         [this]()
         {
-            It("AllModelToStringMightReturnCorrectValue",
+            It("AllModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage).Equals("babbage"));
@@ -117,7 +117,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
                 });
 
-            It("OpenAIMainModelToStringMightReturnCorrectValue",
+            It("OpenAIMainModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_0301).Equals("gpt-3.5-turbo-0301"));
@@ -128,7 +128,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
                 });
 
-            It("OpenAIImageSizeToStringMightReturnCorrectValue",
+            It("OpenAIImageSizeToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256).Equals("256x256"));
@@ -136,14 +136,14 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_1024x1024).Equals("1024x1024"));
                 });
 
-            It("OpenAIImageFormatToStringMightReturnCorrectValue",
+            It("OpenAIImageFormatToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL).Equals("url"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON).Equals("b64_json"));
                 });
 
-            It("OpenAIRoleToStringMightReturnCorrectValue",
+            It("OpenAIRoleToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::System).Equals("system"));
@@ -151,7 +151,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant).Equals("assistant"));
                 });
 
-            It("StringToOpenAIRoleMightReturnCorrectValue",
+            It("StringToOpenAIRoleShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("system") == ERole::System);
@@ -168,7 +168,7 @@ void FFuncLib::Define()
                     TestTrueExpr(Auth.OrganizationID.Equals("org-xxxxxxxxxxxxxxxxxxxxxxxx"));
                 });
 
-            It("OpenAIAudioTranscriptToStringMightReturnCorrectValue",
+            It("OpenAIAudioTranscriptToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON).Equals("json"));
@@ -178,7 +178,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Vtt).Equals("vtt"));
                 });
 
-            It("OpenAIModelToStringMightReturnCorrectValue",
+            It("OpenAIModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     FOpenAIModel OpenAIModel;
@@ -199,7 +199,7 @@ void FFuncLib::Define()
                     TestTrueExpr(ModelsStr.Equals(ExpectedStr));
                 });
 
-            It("BoolToStringMightReturnCorrectValue",
+            It("BoolToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::BoolToString(true).Equals("true"));
@@ -267,12 +267,21 @@ void FFuncLib::Define()
                                                                  "\"code\":\"invalid_api_key\"}}")
                                      .IsEmpty());
                 });
+
+            It("OpenAIResponseErrorToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::InvalidAPIKey).Equals("Invalid API key"));
+                    TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::NetworkError).Equals("Network error"));
+                    TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::ModelNotFound).Equals("Model not found"));
+                    TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::Unknown).Equals("Unknown error"));
+                });
         });
 
     Describe("FileSystemFuncLib",
         [this]()
         {
-            It("GetFileExtensionsMightReturnCorrectValue",
+            It("GetFileExtensionsShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(

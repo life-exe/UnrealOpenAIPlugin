@@ -207,18 +207,6 @@ void UChatGPTWidget::OnTextCommitted(const FText& Text, ETextCommit::Type Commit
     }
 }
 
-FString UChatGPTWidget::MessageFromErrorCode(EOpenAIResponseError Code) const
-{
-    switch (Code)
-    {
-        case EOpenAIResponseError::InvalidAPIKey: return "Invalid API key";
-        case EOpenAIResponseError::NetworkError: return "Network error";
-        case EOpenAIResponseError::Unknown: return "Unknown error";
-    }
-
-    return "Unknown error code";
-}
-
 FString UChatGPTWidget::GenerateFilePath() const
 {
     const auto FileName = "ChatGptChatHistory";
@@ -241,7 +229,7 @@ void UChatGPTWidget::HandleError(const FString& Content)
     const auto Message = UOpenAIFuncLib::GetErrorMessage(Content);
     if (Message.IsEmpty())
     {
-        UpdateAssistantCurrentMessage(MessageFromErrorCode(UOpenAIFuncLib::GetErrorCode(Content)), true);
+        UpdateAssistantCurrentMessage(UOpenAIFuncLib::ResponseErrorToString(UOpenAIFuncLib::GetErrorCode(Content)), true);
         return;
     }
 

@@ -282,3 +282,16 @@ FString UOpenAIFuncLib::GetErrorMessage(const FString& RawError)
 
     return {};
 }
+
+FString UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError Code)
+{
+    switch (Code)
+    {
+        case EOpenAIResponseError::InvalidAPIKey: return "Invalid API key";
+        case EOpenAIResponseError::NetworkError: return "Network error";
+        case EOpenAIResponseError::ModelNotFound: return "Model not found";
+        case EOpenAIResponseError::Unknown: return "Unknown error";
+    }
+
+    return "Unknown error code";
+}

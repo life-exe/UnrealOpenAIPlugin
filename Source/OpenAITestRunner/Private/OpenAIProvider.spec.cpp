@@ -14,7 +14,7 @@ void FOpenAIProvider::Define()
     Describe("OpenAIProvider",
         [this]()
         {
-            It("ListModelsMightBeParsedCorrectly",
+            It("ListModelsShouldBeParsedCorrectly",
                 [this]()
                 {
                     FListModelsResponse ListModelsResponse;
@@ -79,7 +79,7 @@ void FOpenAIProvider::Define()
                     TestTrueExpr(ListModelsResponse.Data[1].Parent.IsEmpty());
                 });
 
-            It("RetrieveModelMightBeParsedCorrectly",
+            It("RetrieveModelShouldBeParsedCorrectly",
                 [this]()
                 {
                     FRetrieveModelResponse RetrieveModelResponse;
@@ -118,7 +118,7 @@ void FOpenAIProvider::Define()
                     TestTrueExpr(RetrieveModelResponse.Parent.IsEmpty());
                 });
 
-            It("CompletionMightBeParsedCorrectly",
+            It("CompletionShouldBeParsedCorrectly",
                 [this]()
                 {
                     FCompletionResponse CompletionResponse;
@@ -171,7 +171,7 @@ void FOpenAIProvider::Define()
                         "platforms."));
                 });
 
-            It("ChatCompletionMightBeParsedCorrectly",
+            It("ChatCompletionShouldBeParsedCorrectly",
                 [this]()
                 {
                     FChatCompletionResponse ChatCompletionResponse;
@@ -217,7 +217,7 @@ void FOpenAIProvider::Define()
                         "customer service, virtual assistants, and language learning."));
                 });
 
-            xIt("ChatCompletionStreamMightBeParsedCorrectly", [this]() { unimplemented(); });
+            xIt("ChatCompletionStreamShouldBeParsedCorrectly", [this]() { unimplemented(); });
         });
 }
 

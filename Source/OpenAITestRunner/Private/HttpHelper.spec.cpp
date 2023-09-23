@@ -36,7 +36,7 @@ void FHttpHelper::Define()
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("jsonl").Equals("application/jsonl"));
                 });
 
-            It("AddMIMEFileMightAddContentCorrectly",
+            It("AddMIMEFileShouldAddContentCorrectly",
                 [this]()
                 {
                     const FString FilePath = FPaths::ProjectPluginsDir().Append("OpenAI/Source/OpenAITestRunner/Data/testImage.png");
@@ -60,7 +60,7 @@ void FHttpHelper::Define()
                     TestTrueExpr(HttpHelper::AddMIMEFile(FilePath, "randomParamName", BeginBoundary) == Content);
                 });
 
-            It("AddMIMEMightAddContentCorrectly",
+            It("AddMIMEShouldAddContentCorrectly",
                 [this]()
                 {
                     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary(99999);

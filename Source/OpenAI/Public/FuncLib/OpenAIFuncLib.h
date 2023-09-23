@@ -59,5 +59,8 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString GetErrorMessage(const FString& RawError);
 
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString ResponseErrorToString(EOpenAIResponseError Code);
+
     static FString BoolToString(bool Value);
 };
