@@ -1,4 +1,5 @@
 name: Game Documentation
+
 on:
   push:
     branches:
@@ -31,13 +32,22 @@ jobs:
           submodules: 'recursive'
 
       - name: Install Conan
-        run: pip install conan
+        run: pip install conan==1.61
+
+      - name: Set Conan Folder
+        run: conan config set storage.path=${{ github.workspace }}\packages
         
       - name: Install Doxygen
         run: conan download doxygen/1.9.4@#19fe2ac34109f3119190869a4d0ffbcb --remote conancenter
+
+      - name: Find Doxygen Executable Path
+        run: |
+          $doxygenPath = Get-ChildItem -Path "${{ github.workspace }}\packages" -Recurse -Filter doxygen.exe | Select-Object -First 1 -ExpandProperty FullName
+          echo "DOXYGEN_EXE_PATH=$doxygenPath" | Out-File -Append $env:GITHUB_ENV
+        shell: powershell
         
       - name: Run Doxygen
-        run: doxygen Doxygen\Doxyfile
+        run: ${{ env.DOXYGEN_EXE_PATH }} ${{ github.workspace }}\Doxygen\Doxyfile
         
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v1
