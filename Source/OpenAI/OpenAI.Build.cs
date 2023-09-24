@@ -8,7 +8,7 @@ public class OpenAI : ModuleRules
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "HTTP" });
 
         // clang-format off
         PrivateDependencyModuleNames.AddRange(
@@ -20,7 +20,6 @@ public class OpenAI : ModuleRules
                 "SlateCore",
                 "Json",
                 "JsonUtilities",
-                "HTTP",
                 "ImageWrapper"
             });
         // clang-format on
