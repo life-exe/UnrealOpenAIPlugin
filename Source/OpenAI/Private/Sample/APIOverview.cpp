@@ -4,6 +4,7 @@
 #include "Provider/OpenAIProvider.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Algo/ForEach.h"
+#include "API/API.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogAPIOverview, All, All);
 
@@ -51,6 +52,8 @@ void AAPIOverview::BeginPlay()
     // DeleteFineTuneModel();
     //  ListFineTune();
     // ListFineTuneEvents();
+
+    // SetYourOwnAPI();
 }
 
 void AAPIOverview::ListModels()
@@ -470,4 +473,35 @@ void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
 
     const EOpenAIResponseError Code = UOpenAIFuncLib::GetErrorCode(Content);
     const FString Messsage = UOpenAIFuncLib::GetErrorMessage(Content);
+}
+
+void AAPIOverview::SetYourOwnAPI()
+{
+    // You can specify your own endpoints. This might be useful if you're calling the OpenAI API through a proxy.
+    class MyAPI : public OpenAI::IAPI
+    {
+    public:
+        MyAPI(const FString& BaseURL = "https://api.openai.com") : API_URL(BaseURL) {}
+        virtual FString BaseURL() const override { return API_URL; }
+
+        virtual FString Models() const override { return API_URL + "/v1/models"; }
+        virtual FString Completion() const override { return API_URL + "/v1/completions"; }
+        virtual FString ChatCompletion() const override { return API_URL + "/v1/chat/completions"; }
+        virtual FString Edits() const override { return API_URL + "/v1/edits"; }
+        virtual FString ImageGenerations() const override { return API_URL + "/v1/images/generations"; }
+        virtual FString ImageEdits() const override { return API_URL + "/v1/images/edits"; }
+        virtual FString ImageVariations() const override { return API_URL + "/v1/images/variations"; }
+        virtual FString Embeddings() const override { return API_URL + "/v1/embeddings"; }
+        virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
+        virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
+        virtual FString Files() const override { return API_URL + "/v1/files"; }
+        virtual FString FineTunes() const override { return API_URL + "/v1/fine-tunes"; }
+        virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
+
+    private:
+        const FString API_URL;
+    };
+
+    const auto API = MakeShared<MyAPI>();
+    Provider->SetAPI(API);
 }

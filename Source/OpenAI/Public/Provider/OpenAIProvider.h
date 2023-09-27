@@ -12,10 +12,20 @@
 
 class FJsonObject;
 
+namespace OpenAI
+{
+class IAPI;
+}
+
 UCLASS()
 class OPENAI_API UOpenAIProvider : public UObject
 {
     GENERATED_BODY()
+
+public:
+    UOpenAIProvider();
+
+    void SetAPI(const TSharedPtr<OpenAI::IAPI>& API);
 
 public:
     /**
@@ -192,6 +202,7 @@ public:
     FOnCreateModerationsCompleted& OnCreateModerationsCompleted() { return CreateModerationsCompleted; }
 
 private:
+    TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
 
     FOnRequestError RequestError;
@@ -247,7 +258,7 @@ private:
     virtual void OnDeleteFineTunedModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateModerationsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
 
-    void ProcessRequest(FHttpRequestRef HttpRequest, const FString& URL);
+    void ProcessRequest(FHttpRequestRef HttpRequest);
     bool ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse);
     bool ParseChatCompletionStreamRequest(FHttpResponsePtr Response, TArray<FChatCompletionStreamResponse>& Responses);
 

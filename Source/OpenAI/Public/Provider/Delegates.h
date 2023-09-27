@@ -10,7 +10,6 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequestCompleted, const FString& /* URL 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequestProgresses, const FString& /* URL */, const FString& /* Response content */);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequestError, const FString& /* URL */, const FString& /* Response content */);
 
-// Blueprint delegates
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListModelsCompleted, const FListModelsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveModelCompleted, const FRetrieveModelResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateCompletionCompleted, const FCompletionResponse&);
