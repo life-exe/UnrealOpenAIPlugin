@@ -13,11 +13,17 @@ struct FChatCompletionPayload
 {
     GENERATED_BODY()
 
+    /** Response struct to be used (if bStream = false) */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FChatCompletionResponse Response;
 
+    /** Array of response structs to be used (if bStream = true) */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString StreamResponse{};
+    TArray<FChatCompletionStreamResponse> StreamResponse;
+
+    /** Response structs combined into the plain string (if bStream = true) */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString StreamResponseString{};
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     bool bStream{};

@@ -42,7 +42,8 @@ void UChatCompletionAction::OnCreateChatCompletionStreamProgresses(const TArray<
     FChatCompletionPayload Payload;
     Payload.bStream = true;
     Payload.bCompleted = false;
-    Payload.StreamResponse = ParseResponses(Responses);
+    Payload.StreamResponseString = ParseResponses(Responses);
+    Payload.StreamResponse = Responses;
     OnUpdate.Broadcast(Payload, {});
 }
 
@@ -51,7 +52,8 @@ void UChatCompletionAction::OnCreateChatCompletionStreamCompleted(const TArray<F
     FChatCompletionPayload Payload;
     Payload.bStream = true;
     Payload.bCompleted = true;
-    Payload.StreamResponse = ParseResponses(Responses);
+    Payload.StreamResponseString = ParseResponses(Responses);
+    Payload.StreamResponse = Responses;
     OnUpdate.Broadcast(Payload, {});
 }
 
