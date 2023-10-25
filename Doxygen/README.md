@@ -86,7 +86,33 @@ public class YourProject : ModuleRules
 10. Build your project and run Editor.
 11. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
 12. Restart the editor.
-13. Start using the plugin.
+13. Make sure that your `.uproject` file contains plugin:
+```json
+{
+    "FileVersion": 3,
+    "EngineAssociation": "5.x",
+    "Category": "",
+    "Description": "",
+    "Modules": [
+        {
+            "Name": "ProjectName",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
+            "AdditionalDependencies": [
+                "Engine"
+            ]
+        }
+    ],
+    "Plugins": [
+        {
+            "Name": "OpenAI",
+            "Enabled": true,
+            "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/97eaf1e101ab4f29b5acbf7dacbd4d16"
+        }
+    ]
+}
+```
+14. Start using the plugin.
 
 ## Blueprints
 
@@ -98,7 +124,33 @@ public class YourProject : ModuleRules
 6. Run the Editor `<YourProjectName>.uproject`
 7. In the Editor, navigate to `Edit->Plugins`. Find and activate the `OpenAI` plugin.
 8. Restart the editor.
-9. Start using the plugin.
+9. Make sure that your `.uproject` file contains plugin:
+```json
+{
+    "FileVersion": 3,
+    "EngineAssociation": "5.x",
+    "Category": "",
+    "Description": "",
+    "Modules": [
+        {
+            "Name": "ProjectName",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
+            "AdditionalDependencies": [
+                "Engine"
+            ]
+        }
+    ],
+    "Plugins": [
+        {
+            "Name": "OpenAI",
+            "Enabled": true,
+            "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/97eaf1e101ab4f29b5acbf7dacbd4d16"
+        }
+    ]
+}
+```
+10. Start using the plugin.
 
 ## Authentication
 
