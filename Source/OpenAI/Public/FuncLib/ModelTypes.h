@@ -22,9 +22,13 @@ enum class EAllModelEnum : uint8
     Babbage_Similarity,
     Whisper_1,
     Code_Search_Babbage_Text_001,
-    Ext_Curie_001,
     GPT_3_5_Turbo_0301,
     GPT_3_5_Turbo,
+    GPT_3_5_Turbo_16k_0613,
+    GPT_3_5_Turbo_16k,
+    GPT_3_5_Turbo_0613,
+    GPT_3_5_Turbo_instruct_0914,
+    GPT_3_5_Turbo_instruct,
     Code_Search_Babbage_Code_001,
     Text_Ada_001,
     Text_Embedding_Ada_002,
@@ -58,37 +62,25 @@ enum class EAllModelEnum : uint8
     Text_Similarity_Davinci_001,
     Text_Davinci_002,
     Davinci_Similarity,
-    Cushman_2020_05_03,
-    Ada_2020_05_03,
-    Babbage_2020_05_03,
-    Curie_2020_05_03,
-    Davinci_2020_05_03,
-    If_Davinci_V2,
-    If_Curie_V2,
-    If_Davinci_3_0_0,
-    Davinci_If_3_0_0,
-    Davinci_Instruct_Beta_2_0_0,
-    Text_Ada__001,
-    Text_Davinci__001,
+    Babbage_002,
+    Davinci_002,
     Text_Curie_001,
-    Text_Babbage__001,
-    /* GPT-4 models not yet available to everyone: https://openai.com/waitlist/gpt-4-api */
     GPT_4,
     GPT_4_0613,
-    GPT_4_0314
+    GPT_4_0314,
+    Fanw_Json_Eval
 };
 
 UENUM(BlueprintType)
 enum class EMainModelEnum : uint8
 {
+    GPT_4,
+    GPT_4_0613,
+    GPT_4_0314,
     GPT_3_5_Turbo_0301,
     GPT_3_5_Turbo,
     Text_Davinci_003,
-    Text_Davinci_002,
-    /* GPT-4 models not yet available to everyone: https://openai.com/waitlist/gpt-4-api */
-    GPT_4,
-    GPT_4_0613,
-    GPT_4_0314
+    Text_Davinci_002
 };
 
 UENUM(BlueprintType)

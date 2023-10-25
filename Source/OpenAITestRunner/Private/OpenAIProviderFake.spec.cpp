@@ -5,13 +5,16 @@
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
 #include "OpenAIProviderFake.h"
+#include "Provider/ResponseTypes.h"
+#include "Provider/RequestTypes.h"
+#include "Provider/CommonTypes.h"
 
-DEFINE_SPEC(FOpenAIProvider, "OpenAI",
+DEFINE_SPEC(FOpenAIProviderFake, "OpenAI.Provider",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 
-void FOpenAIProvider::Define()
+void FOpenAIProviderFake::Define()
 {
-    Describe("OpenAIProvider",
+    Describe("Fake",
         [this]()
         {
             It("ListModelsShouldBeParsedCorrectly",
