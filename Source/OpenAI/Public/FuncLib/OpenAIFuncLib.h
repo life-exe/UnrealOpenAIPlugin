@@ -22,6 +22,12 @@ public:
     static FString OpenAIMainModelToString(EMainModelEnum Model);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString OpenAIModerationModelToString(EModerationsModelEnum Model);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString OpenAIAudioModelToString(EAudioModelEnum Model);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIImageSizeToString(EImageSize ImageSize);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
@@ -46,6 +52,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIAudioTranscriptToString(ETranscriptFormat TranscriptFormat);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat EmbeddingsEncodingFormat);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIModelToString(const FOpenAIModel& OpenAIModel);

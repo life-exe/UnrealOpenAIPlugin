@@ -67,8 +67,7 @@ enum class EAllModelEnum : uint8
     Text_Curie_001,
     GPT_4,
     GPT_4_0613,
-    GPT_4_0314,
-    Fanw_Json_Eval
+    GPT_4_0314
 };
 
 UENUM(BlueprintType)
@@ -81,6 +80,19 @@ enum class EMainModelEnum : uint8
     GPT_3_5_Turbo,
     Text_Davinci_003,
     Text_Davinci_002
+};
+
+UENUM(BlueprintType)
+enum class EModerationsModelEnum : uint8
+{
+    Text_Moderation_Stable,
+    Text_Moderation_Latest
+};
+
+UENUM(BlueprintType)
+enum class EAudioModelEnum : uint8
+{
+    Whisper_1
 };
 
 UENUM(BlueprintType)
@@ -114,4 +126,11 @@ enum class ETranscriptFormat : uint8
     Str,
     Verbose_JSON,
     Vtt
+};
+
+UENUM(BlueprintType)
+enum class EEmbeddingsEncodingFormat : uint8
+{
+    Float,
+    Base64
 };

@@ -68,7 +68,6 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4: return "gpt-4";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
-        case EAllModelEnum::Fanw_Json_Eval: return "fanw-json-eval";
     }
     checkNoEntry();
     return {};
@@ -85,6 +84,27 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::GPT_4: return "gpt-4";
         case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Model)
+{
+    switch (Model)
+    {
+        case EModerationsModelEnum::Text_Moderation_Latest: return "text-moderation-latest";
+        case EModerationsModelEnum::Text_Moderation_Stable: return "text-moderation-stable";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum Model)
+{
+    switch (Model)
+    {
+        case EAudioModelEnum::Whisper_1: return "whisper-1";
     }
     checkNoEntry();
     return {};
@@ -179,6 +199,17 @@ FString UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat Transcri
         case ETranscriptFormat::Str: return "str";
         case ETranscriptFormat::Verbose_JSON: return "verbose_json";
         case ETranscriptFormat::Vtt: return "vtt";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat EmbeddingsEncodingFormat)
+{
+    switch (EmbeddingsEncodingFormat)
+    {
+        case EEmbeddingsEncodingFormat::Float: return "float";
+        case EEmbeddingsEncodingFormat::Base64: return "base64";
     }
     checkNoEntry();
     return {};

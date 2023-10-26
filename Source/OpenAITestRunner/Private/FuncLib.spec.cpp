@@ -108,7 +108,6 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4).Equals("gpt-4"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Fanw_Json_Eval).Equals("fanw-json-eval"));
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -122,6 +121,18 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
                 });
+
+            It("OpenAIModerationModelToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Latest)
+                                     .Equals("text-moderation-latest"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Stable)
+                                     .Equals("text-moderation-stable"));
+                });
+
+            It("OpenAIAudioModelToStringShouldReturnCorrectValue",
+                [this]() { TestTrueExpr(UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum::Whisper_1).Equals("whisper-1")); });
 
             It("OpenAIImageSizeToStringShouldReturnCorrectValue",
                 [this]()
@@ -171,6 +182,14 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Str).Equals("str"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Verbose_JSON).Equals("verbose_json"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Vtt).Equals("vtt"));
+                });
+
+            It("OpenAIEmbeddingsEncodingFormatToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Float).Equals("float"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Base64).Equals("base64"));
                 });
 
             It("OpenAIModelToStringShouldReturnCorrectValue",
