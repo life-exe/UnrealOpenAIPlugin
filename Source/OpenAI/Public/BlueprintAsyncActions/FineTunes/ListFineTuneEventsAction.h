@@ -22,6 +22,7 @@ public:
     virtual void Activate() override;
 
 private:
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | FineTunes")
     static UListFineTuneEventsAction* ListFineTuneEvents(const FString& FineTuneID, const FOpenAIAuth& Auth);
 

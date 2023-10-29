@@ -21,6 +21,7 @@ public:
     virtual void Activate() override;
 
 private:
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API")
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Edit")
     static UEditAction* CreateEdit(const FEdit& Edit, const FOpenAIAuth& Auth);
 

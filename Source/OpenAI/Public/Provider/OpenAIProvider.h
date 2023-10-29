@@ -56,6 +56,7 @@ public:
       Creates a new edit for the provided input, instruction, and parameters.
       https://platform.openai.com/docs/api-reference/edits/create
     */
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API")
     void CreateEdit(const FEdit& Edit, const FOpenAIAuth& Auth);
 
     /**
@@ -130,30 +131,35 @@ public:
       Creates a job that fine-tunes a specified model from a given dataset.
       https://platform.openai.com/docs/api-reference/fine-tunes/create
     */
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     void CreateFineTune(const FFineTune& FineTune, const FOpenAIAuth& Auth);
 
     /**
       List your organization's fine-tuning jobs.
       https://platform.openai.com/docs/api-reference/fine-tunes/list
     */
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     void ListFineTunes(const FOpenAIAuth& Auth);
 
     /**
       Gets info about the fine-tune job.
       https://platform.openai.com/docs/api-reference/fine-tunes/retrieve
     */
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     void RetrieveFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth);
 
     /**
       Immediately cancel a fine-tune job.
       https://platform.openai.com/docs/api-reference/fine-tunes/cancel
     */
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     void CancelFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth);
 
     /**
       Get fine-grained status updates for a fine-tune job.
       https://platform.openai.com/docs/api-reference/fine-tunes/events
     */
+    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     void ListFineTuneEvents(const FString& FineTuneID, const FOpenAIAuth& Auth);
 
     /**
