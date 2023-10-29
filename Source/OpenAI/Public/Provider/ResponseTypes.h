@@ -512,27 +512,55 @@ struct FOpenAIFile
 {
     GENERATED_BODY()
 
+    /**
+      The file identifier, which can be referenced in the API endpoints.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString ID;
 
+    /**
+      The object type, which is always "file".
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Object;
 
+    /**
+      The size of the file in bytes.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     int32 Bytes{};
 
+    /**
+      The Unix timestamp (in seconds) for when the file was created.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Created_At{};
+    int32 Created_At{};
 
+    /**
+      The name of the file.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString FileName;
 
+    /**
+      The intended purpose of the file.
+      Supported values are fine-tune or fine-tune-results.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Purpose;
 
+    /**
+      The current status of the file,
+      which can be either uploaded, processed, pending, error, deleting or deleted.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Status;
 
+    /**
+      Additional details about the status of the file.
+      If the file is in the error state,
+      this will include a message describing the error.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Status_Details;
 };

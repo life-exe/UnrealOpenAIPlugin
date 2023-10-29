@@ -6,6 +6,7 @@
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
 #include "Http/HttpHelper.h"
+#include "TestUtils.h"
 
 DEFINE_SPEC(FHttpHelper, "OpenAI",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
@@ -39,7 +40,7 @@ void FHttpHelper::Define()
             It("AddMIMEFileShouldAddContentCorrectly",
                 [this]()
                 {
-                    const FString FilePath = FPaths::ProjectPluginsDir().Append("OpenAI/Source/OpenAITestRunner/Data/testImage.png");
+                    const FString FilePath = OpenAI::Tests::TestUtils::FileFullPath("test_image.png");
 
                     TArray<uint8> FileContent;
                     FFileHelper::LoadFileToArray(FileContent, *FilePath);
@@ -51,7 +52,7 @@ void FHttpHelper::Define()
 
                     FString Header = "Content-Disposition: form-data;";
                     Header.Append(FString::Printf(TEXT("name=\"randomParamName\";")));
-                    Header.Append("filename=\"testImage.png\"").Append(LINE_TERMINATOR);
+                    Header.Append("filename=\"test_image.png\"").Append(LINE_TERMINATOR);
                     Header.Append(FString::Printf(TEXT("Content-Type: image/png"))).Append(LINE_TERMINATOR).Append(LINE_TERMINATOR);
 
                     Content.Append((uint8*)TCHAR_TO_ANSI(*Header), Header.Len());

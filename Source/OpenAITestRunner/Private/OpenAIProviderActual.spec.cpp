@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
-#include "OpenAIProviderFake.h"
+#include "Provider/OpenAIProvider.h"
 #include "Provider/ResponseTypes.h"
 #include "Provider/RequestTypes.h"
 #include "Provider/CommonTypes.h"
 #include "Funclib/ModelTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
-#include "Internationalization/Regex.h"
 #include "Algo/ForEach.h"
+#include "TestUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProviderActual, All, All);
 
@@ -28,39 +28,10 @@ bool FWaitForRequestCompleted::Update()
     return RequestCompleted;
 }
 
+using namespace OpenAI::Tests;
+
 namespace
 {
-FString PluginEnumToOpenAIModelName(EAllModelEnum ModelEnum)
-{
-    const FString EnumAsString = UEnum::GetValueAsString(ModelEnum);
-
-    // EAllModelEnum::GPT_3_5_Turbo_0301 -> EAllModelEnum, GPT_3_5_Turbo_0301
-    FString EnumName, EnumElementName;
-    EnumAsString.Split("::", &EnumName, &EnumElementName);
-
-    // GPT_3_5_Turbo_0301 -> gpt-3-5-turbo-0301
-    EnumElementName = EnumElementName.ToLower().Replace(TEXT("_"), TEXT("-"));
-
-    // special case: gpt-3-5-turbo-0301 -> gpt-3.5-turbo-0301
-    EnumElementName = EnumElementName.Replace(TEXT("3-5"), TEXT("3.5"));
-
-    return EnumElementName;
-}
-
-FString FileFullPath(const FString& FileName)
-{
-    return FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir().Append("OpenAI/Source/OpenAITestRunner/Data/").Append(FileName));
-}
-
-bool IsValidURL(const FString& URL)
-{
-    const FString URLPattern = "^((http|https)://)[-a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)$";
-    const FRegexPattern Pattern(URLPattern);
-    FRegexMatcher Matcher(Pattern, URL);
-
-    return Matcher.FindNext();
-}
-
 void TestImageResponse(FAutomationTestBase* Test, const TArray<FString>& Data, int32 Num)
 {
     if (!Test)
@@ -72,27 +43,8 @@ void TestImageResponse(FAutomationTestBase* Test, const TArray<FString>& Data, i
     Test->TestTrue("Images amount should be valid", Data.Num() == Num);
     for (const auto& Image : Data)
     {
-        Test->TestTrue("Image url should be valud", IsValidURL(Image));
+        Test->TestTrue("Image url should be valud", TestUtils::IsValidURL(Image));
     }
-}
-
-FString RemovePunctuation(const FString& Input)
-{
-    FRegexPattern Pattern(TEXT("[\\p{P}\\p{S}]"));
-    FRegexMatcher Matcher(Pattern, Input);
-
-    FString Result;
-    int32 LastPosition = 0;
-
-    while (Matcher.FindNext())
-    {
-        Result.Append(Input.Mid(LastPosition, Matcher.GetMatchBeginning() - LastPosition));
-        LastPosition = Matcher.GetMatchEnding();
-    }
-
-    Result.Append(Input.Mid(LastPosition));
-
-    return Result;
 }
 
 bool TestFinishReason(const FString& Reason)
@@ -183,7 +135,7 @@ void FOpenAIProviderActual::Define()
                             const UEnum* Enum = StaticEnum<EAllModelEnum>();
                             for (int32 i = 0; i < Enum->NumEnums() - 1; ++i)
                             {
-                                const FString OpenAIModelName = PluginEnumToOpenAIModelName(static_cast<EAllModelEnum>(i));
+                                const FString OpenAIModelName = ::TestUtils::PluginEnumToOpenAIModelName(static_cast<EAllModelEnum>(i));
                                 PluginModelNames.Add(OpenAIModelName);
                             }
 
@@ -289,7 +241,7 @@ void FOpenAIProviderActual::Define()
 
                     FOpenAIImageVariation OpenAIImageVariation;
                     OpenAIImageVariation.N = 2;
-                    OpenAIImageVariation.Image = FileFullPath("whale.png");
+                    OpenAIImageVariation.Image = TestUtils::FileFullPath("whale.png");
                     OpenAIImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
                     OpenAIImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
@@ -310,8 +262,8 @@ void FOpenAIProviderActual::Define()
 
                     FOpenAIImageEdit OpenAIImageEdit;
                     OpenAIImageEdit.N = 2;
-                    OpenAIImageEdit.Image = FileFullPath("whale.png");
-                    OpenAIImageEdit.Mask = FileFullPath("whale_mask.png");
+                    OpenAIImageEdit.Image = ::TestUtils::FileFullPath("whale.png");
+                    OpenAIImageEdit.Mask = TestUtils::FileFullPath("whale_mask.png");
                     OpenAIImageEdit.Prompt = "put the hat on the whale's head";
                     OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
                     OpenAIImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
@@ -326,7 +278,7 @@ void FOpenAIProviderActual::Define()
                     OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
                         [&](const FAudioTranscriptionResponse& Response)
                         {
-                            TestTrueExpr(RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
+                            TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
                             RequestCompleted = true;
                         });
 
@@ -335,7 +287,7 @@ void FOpenAIProviderActual::Define()
                     AudioTranscription.Model = UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum::Whisper_1);
                     AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
                     AudioTranscription.Temperature = 0.0f;
-                    AudioTranscription.File = FileFullPath("hello.mp3");
+                    AudioTranscription.File = TestUtils::FileFullPath("hello.mp3");
 
                     OpenAIProvider->CreateAudioTranscription(AudioTranscription, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -347,7 +299,7 @@ void FOpenAIProviderActual::Define()
                     OpenAIProvider->OnCreateAudioTranslationCompleted().AddLambda(
                         [&](const FAudioTranslationResponse& Response)
                         {
-                            TestTrueExpr(RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
+                            TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
                             RequestCompleted = true;
                         });
 
@@ -355,7 +307,7 @@ void FOpenAIProviderActual::Define()
                     AudioTranslation.Model = UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum::Whisper_1);
                     AudioTranslation.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
                     AudioTranslation.Temperature = 0.0f;
-                    AudioTranslation.File = FileFullPath("bonjour.mp3");
+                    AudioTranslation.File = TestUtils::FileFullPath("bonjour.mp3");
 
                     OpenAIProvider->CreateAudioTranslation(AudioTranslation, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -514,6 +466,115 @@ void FOpenAIProviderActual::Define()
                     Completion.Stream = true;
 
                     OpenAIProvider->CreateCompletion(Completion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Files.ListFilesRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnListFilesCompleted().AddLambda(
+                        [&](const FListFilesResponse& Response)
+                        {
+                            for (const auto& File : Response.Data)
+                            {
+                                TestTrueExpr(File.Object.Equals("file"));
+                                TestTrueExpr(!File.ID.IsEmpty());
+                                TestTrueExpr(!File.Purpose.IsEmpty());
+                                TestTrueExpr(!File.FileName.IsEmpty());
+                                TestTrueExpr(File.Bytes > 0);
+                                TestTrueExpr(File.Created_At > 0);
+                                TestTrueExpr(!File.Status.IsEmpty());
+                            }
+                            TestTrueExpr(Response.Object.Equals("list"));
+
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->ListFiles(Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Files.UploadAndDeleteFileRequestsShouldResponseCorrectly",
+                [this]()
+                {
+                    const FString FileName = "test_file.jsonl";
+
+                    OpenAIProvider->OnUploadFileCompleted().AddLambda(
+                        [&, FileName](const FUploadFileResponse& File)
+                        {
+                            TestTrueExpr(File.FileName.Equals(FileName));
+                            TestTrueExpr(File.Purpose.Equals("fine-tune"));
+                            TestTrueExpr(File.Object.Equals("file"));
+                            TestTrueExpr(File.Bytes == 783);
+                            TestTrueExpr(File.Status.Equals("processed"));
+                            TestTrueExpr(!File.ID.IsEmpty());
+                            TestTrueExpr(File.Created_At > 0);
+
+                            OpenAIProvider->DeleteFile(File.ID, Auth);
+                        });
+
+                    // delete file after upload
+                    OpenAIProvider->OnDeleteFileCompleted().AddLambda(
+                        [&](const FDeleteFileResponse& File)
+                        {
+                            TestTrueExpr(File.Object.Equals("file"));
+                            TestTrueExpr(File.Deleted);
+                            RequestCompleted = true;
+                        });
+
+                    FUploadFile UploadFile;
+                    UploadFile.File = TestUtils::FileFullPath(FileName);
+                    UploadFile.Purpose = "fine-tune";
+
+                    OpenAIProvider->UploadFile(UploadFile, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Files.RetrieveFileRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    const FString FileName = "test_file.jsonl";
+                    const FString FileID{"file-dzZGB6tQ2ZfOo4U7YV68lOFx"};
+
+                    OpenAIProvider->OnRetrieveFileCompleted().AddLambda(
+                        [&, FileName, FileID](const FRetrieveFileResponse& File)
+                        {
+                            TestTrueExpr(File.FileName.Equals(FileName));
+                            TestTrueExpr(File.Purpose.Equals("fine-tune"));
+                            TestTrueExpr(File.Object.Equals("file"));
+                            TestTrueExpr(File.Bytes == 783);
+                            TestTrueExpr(File.Status.Equals("processed"));
+                            TestTrueExpr(File.ID.Equals(FileID));
+                            TestTrueExpr(File.Created_At > 0);
+
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->RetrieveFile(FileID, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Files.RetrieveFileContentRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    const FString FilePath = TestUtils::FileFullPath("test_file.jsonl");
+                    FString FileContent;
+                    if (!FFileHelper::LoadFileToString(FileContent, *FilePath))
+                    {
+                        AddError(FString::Format(TEXT("Can't open the file {0}"), {FilePath}));
+                        return;
+                    }
+
+                    const FString FileID{"file-dzZGB6tQ2ZfOo4U7YV68lOFx"};
+
+                    OpenAIProvider->OnRetrieveFileContentCompleted().AddLambda(
+                        [&, FileContent, FileID](const FRetrieveFileContentResponse& File)
+                        {
+                            TestTrueExpr(FileContent.Equals(File.Content));
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->RetrieveFileContent(FileID, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
         });
