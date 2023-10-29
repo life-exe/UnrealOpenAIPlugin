@@ -178,6 +178,8 @@ public:
     FOnListModelsCompleted& OnListModelsCompleted() { return ListModelsCompleted; }
     FOnRetrieveModelCompleted& OnRetrieveModelCompleted() { return RetrieveModelCompleted; }
     FOnCreateCompletionCompleted& OnCreateCompletionCompleted() { return CreateCompletionCompleted; }
+    FOnCreateCompletionStreamCompleted& OnCreateCompletionStreamCompleted() { return CreateCompletionStreamCompleted; }
+    FOnCreateCompletionStreamProgresses& OnCreateCompletionStreamProgresses() { return CreateCompletionStreamProgresses; }
     FOnCreateChatCompletionCompleted& OnCreateChatCompletionCompleted() { return CreateChatCompletionCompleted; }
     FOnCreateChatCompletionStreamCompleted& OnCreateChatCompletionStreamCompleted() { return CreateChatCompletionStreamCompleted; }
     FOnCreateChatCompletionStreamCompleted& OnCreateChatCompletionStreamProgresses() { return CreateChatCompletionStreamProgresses; }
@@ -209,6 +211,8 @@ private:
     FOnListModelsCompleted ListModelsCompleted;
     FOnRetrieveModelCompleted RetrieveModelCompleted;
     FOnCreateCompletionCompleted CreateCompletionCompleted;
+    FOnCreateCompletionStreamCompleted CreateCompletionStreamCompleted;
+    FOnCreateCompletionStreamProgresses CreateCompletionStreamProgresses;
     FOnCreateChatCompletionCompleted CreateChatCompletionCompleted;
     FOnCreateChatCompletionStreamCompleted CreateChatCompletionStreamCompleted;
     FOnCreateChatCompletionStreamProgresses CreateChatCompletionStreamProgresses;
@@ -235,6 +239,8 @@ private:
     virtual void OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnRetrieveModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateCompletionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnCreateCompletionStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnCreateCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
     virtual void OnCreateChatCompletionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateChatCompletionStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateChatCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
@@ -260,7 +266,6 @@ private:
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
     bool ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse);
-    bool ParseChatCompletionStreamRequest(FHttpResponsePtr Response, TArray<FChatCompletionStreamResponse>& Responses);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
     void LogResponse(FHttpResponsePtr Response);
@@ -342,5 +347,88 @@ private:
     {
         if (!Param.IsSet()) return;
         RequestBody->SetNumberField(ParamName, Param.GetValue());
+    }
+
+private:
+    TTuple<FString, FString> GetErrorData(FHttpRequestPtr Request, FHttpResponsePtr Response) const;
+    bool HandleString(FString& IncomeString, bool& LastString) const;
+
+    template <typename ResponseType>
+    bool ParseStreamRequest(FHttpResponsePtr Response, TArray<ResponseType>& Responses)
+    {
+        if (!Response) return false;
+
+        TArray<FString> StringArray;
+        Response->GetContentAsString().ParseIntoArrayLines(StringArray);
+
+        for (auto& String : StringArray)
+        {
+            bool LastString{false};
+            if (HandleString(String, LastString))
+            {
+                if (LastString)
+                {
+                    break;
+                }
+                ResponseType ParsedResponse;
+                if (!ParseJSONToStruct(String, &ParsedResponse)) continue;
+
+                Responses.Add(ParsedResponse);
+            }
+        }
+        return true;
+    }
+
+    template <typename ResponseType, typename DelegateType>
+    void OnStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived, DelegateType& Delegate)
+    {
+        const auto& Response = Request->GetResponse();
+        TArray<ResponseType> ParsedResponses;
+
+        if (ParseStreamRequest(Response, ParsedResponses))
+        {
+            LogResponse(Response);
+            Delegate.Broadcast(ParsedResponses);
+        }
+        else if (Response)
+        {
+            LogError(Response->GetContentAsString());
+            // RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        }
+        else if (BytesReceived == 0)
+        {
+            // UE_5.3: on some reason OnRequestProgress() sends first time with Request = nullptr
+            // BytesReceived = 0 in this case, empty initial call ?
+            // Remove error message from log because nothing bad happened
+        }
+        else
+        {
+            LogError(FString::Format(TEXT("JSON deserialization error BytesSent:{0} BytesReceived:{1}"), {BytesSent, BytesReceived}));
+        }
+    }
+
+    template <typename ResponseType, typename DelegateType>
+    void OnStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)
+    {
+        if (!WasSuccessful)
+        {
+            const auto& [URL, Content] = GetErrorData(Request, Response);
+            LogError(Content);
+            RequestError.Broadcast(URL, Content);
+            return;
+        }
+
+        TArray<ResponseType> ParsedResponses;
+        if (ParseStreamRequest(Response, ParsedResponses))
+        {
+            LogResponse(Response);
+            Delegate.Broadcast(ParsedResponses);
+        }
+        else
+        {
+            LogError("JSON deserialization error");
+            LogError(Response->GetContentAsString());
+            RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        }
     }
 };

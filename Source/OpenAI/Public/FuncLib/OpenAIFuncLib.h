@@ -37,6 +37,9 @@ public:
     static FString OpenAIRoleToString(ERole Role);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString OpenAIFinishReasonToString(EOpenAIFinishReason FinishReason);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
     static ERole StringToOpenAIRole(const FString& Role);
 
     /**

@@ -44,10 +44,10 @@ void FFuncLib::Define()
                         UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_16k_0613).Equals("gpt-3.5-turbo-16k-0613"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_16k).Equals("gpt-3.5-turbo-16k"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613).Equals("gpt-3.5-turbo-0613"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_instruct_0914)
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct_0914)
                                      .Equals("gpt-3.5-turbo-instruct-0914"));
                     TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_instruct).Equals("gpt-3.5-turbo-instruct"));
+                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Code_Search_Babbage_Code_001)
                                      .Equals("code-search-babbage-code-001"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Ada_001).Equals("text-ada-001"));
@@ -115,11 +115,11 @@ void FFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_0301).Equals("gpt-3.5-turbo-0301"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo).Equals("gpt-3.5-turbo"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::Text_Davinci_003).Equals("text-davinci-003"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::Text_Davinci_002).Equals("text-davinci-002"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4).Equals("gpt-4"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
                 });
 
             It("OpenAIModerationModelToStringShouldReturnCorrectValue",
@@ -163,6 +163,15 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("system") == ERole::System);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("user") == ERole::User);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("assistant") == ERole::Assistant);
+                });
+
+            It("OpenAIFinishReasonToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Stop).Equals("stop"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length).Equals("length"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Function_Call).Equals("function_call"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter).Equals("content_filter"));
                 });
 
             It("APITokensCanBeLoadedFromFile",

@@ -42,7 +42,16 @@ void UOpenAIProvider::CreateCompletion(const FCompletion& Completion, const FOpe
     check(!Completion.Prompt.IsEmpty());
 
     auto HttpRequest = MakeRequest(Completion, API->Completion(), "POST", Auth);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateCompletionCompleted);
+    if (Completion.Stream)
+    {
+        HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateCompletionStreamCompleted);
+        HttpRequest->OnRequestProgress().BindUObject(this, &ThisClass::OnCreateCompletionStreamProgress);
+    }
+    else
+    {
+        HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateCompletionCompleted);
+    }
+
     ProcessRequest(HttpRequest);
 }
 
@@ -333,6 +342,16 @@ void UOpenAIProvider::OnCreateCompletionCompleted(FHttpRequestPtr Request, FHttp
     HandleResponse<FCompletionResponse>(Response, WasSuccessful, CreateCompletionCompleted);
 }
 
+void UOpenAIProvider::OnCreateCompletionStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    OnStreamCompleted<FCompletionStreamResponse>(Request, Response, WasSuccessful, CreateCompletionStreamCompleted);
+}
+
+void UOpenAIProvider::OnCreateCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
+{
+    OnStreamProgress<FCompletionStreamResponse>(Request, BytesSent, BytesReceived, CreateCompletionStreamProgresses);
+}
+
 void UOpenAIProvider::OnCreateChatCompletionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FChatCompletionResponse>(Response, WasSuccessful, CreateChatCompletionCompleted);
@@ -340,87 +359,12 @@ void UOpenAIProvider::OnCreateChatCompletionCompleted(FHttpRequestPtr Request, F
 
 void UOpenAIProvider::OnCreateChatCompletionStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!WasSuccessful)
-    {
-        const auto Content = Response->GetContentAsString();
-        if (!Content.IsEmpty())
-        {
-            LogError(Content);
-            RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
-        }
-        else
-        {
-            const auto Status = EHttpRequestStatus::ToString(Request->GetStatus());
-            LogError(Status);
-            RequestError.Broadcast(Response->GetURL(), Status);
-        }
-        return;
-    }
-
-    TArray<FChatCompletionStreamResponse> ParsedResponses;
-    if (ParseChatCompletionStreamRequest(Response, ParsedResponses))
-    {
-        LogResponse(Response);
-        CreateChatCompletionStreamCompleted.Broadcast(ParsedResponses);
-    }
-    else
-    {
-        LogError("JSON deserialization error");
-        LogError(Response->GetContentAsString());
-        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
-    }
+    OnStreamCompleted<FChatCompletionStreamResponse>(Request, Response, WasSuccessful, CreateChatCompletionStreamCompleted);
 }
 
 void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
 {
-    const auto& Response = Request->GetResponse();
-    TArray<FChatCompletionStreamResponse> ParsedResponses;
-
-    if (ParseChatCompletionStreamRequest(Response, ParsedResponses))
-    {
-        LogResponse(Response);
-        CreateChatCompletionStreamProgresses.Broadcast(ParsedResponses);
-    }
-    else if (Response)
-    {
-        LogError(Response->GetContentAsString());
-        // RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
-    }
-    else if (BytesReceived == 0)
-    {
-        // UE_5.3: on some reason OnRequestProgress() sends first time with Request = nullptr
-        // BytesReceived = 0 in this case, empty initial call ?
-        // Remove error message from log because nothing bad happened
-    }
-    else
-    {
-        LogError(FString::Format(TEXT("JSON deserialization error BytesSent:{0} BytesReceived:{1}"), {BytesSent, BytesReceived}));
-    }
-}
-
-bool UOpenAIProvider::ParseChatCompletionStreamRequest(FHttpResponsePtr Response, TArray<FChatCompletionStreamResponse>& Responses)
-{
-    if (!Response) return false;
-
-    TArray<FString> StringArray;
-    Response->GetContentAsString().ParseIntoArrayLines(StringArray);
-
-    for (auto& Item : StringArray)
-    {
-        if (Item.StartsWith("data: "))
-        {
-            Item.RemoveFromStart("data: ");
-        }
-
-        // igone role chunck // @todo handle this case in another struct
-        if (Item.Find("role") != INDEX_NONE) continue;
-        if (Item.Equals("[DONE]")) break;
-
-        FChatCompletionStreamResponse ParsedResponse;
-        if (!ParseJSONToStruct(Item, &ParsedResponse)) return false;
-        Responses.Add(ParsedResponse);
-    }
-    return true;
+    OnStreamProgress<FChatCompletionStreamResponse>(Request, BytesSent, BytesReceived, CreateChatCompletionStreamProgresses);
 }
 
 void UOpenAIProvider::OnCreateEditCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -692,4 +636,33 @@ void UOpenAIProvider::SetOptional(TSharedPtr<FJsonObject> RequestBody, const TOp
         JsonValues.Add(MakeShareable(new FJsonValueNumber(Value)));
     }
     RequestBody->SetArrayField(ParamName, JsonValues);
+}
+
+TTuple<FString, FString> UOpenAIProvider::GetErrorData(FHttpRequestPtr Request, FHttpResponsePtr Response) const
+{
+    const auto Content = Response->GetContentAsString();
+    if (!Content.IsEmpty())
+    {
+        return MakeTuple(Response->GetURL(), Response->GetContentAsString());
+    }
+
+    const auto Status = EHttpRequestStatus::ToString(Request->GetStatus());
+    return MakeTuple(Response->GetURL(), Status);
+}
+
+bool UOpenAIProvider::HandleString(FString& IncomeString, bool& LastString) const
+{
+    if (IncomeString.StartsWith("data: "))
+    {
+        IncomeString.RemoveFromStart("data: ");
+    }
+
+    // igone role chunck // @todo handle this case in another struct
+    if (IncomeString.Find("role") != INDEX_NONE) return false;
+    if (IncomeString.Equals("[DONE]"))
+    {
+        LastString = true;
+    }
+
+    return true;
 }

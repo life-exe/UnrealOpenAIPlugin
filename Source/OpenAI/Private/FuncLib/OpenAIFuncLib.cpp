@@ -29,8 +29,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_3_5_Turbo_16k_0613: return "gpt-3.5-turbo-16k-0613";
         case EAllModelEnum::GPT_3_5_Turbo_16k: return "gpt-3.5-turbo-16k";
         case EAllModelEnum::GPT_3_5_Turbo_0613: return "gpt-3.5-turbo-0613";
-        case EAllModelEnum::GPT_3_5_Turbo_instruct_0914: return "gpt-3.5-turbo-instruct-0914";
-        case EAllModelEnum::GPT_3_5_Turbo_instruct: return "gpt-3.5-turbo-instruct";
+        case EAllModelEnum::GPT_3_5_Turbo_Instruct_0914: return "gpt-3.5-turbo-instruct-0914";
+        case EAllModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
         case EAllModelEnum::Code_Search_Babbage_Code_001: return "code-search-babbage-code-001";
         case EAllModelEnum::Text_Ada_001: return "text-ada-001";
         case EAllModelEnum::Text_Embedding_Ada_002: return "text-embedding-ada-002";
@@ -77,13 +77,12 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
 {
     switch (Model)
     {
-        case EMainModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
-        case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
-        case EMainModelEnum::Text_Davinci_003: return "text-davinci-003";
-        case EMainModelEnum::Text_Davinci_002: return "text-davinci-002";
         case EMainModelEnum::GPT_4: return "gpt-4";
         case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
+        case EMainModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
+        case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
+        case EMainModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
     }
     checkNoEntry();
     return {};
@@ -140,6 +139,20 @@ FString UOpenAIFuncLib::OpenAIRoleToString(ERole Role)
         case ERole::System: return "system";
         case ERole::User: return "user";
         case ERole::Assistant: return "assistant";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason FinishReason)
+{
+    switch (FinishReason)
+    {
+        case EOpenAIFinishReason::Stop: return "stop";
+        case EOpenAIFinishReason::Length: return "length";
+        case EOpenAIFinishReason::Content_Filter: return "content_filter";
+        case EOpenAIFinishReason::Function_Call: return "function_call";
+        case EOpenAIFinishReason::Null: return "";
     }
     checkNoEntry();
     return {};

@@ -13,6 +13,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequestError, const FString& /* URL */, 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListModelsCompleted, const FListModelsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveModelCompleted, const FRetrieveModelResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateCompletionCompleted, const FCompletionResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateCompletionStreamCompleted, const TArray<FCompletionStreamResponse>&);
+using FOnCreateCompletionStreamProgresses = FOnCreateCompletionStreamCompleted;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateChatCompletionCompleted, const FChatCompletionResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateChatCompletionStreamCompleted, const TArray<FChatCompletionStreamResponse>&);
 using FOnCreateChatCompletionStreamProgresses = FOnCreateChatCompletionStreamCompleted;

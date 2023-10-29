@@ -11,6 +11,7 @@
 #include "Funclib/ModelTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Internationalization/Regex.h"
+#include "Algo/ForEach.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProviderActual, All, All);
 
@@ -94,6 +95,36 @@ FString RemovePunctuation(const FString& Input)
     return Result;
 }
 
+bool TestFinishReason(const FString& Reason)
+{
+    const TSet<FString> FinishReson{UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Stop),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Function_Call),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Null)};
+    return FinishReson.Contains(Reason);
+}
+
+template <typename ResponseType>
+void TestStreamResponse(FAutomationTestBase* Test, const ResponseType& Response, const FString& ModelName, const FString& Oject)
+{
+    if (!Test)
+    {
+        UE_LOG(LogOpenAIProviderActual, Error, TEXT("Automation test object is invalid"));
+        return;
+    }
+
+    Test->TestTrue("Name should be valid", Response.Model.Equals(ModelName));
+    Test->TestTrue("Created should be valid", Response.Created > 0);
+    Test->TestTrue("ID should be valid", !Response.ID.IsEmpty());
+    Test->TestTrue("Object should be valid", Response.Object.Equals(Oject));
+    for (const auto& Choice : Response.Choices)
+    {
+        Test->TestTrue("Choice index should be valid", Choice.Index == 0);
+        Test->TestTrue("Choice finish_reason should be valid", TestFinishReason(Choice.Finish_Reason));
+    }
+}
+
 }  // namespace
 
 void FOpenAIProviderActual::Define()
@@ -119,8 +150,9 @@ void FOpenAIProviderActual::Define()
             It("Models.ListModelsRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    OpenAIProvider->OnListModelsCompleted().AddLambda([&](const FListModelsResponse& Response)  //
-                        {                                                                                       //
+                    OpenAIProvider->OnListModelsCompleted().AddLambda(
+                        [&](const FListModelsResponse& Response)
+                        {
                             TestTrueExpr(!Response.Object.IsEmpty());
                             TestTrueExpr(Response.Data.Num() != 0);
 
@@ -179,8 +211,9 @@ void FOpenAIProviderActual::Define()
             It("Models.RetrieveModelRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    OpenAIProvider->OnRetrieveModelCompleted().AddLambda([&](const FRetrieveModelResponse& Response)  //
-                        {                                                                                             //
+                    OpenAIProvider->OnRetrieveModelCompleted().AddLambda(
+                        [&](const FRetrieveModelResponse& Response)
+                        {
                             TestTrueExpr(Response.Created > 0);
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(!Response.Object.IsEmpty());
@@ -202,8 +235,9 @@ void FOpenAIProviderActual::Define()
             It("Moderations.ModerationRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    OpenAIProvider->OnCreateModerationsCompleted().AddLambda([&](const FModerationsResponse& Response)  //
-                        {                                                                                               //
+                    OpenAIProvider->OnCreateModerationsCompleted().AddLambda(
+                        [&](const FModerationsResponse& Response)
+                        {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(!Response.Model.IsEmpty());
                             TestTrueExpr(Response.Results.Num() == 2);
@@ -224,8 +258,9 @@ void FOpenAIProviderActual::Define()
             It("Image.CreateImageRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    OpenAIProvider->OnCreateImageCompleted().AddLambda([&](const FImageResponse& Response)  //
-                        {                                                                                   //
+                    OpenAIProvider->OnCreateImageCompleted().AddLambda(
+                        [&](const FImageResponse& Response)
+                        {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 2);
                             RequestCompleted = true;
@@ -244,8 +279,9 @@ void FOpenAIProviderActual::Define()
             It("Image.CreateImageVariationRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    OpenAIProvider->OnCreateImageVariationCompleted().AddLambda([&](const FImageVariationResponse& Response)  //
-                        {                                                                                                     //
+                    OpenAIProvider->OnCreateImageVariationCompleted().AddLambda(
+                        [&](const FImageVariationResponse& Response)
+                        {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 2);
                             RequestCompleted = true;
@@ -253,7 +289,7 @@ void FOpenAIProviderActual::Define()
 
                     FOpenAIImageVariation OpenAIImageVariation;
                     OpenAIImageVariation.N = 2;
-                    OpenAIImageVariation.Image = FileFullPath("whale.png ");
+                    OpenAIImageVariation.Image = FileFullPath("whale.png");
                     OpenAIImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
                     OpenAIImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
@@ -265,7 +301,7 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageEditCompleted().AddLambda(
-                        [&](const FImageEditResponse& Response)  //
+                        [&](const FImageEditResponse& Response)
                         {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 2);
@@ -274,8 +310,8 @@ void FOpenAIProviderActual::Define()
 
                     FOpenAIImageEdit OpenAIImageEdit;
                     OpenAIImageEdit.N = 2;
-                    OpenAIImageEdit.Image = FileFullPath("whale.png ");
-                    OpenAIImageEdit.Mask = FileFullPath("whale_mask.png ");
+                    OpenAIImageEdit.Image = FileFullPath("whale.png");
+                    OpenAIImageEdit.Mask = FileFullPath("whale_mask.png");
                     OpenAIImageEdit.Prompt = "put the hat on the whale's head";
                     OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
                     OpenAIImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
@@ -288,7 +324,7 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
-                        [&](const FAudioTranscriptionResponse& Response)  //
+                        [&](const FAudioTranscriptionResponse& Response)
                         {
                             TestTrueExpr(RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
                             RequestCompleted = true;
@@ -309,7 +345,7 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateAudioTranslationCompleted().AddLambda(
-                        [&](const FAudioTranslationResponse& Response)  //
+                        [&](const FAudioTranslationResponse& Response)
                         {
                             TestTrueExpr(RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
                             RequestCompleted = true;
@@ -329,7 +365,7 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
-                        [&](const FEmbeddingsResponse& Response)  //
+                        [&](const FEmbeddingsResponse& Response)
                         {
                             TestTrueExpr(Response.Model.Equals("text-embedding-ada-002-v2"));
                             TestTrueExpr(Response.Usage.Prompt_Tokens == 6);
@@ -353,6 +389,131 @@ void FOpenAIProviderActual::Define()
                     Embeddings.Encoding_Format = UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Float);
                     OpenAIProvider->CreateEmbeddings(Embeddings, Auth);
 
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.NonStreaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301);
+
+                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
+                        [&, Model](const FChatCompletionResponse& Response)
+                        {
+                            TestTrueExpr(!Response.ID.IsEmpty());
+                            TestTrueExpr(Response.Model.Equals(Model));
+                            TestTrueExpr(Response.Created > 0);
+                            TestTrueExpr(Response.Usage.Prompt_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Total_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Completion_Tokens > 0);
+                            TestTrueExpr(Response.Choices.Num() == 1);
+                            const auto Choice = Response.Choices[0];
+                            TestTrueExpr(TestFinishReason(Choice.Finish_Reason));
+                            TestTrueExpr(Choice.Index == 0);
+                            TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
+                            TestTrueExpr(!Choice.Message.Content.IsEmpty());
+
+                            RequestCompleted = true;
+                        });
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
+                    ChatCompletion.Stream = false;
+                    ChatCompletion.Max_Tokens = 100;
+
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Streaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301);
+
+                    OpenAIProvider->OnCreateChatCompletionStreamCompleted().AddLambda(
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        {
+                            for (const auto& Response : Responses)
+                            {
+                                TestStreamResponse<FChatCompletionStreamResponse>(this, Response, Model, "chat.completion.chunk");
+                            }
+
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->OnCreateChatCompletionStreamProgresses().AddLambda(
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        {
+                            for (const auto& Response : Responses)
+                            {
+                                TestStreamResponse<FChatCompletionStreamResponse>(this, Response, Model, "chat.completion.chunk");
+                            }
+                        });
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
+                    ChatCompletion.Stream = true;
+                    ChatCompletion.Max_Tokens = 100;
+
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Completions.CreateCompletionRequestShouldResponseCorrectly.NonStreaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct);
+
+                    OpenAIProvider->OnCreateCompletionCompleted().AddLambda(
+                        [&, Model](const FCompletionResponse& Response)
+                        {
+                            TestStreamResponse<FCompletionResponse>(this, Response, Model, "text_completion");
+                            RequestCompleted = true;
+                        });
+
+                    FCompletion Completion;
+                    Completion.Model = Model;
+                    Completion.Prompt = "What is Unreal Engine?";
+                    Completion.Max_Tokens = 100;
+                    Completion.Stream = false;
+
+                    OpenAIProvider->CreateCompletion(Completion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Completions.CreateCompletionRequestShouldResponseCorrectly.Streaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct);
+
+                    OpenAIProvider->OnCreateCompletionStreamCompleted().AddLambda(
+                        [&, Model](const TArray<FCompletionStreamResponse>& Responses)
+                        {
+                            for (const auto& Response : Responses)
+                            {
+                                TestStreamResponse<FCompletionStreamResponse>(this, Response, Model, "text_completion");
+                            }
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->OnCreateCompletionStreamProgresses().AddLambda(
+                        [&, Model](const TArray<FCompletionStreamResponse>& Responses)
+                        {
+                            for (const auto& Response : Responses)
+                            {
+                                TestStreamResponse<FCompletionStreamResponse>(this, Response, Model, "text_completion");
+                            }
+                        });
+
+                    FCompletion Completion;
+                    Completion.Model = Model;
+                    Completion.Prompt = "What is Unreal Engine?";
+                    Completion.Max_Tokens = 100;
+                    Completion.Stream = true;
+
+                    OpenAIProvider->CreateCompletion(Completion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
         });

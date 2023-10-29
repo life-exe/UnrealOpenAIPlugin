@@ -4,6 +4,20 @@
 #include "Provider/OpenAIProvider.h"
 #include "Algo/ForEach.h"
 
+namespace
+{
+FString ParseResponses(const TArray<FChatCompletionStreamResponse>& Responses)
+{
+    FString OutputString{};
+    Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
+        Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
+            OutputString.Append(Choice.Delta.Content);
+        });
+    });
+    return OutputString;
+}
+}  // namespace
+
 UChatCompletionAction* UChatCompletionAction::CreateChatCompletion(const FChatCompletion& ChatCompletion, const FOpenAIAuth& Auth)
 {
     auto* ChatCompletionAction = NewObject<UChatCompletionAction>();
@@ -55,17 +69,6 @@ void UChatCompletionAction::OnCreateChatCompletionStreamCompleted(const TArray<F
     Payload.StreamResponseString = ParseResponses(Responses);
     Payload.StreamResponse = Responses;
     OnUpdate.Broadcast(Payload, {});
-}
-
-FString UChatCompletionAction::ParseResponses(const TArray<FChatCompletionStreamResponse>& Responses) const
-{
-    FString OutputString{};
-    Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
-        Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
-            OutputString.Append(Choice.Delta.Content);
-        });
-    });
-    return OutputString;
 }
 
 void UChatCompletionAction::OnRequestError(const FString& URL, const FString& Content)

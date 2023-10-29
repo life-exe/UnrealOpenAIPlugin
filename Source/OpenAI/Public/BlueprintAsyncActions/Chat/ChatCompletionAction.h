@@ -57,6 +57,4 @@ private:
 private:
     FChatCompletion ChatCompletion;
     FOpenAIAuth Auth;
-
-    FString ParseResponses(const TArray<FChatCompletionStreamResponse>& Responses) const;
 };

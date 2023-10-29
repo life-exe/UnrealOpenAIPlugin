@@ -84,7 +84,7 @@ struct FCompletion
       If you need more than this, please contact us through our Help center and describe your use case.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Logprobs{0};
+    int32 Logprobs{0};  //+
 
     /**
       Echo back the prompt in addition to the completion.
@@ -152,6 +152,43 @@ struct FCompletion
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString User;
+
+    /**
+      Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
+    */
+    // UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    // TArray<FString> Stop;
+};
+
+USTRUCT(BlueprintType)
+struct FFunctionOpenAI
+{
+    GENERATED_BODY()
+
+    /**
+      A description of what the function does, used by the model to choose when and how to call the function.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Description;
+
+    /**
+      The name of the function to be called. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Name;
+
+    /**
+      The parameters the functions accepts, described as a JSON Schema object.
+      See the guide for examples:
+      https://platform.openai.com/docs/guides/gpt/function-calling
+
+      and the JSON Schema reference for documentation about the format:
+      https://json-schema.org/understanding-json-schema
+
+      To describe a function that accepts no parameters, provide the value {"type": "object", "properties": {}}.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Parameters;
 };
 
 USTRUCT(BlueprintType)
@@ -167,7 +204,7 @@ struct FChatCompletion
     FString Model;
 
     /**
-      The messages to generate chat completions for, in the chat format.
+        A list of messages comprising the conversation so far.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     TArray<FMessage> Messages;
@@ -204,10 +241,6 @@ struct FChatCompletion
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     bool Stream{false};
-
-    /** Up to 4 sequences where the API will stop generating further tokens. */
-    // UPROPERTY(BlueprintReadWrite, Category = "Optional")
-    // TArray<FString> Stop;
 
     /**
       The maximum number of tokens to generate in the chat completion.
@@ -249,6 +282,26 @@ struct FChatCompletion
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString User;
+
+    /** Up to 4 sequences where the API will stop generating further tokens. */
+    // UPROPERTY(BlueprintReadWrite, Category = "Optional")
+    // TArray<FString> Stop;
+
+    /**
+      Controls how the model calls functions.
+      "none" means the model will not call a function and instead generates a message.
+      "auto" means the model can pick between generating a message or calling a function.
+      Specifying a particular function via {"name": "my_function"} forces the model to call that function.
+      "none" is the default when no functions are present. "auto" is the default if functions are present.
+    */
+    // UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    // FFunctionCall Function_Call;
+
+    /**
+      A list of functions the model may generate JSON inputs for.
+    */
+    //  UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    //  TArray<FFunctionOpenAI> Functions;
 };
 
 USTRUCT(BlueprintType)

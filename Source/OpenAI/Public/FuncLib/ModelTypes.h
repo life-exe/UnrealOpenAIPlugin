@@ -27,8 +27,8 @@ enum class EAllModelEnum : uint8
     GPT_3_5_Turbo_16k_0613,
     GPT_3_5_Turbo_16k,
     GPT_3_5_Turbo_0613,
-    GPT_3_5_Turbo_instruct_0914,
-    GPT_3_5_Turbo_instruct,
+    GPT_3_5_Turbo_Instruct_0914,
+    GPT_3_5_Turbo_Instruct,
     Code_Search_Babbage_Code_001,
     Text_Ada_001,
     Text_Embedding_Ada_002,
@@ -78,8 +78,7 @@ enum class EMainModelEnum : uint8
     GPT_4_0314,
     GPT_3_5_Turbo_0301,
     GPT_3_5_Turbo,
-    Text_Davinci_003,
-    Text_Davinci_002
+    GPT_3_5_Turbo_Instruct
 };
 
 UENUM(BlueprintType)

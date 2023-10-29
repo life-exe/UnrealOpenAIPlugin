@@ -92,10 +92,26 @@ void AAPIOverview::CreateCompletionRequest()
             Algo::ForEach(Response.Choices, [&](const FChoice& Choice) { OutputString.Append(Choice.Text); });
             UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
         });
+    Provider->OnCreateCompletionStreamProgresses().AddLambda(
+        [](const TArray<FCompletionStreamResponse>& Responses)
+        {
+            FString OutputString{};
+            Algo::ForEach(Responses, [&](const FCompletionStreamResponse& StreamResponse) {  //
+                Algo::ForEach(StreamResponse.Choices, [&](const FChoice& Choice) {           //
+                    OutputString.Append(Choice.Text);
+                });
+            });
+            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+        });
+    Provider->OnCreateCompletionStreamCompleted().AddLambda([](const TArray<FCompletionStreamResponse>& Responses)  //
+        {                                                                                                           //
+            UE_LOG(LogAPIOverview, Display, TEXT("Stream message generation finished"));
+        });
 
     FCompletion Completion;
-    Completion.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_003);
+    Completion.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct);
     Completion.Prompt = "What is Unreal Engine?";
+    Completion.Stream = true;
     Completion.Max_Tokens = 100;
 
     Provider->CreateCompletion(Completion, Auth);
