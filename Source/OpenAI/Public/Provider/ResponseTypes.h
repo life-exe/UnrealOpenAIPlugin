@@ -822,3 +822,168 @@ struct FModerationsResponse
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<FModerationResults> Results;
 };
+
+USTRUCT(BlueprintType)
+struct FFineTuningJobHyperparams
+{
+    GENERATED_BODY()
+
+    /**
+      The number of epochs to train the model for.
+      An epoch refers to one full cycle through the training dataset.
+      "auto" decides the optimal number of epochs based on the size of the dataset.
+      If setting the number manually, we support any number between 1 and 50 epochs.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString N_Epochs;
+};
+
+USTRUCT(BlueprintType)
+struct FFineTuningJobError
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Code;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Param;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Message;
+};
+
+USTRUCT(BlueprintType)
+struct FFineTuningJobObjectResponse
+{
+    GENERATED_BODY()
+
+    /**
+      The object identifier, which can be referenced in the API endpoints.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString ID;
+
+    /**
+      The Unix timestamp (in seconds) for when the fine-tuning job was created.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Created_At;
+
+    /**
+      For fine-tuning jobs that have failed, this will contain more information on the cause of the failure.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FFineTuningJobError Error;
+
+    /**
+      The name of the fine-tuned model that is being created. The value will be null if the fine-tuning job is still running.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Fine_Tuned_Model;
+
+    /**
+      The Unix timestamp (in seconds) for when the fine-tuning job was finished.
+      The value will be null if the fine-tuning job is still running.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Finished_At;
+
+    /**
+      The hyperparameters used for the fine-tuning job:
+      https://platform.openai.com/docs/guides/fine-tuning
+      See the fine-tuning guide for more details.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FFineTuningJobHyperparams Hyperparameters;
+
+    /**
+      The size of the file in bytes.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Model;
+
+    /**
+      The object type, which is always "fine_tuning.job".
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+
+    /**
+      The organization that owns the fine-tuning job.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Organization_ID;
+
+    /**
+      The compiled results file ID(s) for the fine-tuning job.
+      You can retrieve the results with the Files API:
+      https://platform.openai.com/docs/api-reference/files/retrieve-contents
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Result_Files;
+
+    /**
+      The current status of the fine-tuning job,
+      which can be either validating_files, queued, running, succeeded, failed, or cancelled.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Status;
+
+    /**
+      The total number of billable tokens processed by this fine-tuning job.
+      The value will be null if the fine-tuning job is still running.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Trained_Tokens;
+
+    /**
+      The file ID used for training. You can retrieve the training data with the Files API:
+      https://platform.openai.com/docs/api-reference/files/retrieve-contents
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Training_File;
+
+    /**
+      The file ID used for validation. You can retrieve the validation results with the Files API:
+      https://platform.openai.com/docs/api-reference/files/retrieve-contents
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Validation_File;
+};
+
+USTRUCT(BlueprintType)
+struct FListFineTuningJobsResponse
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FFineTuningJobObjectResponse> Data;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    bool Has_More{false};
+};
+
+USTRUCT(BlueprintType)
+struct FFineTuningJobEventResponse
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString ID;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Created_At;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Level;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Message;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+};

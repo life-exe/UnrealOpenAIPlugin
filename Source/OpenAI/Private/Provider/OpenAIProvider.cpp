@@ -325,6 +325,68 @@ void UOpenAIProvider::CreateModerations(const FModerations& Moderations, const F
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::ListFineTuningJobs(const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters)
+{
+    const auto URL = FString(API->FineTuningJobs()).Append(FineTuningQueryParameters.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListFineTuningJobsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CreateFineTuningJob(const FFineTuningJob& FineTuningJob, const FOpenAIAuth& Auth)
+{
+    // The current request is case sensitive for file ids and optional params.
+    // That's why special serialisation is needed.
+
+    auto HttpRequest = MakeRequest(API->FineTuningJobs(), "POST", Auth);
+
+    TSharedPtr<FJsonObject> RequestBody = MakeShareable(new FJsonObject());
+    RequestBody->SetStringField("training_file", FineTuningJob.Training_File);
+    RequestBody->SetStringField("model", FineTuningJob.Model);
+    if (FineTuningJob.Hyperparameters.IsSet())
+    {
+        TSharedPtr<FJsonObject> HyperparametersObj = MakeShareable(new FJsonObject());
+        HyperparametersObj->SetStringField("n_epochs", FineTuningJob.Hyperparameters.GetValue().N_Epochs);
+        RequestBody->SetObjectField("hyperparameters", HyperparametersObj);
+    }
+    SetOptional(RequestBody, FineTuningJob.Suffix, "suffix");
+    SetOptional(RequestBody, FineTuningJob.Validation_File, "validation_file");
+
+    FString RequestBodyStr;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&RequestBodyStr);
+    FJsonSerializer::Serialize(RequestBody.ToSharedRef(), Writer);
+
+    HttpRequest->SetContentAsString(RequestBodyStr);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateFineTuningJobCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveFineTuningJob(const FString& FineTuningJobID, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->FineTuningJobs()).Append("/").Append(FineTuningJobID);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveFineTuningJobCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CancelFineTuningJob(const FString& FineTuningJobID, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->FineTuningJobs()).Append("/").Append(FineTuningJobID).Append("/cancel");
+    auto HttpRequest = MakeRequest(URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCancelFineTuningJobCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListFineTuningEvents(
+    const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters)
+{
+    const auto URL =
+        FString(API->FineTunes()).Append("/").Append(FineTuningJobID).Append("/events").Append(FineTuningQueryParameters.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListFineTuningEventsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 void UOpenAIProvider::OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -561,6 +623,31 @@ void UOpenAIProvider::OnDeleteFineTunedModelCompleted(FHttpRequestPtr Request, F
     HandleResponse<FDeleteFineTuneResponse>(Response, WasSuccessful, DeleteFineTunedModelCompleted);
 }
 
+void UOpenAIProvider::OnCreateFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FFineTuningJobObjectResponse>(Response, WasSuccessful, CreateFineTuningJobCompleted);
+}
+
+void UOpenAIProvider::OnListFineTuningJobsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FListFineTuningJobsResponse>(Response, WasSuccessful, ListFineTuningJobsCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FFineTuningJobObjectResponse>(Response, WasSuccessful, RetrieveFineTuningJobCompleted);
+}
+
+void UOpenAIProvider::OnCancelFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FFineTuningJobObjectResponse>(Response, WasSuccessful, CancelFineTuningJobCompleted);
+}
+
+void UOpenAIProvider::OnListFineTuningEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FFineTuningJobEventResponse>(Response, WasSuccessful, ListFineTuningEventsCompleted);
+}
+
 ///////////////////////////// HELPER FUNCTIONS /////////////////////////////
 
 void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
@@ -588,7 +675,7 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
         return false;
     }
 
-    if (!WasSuccessful || !JsonObject.IsValid() || JsonObject->HasField("error"))
+    if (!WasSuccessful || !JsonObject.IsValid() /*|| JsonObject->HasField("error")*/)
     {
         LogError(Response->GetContentAsString());
         RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());

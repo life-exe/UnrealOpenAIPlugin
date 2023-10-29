@@ -6,6 +6,7 @@
 #include "Misc/AutomationTest.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/FileSystemFuncLib.h"
+#include "Provider/RequestTypes.h"
 
 DEFINE_SPEC(FFuncLib, "OpenAI",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
@@ -334,6 +335,32 @@ void FFuncLib::Define()
                     TestTrueExpr(FileLines[3].Equals("[assistant]: hello bro!"));
 
                     IFileManager::Get().Delete(*FilePath);
+                });
+        });
+
+    Describe("FineTuningQueryParameters",
+        [this]()
+        {
+            It("ShouldBeEmptyIfNotSet",
+                [this]()
+                {
+                    const FFineTuningQueryParameters Parameters;
+                    TestTrueExpr(Parameters.ToQuery().IsEmpty());
+                });
+            It("ShouldBECorrectIfOneParamIsSet",
+                [this]()
+                {
+                    FFineTuningQueryParameters Parameters;
+                    Parameters.After = "event-id";
+                    TestTrueExpr(Parameters.ToQuery().Equals("?after=event-id"));
+                });
+            It("ShouldBECorrectIfTwoParamsAreSet",
+                [this]()
+                {
+                    FFineTuningQueryParameters Parameters;
+                    Parameters.After = "event-id";
+                    Parameters.Limit = 20;
+                    TestTrueExpr(Parameters.ToQuery().Equals("?after=event-id&limit=20"));
                 });
         });
 }

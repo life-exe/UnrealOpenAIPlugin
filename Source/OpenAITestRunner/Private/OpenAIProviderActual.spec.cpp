@@ -77,6 +77,33 @@ void TestStreamResponse(FAutomationTestBase* Test, const ResponseType& Response,
     }
 }
 
+const FString JobID = "ftjob-HwfVFJki16yQveB1iwPqBaeF";
+const FString FileID = "file-xm3aonDNpFhE4CMnzUdgoKUU";
+const int32 FileBytes = 3138;
+
+struct FFineTunePayload
+{
+    FString JobID;
+    FString FileID;
+    FString ModelName;
+    FString OrgId;
+};
+
+void TestFineTuningJob(FAutomationTestBase* Test, const FFineTuningJobObjectResponse& Response, const FFineTunePayload& Payload)
+{
+    if (!Test)
+    {
+        UE_LOG(LogOpenAIProviderActual, Error, TEXT("Automation test object is invalid"));
+        return;
+    }
+
+    Test->TestTrue("Object should be valid", Response.Object.Equals("fine_tuning.job"));
+    Test->TestTrue("Model should be valid", Response.Model.Equals(Payload.ModelName));
+    Test->TestTrue("Created_At should be valid", Response.Created_At > 0);
+    Test->TestTrue("Organization_ID should be valid", Response.Organization_ID.Equals(Payload.OrgId));
+    Test->TestTrue("Training_File should be valid", !Response.Training_File.IsEmpty());
+}
+
 }  // namespace
 
 void FOpenAIProviderActual::Define()
@@ -135,7 +162,7 @@ void FOpenAIProviderActual::Define()
                             const UEnum* Enum = StaticEnum<EAllModelEnum>();
                             for (int32 i = 0; i < Enum->NumEnums() - 1; ++i)
                             {
-                                const FString OpenAIModelName = ::TestUtils::PluginEnumToOpenAIModelName(static_cast<EAllModelEnum>(i));
+                                const FString OpenAIModelName = TestUtils::PluginEnumToOpenAIModelName(static_cast<EAllModelEnum>(i));
                                 PluginModelNames.Add(OpenAIModelName);
                             }
 
@@ -505,7 +532,7 @@ void FOpenAIProviderActual::Define()
                             TestTrueExpr(File.FileName.Equals(FileName));
                             TestTrueExpr(File.Purpose.Equals("fine-tune"));
                             TestTrueExpr(File.Object.Equals("file"));
-                            TestTrueExpr(File.Bytes == 783);
+                            TestTrueExpr(File.Bytes == FileBytes);
                             TestTrueExpr(File.Status.Equals("processed"));
                             TestTrueExpr(!File.ID.IsEmpty());
                             TestTrueExpr(File.Created_At > 0);
@@ -534,17 +561,17 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     const FString FileName = "test_file.jsonl";
-                    const FString FileID{"file-dzZGB6tQ2ZfOo4U7YV68lOFx"};
+                    const FString _FileID{FileID};
 
                     OpenAIProvider->OnRetrieveFileCompleted().AddLambda(
-                        [&, FileName, FileID](const FRetrieveFileResponse& File)
+                        [&, FileName, _FileID](const FRetrieveFileResponse& File)
                         {
                             TestTrueExpr(File.FileName.Equals(FileName));
                             TestTrueExpr(File.Purpose.Equals("fine-tune"));
                             TestTrueExpr(File.Object.Equals("file"));
-                            TestTrueExpr(File.Bytes == 783);
+                            TestTrueExpr(File.Bytes == FileBytes);
                             TestTrueExpr(File.Status.Equals("processed"));
-                            TestTrueExpr(File.ID.Equals(FileID));
+                            TestTrueExpr(File.ID.Equals(_FileID));
                             TestTrueExpr(File.Created_At > 0);
 
                             RequestCompleted = true;
@@ -565,16 +592,99 @@ void FOpenAIProviderActual::Define()
                         return;
                     }
 
-                    const FString FileID{"file-dzZGB6tQ2ZfOo4U7YV68lOFx"};
-
                     OpenAIProvider->OnRetrieveFileContentCompleted().AddLambda(
-                        [&, FileContent, FileID](const FRetrieveFileContentResponse& File)
+                        [&, FileContent](const FRetrieveFileContentResponse& File)
                         {
                             TestTrueExpr(FileContent.Equals(File.Content));
                             RequestCompleted = true;
                         });
 
                     OpenAIProvider->RetrieveFileContent(FileID, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Fine-tuning.ListFineTuningJobsShouldResponseCorrectly",
+                [this]()
+                {
+                    const FString OrgId = Auth.OrganizationID;
+                    OpenAIProvider->OnListFineTuningJobsCompleted().AddLambda(
+                        [&, OrgId](const FListFineTuningJobsResponse& Response)
+                        {
+                            TestTrueExpr(Response.Object.Equals("list"));
+                            for (const auto& FineTune : Response.Data)
+                            {
+                                TestTrueExpr(!FineTune.Model.IsEmpty());
+                                TestTrueExpr(FineTune.Object.Equals("fine_tuning.job"));
+                                TestTrueExpr(FineTune.Organization_ID.Equals(OrgId));
+                                TestTrueExpr(FineTune.Created_At > 0);
+                            }
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->ListFineTuningJobs(Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Fine-tuning.CreateFineTuningJobShouldResponseCorrectly",
+                [this]()
+                {
+                    FFineTunePayload Payload;
+                    Payload.FileID = FileID;
+                    Payload.ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613);
+                    Payload.OrgId = Auth.OrganizationID;
+
+                    OpenAIProvider->OnCreateFineTuningJobCompleted().AddLambda(
+                        [&, Payload](const FFineTuningJobObjectResponse& Response)
+                        {
+                            TestFineTuningJob(this, Response, Payload);
+                            RequestCompleted = true;
+                        });
+
+                    FFineTuningJob FineTuningJob;
+                    FineTuningJob.Model = Payload.ModelName;
+                    FineTuningJob.Training_File = Payload.FileID;
+                    OpenAIProvider->CreateFineTuningJob(FineTuningJob, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Fine-tuning.RetriveFineTuningJobShouldResponseCorrectly",
+                [this]()
+                {
+                    FFineTunePayload Payload;
+                    Payload.JobID = JobID;
+                    Payload.FileID = FileID;
+                    Payload.ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613);
+                    Payload.OrgId = Auth.OrganizationID;
+
+                    OpenAIProvider->OnRetrieveFineTuningJobCompleted().AddLambda(
+                        [&, Payload](const FFineTuningJobObjectResponse& Response)
+                        {
+                            TestFineTuningJob(this, Response, Payload);
+                            TestTrueExpr(Response.ID.Equals(Payload.JobID));
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->RetrieveFineTuningJob(JobID, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Fine-tuning.CancelFineTuningJobShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnCancelFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response) { RequestCompleted = true; });
+
+                    OpenAIProvider->CancelFineTuningJob(JobID, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Fine-tuning.ListFineTuningEventsShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnListFineTuningEventsCompleted().AddLambda(
+                        [&](const FFineTuningJobEventResponse& Response) { RequestCompleted = true; });
+
+                    OpenAIProvider->ListFineTuningEvents(JobID, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
         });

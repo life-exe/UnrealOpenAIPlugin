@@ -29,6 +29,7 @@ private:
 
     void ListModels();
     void RetrieveModel();
+    void DeleteFineTuneModel();
 
     void CreateCompletionRequest();
     void CreateChatCompletionRequest();
@@ -37,7 +38,6 @@ private:
     void CreateImageEdit();
     void CreateImageVariation();
 
-    void CreateEdit();
     void CreateModerations();
     void CreateEmbeddings();
 
@@ -50,12 +50,11 @@ private:
     void RetrieveFile();
     void RetrieveFileContent();
 
-    void CreateFineTune();
-    void CancelFineTune();
-    void DeleteFineTuneModel();
-    void ListFineTune();
-    void ListFineTuneEvents();
-    void RetrieveFineTune();
+    void ListFineTuningJobs();
+    void CreateFineTuningJob();
+    void RetriveFineTuningJob();
+    void CancelFineTuningJob();
+    void ListFineTuningEvents();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

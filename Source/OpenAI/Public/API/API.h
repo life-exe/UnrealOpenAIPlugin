@@ -27,6 +27,7 @@ public:
     virtual FString Files() const = 0;
     UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     virtual FString FineTunes() const = 0;
+    virtual FString FineTuningJobs() const = 0;
     virtual FString Moderations() const = 0;
 };
 
@@ -52,6 +53,7 @@ public:
     virtual FString Files() const override { return API_URL + "/v1/files"; }
     UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
     virtual FString FineTunes() const override { return API_URL + "/v1/fine-tunes"; }
+    virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
     virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
 
 private:

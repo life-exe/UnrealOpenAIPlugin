@@ -25,6 +25,7 @@ void AAPIOverview::BeginPlay()
 
     ListModels();
     // RetrieveModel();
+    // DeleteFineTuneModel();
 
     // CreateCompletionRequest();
     // CreateChatCompletionRequest();
@@ -34,7 +35,6 @@ void AAPIOverview::BeginPlay()
     // CreateImageVariation();
 
     // CreateModerations();
-    // CreateEdit();
     // CreateEmbeddings();
 
     // CreateAudioTranscription();
@@ -46,12 +46,11 @@ void AAPIOverview::BeginPlay()
     // RetrieveFileContent();
     // ListFiles();
 
-    // CreateFineTune();
-    // RetrieveFineTune();
-    // CancelFineTune();
-    // DeleteFineTuneModel();
-    //  ListFineTune();
-    // ListFineTuneEvents();
+    // ListFineTuningJobs();
+    // CreateFineTuningJob();
+    // RetriveFineTuningJob();
+    // CancelFineTuningJob();
+    // ListFineTuningEvents();
 
     // SetYourOwnAPI();
 }
@@ -79,6 +78,21 @@ void AAPIOverview::RetrieveModel()
         { UE_LOG(LogAPIOverview, Display, TEXT("%s"), *UOpenAIFuncLib::OpenAIModelToString(Response)); });
     const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_003);
     Provider->RetrieveModel("ada", Auth);
+}
+
+void AAPIOverview::DeleteFineTuneModel()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteFineTunedModelCompleted().AddLambda(
+        [](const FDeleteFineTuneResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOG(LogAPIOverview, Display, TEXT("DeleteFineTuneModel request completed!"));
+        });
+
+    const FString ModelID{"curie:ft-lifeexe-2023-06-12-19-57-37"};
+    Provider->DeleteFineTunedModel(ModelID, Auth);
 }
 
 void AAPIOverview::CreateCompletionRequest()
@@ -237,27 +251,6 @@ void AAPIOverview::CreateModerations()
     Provider->CreateModerations(Moderations, Auth);
 }
 
-void AAPIOverview::CreateEdit()
-{
-    Provider->SetLogEnabled(true);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCreateEditCompleted().AddLambda(
-        [](const FEditResponse& Response)
-        {
-            FString OutputString{};
-            Algo::ForEach(Response.Choices, [&](const FBaseChoice& Choice) { OutputString.Append(Choice.Text); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
-        });
-
-    FEdit Edit;
-    Edit.Model = "text-davinci-edit-001";
-    Edit.Input = "Find mistke in this sentence 2+2=5";
-    Edit.Instruction = "Fix the spelling and math mistakes";
-    Edit.Temperature = 0.1f;
-    Edit.N = 3;
-    Provider->CreateEdit(Edit, Auth);
-}
-
 void AAPIOverview::CreateEmbeddings()
 {
     Provider->SetLogEnabled(true);
@@ -265,7 +258,7 @@ void AAPIOverview::CreateEmbeddings()
     Provider->OnCreateEmbeddingsCompleted().AddLambda(
         [](const FEmbeddingsResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
+            // decide what to print from the struct by yourself (=
             UE_LOG(LogAPIOverview, Display, TEXT("CreateEmbeddings request completed!"));
         });
 
@@ -323,7 +316,7 @@ void AAPIOverview::UploadFile()
     Provider->OnUploadFileCompleted().AddLambda(
         [](const FUploadFileResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
+            // decide what to print from the struct by yourself (=
             UE_LOG(LogAPIOverview, Display, TEXT("UploadFile request completed!"));
         });
 
@@ -341,7 +334,7 @@ void AAPIOverview::DeleteFile()
     Provider->OnDeleteFileCompleted().AddLambda(
         [](const FDeleteFileResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
+            // decide what to print from the struct by yourself (=
             UE_LOG(LogAPIOverview, Display, TEXT("DeleteFile request completed!"));
         });
 
@@ -393,94 +386,80 @@ void AAPIOverview::RetrieveFileContent()
     Provider->RetrieveFileContent(FileID, Auth);
 }
 
-void AAPIOverview::CreateFineTune()
+void AAPIOverview::ListFineTuningJobs()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCreateFineTuneCompleted().AddLambda(
-        [](const FFineTuneResponse& Response)
+    Provider->OnListFineTuningJobsCompleted().AddLambda(
+        [](const FListFineTuningJobsResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("CreateFineTune request completed!"));
+            // decide what to print from the struct by yourself (=
+            UE_LOG(LogAPIOverview, Display, TEXT("ListFineTuningJobs request completed!"));
         });
 
-    FFineTune FineTune;
-    FineTune.Training_File = "file-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
-    Provider->CreateFineTune(FineTune, Auth);
+    Provider->ListFineTuningJobs(Auth);
 }
 
-void AAPIOverview::CancelFineTune()
+void AAPIOverview::CreateFineTuningJob()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCancelFineTuneCompleted().AddLambda(
-        [](const FFineTuneResponse& Response)
+    Provider->OnCreateFineTuningJobCompleted().AddLambda(
+        [](const FFineTuningJobObjectResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("CancelFineTune request completed!"));
+            // decide what to print from the struct by yourself (=
+            UE_LOG(LogAPIOverview, Display, TEXT("CreateFineTuningJob request completed!"));
         });
 
-    const FString FineTuneID{"ft-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
-    Provider->CancelFineTune(FineTuneID, Auth);
+    FFineTuningJob FineTuningJob;
+    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613);
+    FineTuningJob.Training_File = "file-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    Provider->CreateFineTuningJob(FineTuningJob, Auth);
 }
 
-void AAPIOverview::DeleteFineTuneModel()
+void AAPIOverview::RetriveFineTuningJob()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnDeleteFineTunedModelCompleted().AddLambda(
-        [](const FDeleteFineTuneResponse& Response)
+    Provider->OnRetrieveFineTuningJobCompleted().AddLambda(
+        [](const FFineTuningJobObjectResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("DeleteFineTuneModel request completed!"));
+            // decide what to print from the struct by yourself (=
+            UE_LOG(LogAPIOverview, Display, TEXT("RetriveFineTuningJob request completed!"));
         });
 
-    const FString ModelID{"curie:ft-lifeexe-2023-06-12-19-57-37"};
-    Provider->DeleteFineTunedModel(ModelID, Auth);
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->RetrieveFineTuningJob(JobID, Auth);
 }
 
-void AAPIOverview::ListFineTune()
+void AAPIOverview::CancelFineTuningJob()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnListFineTunesCompleted().AddLambda(
-        [](const FListFineTuneResponse& Response)
+    Provider->OnCancelFineTuningJobCompleted().AddLambda(
+        [&](const FFineTuningJobObjectResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("ListFineTune request completed!"));
+            // decide what to print from the struct by yourself (=
+            UE_LOG(LogAPIOverview, Display, TEXT("CancelFineTuningJob request completed!"));
         });
 
-    Provider->ListFineTunes(Auth);
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->CancelFineTuningJob(JobID, Auth);
 }
 
-void AAPIOverview::ListFineTuneEvents()
+void AAPIOverview::ListFineTuningEvents()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnListFineTuneEventsCompleted().AddLambda(
-        [](const FFineTuneEventsResponse& Response)
+    Provider->OnListFineTuningEventsCompleted().AddLambda(
+        [&](const FFineTuningJobEventResponse& Response)
         {
-            // decide what to print from the struct by yuorself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("ListFineTuneEvents request completed!"));
+            // decide what to print from the struct by yourself (=
+            UE_LOG(LogAPIOverview, Display, TEXT("ListFineTuningEvents request completed!"));
         });
 
-    const FString FineTuneID{"ft-xxxxxxxxxxxxxxxxxxxxxxxxxxxx"};
-    Provider->ListFineTuneEvents(FineTuneID, Auth);
-}
-
-void AAPIOverview::RetrieveFineTune()
-{
-    Provider->SetLogEnabled(true);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnRetrieveFineTuneCompleted().AddLambda(
-        [](const FFineTuneResponse& Response)
-        {
-            // decide what to print from the struct by yuorself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("RetrieveFineTune request completed!"));
-        });
-
-    const FString FineTuneID{"ft-xxxxxxxxxxxxxxxxxxxxxxxx"};
-    Provider->RetrieveFineTune(FineTuneID, Auth);
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->ListFineTuningEvents(JobID, Auth);
 }
 
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
@@ -512,6 +491,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
         virtual FString Files() const override { return API_URL + "/v1/files"; }
         virtual FString FineTunes() const override { return API_URL + "/v1/fine-tunes"; }
+        virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
 
     private:

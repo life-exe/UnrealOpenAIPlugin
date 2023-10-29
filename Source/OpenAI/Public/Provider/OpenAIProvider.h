@@ -175,6 +175,37 @@ public:
     void CreateModerations(const FModerations& Moderations, const FOpenAIAuth& Auth);
 
     /**
+      List your organization's fine-tuning jobs.
+      https://platform.openai.com/docs/api-reference/fine-tuning/list
+    */
+    void ListFineTuningJobs(const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
+
+    /**
+      Creates a job that fine-tunes a specified model from a given dataset.
+      Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
+      Learn more about fine-tuning:
+      https://platform.openai.com/docs/guides/fine-tuning
+    */
+    void CreateFineTuningJob(const FFineTuningJob& FineTuningJob, const FOpenAIAuth& Auth);
+
+    /**
+      Get info about a fine-tuning job. Learn more about fine-tuning:
+      https://platform.openai.com/docs/guides/fine-tuning
+    */
+    void RetrieveFineTuningJob(const FString& FineTuningJobID, const FOpenAIAuth& Auth);
+
+    /**
+      Immediately cancel a fine-tune job.
+    */
+    void CancelFineTuningJob(const FString& FineTuneID, const FOpenAIAuth& Auth);
+
+    /**
+      Get status updates for a fine-tuning job.
+    */
+    void ListFineTuningEvents(
+        const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -208,6 +239,11 @@ public:
     FOnListFineTuneEventsCompleted& OnListFineTuneEventsCompleted() { return ListFineTuneEventsCompleted; }
     FOnDeleteFineTunedModelCompleted& OnDeleteFineTunedModelCompleted() { return DeleteFineTunedModelCompleted; }
     FOnCreateModerationsCompleted& OnCreateModerationsCompleted() { return CreateModerationsCompleted; }
+    FOnListFineTuningJobsCompleted& OnListFineTuningJobsCompleted() { return ListFineTuningJobsCompleted; }
+    FOnCreateFineTuningJobCompleted& OnCreateFineTuningJobCompleted() { return CreateFineTuningJobCompleted; }
+    FOnRetrieveFineTuningJobCompleted& OnRetrieveFineTuningJobCompleted() { return RetrieveFineTuningJobCompleted; }
+    FOnCancelFineTuningJobCompleted& OnCancelFineTuningJobCompleted() { return CancelFineTuningJobCompleted; }
+    FOnListFineTuningEventsCompleted& OnListFineTuningEventsCompleted() { return ListFineTuningEventsCompleted; }
 
 private:
     TSharedPtr<OpenAI::IAPI> API;
@@ -241,6 +277,11 @@ private:
     FOnListFineTuneEventsCompleted ListFineTuneEventsCompleted;
     FOnDeleteFineTunedModelCompleted DeleteFineTunedModelCompleted;
     FOnCreateModerationsCompleted CreateModerationsCompleted;
+    FOnListFineTuningJobsCompleted ListFineTuningJobsCompleted;
+    FOnCreateFineTuningJobCompleted CreateFineTuningJobCompleted;
+    FOnRetrieveFineTuningJobCompleted RetrieveFineTuningJobCompleted;
+    FOnCancelFineTuningJobCompleted CancelFineTuningJobCompleted;
+    FOnListFineTuningEventsCompleted ListFineTuningEventsCompleted;
 
     virtual void OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnRetrieveModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
@@ -269,6 +310,11 @@ private:
     virtual void OnListFineTuneEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnDeleteFineTunedModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateModerationsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnListFineTuningJobsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnCreateFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnRetrieveFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnCancelFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnListFineTuningEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
     bool ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse);

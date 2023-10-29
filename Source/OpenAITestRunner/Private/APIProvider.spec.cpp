@@ -24,7 +24,6 @@ void FAPIProvider::Define()
                     TestTrueExpr(API->Models().Equals(BaseURL + "/v1/models"));
                     TestTrueExpr(API->Completion().Equals(BaseURL + "/v1/completions"));
                     TestTrueExpr(API->ChatCompletion().Equals(BaseURL + "/v1/chat/completions"));
-                    TestTrueExpr(API->Edits().Equals(BaseURL + "/v1/edits"));
                     TestTrueExpr(API->ImageGenerations().Equals(BaseURL + "/v1/images/generations"));
                     TestTrueExpr(API->ImageEdits().Equals(BaseURL + "/v1/images/edits"));
                     TestTrueExpr(API->ImageVariations().Equals(BaseURL + "/v1/images/variations"));
@@ -32,7 +31,7 @@ void FAPIProvider::Define()
                     TestTrueExpr(API->AudioTranscriptions().Equals(BaseURL + "/v1/audio/transcriptions"));
                     TestTrueExpr(API->AudioTranslations().Equals(BaseURL + "/v1/audio/translations"));
                     TestTrueExpr(API->Files().Equals(BaseURL + "/v1/files"));
-                    TestTrueExpr(API->FineTunes().Equals(BaseURL + "/v1/fine-tunes"));
+                    TestTrueExpr(API->FineTuningJobs().Equals(BaseURL + "/v1/fine_tuning/jobs"));
                     TestTrueExpr(API->Moderations().Equals(BaseURL + "/v1/moderations"));
                 });
         });
