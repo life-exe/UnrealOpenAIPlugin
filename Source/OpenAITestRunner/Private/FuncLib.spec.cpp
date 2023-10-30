@@ -156,6 +156,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::System).Equals("system"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::User).Equals("user"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant).Equals("assistant"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::Function).Equals("function"));
                 });
 
             It("StringToOpenAIRoleShouldReturnCorrectValue",
@@ -164,6 +165,7 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("system") == ERole::System);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("user") == ERole::User);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("assistant") == ERole::Assistant);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("function") == ERole::Function);
                 });
 
             It("OpenAIFinishReasonToStringShouldReturnCorrectValue",
@@ -173,6 +175,16 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length).Equals("length"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Function_Call).Equals("function_call"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter).Equals("content_filter"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Null).Equals(""));
+                });
+            It("StringToOpenAIFinishReasonShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("stop") == EOpenAIFinishReason::Stop);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("length") == EOpenAIFinishReason::Length);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("function_call") == EOpenAIFinishReason::Function_Call);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("content_filter") == EOpenAIFinishReason::Content_Filter);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("") == EOpenAIFinishReason::Null);
                 });
 
             It("APITokensCanBeLoadedFromFile",
@@ -299,6 +311,16 @@ void FFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::NetworkError).Equals("Network error"));
                     TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::ModelNotFound).Equals("Model not found"));
                     TestTrueExpr(UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError::Unknown).Equals("Unknown error"));
+                });
+
+            It("WhiteSpacesShouldBeRemovedCorrectly",
+                [this]()
+                {
+                    const FString NormalString = "Hello, how are you?";
+                    TestTrueExpr(UOpenAIFuncLib::RemoveWhiteSpaces(NormalString).Equals(NormalString));
+
+                    const FString StringWithWhiteSpaces = "Hello\t, \nhow are you\r?";
+                    TestTrueExpr(UOpenAIFuncLib::RemoveWhiteSpaces(StringWithWhiteSpaces).Equals(NormalString));
                 });
         });
 

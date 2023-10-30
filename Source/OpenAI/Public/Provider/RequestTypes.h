@@ -84,19 +84,13 @@ struct FCompletion
       If you need more than this, please contact us through our Help center and describe your use case.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Logprobs{0};  //+
+    int32 Logprobs{0};
 
     /**
       Echo back the prompt in addition to the completion.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     bool Echo{false};
-
-    /**
-      Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
-    */
-    // UPROPERTY(BlueprintReadWrite, Category = "Optional")
-    // TArray<FString> Stop;
 
     /**
       Number between -2.0 and 2.0.
@@ -284,8 +278,8 @@ struct FChatCompletion
     FString User;
 
     /** Up to 4 sequences where the API will stop generating further tokens. */
-    // UPROPERTY(BlueprintReadWrite, Category = "Optional")
-    // TArray<FString> Stop;
+    UPROPERTY(BlueprintReadWrite, Category = "Optional")
+    TArray<FString> Stop;
 
     /**
       Controls how the model calls functions.
@@ -294,14 +288,14 @@ struct FChatCompletion
       Specifying a particular function via {"name": "my_function"} forces the model to call that function.
       "none" is the default when no functions are present. "auto" is the default if functions are present.
     */
-    // UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    // FFunctionCall Function_Call;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FFunctionCall Function_Call;
 
     /**
       A list of functions the model may generate JSON inputs for.
     */
-    //  UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    //  TArray<FFunctionOpenAI> Functions;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    TArray<FFunctionOpenAI> Functions;
 };
 
 USTRUCT(BlueprintType)
@@ -567,7 +561,6 @@ struct FAudioTranslation : public FAudioBase
 USTRUCT(BlueprintType)
 struct FUploadFile
 {
-
     GENERATED_BODY()
 
     /**

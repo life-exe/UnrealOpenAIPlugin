@@ -139,6 +139,7 @@ FString UOpenAIFuncLib::OpenAIRoleToString(ERole Role)
         case ERole::System: return "system";
         case ERole::User: return "user";
         case ERole::Assistant: return "assistant";
+        case ERole::Function: return "function";
     }
     checkNoEntry();
     return {};
@@ -158,13 +159,28 @@ FString UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason FinishRea
     return {};
 }
 
+EOpenAIFinishReason UOpenAIFuncLib::StringToOpenAIFinishReason(const FString& FinishReason)
+{
+    if (FinishReason.Equals("stop")) return EOpenAIFinishReason::Stop;
+    if (FinishReason.Equals("length")) return EOpenAIFinishReason::Length;
+    if (FinishReason.Equals("content_filter")) return EOpenAIFinishReason::Content_Filter;
+    if (FinishReason.Equals("function_call")) return EOpenAIFinishReason::Function_Call;
+    if (FinishReason.IsEmpty()) return EOpenAIFinishReason::Null;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown OpenAIFinishReason: %s"), *FinishReason);
+    checkNoEntry();
+    return {};
+}
+
 ERole UOpenAIFuncLib::StringToOpenAIRole(const FString& Role)
 {
     if (Role.ToLower().Equals("system")) return ERole::System;
     if (Role.ToLower().Equals("user")) return ERole::User;
     if (Role.ToLower().Equals("assistant")) return ERole::Assistant;
+    if (Role.ToLower().Equals("function")) return ERole::Function;
 
     UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown OpenAIRole: %s"), *Role);
+    checkNoEntry();
     return {};
 }
 
@@ -242,6 +258,21 @@ FString UOpenAIFuncLib::OpenAIModelToString(const FOpenAIModel& OpenAIModel)
 FString UOpenAIFuncLib::BoolToString(bool Value)
 {
     return Value ? TEXT("true") : TEXT("false");
+}
+
+FString UOpenAIFuncLib::RemoveWhiteSpaces(const FString& Input)
+{
+    FString Result;
+    const TSet<TCHAR> Whitespaces{'\t', '\n', '\r'};
+
+    for (const TCHAR& Char : Input)
+    {
+        if (!Whitespaces.Contains(Char))
+        {
+            Result += Char;
+        }
+    }
+    return Result;
 }
 
 FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& ModerationResults)
@@ -330,4 +361,36 @@ FString UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError Code)
     }
 
     return "Unknown error code";
+}
+
+// we need two markes to make clean JSON object during request serialization
+// basically to remove quotes
+
+const FString UOpenAIFuncLib::START_FUNCTION_OBJECT_MARKER = "START_FUNCTION_OBJECT_MARKER";
+const FString UOpenAIFuncLib::END_FUNCTION_OBJECT_MARKER = "END_FUNCTION_OBJECT_MARKER";
+
+FString UOpenAIFuncLib::MakeFunctionsString(const TSharedPtr<FJsonObject>& Json)
+{
+    FString Functions;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&Functions);
+    FJsonSerializer::Serialize(Json.ToSharedRef(), Writer);
+
+    Functions.Append(END_FUNCTION_OBJECT_MARKER);
+    Functions = START_FUNCTION_OBJECT_MARKER + Functions;
+
+    return RemoveWhiteSpaces(Functions);
+}
+
+FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
+{
+    FString Output{Input};
+    const FString StartMarker = FString::Format(TEXT("\"{0}"), {START_FUNCTION_OBJECT_MARKER});
+    Output = Output.Replace(*StartMarker, TEXT(""));
+
+    const FString EndMarker = FString::Format(TEXT("{0}\""), {END_FUNCTION_OBJECT_MARKER});
+    Output = Output.Replace(*EndMarker, TEXT(""));
+
+    Output = Output.Replace(TEXT("\\"), TEXT(""));
+
+    return Output.ToLower();
 }

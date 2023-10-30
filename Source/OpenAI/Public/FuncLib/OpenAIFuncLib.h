@@ -40,6 +40,9 @@ public:
     static FString OpenAIFinishReasonToString(EOpenAIFinishReason FinishReason);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static EOpenAIFinishReason StringToOpenAIFinishReason(const FString& FinishReason);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
     static ERole StringToOpenAIRole(const FString& Role);
 
     /**
@@ -75,4 +78,12 @@ public:
     static FString ResponseErrorToString(EOpenAIResponseError Code);
 
     static FString BoolToString(bool Value);
+    static FString RemoveWhiteSpaces(const FString& Input);
+
+    static FString MakeFunctionsString(const TSharedPtr<FJsonObject>& Json);
+    static FString CleanUpFunctionsObject(const FString& Input);
+
+private:
+    static const FString START_FUNCTION_OBJECT_MARKER;
+    static const FString END_FUNCTION_OBJECT_MARKER;
 };

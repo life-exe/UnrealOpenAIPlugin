@@ -18,7 +18,9 @@ public class OpenAITestRunner : ModuleRules
                 "Slate",
                 "SlateCore",
                 "UMG",
-                "OpenAI"
+                "OpenAI",
+                "Json",
+                "JsonUtilities"
             });
         // clang-format on
 

@@ -440,6 +440,156 @@ void FOpenAIProviderActual::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Function",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613);
+                    TArray<FMessage> History;
+                    History.Add(FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is the weather like in Boston?"});
+
+                    const FString FuncName = "get_current_weather";
+
+                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
+                        [&, Model, FuncName, History](const FChatCompletionResponse& Response)
+                        {
+                            TestTrueExpr(!Response.ID.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("chat.completion"));
+                            TestTrueExpr(Response.Created > 0);
+
+                            TestTrueExpr(Response.Choices.Num() == 1);
+                            if (Response.Choices.Num() == 0)
+                            {
+                                AddError("Choices array is empty!");
+                                RequestCompleted = true;
+                                return;
+                            }
+                            const auto Choice = Response.Choices[0];
+                            TestTrueExpr(TestFinishReason(Choice.Finish_Reason));
+                            TestTrueExpr(Choice.Index == 0);
+                            TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
+
+                            const float Temperature = 22.5f;
+
+                            if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Function_Call)
+                            {
+                                TestTrueExpr(Choice.Message.Content.IsEmpty());
+
+                                const auto get_current_weather = [&](const FString& Location, const FString& Unit) -> FString {
+                                    return FString::Format(TEXT("location:{0}, temperature:{1}, unit:{2}, forecast: [sunny, windy]"),
+                                        {Location, Temperature, Unit});
+                                };
+
+                                TMap<FString, TFunction<FString(const FString&, const FString&)>> Funcs;
+                                Funcs.Add("get_current_weather", get_current_weather);
+
+                                const FString IncomeFuncName = Choice.Message.Function_Call.Name;
+                                TestTrueExpr(IncomeFuncName.Equals(FuncName));
+
+                                const FString Arguments = Choice.Message.Function_Call.Arguments;
+                                TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Arguments);
+                                TSharedPtr<FJsonObject> ArgumentsJsonObject;
+                                if (!FJsonSerializer::Deserialize(JsonReader, ArgumentsJsonObject))
+                                {
+                                    AddError("Can't deserialize function arguments");
+                                    RequestCompleted = true;
+                                    return;
+                                }
+                                const auto LocationArg = ArgumentsJsonObject->TryGetField("location");
+                                TestTrueExpr(LocationArg.IsValid());
+                                const auto UnitArg = ArgumentsJsonObject->TryGetField("unit");
+                                TestTrueExpr(UnitArg.IsValid());
+
+                                TArray<FMessage> NewHistory = History;
+                                FMessage Message;
+                                Message.Name = FuncName;
+                                Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
+                                // call function
+                                Message.Content = Funcs[IncomeFuncName](LocationArg.Get()->AsString(), UnitArg.Get()->AsString());
+                                NewHistory.Add(Message);
+
+                                FChatCompletion ChatCompletion;
+                                ChatCompletion.Model = Model;
+                                ChatCompletion.Messages = NewHistory;
+                                ChatCompletion.Stream = false;
+                                ChatCompletion.Max_Tokens = 100;
+                                OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                            }
+                            else if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Stop)
+                            {
+                                TestTrueExpr(!Choice.Message.Content.IsEmpty());
+                                const FString TemperatureStr = FString::SanitizeFloat(Temperature);
+                                TestTrueExpr(Choice.Message.Content.Contains(TemperatureStr));
+                                RequestCompleted = true;
+                            }
+                            else
+                            {
+                                RequestCompleted = true;
+                            }
+                        });
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages = History;
+                    ChatCompletion.Stream = false;
+                    ChatCompletion.Max_Tokens = 100;
+
+                    /*
+                        functions = [
+                        {
+                            "name": "get_current_weather",
+                            "description": "Get the current weather in a given location",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "location": {
+                                        "type": "string",
+                                        "description": "The city and state, e.g. San Francisco, CA",
+                                    },
+                                    "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
+                                },
+                                "required": ["location", "unit"],
+                            },
+                        }]
+                    */
+
+                    FFunctionOpenAI FunctionOpenAI;
+                    FunctionOpenAI.Name = FuncName;
+                    FunctionOpenAI.Description = "Get the current weather in a given location";
+
+                    TSharedPtr<FJsonObject> MainObj = MakeShareable(new FJsonObject());
+                    MainObj->SetStringField("type", "object");
+
+                    TSharedPtr<FJsonObject> Props = MakeShareable(new FJsonObject());
+
+                    // location
+                    TSharedPtr<FJsonObject> LocationObj = MakeShareable(new FJsonObject());
+                    LocationObj->SetStringField("type", "string");
+                    LocationObj->SetStringField("description", "The city and state, e.g. San Francisco, CA");
+                    Props->SetObjectField("location", LocationObj);
+
+                    // unit
+                    TSharedPtr<FJsonObject> UnitObj = MakeShareable(new FJsonObject());
+                    UnitObj->SetStringField("type", "string");
+                    TArray<TSharedPtr<FJsonValue>> EnumArray;
+                    EnumArray.Add(MakeShareable(new FJsonValueString("celsius")));
+                    EnumArray.Add(MakeShareable(new FJsonValueString("fahrenheit")));
+                    UnitObj->SetArrayField("enum", EnumArray);
+                    Props->SetObjectField("unit", UnitObj);
+
+                    MainObj->SetObjectField("properties", Props);
+
+                    // required params
+                    TArray<TSharedPtr<FJsonValue>> RequiredArray;
+                    RequiredArray.Add(MakeShareable(new FJsonValueString("location")));
+                    RequiredArray.Add(MakeShareable(new FJsonValueString("unit")));
+                    MainObj->SetArrayField("required", RequiredArray);
+
+                    FunctionOpenAI.Parameters = UOpenAIFuncLib::MakeFunctionsString(MainObj);
+                    ChatCompletion.Functions.Add(FunctionOpenAI);
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
             It("Completions.CreateCompletionRequestShouldResponseCorrectly.NonStreaming",
                 [this]()
                 {

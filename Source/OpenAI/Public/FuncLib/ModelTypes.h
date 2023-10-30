@@ -114,7 +114,8 @@ enum class ERole : uint8
 {
     System,
     User,
-    Assistant
+    Assistant,
+    Function
 };
 
 UENUM(BlueprintType)

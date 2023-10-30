@@ -347,17 +347,10 @@ private:
         HttpRequest->SetContentAsString(SerializeRequest(OutStruct));
         return HttpRequest;
     }
-
-    FHttpRequestRef MakeRequest(const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
-    {
-        auto HttpRequest = CreateRequest();
-        HttpRequest->SetHeader("Content-Type", "application/json");
-        HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
-        HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
-        HttpRequest->SetURL(URL);
-        HttpRequest->SetVerb(Method);
-        return HttpRequest;
-    }
+    // specializations
+    FHttpRequestRef MakeRequest(const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FChatCompletion& ChatCompletion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
     template <typename OutStructType>
     bool ParseJSONToStruct(const FString& Data, OutStructType* OutStruct)
@@ -483,4 +476,6 @@ private:
             RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
         }
     }
+
+    void CleanChatCompletionFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPtr<FJsonObject>& Json) const;
 };

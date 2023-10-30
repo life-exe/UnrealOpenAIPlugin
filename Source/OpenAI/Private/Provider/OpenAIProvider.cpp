@@ -5,6 +5,7 @@
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonReader.h"
 #include "Http/HttpHelper.h"
+#include "FuncLib/OpenAIFuncLib.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProvider, All, All);
 
@@ -666,6 +667,13 @@ void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
 
 bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
 {
+    if (!Response)
+    {
+        LogError("Response is nullptr");
+        RequestError.Broadcast("null", "null");
+        return false;
+    }
+
     TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
     TSharedPtr<FJsonObject> JsonObject;
     if (!FJsonSerializer::Deserialize(JsonReader, JsonObject))
@@ -752,4 +760,64 @@ bool UOpenAIProvider::HandleString(FString& IncomeString, bool& LastString) cons
     }
 
     return true;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = CreateRequest();
+    HttpRequest->SetHeader("Content-Type", "application/json");
+    HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
+    HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FChatCompletion& ChatCompletion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = CreateRequest();
+    HttpRequest->SetHeader("Content-Type", "application/json");
+    HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
+    HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(ChatCompletion);
+    CleanChatCompletionFieldsThatCantBeEmpty(ChatCompletion, Json);
+
+    FString RequestBodyStr;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&RequestBodyStr);
+    FJsonSerializer::Serialize(Json.ToSharedRef(), Writer);
+
+    RequestBodyStr = UOpenAIFuncLib::CleanUpFunctionsObject(RequestBodyStr);
+
+    HttpRequest->SetContentAsString(RequestBodyStr);
+    return HttpRequest;
+}
+
+void UOpenAIProvider::CleanChatCompletionFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPtr<FJsonObject>& Json) const
+{
+    if (ChatCompletion.Functions.IsEmpty())
+    {
+        Json->RemoveField("Functions");
+    }
+
+    if (ChatCompletion.Function_Call.Arguments.IsEmpty() || ChatCompletion.Function_Call.Name.IsEmpty())
+    {
+        Json->RemoveField("Function_Call");
+    }
+
+    for (int32 i = 0; i < ChatCompletion.Messages.Num(); ++i)
+    {
+        const auto& Message = ChatCompletion.Messages[i];
+        if (Message.Function_Call.Arguments.IsEmpty() || Message.Function_Call.Name.IsEmpty())
+        {
+            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Function_Call");
+        }
+        if (Message.Name.IsEmpty())
+        {
+            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Name");
+        }
+    }
 }

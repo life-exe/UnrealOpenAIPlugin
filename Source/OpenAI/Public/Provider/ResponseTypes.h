@@ -868,7 +868,7 @@ struct FFineTuningJobObjectResponse
       The Unix timestamp (in seconds) for when the fine-tuning job was created.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Created_At;
+    int32 Created_At{};
 
     /**
       For fine-tuning jobs that have failed, this will contain more information on the cause of the failure.
@@ -887,7 +887,7 @@ struct FFineTuningJobObjectResponse
       The value will be null if the fine-tuning job is still running.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Finished_At;
+    int32 Finished_At{};
 
     /**
       The hyperparameters used for the fine-tuning job:
@@ -935,7 +935,7 @@ struct FFineTuningJobObjectResponse
       The value will be null if the fine-tuning job is still running.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Trained_Tokens;
+    int32 Trained_Tokens{};
 
     /**
       The file ID used for training. You can retrieve the training data with the Files API:
@@ -976,7 +976,7 @@ struct FFineTuningJobEventResponse
     FString ID;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Created_At;
+    int32 Created_At{};
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Level;
