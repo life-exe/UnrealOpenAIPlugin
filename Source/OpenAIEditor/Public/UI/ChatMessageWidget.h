@@ -31,7 +31,7 @@ protected:
     TObjectPtr<UTextBlock> TimeTextBox;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UWidgetSwitcher> WidgetSwitcher; // preloader -> text;
+    TObjectPtr<UWidgetSwitcher> WidgetSwitcher;  // preloader -> text;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FLinearColor UserColor{FColor::FromHex("343541FF")};
