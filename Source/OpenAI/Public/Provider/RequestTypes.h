@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonTypes.h"
+#include "ResponseTypes.h"
 #include "RequestTypes.generated.h"
 
 USTRUCT(BlueprintType)
