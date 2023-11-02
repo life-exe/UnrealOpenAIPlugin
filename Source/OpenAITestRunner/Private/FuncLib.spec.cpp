@@ -7,6 +7,7 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/FileSystemFuncLib.h"
 #include "Provider/RequestTypes.h"
+#include "TestUtils.h"
 
 DEFINE_SPEC(FFuncLib, "OpenAI",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
@@ -190,7 +191,7 @@ void FFuncLib::Define()
             It("APITokensCanBeLoadedFromFile",
                 [this]()
                 {
-                    const FString FilePath = FPaths::ProjectPluginsDir().Append("OpenAI/Source/OpenAITestRunner/Data/OpenAIAuth.ini");
+                    const FString FilePath = OpenAI::Tests::TestUtils::FileFullPath("OpenAIAuth.ini");
                     const FOpenAIAuth Auth = UOpenAIFuncLib::LoadAPITokensFromFile(FilePath);
                     TestTrueExpr(Auth.APIKey.Equals("sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
                     TestTrueExpr(Auth.OrganizationID.Equals("org-xxxxxxxxxxxxxxxxxxxxxxxx"));
@@ -321,6 +322,64 @@ void FFuncLib::Define()
 
                     const FString StringWithWhiteSpaces = "Hello\t, \nhow are you\r?";
                     TestTrueExpr(UOpenAIFuncLib::RemoveWhiteSpaces(StringWithWhiteSpaces).Equals(NormalString));
+                });
+
+            It("StringWithValidJsonShouldMakeConversionCorrectly",
+                [this]()
+                {
+                    const FString String = "{\"object\":\"list\"}";
+                    TSharedPtr<FJsonObject> JsonObject;
+                    TestTrueExpr(UOpenAIFuncLib::StringToJson(String, JsonObject));
+                    TestTrueExpr(JsonObject->GetStringField("object").Equals("list"));
+                });
+
+            It("JsonToStringShouldMakeConversionCorrectly",
+                [this]()
+                {
+                    TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+                    JsonObject->SetStringField("object", "list");
+
+                    FString String;
+                    TestTrueExpr(UOpenAIFuncLib::JsonToString(JsonObject, String));
+
+                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    TestTrueExpr(ResultString.Equals("{\"object\": \"list\"}"));
+                });
+
+            It("URLWithQueryCanBECreatedCorrectly",
+                [this]()
+                {
+                    OpenAI::QueryPairs QueryArgs;
+                    QueryArgs.Add(MakeTuple("param1", "value1"));
+                    QueryArgs.Add(MakeTuple("param2", "value2"));
+
+                    const auto ResultURL = UOpenAIFuncLib::MakeURLWithQuery("https://myapi.com", QueryArgs);
+                    TestTrueExpr(ResultURL.Equals("https://myapi.com?param1=value1&param2=value2"));
+                });
+
+            It("APISecretCanBeLoadedByName",
+                [this]()
+                {
+                    OpenAI::ServiceSecrets Secrets;
+                    Secrets.Add(MakeTuple("ApiKey1", "adsgsfhgsgfhg"));
+                    Secrets.Add(MakeTuple("ApiKey2", "kjhtlkjgkghl"));
+                    Secrets.Add(MakeTuple("ApiKey3", "ghkjfyifkfhjkfhjgkj"));
+
+                    FString FoundApiKey;
+                    TestTrueExpr(UOpenAIFuncLib::LoadSecretByName(Secrets, "ApiKey2", FoundApiKey));
+                    TestTrueExpr(FoundApiKey.Equals("kjhtlkjgkghl"));
+                });
+
+            It("ServiceSecretsCanBeLoadedFromFile",
+                [this]()
+                {
+                    const FString FilePath = OpenAI::Tests::TestUtils::FileFullPath("OnlineServicesAuth.ini");
+                    const OpenAI::ServiceSecrets Secrets = UOpenAIFuncLib::LoadServiceSecretsFromFile(FilePath);
+
+                    TestTrueExpr(Secrets[0].Key.Equals("key1"));
+                    TestTrueExpr(Secrets[0].Value.Equals("KeYvAlUe1"));
+                    TestTrueExpr(Secrets[1].Key.Equals("key2"));
+                    TestTrueExpr(Secrets[1].Value.Equals("KeYvAlUe2"));
                 });
         });
 

@@ -289,7 +289,7 @@ void FOpenAIProviderActual::Define()
 
                     FOpenAIImageEdit OpenAIImageEdit;
                     OpenAIImageEdit.N = 2;
-                    OpenAIImageEdit.Image = ::TestUtils::FileFullPath("whale.png");
+                    OpenAIImageEdit.Image = TestUtils::FileFullPath("whale.png");
                     OpenAIImageEdit.Mask = TestUtils::FileFullPath("whale_mask.png");
                     OpenAIImageEdit.Prompt = "put the hat on the whale's head";
                     OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);

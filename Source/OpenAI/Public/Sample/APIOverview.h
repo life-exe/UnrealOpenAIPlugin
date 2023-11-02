@@ -3,15 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
+#include "GameFramework/Info.h"
+#include "Provider/CommonTypes.h"
 #include "APIOverview.generated.h"
 
 class UOpenAIProvider;
 
 UCLASS()
-class OPENAI_API AAPIOverview : public AActor
+class OPENAI_API AAPIOverview : public AInfo
 {
     GENERATED_BODY()
 

@@ -190,12 +190,12 @@ FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFile(const FString& FilePath)
     if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
     {
         UE_LOG(LogOpenAIFuncLib, Error, TEXT("Failed loading file: %s"), *FilePath);
-        return FOpenAIAuth{};
+        return {};
     }
     else if (FileLines.Num() != 2)
     {
         UE_LOG(LogOpenAIFuncLib, Error, TEXT("Auth file might have 2 lines only"));
-        return FOpenAIAuth{};
+        return {};
     }
     FOpenAIAuth Auth;
 
@@ -217,6 +217,41 @@ FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFileOnce(const FString& FilePath)
         Auth = LoadAPITokensFromFile(FilePath);
     }
     return Auth;
+}
+
+OpenAI::ServiceSecrets UOpenAIFuncLib::LoadServiceSecretsFromFile(const FString& FilePath)
+{
+    TArray<FString> FileLines;
+    if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
+    {
+        UE_LOG(LogOpenAIFuncLib, Error, TEXT("Failed loading file: %s"), *FilePath);
+        return {};
+    }
+
+    OpenAI::ServiceSecrets Secrets;
+    for (const auto& Line : FileLines)
+    {
+        FString SecretName, SecretValue;
+        Line.Split("=", &SecretName, &SecretValue);
+        Secrets.Add(MakeTuple(SecretName, SecretValue));
+    }
+
+    return Secrets;
+}
+
+bool UOpenAIFuncLib::LoadSecretByName(const OpenAI::ServiceSecrets& Secrets, const FString& SecretName, FString& SecretValue)
+{
+    const auto* Found =
+        Secrets.FindByPredicate([&](const TTuple<FString, FString>& SecretData) { return SecretData.Key.Equals(SecretName); });
+
+    if (Found)
+    {
+        SecretValue = *Found->Value;
+        return true;
+    }
+
+    SecretValue = {};
+    return false;
 }
 
 FString UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat TranscriptFormat)
@@ -273,6 +308,22 @@ FString UOpenAIFuncLib::RemoveWhiteSpaces(const FString& Input)
         }
     }
     return Result;
+}
+
+bool UOpenAIFuncLib::StringToJson(const FString& JsonString, TSharedPtr<FJsonObject>& JsonObject)
+{
+    TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonString);
+    if (!FJsonSerializer::Deserialize(JsonReader, JsonObject))
+    {
+        return false;
+    }
+    return true;
+}
+
+bool UOpenAIFuncLib::JsonToString(const TSharedPtr<FJsonObject>& JsonObject, FString& JsonString)
+{
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
+    return FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
 }
 
 FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& ModerationResults)
@@ -385,12 +436,43 @@ FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
 {
     FString Output{Input};
     const FString StartMarker = FString::Format(TEXT("\"{0}"), {START_FUNCTION_OBJECT_MARKER});
-    Output = Output.Replace(*StartMarker, TEXT(""));
-
     const FString EndMarker = FString::Format(TEXT("{0}\""), {END_FUNCTION_OBJECT_MARKER});
+
+    const auto Find = [&](const FString& Str, int32 StartIndex)
+    { return Output.Find(Str, ESearchCase::IgnoreCase, ESearchDir::FromStart, StartIndex); };
+
+    int32 StartIndex = Find(StartMarker, 0);
+    int32 EndIndex = Find(EndMarker, StartIndex);
+
+    while (StartIndex != INDEX_NONE && EndIndex != INDEX_NONE)
+    {
+        int32 ContentStart = StartIndex + StartMarker.Len();
+        int32 ContentEnd = EndIndex;
+
+        // Extract the substring that needs to have backslashes removed
+        FString ContentToClean = Output.Mid(ContentStart, ContentEnd - ContentStart);
+        // Replace backslashes within the extracted content
+        FString CleanedContent = ContentToClean.Replace(TEXT("\\"), TEXT(""));
+        // Replace old content with cleaned content
+        Output = Output.Left(ContentStart) + CleanedContent + Output.Mid(EndIndex);
+
+        StartIndex = Find(StartMarker, EndIndex);
+        EndIndex = Find(EndMarker, StartIndex);
+    }
+
+    Output = Output.Replace(*StartMarker, TEXT(""));
     Output = Output.Replace(*EndMarker, TEXT(""));
 
-    Output = Output.Replace(TEXT("\\"), TEXT(""));
-
     return Output.ToLower();
+}
+
+FString UOpenAIFuncLib::MakeURLWithQuery(const FString& URL, const OpenAI::QueryPairs& Args)
+{
+    FString URLWithQuery = URL + "?";
+    for (const auto& [Name, Param] : Args)
+    {
+        URLWithQuery.Append(Name).Append("=").Append(Param).Append("&");
+    }
+    URLWithQuery = URLWithQuery.LeftChop(1);
+    return URLWithQuery;
 }

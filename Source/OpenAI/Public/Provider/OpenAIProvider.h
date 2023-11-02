@@ -7,7 +7,7 @@
 #include "ResponseTypes.h"
 #include "RequestTypes.h"
 #include "Delegates.h"
-#include "JsonObjectConverter.h"
+#include "FuncLib/OpenAIFuncLib.h"
 #include "OpenAIProvider.generated.h"
 
 class FJsonObject;
@@ -352,24 +352,13 @@ private:
     FHttpRequestRef MakeRequest(
         const FChatCompletion& ChatCompletion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
-    template <typename OutStructType>
-    bool ParseJSONToStruct(const FString& Data, OutStructType* OutStruct)
-    {
-        TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Data);
-        TSharedPtr<FJsonObject> JsonObject;
-        if (!FJsonSerializer::Deserialize(JsonReader, JsonObject)) return false;
-
-        FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), OutStruct, 0, 0);
-        return true;
-    }
-
     template <typename ParsedResponseType, typename DelegateType>
     void HandleResponse(FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)
     {
         if (!Success(Response, WasSuccessful)) return;
 
         ParsedResponseType ParsedResponse;
-        if (ParseJSONToStruct(Response->GetContentAsString(), &ParsedResponse))
+        if (UOpenAIFuncLib::ParseJSONToStruct(Response->GetContentAsString(), &ParsedResponse))
         {
             Delegate.Broadcast(ParsedResponse);
         }
@@ -416,7 +405,7 @@ private:
                     break;
                 }
                 ResponseType ParsedResponse;
-                if (!ParseJSONToStruct(String, &ParsedResponse)) continue;
+                if (!UOpenAIFuncLib::ParseJSONToStruct(String, &ParsedResponse)) continue;
 
                 Responses.Add(ParsedResponse);
             }

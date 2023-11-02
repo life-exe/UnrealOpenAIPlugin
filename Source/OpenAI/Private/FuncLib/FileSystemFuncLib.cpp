@@ -80,7 +80,15 @@ bool UFileSystemFuncLib::SaveChatHistoryToFile(const TArray<FMessage>& History, 
 
     for (const auto& Message : History)
     {
-        Line = FString::Printf(TEXT("[%s]: %s"), *Message.Role, *Message.Content);
+        if (Message.Content.IsEmpty())
+        {
+            Line = FString::Printf(
+                TEXT("[%s]: [function: %s, args: %s]"), *Message.Role, *Message.Function_Call.Name, *Message.Function_Call.Arguments);
+        }
+        else
+        {
+            Line = FString::Printf(TEXT("[%s]: %s"), *Message.Role, *Message.Content);
+        }
         FileContent.Append(Line).Append(LINE_TERMINATOR);
     }
 

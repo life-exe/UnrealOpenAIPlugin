@@ -7,6 +7,7 @@
 #include "ModelTypes.h"
 #include "Provider/CommonTypes.h"
 #include "Provider/ResponseTypes.h"
+#include "JsonObjectConverter.h"
 #include "OpenAIFuncLib.generated.h"
 
 UCLASS()
@@ -80,6 +81,26 @@ public:
     static FString BoolToString(bool Value);
     static FString RemoveWhiteSpaces(const FString& Input);
 
+    static OpenAI::ServiceSecrets LoadServiceSecretsFromFile(const FString& FilePath);
+    static bool LoadSecretByName(const OpenAI::ServiceSecrets& Secrets, const FString& SecretName, FString& SecretValue);
+
+    static bool StringToJson(const FString& JsonString, TSharedPtr<FJsonObject>& JsonObject);
+    static bool JsonToString(const TSharedPtr<FJsonObject>& JsonObject, FString& JsonString);
+
+    template <typename OutStructType>
+    static bool ParseJSONToStruct(const FString& Data, OutStructType* OutStruct)
+    {
+        TSharedPtr<FJsonObject> JsonObject;
+        if (!UOpenAIFuncLib::StringToJson(Data, JsonObject)) return false;
+
+        FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), OutStruct, 0, 0);
+        return true;
+    }
+
+    static FString MakeURLWithQuery(const FString& URL, const OpenAI::QueryPairs& Args);
+
+public:
+    // helpers for OpeanAI 'functions'
     static FString MakeFunctionsString(const TSharedPtr<FJsonObject>& Json);
     static FString CleanUpFunctionsObject(const FString& Input);
 

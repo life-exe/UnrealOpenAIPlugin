@@ -753,7 +753,7 @@ bool UOpenAIProvider::HandleString(FString& IncomeString, bool& LastString) cons
     }
 
     // igone role chunck // @todo handle this case in another struct
-    if (IncomeString.Find("role") != INDEX_NONE) return false;
+    // if (IncomeString.Find("role") != INDEX_NONE) return false;
     if (IncomeString.Equals("[DONE]"))
     {
         LastString = true;

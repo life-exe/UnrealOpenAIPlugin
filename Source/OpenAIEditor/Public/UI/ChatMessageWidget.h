@@ -10,6 +10,7 @@
 class UBorder;
 class UMultiLineEditableText;
 class UTextBlock;
+class UWidgetSwitcher;
 
 UCLASS()
 class OPENAIEDITOR_API UChatMessageWidget : public UEditorUtilityWidget
@@ -28,6 +29,9 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UTextBlock> TimeTextBox;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UWidgetSwitcher> WidgetSwitcher; // preloader -> text;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FLinearColor UserColor{FColor::FromHex("343541FF")};

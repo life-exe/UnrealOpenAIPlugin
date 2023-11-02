@@ -9,6 +9,8 @@
 #include "Provider/RequestTypes.h"
 #include "Provider/CommonTypes.h"
 #include "FuncLib/ModelTypes.h"
+#include "ChatGPT/ChatGPT.h"
+#include "ChatGPT/BaseService.h"
 #include "ChatGPTWidget.generated.h"
 
 class UVerticalBox;
@@ -17,6 +19,9 @@ class UEditableText;
 class UButton;
 class UChatMessageWidget;
 class UComboBoxString;
+class UChatGPT;
+class UServiceWidget;
+class UGridPanel;
 
 UCLASS(BlueprintType)
 class OPENAIEDITOR_API UChatGPTWidget : public UEditorUtilityWidget
@@ -55,16 +60,25 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UChatMessageWidget> ChatMessageWidgetClass;
 
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UGridPanel> ServiceContainer;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UServiceWidget> ServiceWidgetClass;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "OpenAI")
+    TArray<TSubclassOf<UBaseService>> Services;
+
     virtual void NativeConstruct() override;
 
 private:
-    FOpenAIAuth Auth;
-    FString Model;
-    TArray<FMessage> ChatHistory;
+    UPROPERTY()
+    TObjectPtr<UChatGPT> ChatGPT;
+
     UPROPERTY()
     TArray<TObjectPtr<UChatMessageWidget>> ChatWidgets;
-    FMessage AssistantCurrentMessage;
 
+private:
     UFUNCTION()
     void OnSendMessage();
 
@@ -80,13 +94,23 @@ private:
     UFUNCTION()
     void OnTextChanged(const FText& Text);
 
-    void MakeModelsComboBox();
-    void CreateChatCompletionRequest();
-    void HandleRequestCompletion();
-    void UpdateAssistantCurrentMessage(const FString& Message, bool WasError = false);
+    UFUNCTION()
+    void OnModelSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+    void InitChatGPT();
+    void InitModelsComboBox();
+
+    void OnRequestCompleted();
+    void OnRequestUpdated(const FMessage& Message, bool WasError);
+
+    void CreateMessageWidget(const FMessage& Message);
+    void EnableControls(bool Enabled);
 
     FString GenerateFilePath() const;
 
-    void EnableControls(bool Enabled);
-    void HandleError(const FString& Content);
+private:
+    OpenAI::ServiceSecrets ServiceSecrets;
+
+    void CreateServiceWidgets();
+    void OnServiceEnabled(bool IsEnabled, const TSubclassOf<UBaseService>& ServiceClass);
 };

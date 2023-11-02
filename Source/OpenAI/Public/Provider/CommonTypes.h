@@ -72,3 +72,10 @@ struct FOpenAIAuth
 
     bool IsEmpty() const { return APIKey.IsEmpty() || OrganizationID.IsEmpty(); }
 };
+
+namespace OpenAI
+{
+using ServiceSecrets = TArray<TTuple<FString, FString>>;
+using QueryPairs = TArray<TTuple<FString, FString>>;
+
+}  // namespace OpenAI

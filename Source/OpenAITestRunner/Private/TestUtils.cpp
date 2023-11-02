@@ -1,3 +1,5 @@
+// OpenAI, Copyright LifeEXE. All Rights Reserved.
+
 #pragma once
 
 #if WITH_AUTOMATION_TESTS

@@ -1,15 +1,21 @@
-// // OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
+// OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
 
 #include "UI/ChatMessageWidget.h"
 #include "Components/MultiLineEditableText.h"
 #include "Components/TextBlock.h"
 #include "Components/Border.h"
+#include "Components/WidgetSwitcher.h"
 #include "FuncLib/OpenAIFuncLib.h"
 
 void UChatMessageWidget::SetMessage(const FMessage& Message, bool WasError)
 {
     RoleTextBox->SetText(FText::FromString(Message.Role));
     MessageText->SetText(FText::FromString(Message.Content));
+
+    if (!Message.Content.IsEmpty())
+    {
+        WidgetSwitcher->SetActiveWidgetIndex(1);
+    }
 
     if (!WasError)
     {
