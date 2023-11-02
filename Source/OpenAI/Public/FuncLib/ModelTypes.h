@@ -67,7 +67,8 @@ enum class EAllModelEnum : uint8
     Text_Curie_001,
     GPT_4,
     GPT_4_0613,
-    GPT_4_0314
+    GPT_4_0314,
+    Dall_E_2
 };
 
 UENUM(BlueprintType)

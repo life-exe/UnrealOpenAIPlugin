@@ -68,6 +68,7 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4: return "gpt-4";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
+        case EAllModelEnum::Dall_E_2: return "dalle-e-2";
     }
     checkNoEntry();
     return {};
