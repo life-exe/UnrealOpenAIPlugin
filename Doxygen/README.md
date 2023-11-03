@@ -54,6 +54,12 @@ void AAPIOverview::CreateImage()
 
 - [Complete OpenAI API plugin](https://www.unrealengine.com/marketplace/en-US/product/complete-openai-api-plugin)
 
+## Updates
+
+ - [Functions](https://platform.openai.com/docs/guides/gpt/function-calling) support added! You can check the tutorial [via link](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
+
+![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/services.png)
+
 ## C++
 
 1. Create a new C++ project in Unreal Engine.
