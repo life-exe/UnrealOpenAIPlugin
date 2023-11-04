@@ -172,18 +172,19 @@ public class YourProject : ModuleRules
 
 3. Record your [Organization ID](https://platform.openai.com/account/org-settings):
 `org-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
-4. At the root of your Unreal Engine project, create a file named `OpenAIAuth.ini` with the following content:
+4. At the root of your Unreal Engine project, create a file named `OpenAIAuth.ini` (you can use `setup_auth_files.bat` in the plugin root folder. It will copy `.ini` files from [template folder](https://github.com/life-exe/UnrealOpenAIPlugin/tree/master/Templates)) with the following content:
 ```
 APIKey=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 OrganizationID=org-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
-5. You can copy it from [template folder](https://github.com/life-exe/UnrealOpenAIPlugin/tree/master/Templates).
-6. Once completed, your Unreal Engine project structure might look like this:
+5. Once completed, your Unreal Engine project structure might look like this:
 
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/3.png)
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/4.png)
 
-7. Actually you can left `OrganizationID` empty. It doesn't affect on auth.
+6. Actually you can left `OrganizationID` empty. It doesn't affect on auth.
+
+7. [Do the authentication steps](#how-to-set-up-default-services) for services if you need them.
 
 Finally, compile your project and launch the Unreal Editor.
 
@@ -251,19 +252,18 @@ I use free API for services. But you need to create accounts to get API keys.
 
 1. Weather serivces: https://weatherstack.com. Once your account is created, you will find `API Access Key` on your dashboard.
 2. News service: https://newsapi.org. Once your account is created, you will find `API Key` on your dashboard.
-3. In the root of your Unreal Engine project, create a file called `OnlineServicesAuth.ini` with the following content:
+3. In the root of your Unreal Engine project, create a file called `OnlineServicesAuth.ini` (you can use `setup_auth_files.bat` in the plugin root folder. It will copy `.ini` files from [template folder](https://github.com/life-exe/UnrealOpenAIPlugin/tree/master/Templates)) with the following content:
 ```
 WeatherstackAccessKey=dbe5fcdd54f2196d2cdc5194cf5
 NewsApiOrgApiKey=1dec1793ed3940e880cc93b4087fcf96
 ```
-4. You can copy it from [template folder](https://github.com/life-exe/UnrealOpenAIPlugin/tree/master/Templates).
-5. Enter your APi keys for each service.
-6. Compile your project, launch the Unreal Editor, launch ChatGPT editor widget, select the services that you want to use.
-7. Ask for the weather or latest news somewhere. Example prompts:
+4. Enter your APi keys for each service.
+5. Compile your project, launch the Unreal Editor, launch ChatGPT editor widget, select the services that you want to use.
+6. Ask for the weather or latest news somewhere. Example prompts:
 > What is the weather like in Oslo?
 
 > What is the latest news from Microsoft? (2 headlines)
-8. Always check the logs when you encounter an error.
+7. Always check the logs when you encounter an error.
 
 ## Blueprint Nodes Overview
 
@@ -339,7 +339,10 @@ to learn how to make requests, because testing in software development is a part
 ```
 
 2. Package the project as you always do (kudos if you use a CI solution like Jenkins).
-3. You can handle authentication in your project as you see fit. However, if you choose to use a file-based method, such as in a plugin, please remember to include the `OpenAIAuth.ini` file in your packaged folder `Build/Windows/<YourProjectName>/OpenAIAuth.ini`
+3. You can handle authentication in your project as you see fit. However, if you choose to use a file-based method, such as in a plugin, please remember to include the `OpenAIAuth.ini` and `OnlineServicesAuth.ini` files in your packaged folder:
+ - `Build/Windows/<YourProjectName>/OpenAIAuth.ini`
+ - `Build/Windows/<YourProjectName>/OnlineServicesAuth.ini`
+
 If you are having problems loading the file, please check the logs to see where it might be located:
 
 ```
