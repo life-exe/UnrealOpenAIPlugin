@@ -19,7 +19,6 @@ DEFINE_LOG_CATEGORY_STATIC(LogNewsService, All, All);
 
 namespace News
 {
-const FString InternalFunctionName = "get_top_headline_news";
 const FString API = "https://newsapi.org/v2/top-headlines";
 constexpr int32 MaxNewsAmount = 5;
 
@@ -32,6 +31,16 @@ FString ReplaceSpaces(const FString& Str)
 bool UNewsService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
     return UOpenAIFuncLib::LoadSecretByName(Secrets, "NewsApiOrgApiKey", APIKey);
+}
+
+FString UNewsService::FunctionName() const
+{
+    return "get_top_headline_news";
+}
+
+FString UNewsService::Description() const
+{
+    return "Get top news headlines by country and/or category";
 }
 
 FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const
@@ -60,16 +69,7 @@ FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) co
     return URL;
 }
 
-FFunctionOpenAI UNewsService::Function() const
-{
-    FFunctionOpenAI FunctionOpenAI;
-    FunctionOpenAI.Name = News::InternalFunctionName;
-    FunctionOpenAI.Description = "Get top news headlines by country and/or category";
-    FunctionOpenAI.Parameters = MakeNewsFunction();
-    return FunctionOpenAI;
-}
-
-FString UNewsService::MakeNewsFunction() const
+FString UNewsService::MakeFunction() const
 {
     /*
     "parameters": {
@@ -133,11 +133,6 @@ FString UNewsService::MakeNewsFunction() const
     return UOpenAIFuncLib::MakeFunctionsString(MainObj);
 }
 
-FString UNewsService::FunctionName() const
-{
-    return News::InternalFunctionName;
-}
-
 void UNewsService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
 {
     auto HttpRequest = FHttpModule::Get().CreateRequest();
@@ -185,7 +180,7 @@ void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr 
         });
 
     FMessage Message;
-    Message.Name = News::InternalFunctionName;
+    Message.Name = FunctionName();
     Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
     Message.Content = NewsCombined;
 

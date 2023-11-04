@@ -33,7 +33,8 @@ void UServiceWidget::SetServiceClass(const TSubclassOf<UBaseService>& Class)
 
     const auto NameToDisplay = TruncateStringWithEllipsis(Service->Name(), NameMaxLenght);
     ServiceName->SetText(FText::FromString(NameToDisplay));
-    const auto TooltipToDisplay = FString(Service->Name()).Append(LINE_TERMINATOR).Append(LINE_TERMINATOR).Append(Service->Description());
+    const auto TooltipToDisplay =
+        FString(Service->Name()).Append(LINE_TERMINATOR).Append(LINE_TERMINATOR).Append(Service->TooltipDescription());
     ServiceName->SetToolTipText(FText::FromString(TooltipToDisplay));
 }
 

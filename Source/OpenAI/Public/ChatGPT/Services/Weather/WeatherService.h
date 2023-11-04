@@ -56,18 +56,19 @@ class OPENAI_API UWeatherService : public UBaseService
 
 public:
     virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override;
-    virtual FString Name() const override { return "Weather"; };
-    virtual FString Description() const override { return "Weather from https://weatherstack.com"; };
-    virtual FFunctionOpenAI Function() const override;
+    virtual FString Name() const override { return "Weather"; }
+    virtual FString TooltipDescription() const override { return "Weather from https://weatherstack.com"; }
+    virtual FString Description() const override;
     virtual FString FunctionName() const override;
     virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
+
+protected:
+    virtual FString MakeFunction() const;
 
 private:
     FString AccessKey{};
 
     bool MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FString& WeatherRequestURL) const;
-    FString MakeWeatherFunction() const;
     void SendError(const FString& ErrorMessage);
-
     void OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
 };

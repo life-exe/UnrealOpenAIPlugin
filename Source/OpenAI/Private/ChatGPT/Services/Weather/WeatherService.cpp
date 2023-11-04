@@ -19,13 +19,22 @@ DEFINE_LOG_CATEGORY_STATIC(LogWeatherService, All, All);
 
 namespace Weather
 {
-const FString InternalFunctionName = "get_current_weather";
 const FString API = "http://api.weatherstack.com/current";
 }  // namespace Weather
 
 bool UWeatherService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
     return UOpenAIFuncLib::LoadSecretByName(Secrets, "WeatherstackAccessKey", AccessKey);
+}
+
+FString UWeatherService::FunctionName() const
+{
+    return "get_current_weather";
+}
+
+FString UWeatherService::Description() const
+{
+    return "Get the current weather in a given location";
 }
 
 bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FString& WeatherRequestURL) const
@@ -50,16 +59,7 @@ bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FS
     return true;
 }
 
-FFunctionOpenAI UWeatherService::Function() const
-{
-    FFunctionOpenAI FunctionOpenAI;
-    FunctionOpenAI.Name = Weather::InternalFunctionName;
-    FunctionOpenAI.Description = "Get the current weather in a given location";
-    FunctionOpenAI.Parameters = MakeWeatherFunction();
-    return FunctionOpenAI;
-}
-
-FString UWeatherService::MakeWeatherFunction() const
+FString UWeatherService::MakeFunction() const
 {
     /*
         "parameters": {
@@ -105,11 +105,6 @@ FString UWeatherService::MakeWeatherFunction() const
     MainObj->SetArrayField("required", RequiredArray);
 
     return UOpenAIFuncLib::MakeFunctionsString(MainObj);
-}
-
-FString UWeatherService::FunctionName() const
-{
-    return Weather::InternalFunctionName;
 }
 
 void UWeatherService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
@@ -161,7 +156,7 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
     });
 
     FMessage Message;
-    Message.Name = Weather::InternalFunctionName;
+    Message.Name = FunctionName();
     Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
     Message.Content = FString::Format(TEXT("location:{0}, temperature:{1}, descriptions:{2}"),  //
         {Weather.Location.Name, Weather.Current.Temperature, FullDescription});

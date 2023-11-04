@@ -4,43 +4,58 @@
 
 bool UBaseService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
-    checkf(false, TEXT("You must override the 'Init' function in your service class that derives from the UBaseService class."));
+    checkf(false, TEXT("You must override the 'Init' method in your service class that derived from the UBaseService class."));
     return false;
 }
 
 FString UBaseService::Name() const
 {
-    checkf(false, TEXT("You must override the 'Name' function in your service class that derives from the UBaseService class."));
+    checkf(false, TEXT("You must override the 'Name' method in your service class that derived from the UBaseService class."));
     return "Unknown service";
 }
 
 FString UBaseService::Description() const
 {
-    // Can be empty
+    checkf(false, TEXT("You must override the 'Description' method in your service class that derived from the UBaseService class."));
+    return "Unknown description";
+}
+
+FString UBaseService::FunctionName() const
+{
+    checkf(false, TEXT("You must override the 'FunctionName' method in your service class that derived from the UBaseService class."));
+    return "Unknown function name";
+}
+
+void UBaseService::Call(const TSharedPtr<FJsonObject>& Args)
+{
+    checkf(false, TEXT("You must override the 'Call' method in your service class that derived from the UBaseService class."));
+}
+
+FString UBaseService::MakeFunction() const
+{
+    checkf(false, TEXT("You must override the 'MakeFunction' method in your service class that derived from the UBaseService class."));
+    return "Can't make function";
+}
+
+FString UBaseService::TooltipDescription() const
+{
     return "";
 }
 
 FFunctionOpenAI UBaseService::Function() const
 {
-    checkf(false, TEXT("You must override the 'Function' function in your service class that derives from the UBaseService class."));
-    return {};
-}
-
-FString UBaseService::FunctionName() const
-{
-    checkf(false, TEXT("You must override the 'FunctionName' function in your service class that derives from the UBaseService class."));
-    return {};
-}
-
-void UBaseService::Call(const TSharedPtr<FJsonObject>& Args)
-{
-    checkf(false, TEXT("You must override the 'Call' function in your service class that derives from the UBaseService class."));
+    FFunctionOpenAI FunctionOpenAI;
+    FunctionOpenAI.Name = FunctionName();
+    FunctionOpenAI.Description = Description();
+    FunctionOpenAI.Parameters = MakeFunction();
+    return FunctionOpenAI;
 }
 
 FOnServiceDataRecieved& UBaseService::OnServiceDataRecieved()
 {
     return ServiceDataRecieved;
 }
+
 FOnServiceDataError& UBaseService::OnServiceDataError()
 {
     return ServiceDataError;

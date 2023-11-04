@@ -44,17 +44,19 @@ class OPENAI_API UNewsService : public UBaseService
 
 public:
     virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override;
-    virtual FString Name() const override { return "News"; };
-    virtual FString Description() const override { return "News headlines from https://newsapi.org"; };
-    virtual FFunctionOpenAI Function() const override;
+    virtual FString Name() const override { return "News"; }
+    virtual FString TooltipDescription() const override { return "News headlines from https://newsapi.org"; }
+    virtual FString Description() const override;
     virtual FString FunctionName() const override;
     virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
+
+protected:
+    virtual FString MakeFunction() const;
 
 private:
     FString APIKey{};
 
     FString MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const;
-    FString MakeNewsFunction() const;
     void SendError(const FString& ErrorMessage);
 
     void OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);

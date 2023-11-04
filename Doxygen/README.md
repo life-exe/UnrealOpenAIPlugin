@@ -243,7 +243,7 @@ Currently the plugin has two services available by default:
 
 ### How to set up default services
 
-I use free API fro services. But you need to create accounts to get API keys.
+I use free API for services. But you need to create accounts to get API keys.
 
 1. Weather serivces: https://weatherstack.com. Once your account is created, you will find `API Access Key` on your dashboard.
 2. News service: https://newsapi.org. Once your account is created, you will find `API Key` on your dashboard.

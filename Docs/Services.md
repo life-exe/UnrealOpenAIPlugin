@@ -11,7 +11,7 @@ I've added two services to the core of the plugin - `weather` and `news`. You ca
 Before we start, I strongly recommend familiarizing yourself with the [official documentation](https://platform.openai.com/docs/guides/gpt/function-calling) and examples on functions and understanding the concept.
 
 We will be creating everything in `C++`. In theory, everything could be done using `Blueprints` and you can call functions by name,
-but defining `JSON` in `Blueprints` will lead to spaghetti code.
+but defining `JSON` in `Blueprints` it's a pain.
 
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/Services/bp.png)
 
@@ -63,12 +63,18 @@ class YOUR_PROJECT_API UQuestService : public UBaseService
     GENERATED_BODY()
 
 public:
-    virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override;
-    virtual FString Name() const override;
-    virtual FString Description() const override;
-    virtual FFunctionOpenAI Function() const override;
-    virtual FString FunctionName() const override;
-    virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
+    virtual bool Init(const OpenAI::ServiceSecrets& Secrets);
+
+    virtual FFunctionOpenAI Function() const;
+    virtual FString Description() const;
+    virtual FString FunctionName() const;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+
+    virtual FString Name() const;
+    virtual FString TooltipDescription() const;
+
+protected:
+    virtual FString MakeFunction() const;
 };
 ```
 3. We will need `JSON` utilities, so include the `JSON` module in the build file, and don't forget that the `OpenAI` plugin also needs to be linked:
@@ -89,8 +95,7 @@ public class YourProjectName : ModuleRules
 }
 ```
 
-4. Immediately implement the `Name` and `Description` functions.
-These are strictly for UI information. Also, add the declaration for `MakeQuestFunction` function:
+4. Immediately implement the `Name` and `TooltipDescription` functions. These are strictly for UI information:
 
 ```cpp
 UCLASS()
@@ -99,15 +104,18 @@ class YOUR_PROJECT_API UQuestService : public UBaseService
     GENERATED_BODY()
 
 public:
-    virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override;
-    virtual FString Name() const override { return "Quest"; };
-    virtual FString Description() const override { return "Alien Rampage Saga"; };
-    virtual FFunctionOpenAI Function() const override;
-    virtual FString FunctionName() const override;
-    virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
+    virtual bool Init(const OpenAI::ServiceSecrets& Secrets);
 
-private:
-    FString MakeQuestFunction() const;
+    virtual FFunctionOpenAI Function() const;
+    virtual FString Description() const;
+    virtual FString FunctionName() const;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+
+    virtual FString Name() const override { return "Quest"; }
+    virtual FString TooltipDescription() const override { return "Alien Rampage Saga"; }
+
+protected:
+    virtual FString MakeFunction() const;
 };
 ```
 
@@ -116,39 +124,24 @@ private:
 ```cpp
 #include "QuestService.h"
 #include "Provider/CommonTypes.h"
-#include "Provider/RequestTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "Provider/RequestTypes.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogQuestService, All, All);
 
-bool UQuestService::Init(const OpenAI::ServiceSecrets& Secrets)
-{
-    return true;
-}
+bool UQuestService::Init(const OpenAI::ServiceSecrets& Secrets) { return true; }
 
-FFunctionOpenAI UQuestService::Function() const
-{
-    return {};
-}
+FString UQuestService::FunctionName() const { return {}; }
 
-FString UQuestService::FunctionName() const
-{
-    return {};
-}
+FString UQuestService::Description() const { return {}; }
 
-FString UQuestService::MakeQuestFunction() const
-{
-    return {};
-}
+FString UQuestService::MakeFunction() const { return {}; }
 
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
-{
-}
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson) {}
 ```
 
-6. Create a name for our function that `OpenAI` will call, and write it in a constant within an anonymous namespace.
-The init function will always return `true` in our example. It's not significant as it's assumed that some kind of
-service validation is taking place here such as an checking `API` key or whatever:
+6. Create a name for our function that `OpenAI` will call. The init function will always return `true` in our example.
+It's not significant in our service. It's assumed that some kind of service validation is taking place here such as an checking `API` key or whatever:
 
 ```cpp
 #include "QuestService.h"
@@ -158,40 +151,27 @@ service validation is taking place here such as an checking `API` key or whateve
 
 DEFINE_LOG_CATEGORY_STATIC(LogQuestService, All, All);
 
-namespace Quest
-{
-const FString InternalFunctionName = "get_alien_rampage_saga_characters_information";
-}  // namespace Quest
-
 bool UQuestService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
     return true;
 }
-...
-
-```
-
-7. The `Function` method returns a structure that will be passed to the `ChatGPT`.
-The `Description` field should be as informative as possible so that `ChatGPT` understands the context of your prompts.
-The `FunctionName` method returns name of our function `get_alien_rampage_saga_characters_information`:
-
-```cpp
-FFunctionOpenAI UQuestService::Function() const
-{
-    FFunctionOpenAI FunctionOpenAI;
-    FunctionOpenAI.Name = Quest::InternalFunctionName;
-    FunctionOpenAI.Description = "Get information about characters from my game Alien Rampage Saga.";
-    FunctionOpenAI.Parameters = MakeQuestFunction();
-    return FunctionOpenAI;
-}
 
 FString UQuestService::FunctionName() const
 {
-    return Quest::InternalFunctionName;
+    return "get_alien_rampage_saga_characters_information";
 }
 ```
 
-8. The `MakeQuestFunction` method defines the parameters for our function `get_alien_rampage_saga_characters_information`
+7. The `Description` function should be as informative as possible so that `ChatGPT` understands the context of your prompts:
+
+```cpp
+FString UQuestService::Description() const
+{
+    return "Get information about characters from my game Alien Rampage Saga.";
+}
+```
+
+8. The `MakeFunction` method defines the parameters for our function `get_alien_rampage_saga_characters_information`
 that the GPT chat can pass. The function returns `JSON` as a string. Let's create such a `JSON` object with parameters:
 
 ```json
@@ -217,10 +197,10 @@ that the GPT chat can pass. The function returns `JSON` as a string. Let's creat
  - ability - this is a flag that `ChatGPT` will send when it wants to know about the character's abilities.
  - required - array of required parameters, we always only need the name of the character.
 
-Implementation of the `MakeQuestFunction`. Basically, it's just a `JSON` creation that I listed above:
+Implementation of the `MakeFunction`. Basically, it's just a `JSON` creation that I listed above:
 
 ```cpp
-FString UQuestService::MakeQuestFunction() const
+FString UQuestService::MakeFunction() const
 {
     TSharedPtr<FJsonObject> MainObj = MakeShareable(new FJsonObject());
     MainObj->SetStringField("type", "object");
@@ -338,6 +318,7 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
     Message.Content = InfoToOpenaAI;
 
     ServiceDataRecieved.Broadcast(Message);
+}
 ```
 
 The main field of the structure `FMessage` is `Content`, into which any information that
@@ -457,16 +438,15 @@ class AIMUSEUM_API UQuestService : public UBaseService
 
 public:
     virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override;
-    virtual FString Name() const override { return "Quest"; };
-    virtual FString Description() const override { return "Alien Rampage Saga"; };
-    virtual FFunctionOpenAI Function() const override;
+    virtual FString Name() const override { return "Quest"; }
+    virtual FString TooltipDescription() const override { return "Alien Rampage Saga"; }
+    virtual FString Description() const override;
     virtual FString FunctionName() const override;
     virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
 
-private:
-    FString MakeQuestFunction() const;
+protected:
+    virtual FString MakeFunction() const;
 };
-
 ```
 
 ```cpp
@@ -477,31 +457,22 @@ private:
 
 DEFINE_LOG_CATEGORY_STATIC(LogQuestService, All, All);
 
-namespace Quest
-{
-const FString InternalFunctionName = "get_alien_rampage_saga_characters_information";
-}  // namespace Quest
-
 bool UQuestService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
     return true;
 }
 
-FFunctionOpenAI UQuestService::Function() const
-{
-    FFunctionOpenAI FunctionOpenAI;
-    FunctionOpenAI.Name = Quest::InternalFunctionName;
-    FunctionOpenAI.Description = "Get information about characters from my game Alien Rampage Saga.";
-    FunctionOpenAI.Parameters = MakeQuestFunction();
-    return FunctionOpenAI;
-}
-
 FString UQuestService::FunctionName() const
 {
-    return Quest::InternalFunctionName;
+    return "get_alien_rampage_saga_characters_information";
 }
 
-FString UQuestService::MakeQuestFunction() const
+FString UQuestService::Description() const
+{
+    return "Get information about characters from my game Alien Rampage Saga.";
+}
+
+FString UQuestService::MakeFunction() const
 {
     /*
         "parameters": {
@@ -509,7 +480,7 @@ FString UQuestService::MakeQuestFunction() const
             "properties": {
                 "name": {
                     "type": "string",
-                    "description": "Name of the character of my Alien Rampage Saga.",
+                    "description": "Name of the character of my Alien Rampage Saga game.",
                 },
                 "ability": {
                     "type": "boolean",
@@ -528,7 +499,7 @@ FString UQuestService::MakeQuestFunction() const
     // character name
     TSharedPtr<FJsonObject> CharacterObj = MakeShareable(new FJsonObject());
     CharacterObj->SetStringField("type", "string");
-    CharacterObj->SetStringField("description", "Name of the character of my Alien Rampage Saga.");
+    CharacterObj->SetStringField("description", "Name of the character of my Alien Rampage Saga game.");
     Props->SetObjectField("name", CharacterObj);
 
     // ability
@@ -582,9 +553,13 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
     {
         InfoToOpenaAI = AbilityRequested ? Info[CharacterName].Abilities : Info[CharacterName].Description;
     }
+    else
+    {
+        InfoToOpenaAI = "Character with such a name doesn't exist in game";
+    }
 
     FMessage Message;
-    Message.Name = Quest::InternalFunctionName;
+    Message.Name = FunctionName();
     Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
     Message.Content = InfoToOpenaAI;
 
