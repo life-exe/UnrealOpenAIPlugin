@@ -48,6 +48,10 @@ void AAPIOverview::CreateImage()
 
  - Unreal Engine 5.3 (master), 5.2
 
+## Tutorials
+ - [Plugin overview and usage example](https://youtu.be/SkiWQXHjk30) [english subtitles].
+ - [How to use functions](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
+
 # Updates
 
  - [Functions](https://platform.openai.com/docs/guides/gpt/function-calling) support added! You can check the tutorial [via link](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
