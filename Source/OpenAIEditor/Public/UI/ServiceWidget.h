@@ -27,6 +27,7 @@ public:
 
     void SetServiceClass(const TSubclassOf<UBaseService>& Class);
     bool IsEnabled() const;
+    void SetEnabled(bool IsEnabled);
 
     FOnServiceEnabled& OnServiceEnabled() { return ServiceEnabled; }
 

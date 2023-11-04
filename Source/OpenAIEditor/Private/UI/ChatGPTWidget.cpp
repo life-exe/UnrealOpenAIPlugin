@@ -2,6 +2,7 @@
 
 #include "UI/ChatGPTWidget.h"
 #include "UI/ServiceWidget.h"
+#include "UI/SaveSettings.h"
 #include "Components/VerticalBox.h"
 #include "Components/ScrollBox.h"
 #include "Components/EditableText.h"
@@ -69,6 +70,9 @@ void UChatGPTWidget::InitChatGPT()
     ChatGPT->OnRequestUpdated().AddUObject(this, &ThisClass::OnRequestUpdated);
 
     ServiceSecrets = UOpenAIFuncLib::LoadServiceSecretsFromFile(FPaths::ProjectDir().Append("OnlineServicesAuth.ini"));
+
+    SaveSettings = USaveSettings::Load();
+    check(SaveSettings);
 }
 
 void UChatGPTWidget::InitModelsComboBox()
@@ -99,6 +103,7 @@ void UChatGPTWidget::CreateServiceWidgets()
         ServiceWidget->SetServiceClass(ServiceClass);
         ServiceWidget->OnServiceEnabled().AddUObject(this, &ThisClass::OnServiceEnabled);
         ServiceContainer->AddChildToGrid(ServiceWidget, Row, Column);
+        ServiceWidget->SetEnabled(SaveSettings->IsServerRegistered(ServiceClass));
         if (ServiceWidget->IsEnabled())
         {
             OnServiceEnabled(true, ServiceClass);
@@ -117,9 +122,11 @@ void UChatGPTWidget::OnServiceEnabled(bool IsEnabled, const TSubclassOf<UBaseSer
     if (!IsEnabled)
     {
         ChatGPT->UnRegisterService(ServiceClass);
+        SaveSettings->UnRegisterService(ServiceClass);
         return;
     }
     ChatGPT->RegisterService(ServiceClass, ServiceSecrets);
+    SaveSettings->RegisterService(ServiceClass);
 }
 
 void UChatGPTWidget::OnSendMessage()

@@ -4,13 +4,14 @@
 #include "Provider/OpenAIProvider.h"
 #include "Algo/ForEach.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "ChatGPT/BaseService.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogChatGPT, All, All);
 
 UChatGPT::UChatGPT()
 {
     Provider = NewObject<UOpenAIProvider>();
-    Provider->SetLogEnabled(true);
+    Provider->SetLogEnabled(false);
     Provider->OnRequestError().AddLambda(
         [&](const FString& URL, const FString& Content)
         {
@@ -174,8 +175,7 @@ void UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, co
 
 void UChatGPT::UnRegisterService(const TSubclassOf<UBaseService>& ServiceClass)
 {
-    auto* FoundService =
-        Services.FindByPredicate([ServiceClass](const TObjectPtr<UBaseService>& Item) { return Item && Item->IsA(ServiceClass); });
+    auto* FoundService = Services.FindByPredicate([ServiceClass](const auto& Item) { return Item && Item->IsA(ServiceClass); });
     if (FoundService)
     {
         FoundService->Get()->OnServiceDataRecieved().RemoveAll(this);

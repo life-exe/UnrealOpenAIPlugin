@@ -22,6 +22,7 @@ class UComboBoxString;
 class UChatGPT;
 class UServiceWidget;
 class UGridPanel;
+class USaveSettings;
 
 UCLASS(BlueprintType)
 class OPENAIEDITOR_API UChatGPTWidget : public UEditorUtilityWidget
@@ -77,6 +78,9 @@ private:
 
     UPROPERTY()
     TArray<TObjectPtr<UChatMessageWidget>> ChatWidgets;
+
+    UPROPERTY()
+    TObjectPtr<USaveSettings> SaveSettings;
 
 private:
     UFUNCTION()

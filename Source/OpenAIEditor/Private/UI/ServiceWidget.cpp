@@ -43,6 +43,11 @@ bool UServiceWidget::IsEnabled() const
     return EnableCheckBox->IsChecked();
 }
 
+void UServiceWidget::SetEnabled(bool IsEnabled)
+{
+    EnableCheckBox->SetCheckedState(IsEnabled ? ECheckBoxState::Checked : ECheckBoxState::Unchecked);
+}
+
 void UServiceWidget::OnCheckStateChanged(bool bIsChecked)
 {
     ServiceEnabled.Broadcast(bIsChecked, ServiceClass);

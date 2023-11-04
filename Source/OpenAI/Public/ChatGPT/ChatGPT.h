@@ -6,10 +6,10 @@
 #include "UObject/NoExportTypes.h"
 #include "Provider/CommonTypes.h"
 #include "Logging/LogVerbosity.h"
-#include "ChatGPT/BaseService.h"
 #include "ChatGPT.generated.h"
 
 class UOpenAIProvider;
+class UBaseService;
 
 DECLARE_MULTICAST_DELEGATE(FOnChatGPTRequestCompleted);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChatGPTRequestUpdated, const FMessage&, bool);
