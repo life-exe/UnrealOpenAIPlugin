@@ -66,7 +66,7 @@ protected:
     virtual FString MakeFunction() const;
 
 private:
-    FString AccessKey{};
+    FString API_KEY{};
 
     bool MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FString& WeatherRequestURL) const;
     void SendError(const FString& ErrorMessage);

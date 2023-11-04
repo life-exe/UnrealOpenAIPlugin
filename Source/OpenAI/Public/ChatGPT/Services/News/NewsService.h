@@ -54,7 +54,7 @@ protected:
     virtual FString MakeFunction() const;
 
 private:
-    FString APIKey{};
+    FString API_KEY{};
 
     FString MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const;
     void SendError(const FString& ErrorMessage);

@@ -19,7 +19,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogNewsService, All, All);
 
 namespace News
 {
-const FString API = "https://newsapi.org/v2/top-headlines";
+const FString API_URL = "https://newsapi.org/v2/top-headlines";
 constexpr int32 MaxNewsAmount = 5;
 
 FString ReplaceSpaces(const FString& Str)
@@ -30,7 +30,7 @@ FString ReplaceSpaces(const FString& Str)
 
 bool UNewsService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
-    return UOpenAIFuncLib::LoadSecretByName(Secrets, "NewsApiOrgApiKey", APIKey);
+    return UOpenAIFuncLib::LoadSecretByName(Secrets, "NewsApiOrgApiKey", API_KEY);
 }
 
 FString UNewsService::FunctionName() const
@@ -62,9 +62,9 @@ FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) co
             QueryArgs.Add(MakeTuple(Query, News::ReplaceSpaces(FieldObj->AsString())));
         }
     }
-    QueryArgs.Add(MakeTuple("apiKey", APIKey));
+    QueryArgs.Add(MakeTuple("apiKey", API_KEY));
 
-    const FString URL = UOpenAIFuncLib::MakeURLWithQuery(News::API, QueryArgs);
+    const FString URL = UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs);
     UE_LOG(LogNewsService, Display, TEXT("News request URL: %s"), *URL);
     return URL;
 }
@@ -151,7 +151,7 @@ void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr 
     TSharedPtr<FJsonObject> JsonObject;
     if (!UOpenAIFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
     {
-        SendError("Can't parse request");
+        SendError("Can't parse response");
         return;
     }
 

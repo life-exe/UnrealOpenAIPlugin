@@ -7,12 +7,11 @@ public class OpenAITestRunner : ModuleRules
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core" });
-
         // clang-format off
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
+                "Core",
                 "CoreUObject",
                 "Engine",
                 "Slate",

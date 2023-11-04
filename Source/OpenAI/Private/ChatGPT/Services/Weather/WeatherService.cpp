@@ -19,12 +19,12 @@ DEFINE_LOG_CATEGORY_STATIC(LogWeatherService, All, All);
 
 namespace Weather
 {
-const FString API = "http://api.weatherstack.com/current";
+const FString API_URL = "http://api.weatherstack.com/current";
 }  // namespace Weather
 
 bool UWeatherService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
-    return UOpenAIFuncLib::LoadSecretByName(Secrets, "WeatherstackAccessKey", AccessKey);
+    return UOpenAIFuncLib::LoadSecretByName(Secrets, "WeatherstackAccessKey", API_KEY);
 }
 
 FString UWeatherService::FunctionName() const
@@ -53,8 +53,8 @@ bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FS
         return false;
     }
 
-    const OpenAI::QueryPairs QueryArgs{{"access_key", AccessKey}, {"query", Location}, {"units", Units}};
-    WeatherRequestURL = UOpenAIFuncLib::MakeURLWithQuery(Weather::API, QueryArgs);
+    const OpenAI::QueryPairs QueryArgs{{"access_key", API_KEY}, {"query", Location}, {"units", Units}};
+    WeatherRequestURL = UOpenAIFuncLib::MakeURLWithQuery(Weather::API_URL, QueryArgs);
     UE_LOG(LogWeatherService, Display, TEXT("Weather reqest URL: %s"), *WeatherRequestURL);
     return true;
 }
@@ -132,7 +132,7 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
     TSharedPtr<FJsonObject> JsonObject;
     if (!UOpenAIFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
     {
-        SendError("Can't parse request");
+        SendError("Can't parse response");
         return;
     }
 
