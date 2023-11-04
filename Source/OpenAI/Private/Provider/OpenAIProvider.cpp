@@ -11,6 +11,8 @@ DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProvider, All, All);
 
 using namespace OpenAI;
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 UOpenAIProvider::UOpenAIProvider() : API(MakeShared<OpenAI::V1::OpenAIAPI>())  //
 {
 }
@@ -821,3 +823,5 @@ void UOpenAIProvider::CleanChatCompletionFieldsThatCantBeEmpty(const FChatComple
         }
     }
 }
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS

@@ -3,27 +3,29 @@
 #include "BlueprintAsyncActions/FineTunes/ListFineTuneAction.h"
 #include "Provider/OpenAIProvider.h"
 
-UListFineTuneAction* UListFineTuneAction::ListFineTunes(const FOpenAIAuth& Auth)
+UDEPRECATED_ListFineTuneAction* UDEPRECATED_ListFineTuneAction::ListFineTunes(const FOpenAIAuth& Auth)
 {
-    auto* CompletionAction = NewObject<UListFineTuneAction>();
+    auto* CompletionAction = NewObject<UDEPRECATED_ListFineTuneAction>();
     CompletionAction->Auth = Auth;
     return CompletionAction;
 }
 
-void UListFineTuneAction::Activate()
+void UDEPRECATED_ListFineTuneAction::Activate()
 {
     auto* Provider = NewObject<UOpenAIProvider>();
     Provider->OnListFineTunesCompleted().AddUObject(this, &ThisClass::OnListFineTunesCompleted);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    PRAGMA_DISABLE_DEPRECATION_WARNINGS
     Provider->ListFineTunes(Auth);
+    PRAGMA_ENABLE_DEPRECATION_WARNINGS
 }
 
-void UListFineTuneAction::OnListFineTunesCompleted(const FListFineTuneResponse& Response)
+void UDEPRECATED_ListFineTuneAction::OnListFineTunesCompleted(const FListFineTuneResponse& Response)
 {
     OnCompleted.Broadcast(Response, {});
 }
 
-void UListFineTuneAction::OnRequestError(const FString& URL, const FString& Content)
+void UDEPRECATED_ListFineTuneAction::OnRequestError(const FString& URL, const FString& Content)
 {
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }

@@ -3,28 +3,30 @@
 #include "BlueprintAsyncActions/FineTunes/CancelFineTuneAction.h"
 #include "Provider/OpenAIProvider.h"
 
-UCancelFineTuneAction* UCancelFineTuneAction::CancelFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth)
+UDEPRECATED_CancelFineTuneAction* UDEPRECATED_CancelFineTuneAction::CancelFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth)
 {
-    auto* CompletionAction = NewObject<UCancelFineTuneAction>();
+    auto* CompletionAction = NewObject<UDEPRECATED_CancelFineTuneAction>();
     CompletionAction->FineTuneID = FineTuneID;
     CompletionAction->Auth = Auth;
     return CompletionAction;
 }
 
-void UCancelFineTuneAction::Activate()
+void UDEPRECATED_CancelFineTuneAction::Activate()
 {
     auto* Provider = NewObject<UOpenAIProvider>();
     Provider->OnCancelFineTuneCompleted().AddUObject(this, &ThisClass::OnCancelFineTuneCompleted);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    PRAGMA_DISABLE_DEPRECATION_WARNINGS
     Provider->CancelFineTune(FineTuneID, Auth);
+    PRAGMA_ENABLE_DEPRECATION_WARNINGS
 }
 
-void UCancelFineTuneAction::OnCancelFineTuneCompleted(const FFineTuneResponse& Response)
+void UDEPRECATED_CancelFineTuneAction::OnCancelFineTuneCompleted(const FFineTuneResponse& Response)
 {
     OnCompleted.Broadcast(Response, {});
 }
 
-void UCancelFineTuneAction::OnRequestError(const FString& URL, const FString& Content)
+void UDEPRECATED_CancelFineTuneAction::OnRequestError(const FString& URL, const FString& Content)
 {
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }

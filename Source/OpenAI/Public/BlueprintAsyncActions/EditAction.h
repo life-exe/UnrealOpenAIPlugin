@@ -9,8 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEdit, const FEditResponse&, Response, const FOpenAIError&, RawError);
 
-UCLASS()
-class UEditAction : public UBlueprintAsyncActionBase
+UCLASS(Deprecated, meta = (DeprecationMessage = "Deprecated in OpenAI API"))
+class UDEPRECATED_EditAction : public UBlueprintAsyncActionBase
 {
     GENERATED_BODY()
 
@@ -21,9 +21,8 @@ public:
     virtual void Activate() override;
 
 private:
-    UE_DEPRECATED("5.3", "Deprecated in OpenAI API")
-    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Edit")
-    static UEditAction* CreateEdit(const FEdit& Edit, const FOpenAIAuth& Auth);
+    UFUNCTION(BlueprintCallable, meta = (DeprecatedFunction, BlueprintInternalUseOnly = "true"), Category = "OpenAI | Edit")
+    static UDEPRECATED_EditAction* CreateEdit(const FEdit& Edit, const FOpenAIAuth& Auth);
 
     void OnCreateEditCompleted(const FEditResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);

@@ -9,8 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCancelFineTune, const FFineTuneResponse&, Response, const FOpenAIError&, RawError);
 
-UCLASS()
-class UCancelFineTuneAction : public UBlueprintAsyncActionBase
+UCLASS(Deprecated, meta = (DeprecationMessage = "Deprecated in OpenAI API, use fine-tuning job object requests instead"))
+class UDEPRECATED_CancelFineTuneAction : public UBlueprintAsyncActionBase
 {
     GENERATED_BODY()
 
@@ -21,9 +21,8 @@ public:
     virtual void Activate() override;
 
 private:
-    UE_DEPRECATED("5.3", "Deprecated in OpenAI API, use fine-tuning job object requests instead")
-    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | FineTunes")
-    static UCancelFineTuneAction* CancelFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth);
+    UFUNCTION(BlueprintCallable, meta = (DeprecatedFunction, BlueprintInternalUseOnly = "true"), Category = "OpenAI | FineTunes")
+    static UDEPRECATED_CancelFineTuneAction* CancelFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth);
 
     void OnCancelFineTuneCompleted(const FFineTuneResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
