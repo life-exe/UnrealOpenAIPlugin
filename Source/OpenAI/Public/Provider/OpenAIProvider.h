@@ -183,24 +183,25 @@ public:
     /**
       Creates a job that fine-tunes a specified model from a given dataset.
       Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-      Learn more about fine-tuning:
-      https://platform.openai.com/docs/guides/fine-tuning
+      https://platform.openai.com/docs/api-reference/fine-tuning/create
     */
     void CreateFineTuningJob(const FFineTuningJob& FineTuningJob, const FOpenAIAuth& Auth);
 
     /**
-      Get info about a fine-tuning job. Learn more about fine-tuning:
-      https://platform.openai.com/docs/guides/fine-tuning
+      Get info about a fine-tuning job.
+      https://platform.openai.com/docs/api-reference/fine-tuning/retrieve
     */
     void RetrieveFineTuningJob(const FString& FineTuningJobID, const FOpenAIAuth& Auth);
 
     /**
       Immediately cancel a fine-tune job.
+      https://platform.openai.com/docs/api-reference/fine-tuning/cancel
     */
     void CancelFineTuningJob(const FString& FineTuneID, const FOpenAIAuth& Auth);
 
     /**
       Get status updates for a fine-tuning job.
+      https://platform.openai.com/docs/api-reference/fine-tuning/list-events
     */
     void ListFineTuningEvents(
         const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});

@@ -1,16 +1,16 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
-#include "BlueprintAsyncActions/FineTunes/ListFineTuneAction.h"
+#include "BlueprintAsyncActions/FineTunes/ListFineTunesAction.h"
 #include "Provider/OpenAIProvider.h"
 
-UDEPRECATED_ListFineTuneAction* UDEPRECATED_ListFineTuneAction::ListFineTunes(const FOpenAIAuth& Auth)
+UDEPRECATED_ListFineTunesAction* UDEPRECATED_ListFineTunesAction::ListFineTunes(const FOpenAIAuth& Auth)
 {
-    auto* CompletionAction = NewObject<UDEPRECATED_ListFineTuneAction>();
+    auto* CompletionAction = NewObject<UDEPRECATED_ListFineTunesAction>();
     CompletionAction->Auth = Auth;
     return CompletionAction;
 }
 
-void UDEPRECATED_ListFineTuneAction::Activate()
+void UDEPRECATED_ListFineTunesAction::Activate()
 {
     auto* Provider = NewObject<UOpenAIProvider>();
     Provider->OnListFineTunesCompleted().AddUObject(this, &ThisClass::OnListFineTunesCompleted);
@@ -20,12 +20,12 @@ void UDEPRECATED_ListFineTuneAction::Activate()
     PRAGMA_ENABLE_DEPRECATION_WARNINGS
 }
 
-void UDEPRECATED_ListFineTuneAction::OnListFineTunesCompleted(const FListFineTuneResponse& Response)
+void UDEPRECATED_ListFineTunesAction::OnListFineTunesCompleted(const FListFineTuneResponse& Response)
 {
     OnCompleted.Broadcast(Response, {});
 }
 
-void UDEPRECATED_ListFineTuneAction::OnRequestError(const FString& URL, const FString& Content)
+void UDEPRECATED_ListFineTunesAction::OnRequestError(const FString& URL, const FString& Content)
 {
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }
