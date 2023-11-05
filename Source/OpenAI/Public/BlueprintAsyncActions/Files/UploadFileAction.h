@@ -29,7 +29,7 @@ private:
      */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Files")
     static UUploadFileAction* UploadFile(const FUploadFile& File, const FOpenAIAuth& Auth, const FString& URLOverride);
-    
+
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnUploadFileCompleted(const FUploadFileResponse& Response);

@@ -31,7 +31,7 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | FineTunes")
     static UListFineTuningJobsAction* ListFineTuningJobs(
         const FFineTuningQueryParameters& FineTuningQueryParameters, const FOpenAIAuth& Auth, const FString& URLOverride);
-    
+
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnListFineTuningJobsCompleted(const FListFineTuningJobsResponse& Response);
