@@ -43,32 +43,6 @@ FString UNewsService::Description() const
     return "Get top news headlines by country and/or category";
 }
 
-FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const
-{
-    FString ArgsStr;
-    if (UOpenAIFuncLib::JsonToString(ArgsJson, ArgsStr))
-    {
-        UE_LOG(LogNewsService, Display, TEXT("Args for the news request: %s"), *ArgsStr);
-    }
-
-    const OpenAI::QueryPairs QueryPairs{
-        {"query", "q"}, {"country", "country"}, {"category", "category"}, {"pageSize", FString::FromInt(News::MaxNewsAmount)}};
-    OpenAI::QueryPairs QueryArgs;
-    for (const auto& [Field, Query] : QueryPairs)
-    {
-        const auto FieldObj = ArgsJson->TryGetField(Field);
-        if (FieldObj.IsValid())
-        {
-            QueryArgs.Add(MakeTuple(Query, News::ReplaceSpaces(FieldObj->AsString())));
-        }
-    }
-    QueryArgs.Add(MakeTuple("apiKey", API_KEY));
-
-    const FString URL = UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs);
-    UE_LOG(LogNewsService, Display, TEXT("News request URL: %s"), *URL);
-    return URL;
-}
-
 FString UNewsService::MakeFunction() const
 {
     /*
@@ -141,6 +115,32 @@ void UNewsService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
     HttpRequest->SetVerb("GET");
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRequestCompleted);
     HttpRequest->ProcessRequest();
+}
+
+FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const
+{
+    FString ArgsStr;
+    if (UOpenAIFuncLib::JsonToString(ArgsJson, ArgsStr))
+    {
+        UE_LOG(LogNewsService, Display, TEXT("Args for the news request: %s"), *ArgsStr);
+    }
+
+    const OpenAI::QueryPairs QueryPairs{
+        {"query", "q"}, {"country", "country"}, {"category", "category"}, {"pageSize", FString::FromInt(News::MaxNewsAmount)}};
+    OpenAI::QueryPairs QueryArgs;
+    for (const auto& [Field, Query] : QueryPairs)
+    {
+        const auto FieldObj = ArgsJson->TryGetField(Field);
+        if (FieldObj.IsValid())
+        {
+            QueryArgs.Add(MakeTuple(Query, News::ReplaceSpaces(FieldObj->AsString())));
+        }
+    }
+    QueryArgs.Add(MakeTuple("apiKey", API_KEY));
+
+    const FString URL = UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs);
+    UE_LOG(LogNewsService, Display, TEXT("News request URL: %s"), *URL);
+    return URL;
 }
 
 void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)

@@ -57,7 +57,6 @@ private:
     FString API_KEY{};
 
     FString MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const;
-    void SendError(const FString& ErrorMessage);
-
     void OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    void SendError(const FString& ErrorMessage);
 };

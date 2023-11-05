@@ -37,28 +37,6 @@ FString UWeatherService::Description() const
     return "Get the current weather in a given location";
 }
 
-bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FString& WeatherRequestURL) const
-{
-    // units = f    temperature: Fahrenheit
-    // units = m    temperature: Celsius // m - metric system, if you, like me, have been wondering wtf m means (=
-    FString Units{"m"};
-    if (ArgsJson->TryGetStringField("unit", Units))
-    {
-        Units = Units.ToLower().Equals("celsius") ? "m" : "f";
-    }
-
-    FString Location;
-    if (!ArgsJson->TryGetStringField("location", Location))
-    {
-        return false;
-    }
-
-    const OpenAI::QueryPairs QueryArgs{{"access_key", API_KEY}, {"query", Location}, {"units", Units}};
-    WeatherRequestURL = UOpenAIFuncLib::MakeURLWithQuery(Weather::API_URL, QueryArgs);
-    UE_LOG(LogWeatherService, Display, TEXT("Weather reqest URL: %s"), *WeatherRequestURL);
-    return true;
-}
-
 FString UWeatherService::MakeFunction() const
 {
     /*
@@ -67,7 +45,7 @@ FString UWeatherService::MakeFunction() const
             "properties": {
                 "location": {
                     "type": "string",
-                    "description": "The city and state, e.g. San Francisco, CA",
+                    "description": "The city and state, e.g. SanFrancisco, CA; Convert city name to English if necessary; don't use spaces in the parameter",
                 },
                 "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
             },
@@ -122,6 +100,28 @@ void UWeatherService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
     HttpRequest->SetVerb("GET");
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRequestCompleted);
     HttpRequest->ProcessRequest();
+}
+
+bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FString& WeatherRequestURL) const
+{
+    // units = f    temperature: Fahrenheit
+    // units = m    temperature: Celsius // m - metric system, if you, like me, have been wondering wtf m means (=
+    FString Units{"m"};
+    if (ArgsJson->TryGetStringField("unit", Units))
+    {
+        Units = Units.ToLower().Equals("celsius") ? "m" : "f";
+    }
+
+    FString Location;
+    if (!ArgsJson->TryGetStringField("location", Location))
+    {
+        return false;
+    }
+
+    const OpenAI::QueryPairs QueryArgs{{"access_key", API_KEY}, {"query", Location}, {"units", Units}};
+    WeatherRequestURL = UOpenAIFuncLib::MakeURLWithQuery(Weather::API_URL, QueryArgs);
+    UE_LOG(LogWeatherService, Display, TEXT("Weather reqest URL: %s"), *WeatherRequestURL);
+    return true;
 }
 
 void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)

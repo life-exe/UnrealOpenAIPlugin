@@ -69,6 +69,6 @@ private:
     FString API_KEY{};
 
     bool MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FString& WeatherRequestURL) const;
-    void SendError(const FString& ErrorMessage);
     void OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    void SendError(const FString& ErrorMessage);
 };
