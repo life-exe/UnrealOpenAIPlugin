@@ -38,7 +38,8 @@ bool USaveSettings::IsServerRegistered(const TSubclassOf<UBaseService>& ServiceC
 // saving / loading
 TObjectPtr<USaveSettings> USaveSettings::Load()
 {
-    return Cast<USaveSettings>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+    auto* SaveSettings = Cast<USaveSettings>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+    return SaveSettings ? SaveSettings : NewObject<USaveSettings>();
 }
 
 void USaveSettings::Save(USaveGame* SaveGameObject)
