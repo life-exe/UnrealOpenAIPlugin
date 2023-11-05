@@ -194,7 +194,7 @@ that the GPT chat can pass. The function returns `JSON` as a string. Let's creat
             "description": "Set this to true if you want to know what skills the character has.",
         },
     },
-    "required": ["character"],
+    "required": ["name"],
 }
 ```
 
@@ -494,7 +494,7 @@ FString UQuestService::MakeFunction() const
                     "description": "Set this to true if you want to know what skills the character has.",
                 },
             },
-            "required": ["character"],
+            "required": ["name"],
         }
     */
 
