@@ -10,6 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
     FOnRetrieveFileContent, const FRetrieveFileContentResponse&, Response, const FOpenAIError&, RawError);
 
+class UOpenAIProvider;
+
 UCLASS()
 class URetrieveFileContentAction : public UBlueprintAsyncActionBase
 {
@@ -22,8 +24,14 @@ public:
     virtual void Activate() override;
 
 private:
+    /**
+     * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
+     * If this functionality is not required, this parameter can be left blank.
+     */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Files")
-    static URetrieveFileContentAction* RetrieveFileContent(const FString& FileID, const FOpenAIAuth& Auth);
+    static URetrieveFileContentAction* RetrieveFileContent(const FString& FileID, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+    void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnRetrieveFileContentCompleted(const FRetrieveFileContentResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
@@ -31,4 +39,5 @@ private:
 private:
     FOpenAIAuth Auth;
     FString FileID;
+    FString URLOverride{};
 };

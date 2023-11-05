@@ -9,6 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeleteFile, const FDeleteFileResponse&, Response, const FOpenAIError&, RawError);
 
+class UOpenAIProvider;
+
 UCLASS()
 class UDeleteFileAction : public UBlueprintAsyncActionBase
 {
@@ -21,8 +23,14 @@ public:
     virtual void Activate() override;
 
 private:
+    /**
+     * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
+     * If this functionality is not required, this parameter can be left blank.
+     */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Files")
-    static UDeleteFileAction* DeleteFile(const FString& FileID, const FOpenAIAuth& Auth);
+    static UDeleteFileAction* DeleteFile(const FString& FileID, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+    void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnDeleteFileCompleted(const FDeleteFileResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
@@ -30,4 +38,5 @@ private:
 private:
     FString FileID;
     FOpenAIAuth Auth;
+    FString URLOverride{};
 };

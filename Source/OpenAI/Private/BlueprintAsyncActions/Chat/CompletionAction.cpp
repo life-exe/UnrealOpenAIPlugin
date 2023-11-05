@@ -3,6 +3,7 @@
 #include "BlueprintAsyncActions/Chat/CompletionAction.h"
 #include "Provider/OpenAIProvider.h"
 #include "Algo/ForEach.h"
+#include "API/API.h"
 
 namespace
 {
@@ -18,7 +19,7 @@ FString ParseResponses(const TArray<FCompletionStreamResponse>& Responses)
 }
 }  // namespace
 
-UCompletionAction* UCompletionAction::CreateCompletion(const FCompletion& Completion, const FOpenAIAuth& Auth)
+UCompletionAction* UCompletionAction::CreateCompletion(const FCompletion& Completion, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
     auto* CompletionAction = NewObject<UCompletionAction>();
     CompletionAction->Completion = Completion;
@@ -40,6 +41,7 @@ void UCompletionAction::Activate()
     }
 
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    TryToOverrideURL(Provider);
     Provider->CreateCompletion(Completion, Auth);
 }
 
@@ -75,4 +77,14 @@ void UCompletionAction::OnCreateCompletionStreamCompleted(const TArray<FCompleti
 void UCompletionAction::OnRequestError(const FString& URL, const FString& Content)
 {
     OnUpdate.Broadcast({}, FOpenAIError{Content, true});
+}
+
+void UCompletionAction::TryToOverrideURL(UOpenAIProvider* Provider)
+{
+    if (URLOverride.IsEmpty()) return;
+
+    OpenAI::V1::FOpenAIEndpoints Endpoints;
+    Endpoints.Completions = URLOverride;
+    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
+    Provider->SetAPI(API);
 }

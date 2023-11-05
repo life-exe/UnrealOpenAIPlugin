@@ -384,7 +384,7 @@ void UOpenAIProvider::ListFineTuningEvents(
     const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters)
 {
     const auto URL =
-        FString(API->FineTunes()).Append("/").Append(FineTuningJobID).Append("/events").Append(FineTuningQueryParameters.ToQuery());
+        FString(API->FineTuningJobs()).Append("/").Append(FineTuningJobID).Append("/events").Append(FineTuningQueryParameters.ToQuery());
     auto HttpRequest = MakeRequest(URL, "GET", Auth);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListFineTuningEventsCompleted);
     ProcessRequest(HttpRequest);

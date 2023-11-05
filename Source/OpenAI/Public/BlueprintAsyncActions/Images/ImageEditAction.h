@@ -9,6 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnImageEdit, const FImageEditResponse&, Response, const FOpenAIError&, RawError);
 
+class UOpenAIProvider;
+
 UCLASS()
 class UImageEditAction : public UBlueprintAsyncActionBase
 {
@@ -21,8 +23,14 @@ public:
     virtual void Activate() override;
 
 private:
+    /**
+     * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
+     * If this functionality is not required, this parameter can be left blank.
+     */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Images")
-    static UImageEditAction* CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const FOpenAIAuth& Auth);
+    static UImageEditAction* CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+    void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnCreateImageEditCompleted(const FImageEditResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
@@ -30,4 +38,5 @@ private:
 private:
     FOpenAIImageEdit ImageEdit;
     FOpenAIAuth Auth;
+    FString URLOverride{};
 };

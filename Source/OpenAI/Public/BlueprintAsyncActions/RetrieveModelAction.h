@@ -10,6 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
     FOnRetrieveModelResponse, const FRetrieveModelResponse&, Response, const FOpenAIError&, RawError);
 
+class UOpenAIProvider;
+
 UCLASS()
 class URetrieveModelAction : public UBlueprintAsyncActionBase
 {
@@ -22,8 +24,14 @@ public:
     virtual void Activate() override;
 
 private:
+    /**
+     * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
+     * If this functionality is not required, this parameter can be left blank.
+     */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Models")
-    static URetrieveModelAction* RetrieveModel(const FString& ModelName, const FOpenAIAuth& Auth);
+    static URetrieveModelAction* RetrieveModel(const FString& ModelName, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+    void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnRetrieveModelCompleted(const FRetrieveModelResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
@@ -31,4 +39,5 @@ private:
 private:
     FString ModelName;
     FOpenAIAuth Auth;
+    FString URLOverride{};
 };

@@ -33,6 +33,8 @@ struct FCompletionPayload
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCompletion, const FCompletionPayload&, Payload, const FOpenAIError&, RawError);
 
+class UOpenAIProvider;
+
 UCLASS()
 class UCompletionAction : public UBlueprintAsyncActionBase
 {
@@ -45,8 +47,14 @@ public:
     virtual void Activate() override;
 
 private:
+    /**
+     * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
+     * If this functionality is not required, this parameter can be left blank.
+     */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Completion")
-    static UCompletionAction* CreateCompletion(const FCompletion& CompletionRequest, const FOpenAIAuth& Auth);
+    static UCompletionAction* CreateCompletion(const FCompletion& CompletionRequest, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+    void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnCreateCompletionCompleted(const FCompletionResponse& Response);
     void OnCreateCompletionStreamProgresses(const TArray<FCompletionStreamResponse>& Responses);
@@ -56,4 +64,5 @@ private:
 private:
     FCompletion Completion;
     FOpenAIAuth Auth;
+    FString URLOverride{};
 };

@@ -34,6 +34,8 @@ struct FChatCompletionPayload
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChatCompletion, const FChatCompletionPayload&, Payload, const FOpenAIError&, RawError);
 
+class UOpenAIProvider;
+
 UCLASS()
 class UChatCompletionAction : public UBlueprintAsyncActionBase
 {
@@ -46,8 +48,15 @@ public:
     virtual void Activate() override;
 
 private:
+    /**
+     * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
+     * If this functionality is not required, this parameter can be left blank.
+     */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Chat")
-    static UChatCompletionAction* CreateChatCompletion(const FChatCompletion& ChatCompletion, const FOpenAIAuth& Auth);
+    static UChatCompletionAction* CreateChatCompletion(
+        const FChatCompletion& ChatCompletion, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+    void TryToOverrideURL(UOpenAIProvider* Provider);
 
     void OnCreateChatCompletionCompleted(const FChatCompletionResponse& Response);
     void OnCreateChatCompletionStreamProgresses(const TArray<FChatCompletionStreamResponse>& Responses);
@@ -57,4 +66,5 @@ private:
 private:
     FChatCompletion ChatCompletion;
     FOpenAIAuth Auth;
+    FString URLOverride{};
 };
