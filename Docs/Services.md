@@ -40,6 +40,7 @@ The complete listing of the program will be at the end of this tutorial.
 
 #include "CoreMinimal.h"
 #include "ChatGPT/BaseService.h"
+#include "QuestService.generated.h"
 
 UCLASS()
 class YOUR_PROJECT_API UQuestService : public UBaseService
@@ -98,6 +99,12 @@ public class YourProjectName : ModuleRules
 4. Immediately implement the `Name` and `TooltipDescription` functions. These are strictly for UI information:
 
 ```cpp
+#pragma once
+
+#include "CoreMinimal.h"
+#include "ChatGPT/BaseService.h"
+#include "QuestService.generated.h"
+
 UCLASS()
 class YOUR_PROJECT_API UQuestService : public UBaseService
 {
