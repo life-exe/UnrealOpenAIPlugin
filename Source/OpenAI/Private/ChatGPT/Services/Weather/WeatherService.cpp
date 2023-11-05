@@ -45,7 +45,8 @@ FString UWeatherService::MakeFunction() const
             "properties": {
                 "location": {
                     "type": "string",
-                    "description": "The city and state, e.g. SanFrancisco, CA; Convert city name to English if necessary; don't use spaces in the parameter",
+                    "description": "The city and state, e.g. SanFrancisco, CA; Convert city name to English if necessary; don't use spaces
+       in the parameter",
                 },
                 "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
             },

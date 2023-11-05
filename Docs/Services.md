@@ -49,7 +49,7 @@ class YOUR_PROJECT_API UQuestService : public UBaseService
 };
 ```
 
-2. Copy all virtual functions from the `UBaseService` class. They need to be implemented:
+2. Copy the following virtual functions from the `UBaseService` class. They need to be implemented:
 
 ```cpp
 #pragma once
@@ -66,7 +66,6 @@ class YOUR_PROJECT_API UQuestService : public UBaseService
 public:
     virtual bool Init(const OpenAI::ServiceSecrets& Secrets);
 
-    virtual FFunctionOpenAI Function() const;
     virtual FString Description() const;
     virtual FString FunctionName() const;
     virtual void Call(const TSharedPtr<FJsonObject>& Args);
@@ -113,7 +112,6 @@ class YOUR_PROJECT_API UQuestService : public UBaseService
 public:
     virtual bool Init(const OpenAI::ServiceSecrets& Secrets);
 
-    virtual FFunctionOpenAI Function() const;
     virtual FString Description() const;
     virtual FString FunctionName() const;
     virtual void Call(const TSharedPtr<FJsonObject>& Args);
@@ -215,10 +213,10 @@ FString UQuestService::MakeFunction() const
     TSharedPtr<FJsonObject> Props = MakeShareable(new FJsonObject());
 
     // character name
-    TSharedPtr<FJsonObject> CharacterObj = MakeShareable(new FJsonObject());
-    CharacterObj->SetStringField("type", "string");
-    CharacterObj->SetStringField("description", "Name of the character of my Alien Rampage Saga.");
-    Props->SetObjectField("name", CharacterObj);
+    TSharedPtr<FJsonObject> NameObj = MakeShareable(new FJsonObject());
+    NameObj->SetStringField("type", "string");
+    NameObj->SetStringField("description", "Name of the character of my Alien Rampage Saga.");
+    Props->SetObjectField("name", NameObj);
 
     // ability
     TSharedPtr<FJsonObject> AbilityObj = MakeShareable(new FJsonObject());
@@ -504,10 +502,10 @@ FString UQuestService::MakeFunction() const
     TSharedPtr<FJsonObject> Props = MakeShareable(new FJsonObject());
 
     // character name
-    TSharedPtr<FJsonObject> CharacterObj = MakeShareable(new FJsonObject());
-    CharacterObj->SetStringField("type", "string");
-    CharacterObj->SetStringField("description", "Name of the character of my Alien Rampage Saga game.");
-    Props->SetObjectField("name", CharacterObj);
+    TSharedPtr<FJsonObject> NameObj = MakeShareable(new FJsonObject());
+    NameObj->SetStringField("type", "string");
+    NameObj->SetStringField("description", "Name of the character of my Alien Rampage Saga game.");
+    Props->SetObjectField("name", NameObj);
 
     // ability
     TSharedPtr<FJsonObject> AbilityObj = MakeShareable(new FJsonObject());
