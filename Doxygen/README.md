@@ -13,7 +13,7 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Files](https://platform.openai.com/docs/api-reference/files)
  - [Moderations](https://platform.openai.com/docs/api-reference/moderations)
  - [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning)
- - [Functions](https://platform.openai.com/docs/guides/gpt/function-calling)
+ - [Functions](https://platform.openai.com/docs/guides/function-calling)
  - ~~[Edits](https://platform.openai.com/docs/api-reference/edits)~~ [deprecated]
  - ~~[Fine-tunes](https://platform.openai.com/docs/api-reference/fine-tunes)~~ [deprecated]
  
@@ -52,9 +52,9 @@ void AAPIOverview::CreateImage()
  - [Plugin overview and usage example](https://youtu.be/SkiWQXHjk30) [english subtitles].
  - [How to use functions](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
 
-# Updates
+## Updates
 
- - [Functions](https://platform.openai.com/docs/guides/gpt/function-calling) support added! You can check the tutorial [via link](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
+ - [Functions](https://platform.openai.com/docs/guides/function-calling) support added! You can check the tutorial [via link](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/services.png)
 
