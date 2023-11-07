@@ -29,9 +29,9 @@ FString TestUtils::RemovePunctuation(const FString& Input)
     return Result;
 }
 
-FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum ModelEnum)
+FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum PluginEnum)
 {
-    const FString EnumAsString = UEnum::GetValueAsString(ModelEnum);
+    const FString EnumAsString = UEnum::GetValueAsString(PluginEnum);
 
     // EAllModelEnum::GPT_3_5_Turbo_0301 -> EAllModelEnum, GPT_3_5_Turbo_0301
     FString EnumName, EnumElementName;
@@ -44,6 +44,37 @@ FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum ModelEnum)
     EnumElementName = EnumElementName.Replace(TEXT("3-5"), TEXT("3.5"));
 
     return EnumElementName;
+}
+
+FString TestUtils::OpenAIModelNameToPluginEnum(const FString& ModelName)
+{
+    // gpt-3.5-turbo-0301 -> gpt_3.5_turbo_0301
+    FString EnumName = ModelName.ToLower().Replace(TEXT("-"), TEXT("_"));
+
+    // special case: gpt-3.5-turbo-0301 -> gpt_3_5_turbo_0301
+    EnumName = EnumName.Replace(TEXT("3.5"), TEXT("3_5"));
+
+    // gpt-3.5-turbo-0301 -> GPT_3_5_turbo_0301
+    EnumName = EnumName.Replace(TEXT("gpt"), TEXT("GPT"));
+
+    // GPT_3_5_turbo_super_turbo_0301 -> GPT_3_5_Turbo_Super_Turbo_0301
+    FString Result;
+    bool bMakeNextUpperCase{true};
+    for (TCHAR Char : EnumName)
+    {
+        if (bMakeNextUpperCase && FChar::IsAlpha(Char))
+        {
+            Char = FChar::ToUpper(Char);
+            bMakeNextUpperCase = false;
+        }
+        else if (Char == TEXT('_'))
+        {
+            bMakeNextUpperCase = true;
+        }
+        Result += Char;
+    }
+
+    return FString::Format(TEXT("EAllModelEnum::{0}"), {Result});
 }
 
 FString TestUtils::FileFullPath(const FString& FileName)

@@ -12,7 +12,8 @@ class TestUtils
 {
 public:
     static FString RemovePunctuation(const FString& Input);
-    static FString PluginEnumToOpenAIModelName(EAllModelEnum ModelEnum);
+    static FString PluginEnumToOpenAIModelName(EAllModelEnum PluginEnum);
+    static FString OpenAIModelNameToPluginEnum(const FString& ModelName);
     static FString FileFullPath(const FString& FileName);
     static bool IsValidURL(const FString& URL);
 };

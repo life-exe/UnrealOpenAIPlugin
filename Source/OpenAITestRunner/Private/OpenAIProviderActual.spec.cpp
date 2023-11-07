@@ -171,13 +171,15 @@ void FOpenAIProviderActual::Define()
 
                             for (const auto& Name : ModelNames)
                             {
-                                AddWarning(FString::Format(
-                                    TEXT("Remote OpenAI model name that doesn't exist in plugin EAllModelEnum: {0}"), {Name}));
+                                const FString PluginEnumName = TestUtils::OpenAIModelNameToPluginEnum(Name);
+                                AddWarning(FString::Format(TEXT("Remote OpenAI model name that doesn't exist in plugin EAllModelEnum: {0}, "
+                                                                "consider to add it as {1}"),
+                                    {Name, PluginEnumName}));
                             }
 
                             for (const auto& Name : PluginModelNames)
                             {
-                                AddWarning(FString::Format(TEXT("Plugin model name that doesn't exist in remote OpenAI: {0}"), {Name}));
+                                AddError(FString::Format(TEXT("Plugin model name that doesn't exist in remote OpenAI: {0}"), {Name}));
                             }
 
                             RequestCompleted = true;

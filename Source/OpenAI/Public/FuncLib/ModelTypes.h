@@ -68,7 +68,15 @@ enum class EAllModelEnum : uint8
     GPT_4,
     GPT_4_0613,
     GPT_4_0314,
-    Dall_E_2
+    Dall_E_2,
+    Dall_E_3,
+    GPT_4_1106_Preview,
+    GPT_4_Vision_Preview,
+    GPT_3_5_Turbo_1106,
+    TTS_1,
+    TTS_1_HD,
+    TTS_1_1106,
+    TTS_1_HD_1106,
 };
 
 UENUM(BlueprintType)

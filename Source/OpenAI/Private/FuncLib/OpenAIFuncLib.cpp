@@ -69,6 +69,14 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
         case EAllModelEnum::Dall_E_2: return "dalle-e-2";
+        case EAllModelEnum::Dall_E_3: return "dalle-e-3";
+        case EAllModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
+        case EAllModelEnum::GPT_4_Vision_Preview: return "gpt-4-vision-preview";
+        case EAllModelEnum::GPT_3_5_Turbo_1106: return "gpt-3.5-turbo-1106";
+        case EAllModelEnum::TTS_1: return "tts-1";
+        case EAllModelEnum::TTS_1_HD: return "tts-1-hd";
+        case EAllModelEnum::TTS_1_1106: return "tts-1-1106";
+        case EAllModelEnum::TTS_1_HD_1106: return "tts-1-hd-1106";
     }
     checkNoEntry();
     return {};
