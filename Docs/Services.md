@@ -6,9 +6,9 @@ For example, the weather, current time, latest news, cost of airline tickets, in
 
 From the `OpenAI` API perspective, functions are just a few additional fields in the `JSON` request to OpenAI endpoints.
 A `Service` in the plugin is a separate `UObject` base class that you can derived from, program at your discretion and add to `ChatGPT` within the plugin.
-I've added two services to the core of the plugin - `weather` and `news`. You can read about how to run them in the [main readme](https://github.com/life-exe/UnrealOpenAIPlugin#unreal-editor-chat-gpt-with-openai-functions).
+I've added two services to the core of the plugin - `weather` and `news`. You can read about how to run them in the [main readme.](https://github.com/life-exe/UnrealOpenAIPlugin#unreal-editor-chat-gpt-with-openai-functions)
 
-Before we start, I strongly recommend familiarizing yourself with the [official documentation](https://platform.openai.com/docs/guides/gpt/function-calling) and examples on functions and understanding the concept.
+Before we start, I strongly recommend familiarizing yourself with the [official documentation](https://platform.openai.com/docs/guides/function-calling) and examples on functions and understanding the concept.
 
 We will be creating everything in `C++`. In theory, everything could be done using `Blueprints` and you can call functions by name,
 but defining `JSON` in `Blueprints` it's a pain.
@@ -29,7 +29,7 @@ We'll have two characters:
 `Galaxor's` abilities:
  - Capable of unicorn riding, boasts the ability to sleep for 20 hours straight, and possesses knowledge of all credit card PIN codes.
 
-It is assumed that you have set up the plugin. Complete instructions can also be found in the [main readme](https://github.com/life-exe/UnrealOpenAIPlugin).
+It is assumed that you have set up the plugin. Complete instructions can also be found in the [main readme.](https://github.com/life-exe/UnrealOpenAIPlugin)
 
 The complete listing of the program will be at the end of this tutorial.
 
@@ -236,7 +236,7 @@ FString UQuestService::MakeFunction() const
 ```
 
 Here we have a magic function from the plugin `UOpenAIFuncLib::MakeFunctionsString(MainObj)`
-that is necessary for proper parsing of the [JSON Schema reference](https://json-schema.org/understanding-json-schema).
+that is necessary for proper parsing of the [JSON Schema reference.](https://json-schema.org/understanding-json-schema)
 
 9. We are moving on to the final function, which is called when `ChatGPT` requests information about our characters:
 
