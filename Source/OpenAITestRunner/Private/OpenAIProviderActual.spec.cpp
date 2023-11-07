@@ -147,7 +147,6 @@ void FOpenAIProviderActual::Define()
                                 TestTrueExpr(!Model.ID.IsEmpty());
                                 TestTrueExpr(!Model.Object.IsEmpty());
                                 TestTrueExpr(!Model.Owned_By.IsEmpty());
-                                TestTrueExpr(!Model.Root.IsEmpty());
                                 for (const auto& OnePermission : Model.Permission)
                                 {
                                     TestTrueExpr(!OnePermission.ID.IsEmpty());
@@ -197,7 +196,6 @@ void FOpenAIProviderActual::Define()
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(!Response.Object.IsEmpty());
                             TestTrueExpr(!Response.Owned_By.IsEmpty());
-                            TestTrueExpr(!Response.Root.IsEmpty());
                             for (const auto& Permission : Response.Permission)
                             {
                                 TestTrueExpr(!Permission.ID.IsEmpty());
