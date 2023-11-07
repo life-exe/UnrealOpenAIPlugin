@@ -127,7 +127,11 @@ bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FS
 
 void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!Response) return;
+    if (!Response)
+    {
+        ServiceDataError.Broadcast("Response was null");
+        return;
+    }
     UE_LOG(LogWeatherService, Display, TEXT("%s"), *Response->GetContentAsString());
 
     TSharedPtr<FJsonObject> JsonObject;

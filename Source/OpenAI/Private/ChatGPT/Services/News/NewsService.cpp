@@ -145,7 +145,11 @@ FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) co
 
 void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!Response) return;
+    if (!Response)
+    {
+        ServiceDataError.Broadcast("Response was null");
+        return;
+    }
     UE_LOG(LogNewsService, Display, TEXT("%s"), *Response->GetContentAsString());
 
     TSharedPtr<FJsonObject> JsonObject;
