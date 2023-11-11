@@ -33,7 +33,8 @@ private:
     void CreateCompletionRequest();
     void CreateChatCompletionRequest();
 
-    void CreateImage();
+    void CreateImageDALLE2();
+    void CreateImageDALLE3();
     void CreateImageEdit();
     void CreateImageVariation();
 

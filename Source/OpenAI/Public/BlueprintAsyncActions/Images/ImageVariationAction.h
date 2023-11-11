@@ -31,12 +31,14 @@ private:
     static UImageVariationAction* CreateImageVariation(
         const FOpenAIImageVariation& ImageVariation, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
+    void TryToOverrideURL();
 
     void OnCreateImageVariationCompleted(const FImageVariationResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:
+    UPROPERTY()
+    TObjectPtr<UOpenAIProvider> Provider;
     FOpenAIImageVariation ImageVariation;
     FOpenAIAuth Auth;
     FString URLOverride{};

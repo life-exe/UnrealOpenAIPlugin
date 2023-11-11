@@ -28,11 +28,41 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIAudioModelToString(EAudioModelEnum Model);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIImageSizeToString(EImageSize ImageSize);
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static FString OpenAIImageModelToString(EImageModelEnum Model);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static EImageModelEnum StringToOpenAIImageModel(const FString& Model);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static FString OpenAIImageSizeDalle2ToString(EImageSizeDalle2 ImageSize);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static EImageSizeDalle2 StringToOpenAIImageSizeDalle2(const FString& ImageSize);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static FString OpenAIImageSizeDalle3ToString(EImageSizeDalle3 ImageSize);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static EImageSizeDalle3 StringToOpenAIImageSizeDalle3(const FString& ImageSize);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static FString OpenAIImageFormatToString(EOpenAIImageFormat ImageFormat);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static EOpenAIImageFormat StringToOpenAIImageFormat(const FString& ImageFormat);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static FString OpenAIImageQualityToString(EOpenAIImageQuality ImageQuality);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static EOpenAIImageQuality StringToOpenAIImageQuality(const FString& ImageQuality);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static FString OpenAIImageStyleToString(EOpenAIImageStyle ImageStyle);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
+    static EOpenAIImageStyle StringToOpenAIImageStyle(const FString& ImageStyle);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIRoleToString(ERole Role);

@@ -68,8 +68,8 @@ enum class EAllModelEnum : uint8
     GPT_4,
     GPT_4_0613,
     GPT_4_0314,
-    Dall_E_2,
-    Dall_E_3,
+    DALL_E_2,
+    DALL_E_3,
     GPT_4_1106_Preview,
     GPT_4_Vision_Preview,
     GPT_3_5_Turbo_1106,
@@ -83,6 +83,8 @@ UENUM(BlueprintType)
 enum class EMainModelEnum : uint8
 {
     GPT_4,
+    GPT_4_1106_Preview,
+    GPT_4_Vision_Preview,
     GPT_4_0613,
     GPT_4_0314,
     GPT_3_5_Turbo_0301,
@@ -104,11 +106,42 @@ enum class EAudioModelEnum : uint8
 };
 
 UENUM(BlueprintType)
-enum class EImageSize : uint8
+enum class EImageModelEnum : uint8
+{
+    DALL_E_2,
+    DALL_E_3
+};
+
+UENUM(BlueprintType)
+enum class EImageSizeDalle2 : uint8
 {
     Size_256x256,
     Size_512x512,
     Size_1024x1024
+};
+
+UENUM(BlueprintType)
+enum EImageSizeDalle3 : uint8
+{
+    Size_1024x1024,
+    Size_1792x1024,
+    Size_1024x1792
+};
+
+UENUM(BlueprintType)
+enum EOpenAIImageQuality
+{
+    Standard,
+    HD
+};
+
+UENUM(BlueprintType)
+enum EOpenAIImageStyle
+{
+    // Vivid causes the model to lean towards generating hyper - real and dramatic images.
+    Vivid,
+    // Natural causes the model to produce more natural, less hyper - real looking images.
+    Natural
 };
 
 UENUM(BlueprintType)

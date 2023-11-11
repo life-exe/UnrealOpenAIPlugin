@@ -15,10 +15,10 @@ UImageAction* UImageAction::CreateImage(const FOpenAIImage& Image, const FOpenAI
 
 void UImageAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    Provider = NewObject<UOpenAIProvider>();
     Provider->OnCreateImageCompleted().AddUObject(this, &ThisClass::OnCreateImageCompleted);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
+    TryToOverrideURL();
     Provider->CreateImage(Image, Auth);
 }
 
@@ -32,7 +32,7 @@ void UImageAction::OnRequestError(const FString& URL, const FString& Content)
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }
 
-void UImageAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UImageAction::TryToOverrideURL()
 {
     if (URLOverride.IsEmpty()) return;
 

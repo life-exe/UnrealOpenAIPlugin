@@ -9,6 +9,7 @@
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "Widgets/SWindow.h"
+#include "Framework/Application/SlateApplication.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFileSystemFuncLib, All, All);
 
@@ -46,8 +47,13 @@ bool UFileSystemFuncLib::SaveImageToFile(UTexture2D* Texture)
     if (!DesktopPlatform) return false;
 
     TArray<FString> OutFileNames;
-    const bool Success = DesktopPlatform->SaveFileDialog(nullptr, SaveDialogTitle.ToString(), DefaultPath, DefaultFileNameToSave,
-        GetFileExtensions(EFileType::Image), EFileDialogFlags::None, OutFileNames);
+    const bool Success = DesktopPlatform->SaveFileDialog(FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),  //
+        SaveDialogTitle.ToString(),                                                                                               //
+        DefaultPath,                                                                                                              //
+        DefaultFileNameToSave,                                                                                                    //
+        GetFileExtensions(EFileType::Image),                                                                                      //
+        EFileDialogFlags::None,                                                                                                   //
+        OutFileNames);
     if (!Success || OutFileNames.Num() == 0) return false;
 
     TArray<uint8> ImageBytes;

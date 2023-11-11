@@ -30,12 +30,14 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Images")
     static UImageAction* CreateImage(const FOpenAIImage& Image, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
+    void TryToOverrideURL();
 
     void OnCreateImageCompleted(const FImageResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:
+    UPROPERTY()
+    TObjectPtr<UOpenAIProvider> Provider;
     FOpenAIImage Image;
     FOpenAIAuth Auth;
     FString URLOverride{};

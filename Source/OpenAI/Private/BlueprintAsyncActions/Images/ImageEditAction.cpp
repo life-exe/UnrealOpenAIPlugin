@@ -15,10 +15,10 @@ UImageEditAction* UImageEditAction::CreateImageEdit(const FOpenAIImageEdit& Imag
 
 void UImageEditAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    Provider = NewObject<UOpenAIProvider>();
     Provider->OnCreateImageEditCompleted().AddUObject(this, &ThisClass::OnCreateImageEditCompleted);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
+    TryToOverrideURL();
     Provider->CreateImageEdit(ImageEdit, Auth);
 }
 
@@ -32,7 +32,7 @@ void UImageEditAction::OnRequestError(const FString& URL, const FString& Content
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }
 
-void UImageEditAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UImageEditAction::TryToOverrideURL()
 {
     if (URLOverride.IsEmpty()) return;
 

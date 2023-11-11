@@ -347,28 +347,54 @@ struct FOpenAIImage
     GENERATED_BODY()
 
     /**
-      A text description of the desired image(s). The maximum length is 1000 characters.
+      A text description of the desired image(s). The maximum length is 1000 characters for dall-e-2 and 4000 characters for dall-e-3.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Prompt;
 
     /**
+      The model to use for image generation.
+      Defaults to dall-e-2.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Model{"dall-e-2"};
+
+    /**
       The number of images to generate. Must be between 1 and 10.
+      For dall-e-3, only n=1 is supported.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     int32 N{1};
 
     /**
-      The size of the generated images. Must be one of 256x256, 512x512, or 1024x1024.
+      The quality of the image that will be generated. hd creates images with finer details and greater consistency across the image.
+      This param is only supported for dall-e-3.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Size{"1024x1024"};
+    FString Quality{"standard"};
 
     /**
       The format in which the generated images are returned. Must be one of url or b64_json.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Response_Format{"url"};
+
+    /**
+      The size of the generated images. Must be one of 256x256, 512x512, or 1024x1024 for dall-e-2.
+      Must be one of 1024x1024, 1792x1024, or 1024x1792 for dall-e-3 models.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Size{"1024x1024"};
+
+    /**
+      The style of the generated images.
+      Must be one of vivid or natural.
+      Vivid causes the model to lean towards generating hyper-real and dramatic images.
+      Natural causes the model to produce more natural, less hyper-real looking images.
+      This param is only supported for dall-e-3.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Style{"vivid"};
 
     /**
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
@@ -390,6 +416,12 @@ struct FOpenAIImageEdit
     FString Image;
 
     /**
+      A text description of the desired image(s). The maximum length is 1000 characters.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Prompt;
+
+    /**
       An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where image should be edited.
       Must be a valid PNG file, less than 4MB, and have the same dimensions as image.
     */
@@ -397,10 +429,11 @@ struct FOpenAIImageEdit
     FString Mask;
 
     /**
-      A text description of the desired image(s). The maximum length is 1000 characters.
+      The model to use for image generation.
+      Defaults to dall-e-2.
     */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
-    FString Prompt;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Model{"dall-e-2"};
 
     /**
       The number of images to generate. Must be between 1 and 10.
@@ -440,22 +473,29 @@ struct FOpenAIImageVariation
     FString Image;
 
     /**
+      The model to use for image generation.
+      Defaults to dall-e-2.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Model{"dall-e-2"};
+
+    /**
       The number of images to generate. Must be between 1 and 10.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     int32 N{1};
 
     /**
-      The size of the generated images. Must be one of 256x256, 512x512, or 1024x1024.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Size{"1024x1024"};
-
-    /**
       The format in which the generated images are returned. Must be one of url or b64_json.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Response_Format{"url"};
+
+    /**
+      The size of the generated images. Must be one of 256x256, 512x512, or 1024x1024.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Size{"1024x1024"};
 
     /**
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.

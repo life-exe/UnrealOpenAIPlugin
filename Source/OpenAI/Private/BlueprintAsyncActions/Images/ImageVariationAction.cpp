@@ -16,10 +16,10 @@ UImageVariationAction* UImageVariationAction::CreateImageVariation(
 
 void UImageVariationAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    Provider = NewObject<UOpenAIProvider>();
     Provider->OnCreateImageVariationCompleted().AddUObject(this, &ThisClass::OnCreateImageVariationCompleted);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
+    TryToOverrideURL();
     Provider->CreateImageVariation(ImageVariation, Auth);
 }
 
@@ -33,7 +33,7 @@ void UImageVariationAction::OnRequestError(const FString& URL, const FString& Co
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }
 
-void UImageVariationAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UImageVariationAction::TryToOverrideURL()
 {
     if (URLOverride.IsEmpty()) return;
 

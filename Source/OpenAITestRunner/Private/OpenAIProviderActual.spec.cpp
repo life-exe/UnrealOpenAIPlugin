@@ -1,4 +1,4 @@
-// Snake Game, Copyright LifeEXE. All Rights Reserved.
+// OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #if WITH_AUTOMATION_TESTS
 
@@ -32,7 +32,7 @@ using namespace OpenAI::Tests;
 
 namespace
 {
-void TestImageResponse(FAutomationTestBase* Test, const TArray<FString>& Data, int32 Num)
+void TestImageResponse(FAutomationTestBase* Test, const TArray<FImageObject>& Data, int32 Num)
 {
     if (!Test)
     {
@@ -43,7 +43,7 @@ void TestImageResponse(FAutomationTestBase* Test, const TArray<FString>& Data, i
     Test->TestTrue("Images amount should be valid", Data.Num() == Num);
     for (const auto& Image : Data)
     {
-        Test->TestTrue("Image url should be valud", TestUtils::IsValidURL(Image));
+        Test->TestTrue("Image url should be valud", TestUtils::IsValidURL(Image.URL));
     }
 }
 
@@ -234,7 +234,7 @@ void FOpenAIProviderActual::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Image.CreateImageRequestShouldResponseCorrectly",
+            It("Image.CreateImageRequestShouldResponseCorrectly.Dalle2",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
@@ -246,16 +246,43 @@ void FOpenAIProviderActual::Define()
                         });
 
                     FOpenAIImage OpenAIImage;
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2);
                     OpenAIImage.N = 2;
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
-                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
+                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
                     OpenAIImage.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
                     OpenAIProvider->CreateImage(OpenAIImage, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Image.CreateImageVariationRequestShouldResponseCorrectly",
+            It("Image.CreateImageRequestShouldResponseCorrectly.Dalle3",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateImageCompleted().AddLambda(
+                        [&](const FImageResponse& Response)
+                        {
+                            TestTrueExpr(Response.Created > 0);
+                            TestImageResponse(this, Response.Data, 1);
+                            TestTrueExpr(!Response.Data[0].Revised_Prompt.IsEmpty());
+                            RequestCompleted = true;
+                        });
+
+                    FOpenAIImage OpenAIImage;
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
+                    OpenAIImage.N = 1;  // only one image is now supported.
+                    OpenAIImage.Prompt = "Bear with beard drinking beer";
+                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
+                    OpenAIImage.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(
+                        EOpenAIImageFormat::URL);  // B64_JSON is not currently supported by the plugin.
+                    OpenAIImage.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
+                    OpenAIImage.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
+
+                    OpenAIProvider->CreateImage(OpenAIImage, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Image.CreateImageVariationRequestShouldResponseCorrectly.Dalle2",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageVariationCompleted().AddLambda(
@@ -269,14 +296,14 @@ void FOpenAIProviderActual::Define()
                     FOpenAIImageVariation OpenAIImageVariation;
                     OpenAIImageVariation.N = 2;
                     OpenAIImageVariation.Image = TestUtils::FileFullPath("whale.png");
-                    OpenAIImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
+                    OpenAIImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
                     OpenAIImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
                     OpenAIProvider->CreateImageVariation(OpenAIImageVariation, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Image.CreateImageEditRequestShouldResponseCorrectly",
+            It("Image.CreateImageEditRequestShouldResponseCorrectly.Dalle2",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageEditCompleted().AddLambda(
@@ -292,7 +319,7 @@ void FOpenAIProviderActual::Define()
                     OpenAIImageEdit.Image = TestUtils::FileFullPath("whale.png");
                     OpenAIImageEdit.Mask = TestUtils::FileFullPath("whale_mask.png");
                     OpenAIImageEdit.Prompt = "put the hat on the whale's head";
-                    OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
+                    OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
                     OpenAIImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
                     OpenAIProvider->CreateImageEdit(OpenAIImageEdit, Auth);

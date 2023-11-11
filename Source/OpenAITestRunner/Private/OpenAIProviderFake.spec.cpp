@@ -1,4 +1,4 @@
-// Snake Game, Copyright LifeEXE. All Rights Reserved.
+// OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #if WITH_AUTOMATION_TESTS
 

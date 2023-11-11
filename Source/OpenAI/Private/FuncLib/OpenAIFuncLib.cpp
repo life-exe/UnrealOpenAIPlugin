@@ -68,8 +68,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4: return "gpt-4";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
-        case EAllModelEnum::Dall_E_2: return "dalle-e-2";
-        case EAllModelEnum::Dall_E_3: return "dalle-e-3";
+        case EAllModelEnum::DALL_E_2: return "dall-e-2";
+        case EAllModelEnum::DALL_E_3: return "dall-e-3";
         case EAllModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
         case EAllModelEnum::GPT_4_Vision_Preview: return "gpt-4-vision-preview";
         case EAllModelEnum::GPT_3_5_Turbo_1106: return "gpt-3.5-turbo-1106";
@@ -118,15 +118,73 @@ FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum Model)
     return {};
 }
 
-FString UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize ImageSize)
+FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
+{
+    switch (Model)
+    {
+        case EImageModelEnum::DALL_E_2: return "dall-e-2";
+        case EImageModelEnum::DALL_E_3: return "dall-e-3";
+    }
+    checkNoEntry();
+    return {};
+}
+
+EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
+{
+    if (Model.Equals("dall-e-2")) return EImageModelEnum::DALL_E_2;
+    if (Model.Equals("dall-e-3")) return EImageModelEnum::DALL_E_3;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EImageModelEnum: %s"), *Model);
+    checkNoEntry();
+
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2 ImageSize)
 {
     switch (ImageSize)
     {
-        case EImageSize::Size_256x256: return "256x256";
-        case EImageSize::Size_512x512: return "512x512";
-        case EImageSize::Size_1024x1024: return "1024x1024";
+        case EImageSizeDalle2::Size_256x256: return "256x256";
+        case EImageSizeDalle2::Size_512x512: return "512x512";
+        case EImageSizeDalle2::Size_1024x1024: return "1024x1024";
     }
     checkNoEntry();
+    return {};
+}
+
+EImageSizeDalle2 UOpenAIFuncLib::StringToOpenAIImageSizeDalle2(const FString& ImageSize)
+{
+    if (ImageSize.Equals("256x256")) return EImageSizeDalle2::Size_256x256;
+    if (ImageSize.Equals("512x512")) return EImageSizeDalle2::Size_512x512;
+    if (ImageSize.Equals("1024x1024")) return EImageSizeDalle2::Size_1024x1024;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EImageSizeDalle2: %s"), *ImageSize);
+    checkNoEntry();
+
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3 ImageSize)
+{
+    switch (ImageSize)
+    {
+        case EImageSizeDalle3::Size_1024x1024: return "1024x1024";
+        case EImageSizeDalle3::Size_1024x1792: return "1024x1792";
+        case EImageSizeDalle3::Size_1792x1024: return "1792x1024";
+    }
+    checkNoEntry();
+    return {};
+}
+
+EImageSizeDalle3 UOpenAIFuncLib::StringToOpenAIImageSizeDalle3(const FString& ImageSize)
+{
+    if (ImageSize.Equals("1024x1024")) return EImageSizeDalle3::Size_1024x1024;
+    if (ImageSize.Equals("1024x1792")) return EImageSizeDalle3::Size_1024x1792;
+    if (ImageSize.Equals("1792x1024")) return EImageSizeDalle3::Size_1792x1024;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EImageSizeDalle3: %s"), *ImageSize);
+    checkNoEntry();
+
     return {};
 }
 
@@ -138,6 +196,61 @@ FString UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat ImageFormat
         case EOpenAIImageFormat::B64_JSON: return "b64_json";
     }
     checkNoEntry();
+    return {};
+}
+
+EOpenAIImageFormat UOpenAIFuncLib::StringToOpenAIImageFormat(const FString& ImageFormat)
+{
+    if (ImageFormat.Equals("url")) return EOpenAIImageFormat::URL;
+    if (ImageFormat.Equals("b64_json")) return EOpenAIImageFormat::B64_JSON;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EOpenAIImageFormat: %s"), *ImageFormat);
+    checkNoEntry();
+
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality ImageQuality)
+{
+    switch (ImageQuality)
+    {
+        case EOpenAIImageQuality::HD: return "hd";
+        case EOpenAIImageQuality::Standard: return "standard";
+    }
+    checkNoEntry();
+    return {};
+}
+
+EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& ImageQuality)
+{
+    if (ImageQuality.Equals("hd")) return EOpenAIImageQuality::HD;
+    if (ImageQuality.Equals("standard")) return EOpenAIImageQuality::Standard;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EOpenAIImageQuality: %s"), *ImageQuality);
+    checkNoEntry();
+
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle ImageStyle)
+{
+    switch (ImageStyle)
+    {
+        case EOpenAIImageStyle::Natural: return "natural";
+        case EOpenAIImageStyle::Vivid: return "vivid";
+    }
+    checkNoEntry();
+    return {};
+}
+
+EOpenAIImageStyle UOpenAIFuncLib::StringToOpenAIImageStyle(const FString& ImageStyle)
+{
+    if (ImageStyle.Equals("natural")) return EOpenAIImageStyle::Natural;
+    if (ImageStyle.Equals("vivid")) return EOpenAIImageStyle::Vivid;
+
+    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EOpenAIImageStyle: %s"), *ImageStyle);
+    checkNoEntry();
+
     return {};
 }
 

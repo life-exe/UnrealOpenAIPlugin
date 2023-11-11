@@ -25,14 +25,15 @@ void AAPIOverview::BeginPlay()
     Provider = NewObject<UOpenAIProvider>();
     Auth = UOpenAIFuncLib::LoadAPITokensFromFile(FPaths::ProjectDir().Append("OpenAIAuth.ini"));
 
-    ListModels();
+    // ListModels();
     // RetrieveModel();
     // DeleteFineTuneModel();
 
     // CreateCompletionRequest();
     // CreateChatCompletionRequest();
 
-    // CreateImage();
+    // CreateImageDALLE2();
+    CreateImageDALLE3();
     // CreateImageEdit();
     // CreateImageVariation();
 
@@ -166,7 +167,7 @@ void AAPIOverview::CreateChatCompletionRequest()
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }
 
-void AAPIOverview::CreateImage()
+void AAPIOverview::CreateImageDALLE2()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
@@ -174,15 +175,42 @@ void AAPIOverview::CreateImage()
         [](const FImageResponse& Response)
         {
             FString OutputString{};
-            Algo::ForEach(Response.Data, [&](const FString& Data) { OutputString.Append(Data).Append(LINE_TERMINATOR); });
+            Algo::ForEach(
+                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
             UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
         });
 
     FOpenAIImage Image;
     Image.Prompt = "Tiger is eating pizza";
-    Image.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_512x512);
+    Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_512x512);
     Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
     Image.N = 2;
+
+    Provider->CreateImage(Image, Auth);
+}
+
+void AAPIOverview::CreateImageDALLE3()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateImageCompleted().AddLambda(
+        [](const FImageResponse& Response)
+        {
+            FString OutputString{};
+            Algo::ForEach(
+                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
+            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+        });
+
+    FOpenAIImage Image;
+    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
+    Image.N = 1;  // only one image is now supported.
+    Image.Prompt = "Bear with beard drinking beer";
+    Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
+    Image.Response_Format =
+        UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);  // B64_JSON is not currently supported by the plugin.
+    Image.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
+    Image.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
 
     Provider->CreateImage(Image, Auth);
 }
@@ -196,7 +224,8 @@ void AAPIOverview::CreateImageEdit()
         [](const FImageEditResponse& Response)
         {
             FString OutputString{};
-            Algo::ForEach(Response.Data, [&](const FString& Data) { OutputString.Append(Data).Append(LINE_TERMINATOR); });
+            Algo::ForEach(
+                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
             UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
         });
 
@@ -206,7 +235,7 @@ void AAPIOverview::CreateImageEdit()
     ImageEdit.Mask = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\image_mask.png";
     ImageEdit.N = 1;
     ImageEdit.Prompt = "Draw flamingo";
-    ImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
+    ImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
     ImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
     Provider->CreateImageEdit(ImageEdit, Auth);
@@ -220,7 +249,8 @@ void AAPIOverview::CreateImageVariation()
         [](const FImageVariationResponse& Response)
         {
             FString OutputString{};
-            Algo::ForEach(Response.Data, [&](const FString& Data) { OutputString.Append(Data).Append(LINE_TERMINATOR); });
+            Algo::ForEach(
+                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
             UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
         });
 
@@ -228,7 +258,7 @@ void AAPIOverview::CreateImageVariation()
     // absolute path to your image
     ImageVariation.Image = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\image.png";
     ImageVariation.N = 1;
-    ImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_256x256);
+    ImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
     ImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
     Provider->CreateImageVariation(ImageVariation, Auth);

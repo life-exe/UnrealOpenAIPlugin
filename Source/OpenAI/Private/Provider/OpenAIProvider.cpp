@@ -481,14 +481,10 @@ bool UOpenAIProvider::ParseImageRequest(FHttpResponsePtr Response, FImageRespons
     const auto& DataArray = JsonObject->GetArrayField("data");
     for (const auto& DataElem : DataArray)
     {
-        const auto DataObject = DataElem->AsObject();
-        if (DataObject->HasField("b64_json"))
+        FImageObject ImageObject;
+        if (FJsonObjectConverter::JsonObjectToUStruct(DataElem->AsObject().ToSharedRef(), &ImageObject, 0, 0))
         {
-            ImageResponse.Data.Push(DataObject->GetStringField("b64_json"));
-        }
-        else if (DataObject->HasField("url"))
-        {
-            ImageResponse.Data.Push(DataObject->GetStringField("url"));
+            ImageResponse.Data.Push(ImageObject);
         }
     }
 
