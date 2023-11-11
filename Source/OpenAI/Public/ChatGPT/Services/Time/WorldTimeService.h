@@ -34,17 +34,17 @@ class OPENAI_API UWorldTimeService : public UBaseService
     GENERATED_BODY()
 
 public:
-    virtual bool Init(const OpenAI::ServiceSecrets& Secrets) { return true; }
+    virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override { return true; }
 
-    virtual FString Description() const;
-    virtual FString FunctionName() const;
-    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+    virtual FString Description() const override;
+    virtual FString FunctionName() const override;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args) override;
 
-    virtual FString Name() const { return "Time"; };
-    virtual FString TooltipDescription() const { return "World time from http://worldtimeapi.org"; };
+    virtual FString Name() const override { return "Time"; };
+    virtual FString TooltipDescription() const override { return "World time from http://worldtimeapi.org"; };
 
 protected:
-    virtual FString MakeFunction() const;
+    virtual FString MakeFunction() const override;
 
 private:
     void OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);

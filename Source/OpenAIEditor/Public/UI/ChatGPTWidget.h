@@ -82,6 +82,9 @@ private:
     UPROPERTY()
     TObjectPtr<USaveSettings> SaveSettings;
 
+    UPROPERTY()
+    TArray<TObjectPtr<UServiceWidget>> ServiceWidgets;
+
 private:
     UFUNCTION()
     void OnSendMessage();
@@ -116,5 +119,5 @@ private:
     OpenAI::ServiceSecrets ServiceSecrets;
 
     void CreateServiceWidgets();
-    void OnServiceEnabled(bool IsEnabled, const TSubclassOf<UBaseService>& ServiceClass);
+    void OnServiceEnabled(bool IsEnabled, const TSubclassOf<UBaseService>& ServiceClass, const TObjectPtr<UServiceWidget>& ServiceWidget);
 };

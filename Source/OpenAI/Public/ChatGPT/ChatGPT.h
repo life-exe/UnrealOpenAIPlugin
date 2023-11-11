@@ -28,7 +28,7 @@ public:
     FString GetModel() const;
     void SetMaxTokens(int32 Tokens);
 
-    void RegisterService(const TSubclassOf<UBaseService>& ServiceClass, const OpenAI::ServiceSecrets& Secrets);
+    bool RegisterService(const TSubclassOf<UBaseService>& ServiceClass, const OpenAI::ServiceSecrets& Secrets);
     void UnRegisterService(const TSubclassOf<UBaseService>& ServiceClass);
 
     void AddMessage(const FMessage& Message);

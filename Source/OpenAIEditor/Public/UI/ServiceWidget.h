@@ -7,7 +7,8 @@
 #include "ChatGPT/ChatGPT.h"
 #include "ServiceWidget.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnServiceEnabled, bool, const TSubclassOf<UBaseService>&);
+class UServiceWidget;
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnServiceEnabled, bool, const TSubclassOf<UBaseService>&, const TObjectPtr<UServiceWidget>&);
 
 class UTextBlock;
 class UEditorUtilityCheckBox;

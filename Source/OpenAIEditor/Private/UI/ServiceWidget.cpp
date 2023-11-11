@@ -50,5 +50,5 @@ void UServiceWidget::SetEnabled(bool IsEnabled)
 
 void UServiceWidget::OnCheckStateChanged(bool bIsChecked)
 {
-    ServiceEnabled.Broadcast(bIsChecked, ServiceClass);
+    ServiceEnabled.Broadcast(bIsChecked, ServiceClass, this);
 }

@@ -104,9 +104,10 @@ void UChatGPTWidget::CreateServiceWidgets()
         ServiceWidget->OnServiceEnabled().AddUObject(this, &ThisClass::OnServiceEnabled);
         ServiceContainer->AddChildToGrid(ServiceWidget, Row, Column);
         ServiceWidget->SetEnabled(SaveSettings->IsServerRegistered(ServiceClass));
+        ServiceWidgets.Add(ServiceWidget);
         if (ServiceWidget->IsEnabled())
         {
-            OnServiceEnabled(true, ServiceClass);
+            OnServiceEnabled(true, ServiceClass, ServiceWidget);
         }
 
         if (++Column >= ServicesAmountInRow)
@@ -117,7 +118,8 @@ void UChatGPTWidget::CreateServiceWidgets()
     }
 }
 
-void UChatGPTWidget::OnServiceEnabled(bool IsEnabled, const TSubclassOf<UBaseService>& ServiceClass)
+void UChatGPTWidget::OnServiceEnabled(
+    bool IsEnabled, const TSubclassOf<UBaseService>& ServiceClass, const TObjectPtr<UServiceWidget>& ServiceWidget)
 {
     if (!IsEnabled)
     {
@@ -125,8 +127,16 @@ void UChatGPTWidget::OnServiceEnabled(bool IsEnabled, const TSubclassOf<UBaseSer
         SaveSettings->UnRegisterService(ServiceClass);
         return;
     }
-    ChatGPT->RegisterService(ServiceClass, ServiceSecrets);
-    SaveSettings->RegisterService(ServiceClass);
+
+    if (ChatGPT->RegisterService(ServiceClass, ServiceSecrets))
+    {
+        SaveSettings->RegisterService(ServiceClass);
+    }
+    else if (ServiceWidget)
+    {
+        ServiceWidget->SetEnabled(false);
+        SaveSettings->UnRegisterService(ServiceClass);
+    }
 }
 
 void UChatGPTWidget::OnSendMessage()

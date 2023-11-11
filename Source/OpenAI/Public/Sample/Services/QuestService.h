@@ -24,14 +24,14 @@ class OPENAI_API UQuestService : public UBaseService
     GENERATED_BODY()
 
 public:
-    virtual bool Init(const OpenAI::ServiceSecrets& Secrets) { return true; };
-    virtual FString Name() const { return "Quest"; };
-    virtual FString TooltipDescription() const { return "Alien Rampage Saga"; };
+    virtual bool Init(const OpenAI::ServiceSecrets& Secrets) override { return true; };
+    virtual FString Name() const override { return "Quest"; };
+    virtual FString TooltipDescription() const override { return "Alien Rampage Saga"; };
 
-    virtual FString Description() const;
-    virtual FString FunctionName() const;
-    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+    virtual FString Description() const override;
+    virtual FString FunctionName() const override;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args) override;
 
 protected:
-    virtual FString MakeFunction() const;
+    virtual FString MakeFunction() const override;
 };

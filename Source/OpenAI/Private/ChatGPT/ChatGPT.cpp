@@ -142,7 +142,7 @@ bool UChatGPT::HandleFunctionCall(const FFunctionCall& FunctionCall)
     return false;
 }
 
-void UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, const OpenAI::ServiceSecrets& Secrets)
+bool UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, const OpenAI::ServiceSecrets& Secrets)
 {
     FString LogMsg;
 
@@ -153,7 +153,7 @@ void UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, co
         LogMsg = FString::Format(
             TEXT("Service {0} can't be init. API keys have probably not been loaded. Its functions are not available."), {Service->Name()});
         UE_LOG(LogChatGPT, Error, TEXT("%s"), *LogMsg);
-        return;
+        return false;
     }
     Service->OnServiceDataRecieved().AddLambda(
         [&](const FMessage& Message)
@@ -171,6 +171,7 @@ void UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, co
 
     LogMsg = FString::Format(TEXT("Service {0} was registered"), {Service->Name()});
     UE_LOG(LogChatGPT, Display, TEXT("%s"), *LogMsg);
+    return true;
 }
 
 void UChatGPT::UnRegisterService(const TSubclassOf<UBaseService>& ServiceClass)
