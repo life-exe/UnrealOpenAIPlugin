@@ -77,6 +77,8 @@ enum class EAllModelEnum : uint8
     TTS_1_HD,
     TTS_1_1106,
     TTS_1_HD_1106,
+    Canary_Whisper,
+    Canary_TTS,
 };
 
 UENUM(BlueprintType)

@@ -120,6 +120,8 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_HD).Equals("tts-1-hd"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_1106).Equals("tts-1-1106"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_HD_1106).Equals("tts-1-hd-1106"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Canary_Whisper).Equals("canary_whisper"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Canary_TTS).Equals("canary_tts"));
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",

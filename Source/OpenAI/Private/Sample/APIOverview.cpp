@@ -181,6 +181,7 @@ void AAPIOverview::CreateImageDALLE2()
         });
 
     FOpenAIImage Image;
+    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2);
     Image.Prompt = "Tiger is eating pizza";
     Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_512x512);
     Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);

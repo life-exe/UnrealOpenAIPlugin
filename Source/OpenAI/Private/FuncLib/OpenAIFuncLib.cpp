@@ -77,6 +77,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::TTS_1_HD: return "tts-1-hd";
         case EAllModelEnum::TTS_1_1106: return "tts-1-1106";
         case EAllModelEnum::TTS_1_HD_1106: return "tts-1-hd-1106";
+        case EAllModelEnum::Canary_Whisper: return "canary_whisper";
+        case EAllModelEnum::Canary_TTS: return "canary_tts";
     }
     checkNoEntry();
     return {};
