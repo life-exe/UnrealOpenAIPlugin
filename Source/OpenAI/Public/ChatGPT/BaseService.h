@@ -79,5 +79,8 @@ protected:
     */
     virtual FString MakeFunction() const;
 
+    /*
+      Helper function that can be used in the child classes.
+    */
     virtual FMessage MakeMessage(const FString& Content) const;
 };

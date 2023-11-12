@@ -68,7 +68,7 @@ public:
 
     virtual FString Description() const;
     virtual FString FunctionName() const;
-    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+    virtual void Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolID);
 
     virtual FString Name() const;
     virtual FString TooltipDescription() const;
@@ -114,7 +114,7 @@ public:
 
     virtual FString Description() const;
     virtual FString FunctionName() const;
-    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+    virtual void Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolID);
 
     virtual FString Name() const override { return "Quest"; }
     virtual FString TooltipDescription() const override { return "Alien Rampage Saga"; }
@@ -142,7 +142,7 @@ FString UQuestService::Description() const { return {}; }
 
 FString UQuestService::MakeFunction() const { return {}; }
 
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson) {}
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolID) {}
 ```
 
 6. Create a name for our function that `OpenAI` will call. The init function will always return `true` in our example.
@@ -239,10 +239,12 @@ Here we have a magic function from the plugin `UOpenAIFuncLib::MakeFunctionsStri
 that is necessary for proper parsing of the [JSON Schema reference.](https://json-schema.org/understanding-json-schema)
 
 9. We are moving on to the final function, which is called when `ChatGPT` requests information about our characters:
+Add call to the parent function with `Super` alias. Basically the parent function will store the `ToolID`.
 
 ```cpp
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
+    Super::Call(ArgsJson, ToolIDIn);
 }
 ```
 
@@ -252,8 +254,10 @@ We will also retrieve our parameters that we defined in the `JSON schema`.
 The only mandatory parameter is the `name` our character; `ability` may not be present:
 
 ```cpp
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
+    Super::Call(ArgsJson, ToolIDIn);
+
     FString ArgsStr;
     if (UOpenAIFuncLib::JsonToString(ArgsJson, ArgsStr))
     {
@@ -280,7 +284,7 @@ Next, we define the data structure with information about our characters.
 I am doing this locally; you can add it as a member of the class:
 
 ```cpp
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
 ...
     struct FCharacterInfo
@@ -300,7 +304,7 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
 Great. Now we are forming a string to send to the `ChatGPT`:
 
 ```cpp
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
 ...
     FString InfoToOpenaAI;
@@ -312,16 +316,13 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
 ```
 
 Now we're assembling the full structure and sending it to the core of the plugin:
+You can do this with a function that exists in the `UBaseService` class.
 
 ```cpp
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
 ...
-    FMessage Message;
-    Message.Name = Quest::InternalFunctionName;
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = InfoToOpenaAI;
-
+    const FMessage Message = MakeMessage(InfoToOpenAI);
     ServiceDataRecieved.Broadcast(Message);
 }
 ```
@@ -334,8 +335,10 @@ The `ServiceDataRecieved` is a delegate from the base class `UBaseService` which
 The full listing of the `UQuestService::Call` is following:
 
 ```cpp
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
+    Super::Call(Args, ToolIDIn);
+
     FString ArgsStr;
     if (UOpenAIFuncLib::JsonToString(ArgsJson, ArgsStr))
     {
@@ -370,11 +373,7 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
         InfoToOpenaAI = AbilityRequested ? Info[CharacterName].Abilities : Info[CharacterName].Description;
     }
 
-    FMessage Message;
-    Message.Name = Quest::InternalFunctionName;
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = InfoToOpenaAI;
-
+    const FMessage Message = MakeMessage(InfoToOpenAI);
     ServiceDataRecieved.Broadcast(Message);
 }
 ```
@@ -447,7 +446,7 @@ public:
     virtual FString TooltipDescription() const override { return "Alien Rampage Saga"; }
     virtual FString Description() const override;
     virtual FString FunctionName() const override;
-    virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
+    virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolID) override;
 
 protected:
     virtual FString MakeFunction() const;
@@ -523,8 +522,10 @@ FString UQuestService::MakeFunction() const
     return UOpenAIFuncLib::MakeFunctionsString(MainObj);
 }
 
-void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson, const FString& ToolIDIn)
 {
+    Super::Call(Args, ToolIDIn);
+
     FString ArgsStr;
     if (UOpenAIFuncLib::JsonToString(ArgsJson, ArgsStr))
     {
@@ -563,11 +564,7 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
         InfoToOpenaAI = "Character with such a name doesn't exist in game";
     }
 
-    FMessage Message;
-    Message.Name = FunctionName();
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = InfoToOpenaAI;
-
+    const FMessage Message = MakeMessage(InfoToOpenAI);
     ServiceDataRecieved.Broadcast(Message);
 }
 ```
