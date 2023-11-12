@@ -51,7 +51,7 @@ bool TestFinishReason(const FString& Reason)
 {
     const TSet<FString> FinishReson{UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Stop),
         UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length),
-        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Function_Call),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Tool_Calls),
         UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter),
         UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Null)};
     return FinishReson.Contains(Reason);
@@ -497,9 +497,23 @@ void FOpenAIProviderActual::Define()
 
                             const float Temperature = 22.5f;
 
-                            if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Function_Call)
+                            if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Tool_Calls)
                             {
                                 TestTrueExpr(Choice.Message.Content.IsEmpty());
+                                TestTrueExpr(!Choice.Message.Tool_Calls.IsEmpty());
+
+                                const auto ToolCall = Choice.Message.Tool_Calls[0];
+
+                                TArray<FMessage> NewHistory = History;
+                                FMessage HistoryMessage;
+                                HistoryMessage.Role = Choice.Message.Role;
+
+                                FToolCalls ToolCalls;
+                                ToolCalls.ID = ToolCall.ID;
+                                ToolCalls.Type = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
+                                ToolCalls.Function.Name = ToolCall.Function.Name;
+                                HistoryMessage.Tool_Calls.Add(ToolCalls);
+                                NewHistory.Add(HistoryMessage);
 
                                 const auto get_current_weather = [&](const FString& Location, const FString& Unit) -> FString {
                                     return FString::Format(TEXT("location:{0}, temperature:{1}, unit:{2}, forecast: [sunny, windy]"),
@@ -509,10 +523,10 @@ void FOpenAIProviderActual::Define()
                                 TMap<FString, TFunction<FString(const FString&, const FString&)>> Funcs;
                                 Funcs.Add("get_current_weather", get_current_weather);
 
-                                const FString IncomeFuncName = Choice.Message.Function_Call.Name;
+                                const FString IncomeFuncName = ToolCall.Function.Name;
                                 TestTrueExpr(IncomeFuncName.Equals(FuncName));
 
-                                const FString Arguments = Choice.Message.Function_Call.Arguments;
+                                const FString Arguments = ToolCall.Function.Arguments;
                                 TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Arguments);
                                 TSharedPtr<FJsonObject> ArgumentsJsonObject;
                                 if (!FJsonSerializer::Deserialize(JsonReader, ArgumentsJsonObject))
@@ -526,10 +540,9 @@ void FOpenAIProviderActual::Define()
                                 const auto UnitArg = ArgumentsJsonObject->TryGetField("unit");
                                 TestTrueExpr(UnitArg.IsValid());
 
-                                TArray<FMessage> NewHistory = History;
                                 FMessage Message;
-                                Message.Name = FuncName;
-                                Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
+                                Message.Tool_Call_ID = Choice.Message.Tool_Calls[0].ID;
+                                Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Tool);
                                 // call function
                                 Message.Content = Funcs[IncomeFuncName](LocationArg.Get()->AsString(), UnitArg.Get()->AsString());
                                 NewHistory.Add(Message);
@@ -579,10 +592,6 @@ void FOpenAIProviderActual::Define()
                         }]
                     */
 
-                    FFunctionOpenAI FunctionOpenAI;
-                    FunctionOpenAI.Name = FuncName;
-                    FunctionOpenAI.Description = "Get the current weather in a given location";
-
                     TSharedPtr<FJsonObject> MainObj = MakeShareable(new FJsonObject());
                     MainObj->SetStringField("type", "object");
 
@@ -611,8 +620,13 @@ void FOpenAIProviderActual::Define()
                     RequiredArray.Add(MakeShareable(new FJsonValueString("unit")));
                     MainObj->SetArrayField("required", RequiredArray);
 
-                    FunctionOpenAI.Parameters = UOpenAIFuncLib::MakeFunctionsString(MainObj);
-                    ChatCompletion.Functions.Add(FunctionOpenAI);
+                    FTools Tools;
+                    Tools.Type = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
+                    Tools.Function.Name = FuncName;
+                    Tools.Function.Description = "Get the current weather in a given location";
+                    Tools.Function.Parameters = UOpenAIFuncLib::MakeFunctionsString(MainObj);
+                    ChatCompletion.Tools.Add(Tools);
+
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });

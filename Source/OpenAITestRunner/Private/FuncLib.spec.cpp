@@ -241,6 +241,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::User).Equals("user"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant).Equals("assistant"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::Function).Equals("function"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIRoleToString(ERole::Tool).Equals("tool"));
                 });
 
             It("StringToOpenAIRoleShouldReturnCorrectValue",
@@ -250,6 +251,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("user") == ERole::User);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("assistant") == ERole::Assistant);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("function") == ERole::Function);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIRole("tool") == ERole::Tool);
                 });
 
             It("OpenAIFinishReasonToStringShouldReturnCorrectValue",
@@ -257,7 +259,7 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Stop).Equals("stop"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length).Equals("length"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Function_Call).Equals("function_call"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Tool_Calls).Equals("tool_calls"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter).Equals("content_filter"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Null).Equals(""));
                 });
@@ -266,7 +268,7 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("stop") == EOpenAIFinishReason::Stop);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("length") == EOpenAIFinishReason::Length);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("function_call") == EOpenAIFinishReason::Function_Call);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("tool_calls") == EOpenAIFinishReason::Tool_Calls);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("content_filter") == EOpenAIFinishReason::Content_Filter);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("") == EOpenAIFinishReason::Null);
                 });
@@ -296,6 +298,13 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Float).Equals("float"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Base64).Equals("base64"));
+                });
+
+            It("OpenAIChatResponseFormatToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIChatResponseFormatToString(EChatResponseFormat::Text).Equals("text"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIChatResponseFormatToString(EChatResponseFormat::JSON_Object).Equals("json_object"));
                 });
 
             It("OpenAIModelToStringShouldReturnCorrectValue",

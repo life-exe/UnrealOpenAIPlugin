@@ -38,7 +38,7 @@ public:
 
     virtual FString Description() const override;
     virtual FString FunctionName() const override;
-    virtual void Call(const TSharedPtr<FJsonObject>& Args) override;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolID) override;
 
     virtual FString Name() const override { return "Time"; };
     virtual FString TooltipDescription() const override { return "World time from http://worldtimeapi.org"; };

@@ -8,45 +8,60 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogChatGPT, All, All);
 
+namespace
+{
+FString GatherChunkResponse(const TArray<FChatCompletionStreamResponse>& Responses)
+{
+    FString OutputString{};
+    Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
+        Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
+            OutputString.Append(Choice.Delta.Content);
+        });
+    });
+
+    return OutputString;
+}
+
+bool GatherFunctionResponse(const TArray<FChatCompletionStreamResponse>& Responses, FFunctionCommon& FunctionCall, FString& ID)
+{
+    bool NeedToCallFunction{false};
+    Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
+        Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
+            ID.Append(Choice.Delta.Tool_Calls.ID);
+            FunctionCall.Arguments.Append(Choice.Delta.Tool_Calls.Function.Arguments);
+            FunctionCall.Name.Append(Choice.Delta.Tool_Calls.Function.Name);
+            if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Tool_Calls)
+            {
+                NeedToCallFunction = true;
+            }
+        });
+    });
+    return NeedToCallFunction;
+}
+}  // namespace
+
 UChatGPT::UChatGPT()
 {
     Provider = NewObject<UOpenAIProvider>();
-    Provider->SetLogEnabled(false);
+    Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddLambda(
         [&](const FString& URL, const FString& Content)
         {
             HandleError(Content);
             HandleRequestCompletion();
         });
-    Provider->OnCreateChatCompletionStreamProgresses().AddLambda(
-        [&](const TArray<FChatCompletionStreamResponse>& Responses)
-        {
-            FString OutputString{};
-            Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
-                Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
-                    OutputString.Append(Choice.Delta.Content);
-                });
-            });
-            UpdateAssistantMessage(OutputString);
-        });
+    Provider->OnCreateChatCompletionStreamProgresses().AddLambda([&](const TArray<FChatCompletionStreamResponse>& Responses) {  //
+        const FString GatherdChunk = GatherChunkResponse(Responses);
+        UpdateAssistantMessage(GatherdChunk);
+    });
     Provider->OnCreateChatCompletionStreamCompleted().AddLambda(
         [&](const TArray<FChatCompletionStreamResponse>& Responses)  //
         {
-            FFunctionCall FunctionCall{};
-            bool NeedToCallFunction{false};
-            Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
-                Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
-                    FunctionCall.Arguments.Append(Choice.Delta.Function_Call.Arguments);
-                    FunctionCall.Name.Append(Choice.Delta.Function_Call.Name);
-                    if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Function_Call)
-                    {
-                        NeedToCallFunction = true;
-                    }
-                });
-            });
-            if (NeedToCallFunction)
+            FFunctionCommon FunctionCall{};
+            FString ID;
+            if (GatherFunctionResponse(Responses, FunctionCall, ID))
             {
-                if (!HandleFunctionCall(FunctionCall))
+                if (!HandleFunctionCall(FunctionCall, ID))
                 {
                     HandleError("");
                     HandleRequestCompletion();
@@ -61,17 +76,17 @@ UChatGPT::UChatGPT()
 
 void UChatGPT::MakeRequest()
 {
-    TArray<FFunctionOpenAI> AvailableFunctions;
+    TArray<FTools> AvailableTools;
     for (const auto& Service : Services)
     {
-        AvailableFunctions.Add(Service->Function());
+        AvailableTools.Add(FTools{UOpenAIFuncLib::OpenAIRoleToString(ERole::Function), Service->Function()});
     }
     FChatCompletion ChatCompletion;
     ChatCompletion.Model = OpenAIModel;
     ChatCompletion.Messages = ChatHistory;
     ChatCompletion.Max_Tokens = MaxTokens;
     ChatCompletion.Stream = true;
-    ChatCompletion.Functions = AvailableFunctions;
+    ChatCompletion.Tools = AvailableTools;
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }
 
@@ -105,12 +120,12 @@ void UChatGPT::HandleError(const FString& Content)
     UpdateAssistantMessage(UOpenAIFuncLib::ResponseErrorToString(Code), true);
 }
 
-bool UChatGPT::HandleFunctionCall(const FFunctionCall& FunctionCall)
+bool UChatGPT::HandleFunctionCall(const FFunctionCommon& FunctionCall, const FString& ID)
 {
     FString LogMsg;
 
     TSharedPtr<FJsonObject> Args;
-    if (!UOpenAIFuncLib::StringToJson(FunctionCall.Arguments, Args))
+    if (!FunctionCall.Arguments.IsEmpty() && !UOpenAIFuncLib::StringToJson(FunctionCall.Arguments, Args))
     {
         LogMsg = FString::Format(TEXT("Can't parse args: {0}"), {FunctionCall.Arguments});
         UE_LOG(LogChatGPT, Error, TEXT("%s"), *LogMsg);
@@ -122,9 +137,12 @@ bool UChatGPT::HandleFunctionCall(const FFunctionCall& FunctionCall)
 
     FMessage HistoryMessage;
     HistoryMessage.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant);
-    HistoryMessage.Function_Call.Name = FunctionCall.Name;
-    // @todo: leave it empty for now, some problems with serialization format
-    HistoryMessage.Function_Call.Arguments = "{}";
+
+    FToolCalls ToolCalls;
+    ToolCalls.ID = ID;
+    ToolCalls.Type = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
+    ToolCalls.Function.Name = FunctionCall.Name;
+    HistoryMessage.Tool_Calls.Add(ToolCalls);
     ChatHistory.Add(HistoryMessage);
 
     // find and call func
@@ -132,7 +150,7 @@ bool UChatGPT::HandleFunctionCall(const FFunctionCall& FunctionCall)
     {
         if (Service->FunctionName().Equals(FunctionCall.Name))
         {
-            Service->Call(Args);
+            Service->Call(Args, ID);
             return true;
         }
     }

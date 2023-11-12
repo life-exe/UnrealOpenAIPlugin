@@ -107,11 +107,13 @@ FString UNewsService::MakeFunction() const
     return UOpenAIFuncLib::MakeFunctionsString(MainObj);
 }
 
-void UNewsService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UNewsService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
 {
+    Super::Call(Args, ToolIDIn);
+
     auto HttpRequest = FHttpModule::Get().CreateRequest();
     HttpRequest->SetHeader("Content-Type", "application/json");
-    HttpRequest->SetURL(MakeRequestURL(ArgsJson));
+    HttpRequest->SetURL(MakeRequestURL(Args));
     HttpRequest->SetVerb("GET");
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRequestCompleted);
     HttpRequest->ProcessRequest();
@@ -183,12 +185,7 @@ void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr 
             if (Index > News::MaxNewsAmount) return;
         });
 
-    FMessage Message;
-    Message.Name = FunctionName();
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = NewsCombined;
-
-    ServiceDataRecieved.Broadcast(Message);
+    ServiceDataRecieved.Broadcast(MakeMessage(NewsCombined));
 }
 
 void UNewsService::SendError(const FString& ErrorMessage)

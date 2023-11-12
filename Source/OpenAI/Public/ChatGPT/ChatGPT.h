@@ -65,5 +65,5 @@ private:
     void UpdateAssistantMessage(const FString& Message, bool WasError = false);
 
     void HandleError(const FString& Content);
-    bool HandleFunctionCall(const FFunctionCall& FunctionCall);
+    bool HandleFunctionCall(const FFunctionCommon& FunctionCall, const FString& ID);
 };

@@ -30,7 +30,7 @@ public:
 
     virtual FString Description() const override;
     virtual FString FunctionName() const override;
-    virtual void Call(const TSharedPtr<FJsonObject>& Args) override;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolID) override;
 
 protected:
     virtual FString MakeFunction() const override;

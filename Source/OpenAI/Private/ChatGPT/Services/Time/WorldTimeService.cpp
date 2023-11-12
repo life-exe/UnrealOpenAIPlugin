@@ -60,8 +60,10 @@ FString UWorldTimeService::MakeFunction() const
     return UOpenAIFuncLib::MakeFunctionsString(ParamsObj);
 }
 
-void UWorldTimeService::Call(const TSharedPtr<FJsonObject>& Args)
+void UWorldTimeService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
 {
+    Super::Call(Args, ToolIDIn);
+
     FString Location{};
     Args->TryGetStringField("location", Location);
 
@@ -96,10 +98,5 @@ void UWorldTimeService::OnRequestCompleted(FHttpRequestPtr Request, FHttpRespons
     const FString InfoToOpenAI = FString::Format(TEXT("DateTime: {0}, Timezone: {1}"), {WorldTime.DateTime, WorldTime.TimeZone});
     UE_LOG(LogWorldTimeService, Display, TEXT("InfoToOpenAI: %s"), *InfoToOpenAI);
 
-    FMessage Message;
-    Message.Name = FunctionName();
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = InfoToOpenAI;
-
-    ServiceDataRecieved.Broadcast(Message);
+    ServiceDataRecieved.Broadcast(MakeMessage(InfoToOpenAI));
 }

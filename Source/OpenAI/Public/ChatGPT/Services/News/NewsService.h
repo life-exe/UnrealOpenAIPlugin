@@ -48,7 +48,7 @@ public:
     virtual FString TooltipDescription() const override { return "News headlines from https://newsapi.org"; }
     virtual FString Description() const override;
     virtual FString FunctionName() const override;
-    virtual void Call(const TSharedPtr<FJsonObject>& ArgsJson) override;
+    virtual void Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolID) override;
 
 protected:
     virtual FString MakeFunction() const;

@@ -94,6 +94,9 @@ public:
     static FString OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat EmbeddingsEncodingFormat);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString OpenAIChatResponseFormatToString(EChatResponseFormat ChatResponseFormat);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIModelToString(const FOpenAIModel& OpenAIModel);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")

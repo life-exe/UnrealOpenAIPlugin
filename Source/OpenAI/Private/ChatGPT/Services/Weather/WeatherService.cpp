@@ -86,10 +86,12 @@ FString UWeatherService::MakeFunction() const
     return UOpenAIFuncLib::MakeFunctionsString(MainObj);
 }
 
-void UWeatherService::Call(const TSharedPtr<FJsonObject>& ArgsJson)
+void UWeatherService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
 {
+    Super::Call(Args, ToolIDIn);
+
     FString URL;
-    if (!MakeRequestURL(ArgsJson, URL))
+    if (!MakeRequestURL(Args, URL))
     {
         SendError("Most likely an argument parsing problem.");
         return;
@@ -160,13 +162,9 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
         FullDescription.Append(Description);
     });
 
-    FMessage Message;
-    Message.Name = FunctionName();
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = FString::Format(TEXT("location:{0}, temperature:{1}, descriptions:{2}"),  //
+    const FString Content = FString::Format(TEXT("location:{0}, temperature:{1}, descriptions:{2}"),  //
         {Weather.Location.Name, Weather.Current.Temperature, FullDescription});
-
-    ServiceDataRecieved.Broadcast(Message);
+    ServiceDataRecieved.Broadcast(MakeMessage(Content));
 }
 
 void UWeatherService::SendError(const FString& ErrorMessage)

@@ -1,6 +1,7 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "ChatGPT/BaseService.h"
+#include "FuncLib/OpenAIFuncLib.h"
 
 bool UBaseService::Init(const OpenAI::ServiceSecrets& Secrets)
 {
@@ -26,9 +27,10 @@ FString UBaseService::FunctionName() const
     return "Unknown function name";
 }
 
-void UBaseService::Call(const TSharedPtr<FJsonObject>& Args)
+void UBaseService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
 {
-    checkf(false, TEXT("You must override the 'Call' method in your service class that derived from the UBaseService class."));
+    ToolID = ToolIDIn;
+    // "You must override the 'Call' method in your service class that derived from the UBaseService class.
 }
 
 FString UBaseService::MakeFunction() const
@@ -42,13 +44,22 @@ FString UBaseService::TooltipDescription() const
     return "";
 }
 
-FFunctionOpenAI UBaseService::Function() const
+FFunctionRequest UBaseService::Function() const
 {
-    FFunctionOpenAI FunctionOpenAI;
+    FFunctionRequest FunctionOpenAI;
     FunctionOpenAI.Name = FunctionName();
     FunctionOpenAI.Description = Description();
     FunctionOpenAI.Parameters = MakeFunction();
     return FunctionOpenAI;
+}
+
+FMessage UBaseService::MakeMessage(const FString& Content) const
+{
+    FMessage Message;
+    Message.Tool_Call_ID = ToolID;
+    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Tool);
+    Message.Content = Content;
+    return Message;
 }
 
 FOnServiceDataRecieved& UBaseService::OnServiceDataRecieved()

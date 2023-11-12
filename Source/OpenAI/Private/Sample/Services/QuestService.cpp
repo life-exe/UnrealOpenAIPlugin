@@ -61,8 +61,10 @@ FString UQuestService::MakeFunction() const
     return UOpenAIFuncLib::MakeFunctionsString(ParamsObj);
 }
 
-void UQuestService::Call(const TSharedPtr<FJsonObject>& Args)
+void UQuestService::Call(const TSharedPtr<FJsonObject>& Args, const FString& InToolID)
 {
+    Super::Call(Args, InToolID);
+
     FString ArgsStr;
     if (!UOpenAIFuncLib::JsonToString(Args, ArgsStr))
     {
@@ -102,10 +104,5 @@ void UQuestService::Call(const TSharedPtr<FJsonObject>& Args)
         InfoToOpenAI = "Character with such a name doesn't exist in the game.";
     }
 
-    FMessage Message;
-    Message.Name = FunctionName();
-    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
-    Message.Content = InfoToOpenAI;
-
-    ServiceDataRecieved.Broadcast(Message);
+    ServiceDataRecieved.Broadcast(MakeMessage(InfoToOpenAI));
 }

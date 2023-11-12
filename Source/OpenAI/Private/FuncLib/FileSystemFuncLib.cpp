@@ -88,14 +88,18 @@ bool UFileSystemFuncLib::SaveChatHistoryToFile(const TArray<FMessage>& History, 
     {
         if (Message.Content.IsEmpty())
         {
-            Line = FString::Printf(
-                TEXT("[%s]: [function: %s, args: %s]"), *Message.Role, *Message.Function_Call.Name, *Message.Function_Call.Arguments);
+            for (const auto& Tool : Message.Tool_Calls)
+            {
+                Line =
+                    FString::Printf(TEXT("[%s]: [function: %s, args: %s]"), *Message.Role, *Tool.Function.Name, *Tool.Function.Arguments);
+                FileContent.Append(Line).Append(LINE_TERMINATOR);
+            }
         }
         else
         {
             Line = FString::Printf(TEXT("[%s]: %s"), *Message.Role, *Message.Content);
+            FileContent.Append(Line).Append(LINE_TERMINATOR);
         }
-        FileContent.Append(Line).Append(LINE_TERMINATOR);
     }
 
     const auto FullFilePath = FPaths::ConvertRelativePathToFull(FilePath);

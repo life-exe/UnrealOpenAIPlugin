@@ -157,7 +157,8 @@ enum class ERole : uint8
     System,
     User,
     Assistant,
-    Function
+    Function,
+    Tool
 };
 
 UENUM(BlueprintType)
@@ -175,4 +176,33 @@ enum class EEmbeddingsEncodingFormat : uint8
 {
     Float,
     Base64
+};
+
+UENUM(BlueprintType)
+enum class EChatResponseFormat : uint8
+{
+    Text,
+    JSON_Object
+};
+
+/*
+    @todo: add more errors https://platform.openai.com/docs/guides/error-codes
+*/
+UENUM(BlueprintType)
+enum class EOpenAIResponseError : uint8
+{
+    InvalidAPIKey = 0,
+    NetworkError,
+    ModelNotFound,
+    Unknown
+};
+
+UENUM(BlueprintType)
+enum class EOpenAIFinishReason : uint8
+{
+    Stop = 0,
+    Length,
+    Content_Filter,
+    Tool_Calls,
+    Null
 };

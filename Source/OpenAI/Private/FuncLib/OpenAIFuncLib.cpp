@@ -262,6 +262,7 @@ FString UOpenAIFuncLib::OpenAIRoleToString(ERole Role)
         case ERole::User: return "user";
         case ERole::Assistant: return "assistant";
         case ERole::Function: return "function";
+        case ERole::Tool: return "tool";
     }
     checkNoEntry();
     return {};
@@ -274,7 +275,7 @@ FString UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason FinishRea
         case EOpenAIFinishReason::Stop: return "stop";
         case EOpenAIFinishReason::Length: return "length";
         case EOpenAIFinishReason::Content_Filter: return "content_filter";
-        case EOpenAIFinishReason::Function_Call: return "function_call";
+        case EOpenAIFinishReason::Tool_Calls: return "tool_calls";
         case EOpenAIFinishReason::Null: return "";
     }
     checkNoEntry();
@@ -286,7 +287,7 @@ EOpenAIFinishReason UOpenAIFuncLib::StringToOpenAIFinishReason(const FString& Fi
     if (FinishReason.Equals("stop")) return EOpenAIFinishReason::Stop;
     if (FinishReason.Equals("length")) return EOpenAIFinishReason::Length;
     if (FinishReason.Equals("content_filter")) return EOpenAIFinishReason::Content_Filter;
-    if (FinishReason.Equals("function_call")) return EOpenAIFinishReason::Function_Call;
+    if (FinishReason.Equals("tool_calls")) return EOpenAIFinishReason::Tool_Calls;
     if (FinishReason.IsEmpty()) return EOpenAIFinishReason::Null;
 
     UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown OpenAIFinishReason: %s"), *FinishReason);
@@ -300,6 +301,7 @@ ERole UOpenAIFuncLib::StringToOpenAIRole(const FString& Role)
     if (Role.ToLower().Equals("user")) return ERole::User;
     if (Role.ToLower().Equals("assistant")) return ERole::Assistant;
     if (Role.ToLower().Equals("function")) return ERole::Function;
+    if (Role.ToLower().Equals("tool")) return ERole::Tool;
 
     UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown OpenAIRole: %s"), *Role);
     checkNoEntry();
@@ -396,6 +398,17 @@ FString UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodi
     {
         case EEmbeddingsEncodingFormat::Float: return "float";
         case EEmbeddingsEncodingFormat::Base64: return "base64";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIChatResponseFormatToString(EChatResponseFormat ChatResponseFormat)
+{
+    switch (ChatResponseFormat)
+    {
+        case EChatResponseFormat::Text: return "text";
+        case EChatResponseFormat::JSON_Object: return "json_object";
     }
     checkNoEntry();
     return {};

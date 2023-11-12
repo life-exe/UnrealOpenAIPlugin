@@ -796,22 +796,26 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
 
 void UOpenAIProvider::CleanChatCompletionFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPtr<FJsonObject>& Json) const
 {
-    if (ChatCompletion.Functions.IsEmpty())
+    if (ChatCompletion.Tools.IsEmpty())
     {
-        Json->RemoveField("Functions");
+        Json->RemoveField("Tools");
     }
 
-    if (ChatCompletion.Function_Call.Arguments.IsEmpty() || ChatCompletion.Function_Call.Name.IsEmpty())
+    if (ChatCompletion.Tool_Choice.Function.Name.IsEmpty())
     {
-        Json->RemoveField("Function_Call");
+        Json->RemoveField("Tool_Choice");
     }
 
     for (int32 i = 0; i < ChatCompletion.Messages.Num(); ++i)
     {
         const auto& Message = ChatCompletion.Messages[i];
-        if (Message.Function_Call.Arguments.IsEmpty() || Message.Function_Call.Name.IsEmpty())
+        if (Message.Tool_Calls.IsEmpty())
         {
-            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Function_Call");
+            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Tool_Calls");
+        }
+        if (Message.Tool_Call_ID.IsEmpty())
+        {
+            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Tool_Call_ID");
         }
         if (Message.Name.IsEmpty())
         {

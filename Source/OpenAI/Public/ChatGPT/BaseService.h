@@ -25,7 +25,7 @@ public:
     /*
       In most cases you won't need to override this function.
     */
-    virtual FFunctionOpenAI Function() const;
+    virtual FFunctionRequest Function() const;
 
     /*
       Description of your function for the ChatGPT.
@@ -40,7 +40,7 @@ public:
     /*
       Actual call of your function.
     */
-    virtual void Call(const TSharedPtr<FJsonObject>& Args);
+    virtual void Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolID);
 
     /*
       Don't create long names. They will be truncated to [NameMaxLength = 8] in the UI. Use Description for more words.
@@ -66,6 +66,8 @@ protected:
     */
     FOnServiceDataError ServiceDataError;
 
+    FString ToolID{};
+
     /*
       Return a JSON with parameters that your function has.
 
@@ -74,7 +76,8 @@ protected:
       TSharedPtr<FJsonObject> ParamsObj = MakeShareable(new FJsonObject());
       ...
       return UOpenAIFuncLib::MakeFunctionsString(ParamsObj);
-
     */
     virtual FString MakeFunction() const;
+
+    virtual FMessage MakeMessage(const FString& Content) const;
 };
