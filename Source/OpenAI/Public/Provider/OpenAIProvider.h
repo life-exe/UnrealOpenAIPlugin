@@ -6,6 +6,7 @@
 #include "HTTP.h"
 #include "ResponseTypes.h"
 #include "RequestTypes.h"
+#include "Types/AudioTypes.h"
 #include "Delegates.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "OpenAIProvider.generated.h"
@@ -82,6 +83,12 @@ public:
       https://platform.openai.com/docs/api-reference/embeddings/create
     */
     void CreateEmbeddings(const FEmbeddings& Embeddings, const FOpenAIAuth& Auth);
+
+    /**
+      Generates audio from the input text.
+      https://platform.openai.com/docs/api-reference/audio/createSpeech
+    */
+    void CreateSpeech(const FSpeech& Speech, const FOpenAIAuth& Auth);
 
     /**
       Transcribes audio into the input language.
@@ -226,6 +233,7 @@ public:
     FOnCreateImageEditCompleted& OnCreateImageEditCompleted() { return CreateImageEditCompleted; }
     FOnCreateImageVariationCompleted& OnCreateImageVariationCompleted() { return CreateImageVariationCompleted; }
     FOnCreateEmbeddingsCompleted& OnCreateEmbeddingsCompleted() { return CreateEmbeddingsCompleted; }
+    FOnCreateSpeechCompleted& OnCreateSpeechCompleted() { return CreateSpeechCompleted; }
     FOnCreateAudioTranscriptionCompleted& OnCreateAudioTranscriptionCompleted() { return CreateAudioTranscriptionCompleted; }
     FOnCreateAudioTranslationCompleted& OnCreateAudioTranslationCompleted() { return CreateAudioTranslationCompleted; }
     FOnListFilesCompleted& OnListFilesCompleted() { return ListFilesCompleted; }
@@ -264,6 +272,7 @@ private:
     FOnCreateImageEditCompleted CreateImageEditCompleted;
     FOnCreateImageVariationCompleted CreateImageVariationCompleted;
     FOnCreateEmbeddingsCompleted CreateEmbeddingsCompleted;
+    FOnCreateSpeechCompleted CreateSpeechCompleted;
     FOnCreateAudioTranscriptionCompleted CreateAudioTranscriptionCompleted;
     FOnCreateAudioTranslationCompleted CreateAudioTranslationCompleted;
     FOnListFilesCompleted ListFilesCompleted;
@@ -297,6 +306,7 @@ private:
     virtual void OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateImageVariationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+    virtual void OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnCreateAudioTranslationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     virtual void OnListFilesCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);

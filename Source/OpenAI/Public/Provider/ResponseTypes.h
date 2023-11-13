@@ -501,24 +501,6 @@ struct FEmbeddingsResponse
 };
 
 USTRUCT(BlueprintType)
-struct FAudioTranscriptionResponse
-{
-    GENERATED_BODY()
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Text;
-};
-
-USTRUCT(BlueprintType)
-struct FAudioTranslationResponse
-{
-    GENERATED_BODY()
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Text;
-};
-
-USTRUCT(BlueprintType)
 struct FOpenAIFile
 {
     GENERATED_BODY()

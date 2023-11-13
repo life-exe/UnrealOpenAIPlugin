@@ -3,8 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
+#include "Provider/Types/AudioTypes.h"
 #include "AudioTranscriptionAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
@@ -32,12 +31,15 @@ private:
     static UAudioTranscriptionAction* CreateAudioTranscription(
         const FAudioTranscription& AudioTranscription, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
+    void TryToOverrideURL();
 
     void OnCreateAudioTranscriptionCompleted(const FAudioTranscriptionResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:
+    UPROPERTY()
+    TObjectPtr<UOpenAIProvider> Provider;
+
     FAudioTranscription AudioTranscription;
     FOpenAIAuth Auth;
     FString URLOverride{};

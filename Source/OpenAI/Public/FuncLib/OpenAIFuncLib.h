@@ -7,6 +7,7 @@
 #include "ModelTypes.h"
 #include "Provider/CommonTypes.h"
 #include "Provider/ResponseTypes.h"
+#include "Provider/Types/AudioTypes.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIFuncLib.generated.h"
 
@@ -25,8 +26,17 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIModerationModelToString(EModerationsModelEnum Model);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIAudioModelToString(EAudioModelEnum Model);
+    UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
+    static FString OpenAIAudioModelToString(EAudioModel Model);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
+    static FString OpenAITTSModelToString(ETTSModel Model);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
+    static FString OpenAIVoiceToString(EVoice Voice);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
+    static FString OpenAITTSAudioFormatToString(ETTSAudioFormat Format);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static FString OpenAIImageModelToString(EImageModelEnum Model);

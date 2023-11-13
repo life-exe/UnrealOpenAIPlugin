@@ -41,6 +41,7 @@ private:
     void CreateModerations();
     void CreateEmbeddings();
 
+    void CreateSpeech();
     void CreateAudioTranscription();
     void CreateAudioTranslation();
 

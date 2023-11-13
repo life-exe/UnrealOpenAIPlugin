@@ -28,6 +28,7 @@ void FAPIProvider::Define()
                     TestTrueExpr(API->ImageEdits().Equals(BaseURL + "/v1/images/edits"));
                     TestTrueExpr(API->ImageVariations().Equals(BaseURL + "/v1/images/variations"));
                     TestTrueExpr(API->Embeddings().Equals(BaseURL + "/v1/embeddings"));
+                    TestTrueExpr(API->Speech().Equals(BaseURL + "/v1/audio/speech"));
                     TestTrueExpr(API->AudioTranscriptions().Equals(BaseURL + "/v1/audio/transcriptions"));
                     TestTrueExpr(API->AudioTranslations().Equals(BaseURL + "/v1/audio/translations"));
                     TestTrueExpr(API->Files().Equals(BaseURL + "/v1/files"));

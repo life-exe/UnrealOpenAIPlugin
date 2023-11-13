@@ -102,12 +102,6 @@ enum class EModerationsModelEnum : uint8
 };
 
 UENUM(BlueprintType)
-enum class EAudioModelEnum : uint8
-{
-    Whisper_1
-};
-
-UENUM(BlueprintType)
 enum class EImageModelEnum : uint8
 {
     DALL_E_2,

@@ -154,6 +154,13 @@ void UOpenAIProvider::CreateEmbeddings(const FEmbeddings& Embeddings, const FOpe
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateSpeech(const FSpeech& Speech, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(Speech, API->Speech(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateSpeechCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 void UOpenAIProvider::CreateAudioTranscription(const FAudioTranscription& AudioTranscription, const FOpenAIAuth& Auth)
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
@@ -502,6 +509,21 @@ bool UOpenAIProvider::ParseImageRequest(FHttpResponsePtr Response, FImageRespons
 void UOpenAIProvider::OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FEmbeddingsResponse>(Response, WasSuccessful, CreateEmbeddingsCompleted);
+}
+
+void UOpenAIProvider::OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (WasSuccessful && Response.IsValid())
+    {
+        FSpeechResponse SpeechResponse;
+        SpeechResponse.Bytes = Response->GetContent();  //@todo move semantics needed
+        CreateSpeechCompleted.Broadcast(SpeechResponse);
+    }
+    else
+    {
+        LogError("On create speech error");
+        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+    }
 }
 
 void UOpenAIProvider::OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)

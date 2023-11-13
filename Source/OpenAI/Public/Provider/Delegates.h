@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ResponseTypes.h"
+#include "Types/AudioTypes.h"
 
 // C++ delegates
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequestCompleted, const FString& /* URL */, const FString& /* Response content */);
@@ -23,6 +24,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateImageCompleted, const FImageRespons
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateImageEditCompleted, const FImageEditResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateImageVariationCompleted, const FImageVariationResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateEmbeddingsCompleted, const FEmbeddingsResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateSpeechCompleted, const FSpeechResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateAudioTranscriptionCompleted, const FAudioTranscriptionResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateAudioTranslationCompleted, const FAudioTranslationResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFilesCompleted, const FListFilesResponse&);

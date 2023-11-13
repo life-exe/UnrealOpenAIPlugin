@@ -4,6 +4,7 @@
 #include "Provider/OpenAIProvider.h"
 #include "Provider/ResponseTypes.h"
 #include "Provider/RequestTypes.h"
+#include "Provider/Types/AudioTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Algo/ForEach.h"
 #include "API/API.h"
@@ -40,6 +41,7 @@ void AAPIOverview::BeginPlay()
     // CreateModerations();
     // CreateEmbeddings();
 
+    // CreateSpeech();
     // CreateAudioTranscription();
     // CreateAudioTranslation();
 
@@ -301,6 +303,30 @@ void AAPIOverview::CreateEmbeddings()
     Provider->CreateEmbeddings(Embeddings, Auth);
 }
 
+void AAPIOverview::CreateSpeech()
+{
+    // Make sure that WMFCodecs plugin is enabled (Edit->Plugins->WMFCodecs)
+
+    const FString Format = UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::MP3);
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateSpeechCompleted().AddLambda([Format](const FSpeechResponse& Response) {  //
+        const FString Date = FDateTime::Now().ToString();
+        const FString FilePath =
+            FPaths::ProjectPluginsDir().Append("OpenAI/Saved/").Append("speech_").Append(Date).Append(".").Append(Format);
+        if (FFileHelper::SaveArrayToFile(Response.Bytes, *FilePath))
+        {
+            UE_LOG(LogAPIOverview, Display, TEXT("File was successfully saved to: %s"), *FilePath);
+        }
+    });
+    FSpeech Speech;
+    Speech.Input = "Crazy fox running through the forest.";
+    Speech.Model = UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::TTS_1);
+    Speech.Response_Format = Format;
+    Speech.Speed = 1.0f;
+    Provider->CreateSpeech(Speech, Auth);
+}
+
 void AAPIOverview::CreateAudioTranscription()
 {
     Provider->SetLogEnabled(true);
@@ -520,6 +546,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString ImageEdits() const override { return API_URL + "/v1/images/edits"; }
         virtual FString ImageVariations() const override { return API_URL + "/v1/images/variations"; }
         virtual FString Embeddings() const override { return API_URL + "/v1/embeddings"; }
+        virtual FString Speech() const override { return API_URL + "/v1/audio/speech"; }
         virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
         virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
         virtual FString Files() const override { return API_URL + "/v1/files"; }

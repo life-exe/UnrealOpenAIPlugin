@@ -548,67 +548,6 @@ struct FEmbeddings
 };
 
 USTRUCT(BlueprintType)
-struct FAudioBase
-{
-    GENERATED_BODY()
-
-    /**
-      The audio file to transcribe, in one of these formats: mp3, mp4, mpeg, mpga, m4a, wav, or webm.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
-    FString File;
-
-    /**
-      ID of the model to use. Only whisper-1 is currently available.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
-    FString Model{"whisper-1"};
-
-    /**
-      An optional text to guide the model's style or continue a previous audio segment.
-      The prompt should match the audio language.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Prompt;
-
-    /**
-      The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Response_Format{"json"};
-
-    /**
-      The sampling temperature, between 0 and 1.
-      Higher values like 0.8 will make the output more random,
-      while lower values like 0.2 will make it more focused and deterministic.
-      If set to 0, the model will use log probability to automatically increase
-      the temperature until certain thresholds are hit.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    float Temperature{0.0f};
-};
-
-USTRUCT(BlueprintType)
-struct FAudioTranscription : public FAudioBase
-{
-    GENERATED_BODY()
-
-    /**
-      The language of the input audio.
-      Supplying the input language in ISO-639-1 (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format
-      will improve accuracy and latency.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Language;
-};
-
-USTRUCT(BlueprintType)
-struct FAudioTranslation : public FAudioBase
-{
-    GENERATED_BODY()
-};
-
-USTRUCT(BlueprintType)
 struct FUploadFile
 {
     GENERATED_BODY()

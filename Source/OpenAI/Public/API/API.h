@@ -22,6 +22,7 @@ public:
     virtual FString ImageEdits() const = 0;
     virtual FString ImageVariations() const = 0;
     virtual FString Embeddings() const = 0;
+    virtual FString Speech() const = 0;
     virtual FString AudioTranscriptions() const = 0;
     virtual FString AudioTranslations() const = 0;
     virtual FString Files() const = 0;
@@ -48,6 +49,7 @@ public:
     virtual FString ImageEdits() const override { return API_URL + "/v1/images/edits"; }
     virtual FString ImageVariations() const override { return API_URL + "/v1/images/variations"; }
     virtual FString Embeddings() const override { return API_URL + "/v1/embeddings"; }
+    virtual FString Speech() const override { return API_URL + "/v1/audio/speech"; }
     virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
     virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
     virtual FString Files() const override { return API_URL + "/v1/files"; }
@@ -71,6 +73,7 @@ struct FOpenAIEndpoints
     FString ImageEdits;
     FString ImageVariations;
     FString Embeddings;
+    FString Speech;
     FString AudioTranscriptions;
     FString AudioTranslations;
     FString Files;
@@ -92,6 +95,7 @@ public:
     virtual FString ImageEdits() const override { return OpenAIEndpoints.ImageEdits; }
     virtual FString ImageVariations() const override { return OpenAIEndpoints.ImageVariations; }
     virtual FString Embeddings() const override { return OpenAIEndpoints.Embeddings; }
+    virtual FString Speech() const override { return OpenAIEndpoints.Speech; }
     virtual FString AudioTranscriptions() const override { return OpenAIEndpoints.AudioTranscriptions; }
     virtual FString AudioTranslations() const override { return OpenAIEndpoints.AudioTranslations; }
     virtual FString Files() const override { return OpenAIEndpoints.Files; }

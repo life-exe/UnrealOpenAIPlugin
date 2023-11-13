@@ -146,7 +146,34 @@ void FOpenAIFuncLib::Define()
                 });
 
             It("OpenAIAudioModelToStringShouldReturnCorrectValue",
-                [this]() { TestTrueExpr(UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum::Whisper_1).Equals("whisper-1")); });
+                [this]() { TestTrueExpr(UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1).Equals("whisper-1")); });
+
+            It("OpenAITTSModelToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::TTS_1).Equals("tts-1"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::TTS_1_HD).Equals("tts-1-hd"));
+                });
+
+            It("OpenAIVoiceToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Alloy).Equals("alloy"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Echo).Equals("echo"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Fable).Equals("fable"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Nova).Equals("nova"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Onyx).Equals("onyx"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Shimmer).Equals("shimmer"));
+                });
+
+            It("OpenAITTSAudioFormatToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::AAC).Equals("aac"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::FLAC).Equals("flac"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::MP3).Equals("mp3"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::OPUS).Equals("opus"));
+                });
 
             It("OpenAIImageModelToStringShouldReturnCorrectValue",
                 [this]()

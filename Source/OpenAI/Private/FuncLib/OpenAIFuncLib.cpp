@@ -110,11 +110,50 @@ FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Mode
     return {};
 }
 
-FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModelEnum Model)
+FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel Model)
 {
     switch (Model)
     {
-        case EAudioModelEnum::Whisper_1: return "whisper-1";
+        case EAudioModel::Whisper_1: return "whisper-1";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel Model)
+{
+    switch (Model)
+    {
+        case ETTSModel::TTS_1: return "tts-1";
+        case ETTSModel::TTS_1_HD: return "tts-1-hd";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIVoiceToString(EVoice Voice)
+{
+    switch (Voice)
+    {
+        case EVoice::Alloy: return "alloy";
+        case EVoice::Echo: return "echo";
+        case EVoice::Fable: return "fable";
+        case EVoice::Nova: return "nova";
+        case EVoice::Onyx: return "onyx";
+        case EVoice::Shimmer: return "shimmer";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat Format)
+{
+    switch (Format)
+    {
+        case ETTSAudioFormat::AAC: return "aac";
+        case ETTSAudioFormat::FLAC: return "flac";
+        case ETTSAudioFormat::MP3: return "mp3";
+        case ETTSAudioFormat::OPUS: return "opus";
     }
     checkNoEntry();
     return {};

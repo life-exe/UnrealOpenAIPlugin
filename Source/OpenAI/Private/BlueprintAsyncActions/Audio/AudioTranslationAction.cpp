@@ -15,13 +15,13 @@ UAudioTranslationAction* UAudioTranslationAction::CreateAudioTranslation(
 
 void UAudioTranslationAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
-    Provider->OnCreateAudioTranslationCompleted().AddUObject(this, &ThisClass::OnAudioTranslationCompleted);
-    TryToOverrideURL(Provider);
+    Provider = NewObject<UOpenAIProvider>();
+    Provider->OnCreateAudioTranslationCompleted().AddUObject(this, &ThisClass::OnCreateAudioTranslationCompleted);
+    TryToOverrideURL();
     Provider->CreateAudioTranslation(AudioTranslation, Auth);
 }
 
-void UAudioTranslationAction::OnAudioTranslationCompleted(const FAudioTranslationResponse& Response)
+void UAudioTranslationAction::OnCreateAudioTranslationCompleted(const FAudioTranslationResponse& Response)
 {
     OnCompleted.Broadcast(Response, {});
 }
@@ -31,7 +31,7 @@ void UAudioTranslationAction::OnRequestError(const FString& URL, const FString& 
     OnCompleted.Broadcast({}, FOpenAIError{Content, true});
 }
 
-void UAudioTranslationAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UAudioTranslationAction::TryToOverrideURL()
 {
     if (URLOverride.IsEmpty()) return;
 
