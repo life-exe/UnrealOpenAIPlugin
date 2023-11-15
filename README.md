@@ -65,7 +65,7 @@ void AAPIOverview::CreateImage()
 
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/speech.png)
 
- - [Vision added](https://platform.openai.com/docs/guides/vision) support added!
+ - [Vision](https://platform.openai.com/docs/guides/vision) support added!
 
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/vision_1.png)
 

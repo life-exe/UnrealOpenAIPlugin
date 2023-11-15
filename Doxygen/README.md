@@ -7,8 +7,10 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Models](https://platform.openai.com/docs/api-reference/models)
  - [Completions](https://platform.openai.com/docs/api-reference/completions)
  - [Chat](https://platform.openai.com/docs/api-reference/chat)
- - [Images](https://platform.openai.com/docs/api-reference/images)
+ - [Images (DALL·E 3, DALL·E 2)](https://platform.openai.com/docs/api-reference/images)
+ - [Vision](https://platform.openai.com/docs/guides/vision)
  - [Embeddings](https://platform.openai.com/docs/api-reference/embeddings)
+ - [Speech](https://platform.openai.com/docs/api-reference/audio/createSpeech)
  - [Audio](https://platform.openai.com/docs/api-reference/audio)
  - [Files](https://platform.openai.com/docs/api-reference/files)
  - [Moderations](https://platform.openai.com/docs/api-reference/moderations)
@@ -53,6 +55,21 @@ void AAPIOverview::CreateImage()
  - [How to use functions](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
 
 ## Updates
+ - [DALL·E 3](https://openai.com/dall-e-3) support added!
+
+![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/dalle3_1.png)
+
+![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/dalle3_2.png)
+
+ - [Text to speech](https://platform.openai.com/docs/guides/text-to-speech) support added!
+
+![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/speech.png)
+
+ - [Vision](https://platform.openai.com/docs/guides/vision) support added!
+
+![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/vision_1.png)
+
+![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/vision_2.png)
 
  - [Functions](https://platform.openai.com/docs/guides/function-calling) support added! You can check the tutorial [via link.](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md)
 
