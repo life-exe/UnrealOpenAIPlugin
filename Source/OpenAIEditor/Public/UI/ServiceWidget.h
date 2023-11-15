@@ -20,12 +20,6 @@ class OPENAIEDITOR_API UServiceWidget : public UEditorUtilityWidget
     GENERATED_BODY()
 
 public:
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UTextBlock> ServiceName;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UEditorUtilityCheckBox> EnableCheckBox;
-
     void SetServiceClass(const TSubclassOf<UBaseService>& Class);
     bool IsEnabled() const;
     void SetEnabled(bool IsEnabled);
@@ -34,6 +28,12 @@ public:
 
 protected:
     virtual void NativeConstruct() override;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UTextBlock> ServiceName;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UEditorUtilityCheckBox> EnableCheckBox;
 
 private:
     TSubclassOf<UBaseService> ServiceClass;

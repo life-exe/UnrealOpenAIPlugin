@@ -77,10 +77,15 @@ UChatGPT::UChatGPT()
 void UChatGPT::MakeRequest()
 {
     TArray<FTools> AvailableTools;
-    for (const auto& Service : Services)
+    // tools are currently are not supported by vision models
+    if (!UOpenAIFuncLib::ModelSupportsVision(OpenAIModel))
     {
-        AvailableTools.Add(FTools{UOpenAIFuncLib::OpenAIRoleToString(ERole::Function), Service->Function()});
+        for (const auto& Service : Services)
+        {
+            AvailableTools.Add(FTools{UOpenAIFuncLib::OpenAIRoleToString(ERole::Function), Service->Function()});
+        }
     }
+
     FChatCompletion ChatCompletion;
     ChatCompletion.Model = OpenAIModel;
     ChatCompletion.Messages = ChatHistory;

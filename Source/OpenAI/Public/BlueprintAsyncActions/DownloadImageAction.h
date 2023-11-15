@@ -1,4 +1,4 @@
-// OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
+// OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #pragma once
 

@@ -1,4 +1,4 @@
-// // OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
+// OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #pragma once
 
@@ -23,6 +23,8 @@ class UChatGPT;
 class UServiceWidget;
 class UGridPanel;
 class USaveSettings;
+class UTextBlock;
+class UAttachedFilesContainerWidget;
 
 UCLASS(BlueprintType)
 class OPENAIEDITOR_API UChatGPTWidget : public UEditorUtilityWidget
@@ -58,17 +60,26 @@ protected:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UButton> ClearChatButton;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UButton> AttachImageButton;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
     TSubclassOf<UChatMessageWidget> ChatMessageWidgetClass;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UGridPanel> ServiceContainer;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
     TSubclassOf<UServiceWidget> ServiceWidgetClass;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "OpenAI")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "OpenAI")
     TArray<TSubclassOf<UBaseService>> Services;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UTextBlock> ServicesWarningTextBlock;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UAttachedFilesContainerWidget> AttachedFilesContainer;
 
     virtual void NativeConstruct() override;
 
@@ -104,6 +115,9 @@ private:
     UFUNCTION()
     void OnModelSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 
+    UFUNCTION()
+    void OnImageSelected();
+
     void InitChatGPT();
     void InitModelsComboBox();
 
@@ -114,6 +128,10 @@ private:
     void EnableControls(bool Enabled);
 
     FString GenerateFilePath() const;
+
+    void UpdateVisionElements();
+    void UpdateSendMessageButton();
+    void OnFileRemoved();
 
 private:
     OpenAI::ServiceSecrets ServiceSecrets;

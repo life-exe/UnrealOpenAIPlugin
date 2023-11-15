@@ -26,6 +26,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIModerationModelToString(EModerationsModelEnum Model);
 
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static bool ModelSupportsVision(const FString& Model);
+
     UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
     static FString OpenAIAudioModelToString(EAudioModel Model);
 
@@ -109,6 +112,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIModelToString(const FOpenAIModel& OpenAIModel);
 
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Chat")
+    static FString OpenAIMessageContentTypeToString(EMessageContentType MessageContentType);
+
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString OpenAIModerationsToString(const FModerationResults& ModerationResults);
 
@@ -120,6 +126,15 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString ResponseErrorToString(EOpenAIResponseError Code);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString WrapBase64(const FString& Base64String);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString UnWrapBase64(const FString& Base64String);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    static FString FilePathToBase64(const FString& FilePath);
 
     static FString BoolToString(bool Value);
     static FString RemoveWhiteSpaces(const FString& Input);

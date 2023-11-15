@@ -807,9 +807,7 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     CleanChatCompletionFieldsThatCantBeEmpty(ChatCompletion, Json);
 
     FString RequestBodyStr;
-    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&RequestBodyStr);
-    FJsonSerializer::Serialize(Json.ToSharedRef(), Writer);
-
+    UOpenAIFuncLib::JsonToString(Json, RequestBodyStr);
     RequestBodyStr = UOpenAIFuncLib::CleanUpFunctionsObject(RequestBodyStr);
 
     HttpRequest->SetContentAsString(RequestBodyStr);
@@ -828,20 +826,60 @@ void UOpenAIProvider::CleanChatCompletionFieldsThatCantBeEmpty(const FChatComple
         Json->RemoveField("Tool_Choice");
     }
 
+    if (ChatCompletion.Stop.IsEmpty())
+    {
+        Json->RemoveField("Stop");
+    }
+
+    if (ChatCompletion.Logit_Bias.IsEmpty())
+    {
+        Json->RemoveField("Logit_Bias");
+    }
+
+    if (ChatCompletion.Model == UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview))
+    {
+        Json->RemoveField("Response_Format");
+    }
+
     for (int32 i = 0; i < ChatCompletion.Messages.Num(); ++i)
     {
         const auto& Message = ChatCompletion.Messages[i];
+        auto& MessageObj = Json->GetArrayField("Messages")[i]->AsObject();
+
         if (Message.Tool_Calls.IsEmpty())
         {
-            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Tool_Calls");
+            MessageObj->RemoveField("Tool_Calls");
         }
         if (Message.Tool_Call_ID.IsEmpty())
         {
-            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Tool_Call_ID");
+            MessageObj->RemoveField("Tool_Call_ID");
         }
         if (Message.Name.IsEmpty())
         {
-            Json->GetArrayField("Messages")[i]->AsObject()->RemoveField("Name");
+            MessageObj->RemoveField("Name");
+        }
+        if (Message.ContentArray.IsEmpty())
+        {
+            MessageObj->RemoveField("ContentArray");
+        }
+        else
+        {
+            auto Content = MessageObj->GetArrayField("ContentArray");
+
+            for (int32 j = 0; j < Content.Num(); ++j)
+            {
+                TSharedPtr<FJsonObject> MessageContent = Content[j]->AsObject();
+                if (MessageContent->GetStringField("Type").Equals("text"))
+                {
+                    MessageContent->RemoveField("Image_URL");
+                }
+                else
+                {
+                    MessageContent->RemoveField("Text");
+                }
+            }
+            MessageObj->SetArrayField("Content", Content);
+            MessageObj->RemoveField("ContentArray");
         }
     }
 }

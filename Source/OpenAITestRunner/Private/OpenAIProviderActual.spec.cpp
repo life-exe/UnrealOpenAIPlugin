@@ -440,7 +440,7 @@ void FOpenAIProviderActual::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.NonStreaming",
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.NonStreaming",
                 [this]()
                 {
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301);
@@ -449,6 +449,7 @@ void FOpenAIProviderActual::Define()
                         [&, Model](const FChatCompletionResponse& Response)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("chat.completion"));
                             TestTrueExpr(Response.Model.Equals(Model));
                             TestTrueExpr(Response.Created > 0);
                             TestTrueExpr(Response.Usage.Prompt_Tokens > 0);
@@ -474,7 +475,7 @@ void FOpenAIProviderActual::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Streaming",
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.Streaming",
                 [this]()
                 {
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301);
@@ -509,7 +510,7 @@ void FOpenAIProviderActual::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Function",
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.Function",
                 [this]()
                 {
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613);
@@ -668,6 +669,228 @@ void FOpenAIProviderActual::Define()
                     Tools.Function.Description = "Get the current weather in a given location";
                     Tools.Function.Parameters = UOpenAIFuncLib::MakeFunctionsString(MainObj);
                     ChatCompletion.Tools.Add(Tools);
+
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.Text.NonStreaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+
+                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
+                        [&, Model](const FChatCompletionResponse& Response)
+                        {
+                            TestTrueExpr(!Response.ID.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("chat.completion"));
+                            //  TestTrueExpr(Response.Model.Equals(Model));
+                            TestTrueExpr(Response.Created > 0);
+                            TestTrueExpr(Response.Usage.Prompt_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Total_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Completion_Tokens > 0);
+                            TestTrueExpr(Response.Choices.Num() == 1);
+
+                            if (Response.Choices.Num() >= 1)
+                            {
+                                const auto Choice = Response.Choices[0];
+                                TestTrueExpr(TestFinishReason(Choice.Finish_Reason));
+
+                                TestTrueExpr(Choice.Index == 0);
+                                TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
+                                TestTrueExpr(!Choice.Message.Content.IsEmpty());
+                            }
+                            else
+                            {
+                                AddError("Choice array was empty");
+                            }
+
+                            RequestCompleted = true;
+                        });
+
+                    FMessage Message;
+                    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+
+                    FMessageContent MessageContent;
+                    MessageContent.Text = "What is Unreal Engine?";
+                    MessageContent.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Text);
+                    Message.ContentArray.Add(MessageContent);
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages.Add(Message);
+                    ChatCompletion.Stream = false;
+                    ChatCompletion.Max_Tokens = 100;
+
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.TextImage.URL.NonStreaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+
+                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
+                        [&, Model](const FChatCompletionResponse& Response)
+                        {
+                            TestTrueExpr(!Response.ID.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("chat.completion"));
+                            //  TestTrueExpr(Response.Model.Equals(Model));
+                            TestTrueExpr(Response.Created > 0);
+                            TestTrueExpr(Response.Usage.Prompt_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Total_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Completion_Tokens > 0);
+                            TestTrueExpr(Response.Choices.Num() == 1);
+
+                            if (Response.Choices.Num() >= 1)
+                            {
+                                const auto Choice = Response.Choices[0];
+                                TestTrueExpr(TestFinishReason(Choice.Finish_Reason));
+
+                                TestTrueExpr(Choice.Index == 0);
+                                TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
+                                TestTrueExpr(!Choice.Message.Content.IsEmpty());
+                                const bool Cats = Choice.Message.Content.Contains("cat") || Choice.Message.Content.Contains("kitten");
+                                TestTrueExpr(Cats);
+                            }
+                            else
+                            {
+                                AddError("Choice array was empty");
+                            }
+
+                            RequestCompleted = true;
+                        });
+
+                    FMessage Message;
+                    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+
+                    FMessageContent MessageContent1;
+                    MessageContent1.Text = "Describe in a few words what you can see in the picture.";
+                    MessageContent1.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Text);
+                    Message.ContentArray.Add(MessageContent1);
+
+                    FMessageContent MessageContent2;
+                    MessageContent2.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Image_URL);
+                    MessageContent2.Image_URL.URL = "https://cdn.freecodecamp.org/curriculum/cat-photo-app/cats.jpg";
+                    Message.ContentArray.Add(MessageContent2);
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages.Add(Message);
+                    ChatCompletion.Stream = false;
+                    ChatCompletion.Max_Tokens = 100;
+
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.TextImage.Base64.NonStreaming",
+                [this]()
+                {
+                    TArray<uint8> ImageData;
+                    if (!FFileHelper::LoadFileToArray(ImageData, *TestUtils::FileFullPath("lenna.png")))
+                    {
+                        AddError("Can't load test image");
+                        return;
+                    }
+                    const FString ImageInBase64 = FBase64::Encode(ImageData);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+
+                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
+                        [&, Model](const FChatCompletionResponse& Response)
+                        {
+                            TestTrueExpr(!Response.ID.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("chat.completion"));
+                            //  TestTrueExpr(Response.Model.Equals(Model));
+                            TestTrueExpr(Response.Created > 0);
+                            TestTrueExpr(Response.Usage.Prompt_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Total_Tokens > 0);
+                            TestTrueExpr(Response.Usage.Completion_Tokens > 0);
+                            TestTrueExpr(Response.Choices.Num() == 1);
+
+                            if (Response.Choices.Num() >= 1)
+                            {
+                                const auto Choice = Response.Choices[0];
+                                TestTrueExpr(TestFinishReason(Choice.Finish_Reason));
+
+                                TestTrueExpr(Choice.Index == 0);
+                                TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
+                                TestTrueExpr(!Choice.Message.Content.IsEmpty());
+                                TestTrueExpr(Choice.Message.Content.Contains("girl") || Choice.Message.Content.Contains("woman"));
+                            }
+                            else
+                            {
+                                AddError("Choice array was empty");
+                            }
+
+                            RequestCompleted = true;
+                        });
+
+                    FMessage Message;
+                    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+
+                    FMessageContent MessageContent1;
+                    MessageContent1.Text = "Describe in a few words what you can see in the picture.";
+                    MessageContent1.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Text);
+                    Message.ContentArray.Add(MessageContent1);
+
+                    FMessageContent MessageContent2;
+                    MessageContent2.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Image_URL);
+
+                    MessageContent2.Image_URL.URL = UOpenAIFuncLib::WrapBase64(ImageInBase64);
+                    Message.ContentArray.Add(MessageContent2);
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages.Add(Message);
+                    ChatCompletion.Stream = false;
+                    ChatCompletion.Max_Tokens = 100;
+
+                    OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.Text.Streaming",
+                [this]()
+                {
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+
+                    OpenAIProvider->OnCreateChatCompletionStreamCompleted().AddLambda(
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        {
+                            for (const auto& Response : Responses)
+                            {
+                                TestStreamResponse<FChatCompletionStreamResponse>(
+                                    this, Response, "gpt-4-1106-vision-preview", "chat.completion.chunk");
+                            }
+
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->OnCreateChatCompletionStreamProgresses().AddLambda(
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        {
+                            for (const auto& Response : Responses)
+                            {
+                                TestStreamResponse<FChatCompletionStreamResponse>(
+                                    this, Response, "gpt-4-1106-vision-preview", "chat.completion.chunk");
+                            }
+                        });
+
+                    FMessage Message;
+                    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+
+                    FMessageContent MessageContent;
+                    MessageContent.Text = "What is Unreal Engine?";
+                    MessageContent.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Text);
+                    Message.ContentArray.Add(MessageContent);
+
+                    FChatCompletion ChatCompletion;
+                    ChatCompletion.Model = Model;
+                    ChatCompletion.Messages.Add(Message);
+                    ChatCompletion.Stream = true;
+                    ChatCompletion.Max_Tokens = 100;
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));

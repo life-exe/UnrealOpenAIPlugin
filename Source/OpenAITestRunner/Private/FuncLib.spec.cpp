@@ -132,6 +132,9 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4).Equals("gpt-4"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_1106_Preview).Equals("gpt-4-1106-preview"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_Vision_Preview).Equals("gpt-4-vision-preview"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
                 });
@@ -355,6 +358,13 @@ void FOpenAIFuncLib::Define()
                         .Append("root: openAIID\n")
                         .Append("parent: openAIID\n");
                     TestTrueExpr(ModelsStr.Equals(ExpectedStr));
+                });
+
+            It("OpenAIMessageContentTypeToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Text).Equals("text"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Image_URL).Equals("image_url"));
                 });
 
             It("BoolToStringShouldReturnCorrectValue",

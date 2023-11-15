@@ -1,8 +1,9 @@
-// OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
+// OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "UI/ChatGPTWidget.h"
 #include "UI/ServiceWidget.h"
 #include "UI/SaveSettings.h"
+#include "UI/AttachedFilesContainerWidget.h"
 #include "Components/VerticalBox.h"
 #include "Components/ScrollBox.h"
 #include "Components/EditableText.h"
@@ -10,6 +11,7 @@
 #include "Components/VerticalBoxSlot.h"
 #include "Components/ComboBoxString.h"
 #include "Components/GridPanel.h"
+#include "Components/TextBlock.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/FileSystemFuncLib.h"
 #include "ChatGPT/Services/Weather/WeatherService.h"
@@ -23,6 +25,7 @@ const FMargin UserWidgetMargin = FMargin{100.0f, 10.0f, 10.0f, 10.0f};
 const FMargin AssistantWidgetMargin = FMargin{10.0f, 10.0f, 100.0f, 10.0f};
 const FMargin SystemWidgetMargin = FMargin{10.0f, 10.0f, 100.0f, 10.0f};
 const int32 ServicesAmountInRow = 3;
+const int32 MaxAttachedFilesAmount = 3;
 }  // namespace
 
 void UChatGPTWidget::NativeConstruct()
@@ -36,6 +39,8 @@ void UChatGPTWidget::NativeConstruct()
     check(UserInputTextBox);
     check(ChatGPTModelComboBox);
     check(ServiceContainer);
+    check(AttachImageButton);
+    check(AttachedFilesContainer);
 
     SendMessageButton->OnClicked.AddDynamic(this, &ThisClass::OnSendMessage);
     DumpChatButton->OnClicked.AddDynamic(this, &ThisClass::OnDumpChat);
@@ -43,6 +48,7 @@ void UChatGPTWidget::NativeConstruct()
     UserInputTextBox->OnTextCommitted.AddDynamic(this, &ThisClass::OnTextCommitted);
     UserInputTextBox->OnTextChanged.AddDynamic(this, &ThisClass::OnTextChanged);
     ChatGPTModelComboBox->OnSelectionChanged.AddDynamic(this, &ThisClass::OnModelSelectionChanged);
+    AttachImageButton->OnClicked.AddDynamic(this, &ThisClass::OnImageSelected);
 
     SendMessageButton->SetIsEnabled(false);
     DumpChatButton->SetIsEnabled(false);
@@ -51,6 +57,8 @@ void UChatGPTWidget::NativeConstruct()
     MessagesVerticalBox->ClearChildren();
     StartVerticalBox->SetVisibility(ESlateVisibility::Visible);
     ChatScrollBox->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+    AttachedFilesContainer->OnFileRemoved().AddUObject(this, &ThisClass::OnFileRemoved);
 
     InitChatGPT();
     InitModelsComboBox();
@@ -84,13 +92,15 @@ void UChatGPTWidget::InitModelsComboBox()
 
     ChatGPTModelComboBox->ClearOptions();
     AddModel(EMainModelEnum::GPT_4);
+    AddModel(EMainModelEnum::GPT_4_Vision_Preview);
     AddModel(EMainModelEnum::GPT_4_0314);
     AddModel(EMainModelEnum::GPT_4_0613);
     AddModel(EMainModelEnum::GPT_3_5_Turbo);
     AddModel(EMainModelEnum::GPT_3_5_Turbo_0301);
-    ChatGPTModelComboBox->SetSelectedOption(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4));
 
+    ChatGPTModelComboBox->SetSelectedOption(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4));
     ChatGPT->SetModel(ChatGPTModelComboBox->GetSelectedOption());
+    UpdateVisionElements();
 }
 
 void UChatGPTWidget::CreateServiceWidgets()
@@ -99,7 +109,8 @@ void UChatGPTWidget::CreateServiceWidgets()
     int32 Row{0}, Column{0};
     for (const auto& ServiceClass : Services)
     {
-        const auto ServiceWidget = CreateWidget<UServiceWidget>(GetWorld(), ServiceWidgetClass);
+        auto* ServiceWidget = CreateWidget<UServiceWidget>(GetWorld(), ServiceWidgetClass);
+        check(ServiceWidget);
         ServiceWidget->SetServiceClass(ServiceClass);
         ServiceWidget->OnServiceEnabled().AddUObject(this, &ThisClass::OnServiceEnabled);
         ServiceContainer->AddChildToGrid(ServiceWidget, Row, Column);
@@ -141,12 +152,35 @@ void UChatGPTWidget::OnServiceEnabled(
 
 void UChatGPTWidget::OnSendMessage()
 {
-    if (UserInputTextBox->GetText().IsEmpty()) return;
-
     const auto InputText = UserInputTextBox->GetText();
     UserInputTextBox->SetText({});
 
-    const auto Message = FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), InputText.ToString()};
+    FMessage Message;
+    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+
+    if (AttachedFilesContainer->HasFiles())
+    {
+        for (const auto& File : AttachedFilesContainer->FilePaths())
+        {
+            FMessageContent MessageContent;
+            MessageContent.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Image_URL);
+            MessageContent.Image_URL.URL = UOpenAIFuncLib::FilePathToBase64(File);
+            Message.ContentArray.Add(MessageContent);
+        }
+
+        if (!InputText.IsEmpty())
+        {
+            FMessageContent MessageContent;
+            MessageContent.Text = InputText.ToString();
+            MessageContent.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Text);
+            Message.ContentArray.Add(MessageContent);
+        }
+    }
+    else
+    {
+        Message.Content = InputText.ToString();
+    }
+
     ChatGPT->AddMessage(Message);
 
     const auto AssistantMessage = FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant), {}};
@@ -154,12 +188,15 @@ void UChatGPTWidget::OnSendMessage()
 
     CreateMessageWidget(Message);
     ChatGPT->MakeRequest();
+
+    AttachedFilesContainer->Clear();
 }
 
 void UChatGPTWidget::CreateMessageWidget(const FMessage& Message)
 {
     auto* UserChatWidget = CreateWidget<UChatMessageWidget>(GetWorld(), ChatMessageWidgetClass);
-    UserChatWidget->SetMessage(Message);
+    check(UserChatWidget);
+    UserChatWidget->SetMessage(Message, false);
     ChatWidgets.Add(UserChatWidget);
     MessagesVerticalBox->AddChild(UserChatWidget);
     if (auto* ChatSlot = Cast<UVerticalBoxSlot>(UserChatWidget->Slot))
@@ -168,6 +205,7 @@ void UChatGPTWidget::CreateMessageWidget(const FMessage& Message)
     }
 
     auto* AssistantChatWidget = CreateWidget<UChatMessageWidget>(GetWorld(), ChatMessageWidgetClass);
+    check(AssistantChatWidget);
     AssistantChatWidget->SetMessage(ChatGPT->GetAssistantMessage());
     ChatWidgets.Add(AssistantChatWidget);
     MessagesVerticalBox->AddChild(AssistantChatWidget);
@@ -204,6 +242,7 @@ void UChatGPTWidget::OnDumpChat()
     if (UFileSystemFuncLib::SaveChatHistoryToFile(ChatGPT->GetHistory(), Model, FilePath))
     {
         auto* SystemChatWidget = CreateWidget<UChatMessageWidget>(GetWorld(), ChatMessageWidgetClass);
+        check(SystemChatWidget);
         ChatWidgets.Add(SystemChatWidget);
         MessagesVerticalBox->AddChild(SystemChatWidget);
         if (auto* ChatSlot = Cast<UVerticalBoxSlot>(SystemChatWidget->Slot))
@@ -213,7 +252,7 @@ void UChatGPTWidget::OnDumpChat()
 
         FMessage Message;
         Message.Content = FString::Format(TEXT("Chat history was saved to: {0}"), {FPaths::ConvertRelativePathToFull(FilePath)});
-        Message.Role = "system";
+        Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::System);
         SystemChatWidget->SetMessage(Message);
 
         ChatScrollBox->ScrollToEnd();
@@ -230,16 +269,19 @@ void UChatGPTWidget::OnClearChat()
 
     DumpChatButton->SetIsEnabled(false);
     ClearChatButton->SetIsEnabled(false);
+    AttachedFilesContainer->Clear();
 }
 
 void UChatGPTWidget::OnTextChanged(const FText& Text)
 {
-    SendMessageButton->SetIsEnabled(!UserInputTextBox->GetText().IsEmpty());
+    UpdateSendMessageButton();
 }
 
 void UChatGPTWidget::OnModelSelectionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
     ChatGPT->SetModel(ChatGPTModelComboBox->GetSelectedOption());
+    AttachedFilesContainer->Clear();
+    UpdateVisionElements();
 }
 
 void UChatGPTWidget::OnTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
@@ -261,8 +303,55 @@ FString UChatGPTWidget::GenerateFilePath() const
 void UChatGPTWidget::EnableControls(bool Enabled)
 {
     ChatScrollBox->SetAllowOverscroll(Enabled);
-    SendMessageButton->SetIsEnabled(Enabled);
+    if (Enabled)
+    {
+        UpdateVisionElements();
+    }
+    else
+    {
+        SendMessageButton->SetIsEnabled(false);
+        AttachImageButton->SetIsEnabled(false);
+    }
     DumpChatButton->SetIsEnabled(Enabled);
     ClearChatButton->SetIsEnabled(Enabled);
     UserInputTextBox->SetIsReadOnly(!Enabled);
+}
+
+void UChatGPTWidget::UpdateVisionElements()
+{
+    const bool VisionModel = UOpenAIFuncLib::ModelSupportsVision(ChatGPTModelComboBox->GetSelectedOption());
+    const bool AmountIsGood = AttachedFilesContainer->FilePaths().Num() < MaxAttachedFilesAmount;
+    AttachImageButton->SetIsEnabled(VisionModel && AmountIsGood);
+    AttachImageButton->SetToolTipText(VisionModel ? FText{} : FText::FromString("Image attachment is only supported by the vision model"));
+    ServiceContainer->SetVisibility(VisionModel ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+    ServicesWarningTextBlock->SetVisibility(!VisionModel ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+    UpdateSendMessageButton();
+}
+
+void UChatGPTWidget::OnImageSelected()
+{
+    const auto FileExtensions = UFileSystemFuncLib::GetFileExtensions(EFileType::Image);
+    TArray<FString> OutFilePaths;
+    if (UFileSystemFuncLib::OpenFile(FileExtensions, OutFilePaths))
+    {
+        if (OutFilePaths.Num())
+        {
+            for (const auto& FilePath : OutFilePaths)
+            {
+                AttachedFilesContainer->AddImage(FilePath);
+            }
+        }
+        UpdateVisionElements();
+    }
+}
+
+void UChatGPTWidget::UpdateSendMessageButton()
+{
+    const bool IsEnabled = !UserInputTextBox->GetText().IsEmpty() || AttachedFilesContainer->HasFiles();
+    SendMessageButton->SetIsEnabled(IsEnabled);
+}
+
+void UChatGPTWidget::OnFileRemoved()
+{
+    UpdateVisionElements();
 }

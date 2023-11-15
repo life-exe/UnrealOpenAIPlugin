@@ -91,6 +91,8 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::GPT_4: return "gpt-4";
         case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
+        case EMainModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
+        case EMainModelEnum::GPT_4_Vision_Preview: return "gpt-4-vision-preview";
         case EMainModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
         case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
         case EMainModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
@@ -108,6 +110,11 @@ FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Mode
     }
     checkNoEntry();
     return {};
+}
+
+bool UOpenAIFuncLib::ModelSupportsVision(const FString& Model)
+{
+    return OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview).Equals(Model);
 }
 
 FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel Model)
@@ -466,6 +473,17 @@ FString UOpenAIFuncLib::OpenAIModelToString(const FOpenAIModel& OpenAIModel)
     return Out;
 }
 
+FString UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType MessageContentType)
+{
+    switch (MessageContentType)
+    {
+        case EMessageContentType::Text: return "text";
+        case EMessageContentType::Image_URL: return "image_url";
+    }
+    checkNoEntry();
+    return {};
+}
+
 FString UOpenAIFuncLib::BoolToString(bool Value)
 {
     return Value ? TEXT("true") : TEXT("false");
@@ -489,11 +507,7 @@ FString UOpenAIFuncLib::RemoveWhiteSpaces(const FString& Input)
 bool UOpenAIFuncLib::StringToJson(const FString& JsonString, TSharedPtr<FJsonObject>& JsonObject)
 {
     TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonString);
-    if (!FJsonSerializer::Deserialize(JsonReader, JsonObject))
-    {
-        return false;
-    }
-    return true;
+    return FJsonSerializer::Deserialize(JsonReader, JsonObject);
 }
 
 bool UOpenAIFuncLib::JsonToString(const TSharedPtr<FJsonObject>& JsonObject, FString& JsonString)
@@ -608,6 +622,34 @@ FString UOpenAIFuncLib::MakeFunctionsString(const TSharedPtr<FJsonObject>& Json)
     return RemoveWhiteSpaces(Functions);
 }
 
+namespace
+{
+
+FString ToLowerExceptBase64URL(const FString& Input)
+{
+    FString Result = Input;
+    const FRegexPattern Base64UrlPattern(TEXT("data:image\\/(png|jpg|jpeg|gif);base64,[a-zA-Z0-9+/=]+"));
+    FRegexMatcher Matcher(Base64UrlPattern, Input);
+
+    TArray<FString> Matches;
+    while (Matcher.FindNext())
+    {
+        const int32 Begin = Matcher.GetCaptureGroupBeginning(0);
+        const int32 End = Matcher.GetCaptureGroupEnding(0);
+        Matches.Add(Input.Mid(Begin, End - Begin));
+    }
+
+    // Convert the rest of the string to lowercase except for the matches
+    Result.ToLowerInline();
+    for (const auto& Match : Matches)
+    {
+        Result = Result.Replace(*Match.ToLower(), *Match);
+    }
+
+    return Result;
+}
+}  // namespace
+
 FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
 {
     FString Output{Input};
@@ -639,7 +681,7 @@ FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
     Output = Output.Replace(*StartMarker, TEXT(""));
     Output = Output.Replace(*EndMarker, TEXT(""));
 
-    return Output.ToLower();
+    return ToLowerExceptBase64URL(Output);
 }
 
 FString UOpenAIFuncLib::MakeURLWithQuery(const FString& URL, const OpenAI::QueryPairs& Args)
@@ -651,4 +693,26 @@ FString UOpenAIFuncLib::MakeURLWithQuery(const FString& URL, const OpenAI::Query
     }
     URLWithQuery = URLWithQuery.LeftChop(1);
     return URLWithQuery;
+}
+
+FString UOpenAIFuncLib::WrapBase64(const FString& Base64String)
+{
+    return FString::Format(TEXT("data:image/png;base64,{0}"), {Base64String});
+}
+
+FString UOpenAIFuncLib::UnWrapBase64(const FString& Base64String)
+{
+    const FString ToRemove = TEXT("data:image/png;base64,");
+    return Base64String.Replace(*ToRemove, TEXT(""));
+}
+
+FString UOpenAIFuncLib::FilePathToBase64(const FString& FilePath)
+{
+    TArray<uint8> ImageData;
+    if (!FFileHelper::LoadFileToArray(ImageData, *FilePath))
+    {
+        return {};
+    }
+    const FString ImageInBase64 = FBase64::Encode(ImageData);
+    return UOpenAIFuncLib::WrapBase64(ImageInBase64);
 }
