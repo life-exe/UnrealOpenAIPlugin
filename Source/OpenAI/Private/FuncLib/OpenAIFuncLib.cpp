@@ -3,6 +3,7 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "Internationalization/Regex.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIFuncLib, All, All);
 

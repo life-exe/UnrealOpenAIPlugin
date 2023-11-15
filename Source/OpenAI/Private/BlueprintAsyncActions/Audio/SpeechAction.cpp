@@ -3,6 +3,7 @@
 #include "BlueprintAsyncActions/Audio/SpeechAction.h"
 #include "Provider/OpenAIProvider.h"
 #include "API/API.h"
+#include "Misc/FileHelper.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSpeechAction, All, All);
 
