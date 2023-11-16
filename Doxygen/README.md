@@ -55,23 +55,23 @@ void AAPIOverview::CreateImage()
  - [How to use functions](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
 
 ## Updates
- - [DALL·E 3](https://openai.com/dall-e-3) support added!
+ - [DALL·E 3](https://openai.com/dall-e-3) has been added. [Details](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Dalle3.md)
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/dalle3_1.png)
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/dalle3_2.png)
 
- - [Text to speech](https://platform.openai.com/docs/guides/text-to-speech) support added!
+ - [Text to speech](https://platform.openai.com/docs/guides/text-to-speech) has been added. [Details](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/TTS.md)
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/speech.png)
 
- - [Vision](https://platform.openai.com/docs/guides/vision) support added!
+ - [Vision](https://platform.openai.com/docs/guides/vision) has been added. [Details](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Vision.md)
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/vision_1.png)
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/vision_2.png)
 
- - [Functions](https://platform.openai.com/docs/guides/function-calling) support added! You can check the tutorial [via link.](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md)
+ - [Functions](https://platform.openai.com/docs/guides/function-calling) support added! You can check the tutorial [via link](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md)
 
 ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/services.png)
 
