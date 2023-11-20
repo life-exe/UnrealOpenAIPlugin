@@ -336,9 +336,10 @@ void UChatGPTWidget::OnImageSelected()
     {
         if (OutFilePaths.Num())
         {
-            for (const auto& FilePath : OutFilePaths)
+            const auto Amount = FMath::Min(OutFilePaths.Num(), MaxAttachedFilesAmount);
+            for (int32 i = 0; i < Amount; ++i)
             {
-                AttachedFilesContainer->AddImage(FilePath);
+                AttachedFilesContainer->AddImage(OutFilePaths[i]);
             }
         }
         UpdateVisionElements();

@@ -30,7 +30,7 @@ bool UFileSystemFuncLib::OpenFile(const FString& FileExtensions, TArray<FString>
         DefaultPath,                                                                                                              //
         {},                                                                                                                       //
         FileExtensions,                                                                                                           //
-        EFileDialogFlags::None,                                                                                                   //
+        EFileDialogFlags::Multiple,                                                                                               //
         OutFileNames);
 
     for (auto& FileName : OutFileNames)
