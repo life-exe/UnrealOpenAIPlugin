@@ -74,6 +74,11 @@ UChatGPT::UChatGPT()
         });
 }
 
+void UChatGPT::SetLogEnabled(bool Enabled)
+{
+    Provider->SetLogEnabled(Enabled);
+}
+
 void UChatGPT::MakeRequest()
 {
     TArray<FTools> AvailableTools;

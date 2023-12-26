@@ -9,7 +9,6 @@
 #include "Provider/RequestTypes.h"
 #include "Provider/CommonTypes.h"
 #include "FuncLib/ModelTypes.h"
-#include "ChatGPT/ChatGPT.h"
 #include "ChatGPT/BaseService.h"
 #include "ChatGPTWidget.generated.h"
 
