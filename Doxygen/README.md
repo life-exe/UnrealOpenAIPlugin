@@ -51,8 +51,9 @@ void AAPIOverview::CreateImage()
  - Unreal Engine 5.3 (master), 5.2
 
 ## Tutorials
- - [Plugin overview and usage example](https://youtu.be/SkiWQXHjk30) [english subtitles].
+ - [Plugin overview and usage example](https://youtu.be/SkiWQXHjk30) [English subtitles].
  - [How to use functions](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Services.md).
+ - [DALLE 3 | Text To Speech | Vision](https://youtu.be/l4hcCbAceXs) [English subtitles].
 
 ## Updates
  - [DALL·E 3](https://openai.com/dall-e-3) has been added. [Details](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Dalle3.md)
