@@ -56,6 +56,8 @@ void AAPIOverview::CreateImage()
  - [DALLE 3 | Text To Speech | Vision](https://youtu.be/l4hcCbAceXs) [English subtitles].
 
 ## Updates
+ - [Vision & Text To Speech Demo](https://life-exe.itch.io/openai-vision-demo)
+
  - [DALL·E 3](https://openai.com/dall-e-3) has been added. [Details](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Docs/Dalle3.md)
 
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/dalle3_1.png)
