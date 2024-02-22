@@ -337,13 +337,10 @@ private:
     template <typename OutStructType>
     FString SerializeRequest(const OutStructType& OutStruct) const
     {
-        TSharedPtr<FJsonObject> RequestBody = FJsonObjectConverter::UStructToJsonObject(OutStruct);
-
+        TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(OutStruct);
         FString RequestBodyStr;
-        TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&RequestBodyStr);
-        FJsonSerializer::Serialize(RequestBody.ToSharedRef(), Writer);
-
-        return RequestBodyStr.ToLower();
+        UOpenAIFuncLib::JsonToString(Json, RequestBodyStr);
+        return RequestBodyStr;
     }
 
     template <typename OutStructType>

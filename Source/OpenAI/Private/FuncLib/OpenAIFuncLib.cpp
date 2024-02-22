@@ -469,8 +469,46 @@ bool UOpenAIFuncLib::StringToJson(const FString& JsonString, TSharedPtr<FJsonObj
     return FJsonSerializer::Deserialize(JsonReader, JsonObject);
 }
 
+namespace
+{
+void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value);
+
+void ConvertObjectKeysToLowercase(TSharedPtr<FJsonObject> JsonObject)
+{
+    TSharedPtr<FJsonObject> NewJsonObject = MakeShareable(new FJsonObject);
+
+    for (const auto& Elem : JsonObject->Values)
+    {
+        const FString LowerKey = Elem.Key.ToLower();
+        ConvertKeysToLowercaseRecursive(Elem.Value);
+        NewJsonObject->SetField(LowerKey, Elem.Value);
+    }
+
+    *JsonObject = *NewJsonObject;
+}
+
+void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value)
+{
+    if (Value->Type == EJson::Object)
+    {
+        ConvertObjectKeysToLowercase(Value->AsObject());
+    }
+    else if (Value->Type == EJson::Array)
+    {
+        const TArray<TSharedPtr<FJsonValue>>& Array = Value->AsArray();
+        for (const auto& Item : Array)
+        {
+            ConvertKeysToLowercaseRecursive(Item);
+        }
+    }
+}
+
+}  // namespace
+
 bool UOpenAIFuncLib::JsonToString(const TSharedPtr<FJsonObject>& JsonObject, FString& JsonString)
 {
+    TSharedPtr<FJsonObject> NewJsonObject = JsonObject;
+    ConvertObjectKeysToLowercase(NewJsonObject);
     TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
     return FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
 }
@@ -581,34 +619,6 @@ FString UOpenAIFuncLib::MakeFunctionsString(const TSharedPtr<FJsonObject>& Json)
     return RemoveWhiteSpaces(Functions);
 }
 
-namespace
-{
-
-FString ToLowerExceptBase64URL(const FString& Input)
-{
-    FString Result = Input;
-    const FRegexPattern Base64UrlPattern(TEXT("data:image\\/(png|jpg|jpeg|gif);base64,[a-zA-Z0-9+/=]+"));
-    FRegexMatcher Matcher(Base64UrlPattern, Input);
-
-    TArray<FString> Matches;
-    while (Matcher.FindNext())
-    {
-        const int32 Begin = Matcher.GetCaptureGroupBeginning(0);
-        const int32 End = Matcher.GetCaptureGroupEnding(0);
-        Matches.Add(Input.Mid(Begin, End - Begin));
-    }
-
-    // Convert the rest of the string to lowercase except for the matches
-    Result.ToLowerInline();
-    for (const auto& Match : Matches)
-    {
-        Result = Result.Replace(*Match.ToLower(), *Match);
-    }
-
-    return Result;
-}
-}  // namespace
-
 FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
 {
     FString Output{Input};
@@ -640,7 +650,7 @@ FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
     Output = Output.Replace(*StartMarker, TEXT(""));
     Output = Output.Replace(*EndMarker, TEXT(""));
 
-    return ToLowerExceptBase64URL(Output);
+    return Output;
 }
 
 FString UOpenAIFuncLib::MakeURLWithQuery(const FString& URL, const OpenAI::QueryPairs& Args)
