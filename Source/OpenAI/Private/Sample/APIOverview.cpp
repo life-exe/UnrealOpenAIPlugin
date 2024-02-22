@@ -81,7 +81,7 @@ void AAPIOverview::RetrieveModel()
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveModelCompleted().AddLambda([](const FRetrieveModelResponse& Response)
         { UE_LOG(LogAPIOverview, Display, TEXT("%s"), *UOpenAIFuncLib::OpenAIModelToString(Response)); });
-    const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_003);
+    const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
     Provider->RetrieveModel("ada", Auth);
 }
 

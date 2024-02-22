@@ -20,26 +20,7 @@ void FOpenAIFuncLib::Define()
             It("AllModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage).Equals("babbage"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Davinci).Equals("davinci"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_Edit_001).Equals("text-davinci-edit-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage_Code_Search_Code).Equals("babbage-code-search-code"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Similarity_Babbage_001)
-                                     .Equals("text-similarity-babbage-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Code_Davinci_Edit_001).Equals("code-davinci-edit-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_001).Equals("text-davinci-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_003).Equals("text-davinci-003"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Ada).Equals("ada"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Curie_Instruct_Beta).Equals("curie-instruct-beta"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage_Code_Search_Text).Equals("babbage-code-search-text"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage_Similarity).Equals("babbage-similarity"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Whisper_1).Equals("whisper-1"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Code_Search_Babbage_Text_001)
-                                     .Equals("code-search-babbage-text-001"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301).Equals("gpt-3.5-turbo-0301"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo).Equals("gpt-3.5-turbo"));
                     TestTrueExpr(
@@ -50,63 +31,8 @@ void FOpenAIFuncLib::Define()
                                      .Equals("gpt-3.5-turbo-instruct-0914"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Code_Search_Babbage_Code_001)
-                                     .Equals("code-search-babbage-code-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Ada_001).Equals("text-ada-001"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_Ada_002).Equals("text-embedding-ada-002"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Similarity_Ada_001).Equals("text-similarity-ada-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Ada_Code_Search_Code).Equals("ada-code-search-code"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Ada_Similarity).Equals("ada-similarity"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Code_Search_Ada_Text_001).Equals("code-search-ada-text-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Ada_Query_001)
-                                     .Equals("text-search-ada-query-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Davinci_Search_Document).Equals("davinci-search-document"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Ada_Code_Search_Text).Equals("ada-code-search-text"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Ada_Doc_001).Equals("text-search-ada-doc-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Davinci_Instruct_Beta).Equals("davinci-instruct-beta"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Similarity_Curie_001)
-                                     .Equals("text-similarity-curie-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Code_Search_Ada_Code_001).Equals("code-search-ada-code-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Ada_Search_Query).Equals("ada-search-query"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Davinci_Query_001)
-                                     .Equals("text-search-davinci-query-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Curie_Search_Query).Equals("curie-search-query"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Davinci_Search_Query).Equals("davinci-search-query"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage_Search_Document).Equals("babbage-search-document"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Ada_Search_Document).Equals("ada-search-document"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Curie_Query_001)
-                                     .Equals("text-search-curie-query-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Babbage_Doc_001)
-                                     .Equals("text-search-babbage-doc-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Curie_Search_Document).Equals("curie-search-document"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Curie_Doc_001)
-                                     .Equals("text-search-curie-doc-001"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Babbage_Search_Query).Equals("babbage-search-query"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Babbage_001).Equals("text-babbage-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Davinci_Doc_001)
-                                     .Equals("text-search-davinci-doc-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Search_Babbage_Query_001)
-                                     .Equals("text-search-babbage-query-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Curie_Similarity).Equals("curie-similarity"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Curie).Equals("curie"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Similarity_Davinci_001)
-                                     .Equals("text-similarity-davinci-001"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Davinci_002).Equals("text-davinci-002"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Davinci_Similarity).Equals("davinci-similarity"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Curie_001).Equals("text-curie:001"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4).Equals("gpt-4"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
@@ -120,8 +46,14 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_HD).Equals("tts-1-hd"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_1106).Equals("tts-1-1106"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_HD_1106).Equals("tts-1-hd-1106"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Canary_Whisper).Equals("canary_whisper"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Canary_TTS).Equals("canary_tts"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_3_Large).Equals("text-embedding-3-large"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_32K_0314).Equals("gpt-4-32k-0314"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0125).Equals("gpt-3.5-turbo-0125"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_3_Small).Equals("text-embedding-3-small"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0125_Preview).Equals("gpt-4-0125-preview"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Turbo_Preview).Equals("gpt-4-turbo-preview"));
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",

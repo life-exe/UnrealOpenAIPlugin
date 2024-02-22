@@ -227,7 +227,7 @@ void FOpenAIProviderActual::Define()
                         });
 
                     FModerations Moderations;
-                    Moderations.Input = {"I love you", "I really hate you"};
+                    Moderations.Input = {"I love you.", "I despise you fiercely."};
                     Moderations.Model = UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Latest);
 
                     OpenAIProvider->CreateModerations(Moderations, Auth);
@@ -415,7 +415,7 @@ void FOpenAIProviderActual::Define()
                     OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
                         [&](const FEmbeddingsResponse& Response)
                         {
-                            TestTrueExpr(Response.Model.Equals("text-embedding-ada-002-v2"));
+                            TestTrueExpr(Response.Model.Equals("text-embedding-ada-002"));
                             TestTrueExpr(Response.Usage.Prompt_Tokens == 6);
                             TestTrueExpr(Response.Usage.Total_Tokens == 6);
                             TestTrueExpr(Response.Object.Equals("list"));

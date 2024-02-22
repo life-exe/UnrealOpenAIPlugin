@@ -11,20 +11,7 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
 {
     switch (Model)
     {
-        case EAllModelEnum::Babbage: return "babbage";
-        case EAllModelEnum::Davinci: return "davinci";
-        case EAllModelEnum::Text_Davinci_Edit_001: return "text-davinci-edit-001";
-        case EAllModelEnum::Babbage_Code_Search_Code: return "babbage-code-search-code";
-        case EAllModelEnum::Text_Similarity_Babbage_001: return "text-similarity-babbage-001";
-        case EAllModelEnum::Code_Davinci_Edit_001: return "code-davinci-edit-001";
-        case EAllModelEnum::Text_Davinci_001: return "text-davinci-001";
-        case EAllModelEnum::Text_Davinci_003: return "text-davinci-003";
-        case EAllModelEnum::Ada: return "ada";
-        case EAllModelEnum::Curie_Instruct_Beta: return "curie-instruct-beta";
-        case EAllModelEnum::Babbage_Code_Search_Text: return "babbage-code-search-text";
-        case EAllModelEnum::Babbage_Similarity: return "babbage-similarity";
         case EAllModelEnum::Whisper_1: return "whisper-1";
-        case EAllModelEnum::Code_Search_Babbage_Text_001: return "code-search-babbage-text-001";
         case EAllModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
         case EAllModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
         case EAllModelEnum::GPT_3_5_Turbo_16k_0613: return "gpt-3.5-turbo-16k-0613";
@@ -32,40 +19,7 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_3_5_Turbo_0613: return "gpt-3.5-turbo-0613";
         case EAllModelEnum::GPT_3_5_Turbo_Instruct_0914: return "gpt-3.5-turbo-instruct-0914";
         case EAllModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
-        case EAllModelEnum::Code_Search_Babbage_Code_001: return "code-search-babbage-code-001";
-        case EAllModelEnum::Text_Ada_001: return "text-ada-001";
         case EAllModelEnum::Text_Embedding_Ada_002: return "text-embedding-ada-002";
-        case EAllModelEnum::Text_Similarity_Ada_001: return "text-similarity-ada-001";
-        case EAllModelEnum::Ada_Code_Search_Code: return "ada-code-search-code";
-        case EAllModelEnum::Ada_Similarity: return "ada-similarity";
-        case EAllModelEnum::Code_Search_Ada_Text_001: return "code-search-ada-text-001";
-        case EAllModelEnum::Text_Search_Ada_Query_001: return "text-search-ada-query-001";
-        case EAllModelEnum::Davinci_Search_Document: return "davinci-search-document";
-        case EAllModelEnum::Ada_Code_Search_Text: return "ada-code-search-text";
-        case EAllModelEnum::Text_Search_Ada_Doc_001: return "text-search-ada-doc-001";
-        case EAllModelEnum::Davinci_Instruct_Beta: return "davinci-instruct-beta";
-        case EAllModelEnum::Text_Similarity_Curie_001: return "text-similarity-curie-001";
-        case EAllModelEnum::Code_Search_Ada_Code_001: return "code-search-ada-code-001";
-        case EAllModelEnum::Ada_Search_Query: return "ada-search-query";
-        case EAllModelEnum::Text_Search_Davinci_Query_001: return "text-search-davinci-query-001";
-        case EAllModelEnum::Curie_Search_Query: return "curie-search-query";
-        case EAllModelEnum::Davinci_Search_Query: return "davinci-search-query";
-        case EAllModelEnum::Babbage_Search_Document: return "babbage-search-document";
-        case EAllModelEnum::Ada_Search_Document: return "ada-search-document";
-        case EAllModelEnum::Text_Search_Curie_Query_001: return "text-search-curie-query-001";
-        case EAllModelEnum::Text_Search_Babbage_Doc_001: return "text-search-babbage-doc-001";
-        case EAllModelEnum::Curie_Search_Document: return "curie-search-document";
-        case EAllModelEnum::Text_Search_Curie_Doc_001: return "text-search-curie-doc-001";
-        case EAllModelEnum::Babbage_Search_Query: return "babbage-search-query";
-        case EAllModelEnum::Text_Babbage_001: return "text-babbage-001";
-        case EAllModelEnum::Text_Search_Davinci_Doc_001: return "text-search-davinci-doc-001";
-        case EAllModelEnum::Text_Search_Babbage_Query_001: return "text-search-babbage-query-001";
-        case EAllModelEnum::Curie_Similarity: return "curie-similarity";
-        case EAllModelEnum::Curie: return "curie";
-        case EAllModelEnum::Text_Similarity_Davinci_001: return "text-similarity-davinci-001";
-        case EAllModelEnum::Text_Davinci_002: return "text-davinci-002";
-        case EAllModelEnum::Davinci_Similarity: return "davinci-similarity";
-        case EAllModelEnum::Text_Curie_001: return "text-curie:001";
         case EAllModelEnum::GPT_4: return "gpt-4";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
@@ -78,8 +32,12 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::TTS_1_HD: return "tts-1-hd";
         case EAllModelEnum::TTS_1_1106: return "tts-1-1106";
         case EAllModelEnum::TTS_1_HD_1106: return "tts-1-hd-1106";
-        case EAllModelEnum::Canary_Whisper: return "canary_whisper";
-        case EAllModelEnum::Canary_TTS: return "canary_tts";
+        case EAllModelEnum::Text_Embedding_3_Large: return "text-embedding-3-large";
+        case EAllModelEnum::GPT_4_32K_0314: return "gpt-4-32k-0314";
+        case EAllModelEnum::GPT_3_5_Turbo_0125: return "gpt-3.5-turbo-0125";
+        case EAllModelEnum::Text_Embedding_3_Small: return "text-embedding-3-small";
+        case EAllModelEnum::GPT_4_0125_Preview: return "gpt-4-0125-preview";
+        case EAllModelEnum::GPT_4_Turbo_Preview: return "gpt-4-turbo-preview";
     }
     checkNoEntry();
     return {};
