@@ -400,13 +400,19 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
-                    JsonObject->SetStringField("object", "list");
+                    JsonObject->SetStringField("String", "value");
+                    JsonObject->SetStringField("STrinG_NEW", "VALUE");
+
+                    TSharedPtr<FJsonObject> JsonSubObject = MakeShareable(new FJsonObject());
+                    JsonSubObject->SetStringField("SUBObJect", "vaLue");
+                    JsonObject->SetObjectField("ObjecT_NEW", JsonSubObject);
 
                     FString String;
                     TestTrueExpr(UOpenAIFuncLib::JsonToString(JsonObject, String));
 
                     const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
-                    TestTrueExpr(ResultString.Equals("{\"object\": \"list\"}"));
+                    TestTrueExpr(
+                        ResultString.Equals("{\"string\": \"value\",\"string_new\": \"VALUE\",\"object_new\":{\"subobject\": \"vaLue\"}}"));
                 });
 
             It("URLWithQueryCanBECreatedCorrectly",
