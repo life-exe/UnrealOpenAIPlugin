@@ -27,16 +27,16 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "OpenAI")
     int32 MaxTokens{2000};
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "OpenAI")
     void SetAuth(const FOpenAIAuth& OpenAIAuth);
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "OpenAI")
     bool IsInProgress() const { return bIsInProgress; }
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "OpenAI")
     void MakeRequest(const FMessage& Message);
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "OpenAI")
     FMessage GetLastMessage() const { return LastMessage; }
 
 protected:
