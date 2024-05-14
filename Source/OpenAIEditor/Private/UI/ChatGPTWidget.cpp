@@ -91,6 +91,7 @@ void UChatGPTWidget::InitModelsComboBox()
     };
 
     ChatGPTModelComboBox->ClearOptions();
+    AddModel(EMainModelEnum::GPT_4O);
     AddModel(EMainModelEnum::GPT_4);
     AddModel(EMainModelEnum::GPT_4_Vision_Preview);
     AddModel(EMainModelEnum::GPT_4_0314);
@@ -98,7 +99,7 @@ void UChatGPTWidget::InitModelsComboBox()
     AddModel(EMainModelEnum::GPT_3_5_Turbo);
     AddModel(EMainModelEnum::GPT_3_5_Turbo_0301);
 
-    ChatGPTModelComboBox->SetSelectedOption(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4));
+    ChatGPTModelComboBox->SetSelectedOption(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4O));
     ChatGPT->SetModel(ChatGPTModelComboBox->GetSelectedOption());
     UpdateVisionElements();
 }

@@ -37,11 +37,17 @@ enum class EAllModelEnum : uint8
     Text_Embedding_3_Small,
     GPT_4_0125_Preview,
     GPT_4_Turbo_Preview,
+    GPT_4O_2024_05_13,
+    GPT_4O,
+    GPT_4_Turbo_2024_04_09,
+    GPT_4_Turbo,
+    GPT_4_1106_Vision_Preview
 };
 
 UENUM(BlueprintType)
 enum class EMainModelEnum : uint8
 {
+    GPT_4O,
     GPT_4,
     GPT_4_1106_Preview,
     GPT_4_Vision_Preview,

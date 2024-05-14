@@ -38,6 +38,11 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::Text_Embedding_3_Small: return "text-embedding-3-small";
         case EAllModelEnum::GPT_4_0125_Preview: return "gpt-4-0125-preview";
         case EAllModelEnum::GPT_4_Turbo_Preview: return "gpt-4-turbo-preview";
+        case EAllModelEnum::GPT_4O_2024_05_13: return "gpt-4o-2024-05-13";
+        case EAllModelEnum::GPT_4O: return "gpt-4o";
+        case EAllModelEnum::GPT_4_Turbo_2024_04_09: return "gpt-4-turbo-2024-04-09";
+        case EAllModelEnum::GPT_4_Turbo: return "gpt-4-turbo";
+        case EAllModelEnum::GPT_4_1106_Vision_Preview: return "gpt-4-1106-vision-preview";
     }
     checkNoEntry();
     return {};
@@ -47,6 +52,7 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
 {
     switch (Model)
     {
+        case EMainModelEnum::GPT_4O: return "gpt-4o";
         case EMainModelEnum::GPT_4: return "gpt-4";
         case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
@@ -73,7 +79,9 @@ FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Mode
 
 bool UOpenAIFuncLib::ModelSupportsVision(const FString& Model)
 {
-    return OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview).Equals(Model);
+    return OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview).Equals(Model) ||
+           OpenAIAllModelToString(EAllModelEnum::GPT_4_1106_Vision_Preview).Equals(Model) ||
+           OpenAIAllModelToString(EAllModelEnum::GPT_4O).Equals(Model);
 }
 
 FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel Model)
