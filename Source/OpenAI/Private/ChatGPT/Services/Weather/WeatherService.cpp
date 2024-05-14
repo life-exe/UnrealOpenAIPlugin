@@ -110,13 +110,13 @@ bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FS
     // units = f    temperature: Fahrenheit
     // units = m    temperature: Celsius // m - metric system, if you, like me, have been wondering wtf m means (=
     FString Units{"m"};
-    if (ArgsJson->TryGetStringField("unit", Units))
+    if (ArgsJson->TryGetStringField(TEXT("unit"), Units))
     {
         Units = Units.ToLower().Equals("celsius") ? "m" : "f";
     }
 
     FString Location;
-    if (!ArgsJson->TryGetStringField("location", Location))
+    if (!ArgsJson->TryGetStringField(TEXT("location"), Location))
     {
         return false;
     }
@@ -144,7 +144,7 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
     }
 
     bool IsSuccess{true};
-    if (JsonObject->TryGetBoolField("success", IsSuccess) && !IsSuccess)
+    if (JsonObject->TryGetBoolField(TEXT("success"), IsSuccess) && !IsSuccess)
     {
         SendError("Service can't provide requested weather");
         return;

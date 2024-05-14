@@ -3,6 +3,7 @@
 #if WITH_AUTOMATION_TESTS
 
 #include "CoreMinimal.h"
+#include "FuncLib/ModelTypes.h"
 
 namespace OpenAI
 {

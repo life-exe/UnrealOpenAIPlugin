@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/AudioTypes.h"
+#include "Provider/CommonTypes.h"
 #include "Misc/Paths.h"
 #include "SpeechAction.generated.h"
 

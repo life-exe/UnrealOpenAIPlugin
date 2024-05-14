@@ -2,6 +2,7 @@
 
 #include "Http/HttpHelper.h"
 #include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHttpHelper, All, All);
 

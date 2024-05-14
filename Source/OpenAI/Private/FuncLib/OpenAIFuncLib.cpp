@@ -4,6 +4,8 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Internationalization/Regex.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Base64.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIFuncLib, All, All);
 
@@ -563,12 +565,12 @@ EOpenAIResponseError UOpenAIFuncLib::GetErrorCode(const FString& RawError)
         return EOpenAIResponseError::Unknown;
     }
 
-    if (JsonObject.IsValid() && JsonObject->HasField("error"))
+    if (JsonObject.IsValid() && JsonObject->HasField(TEXT("error")))
     {
-        const auto Error = JsonObject->GetObjectField("error");
-        if (Error->HasField("code"))
+        const auto Error = JsonObject->GetObjectField(TEXT("error"));
+        if (Error->HasField(TEXT("code")))
         {
-            const auto Code = Error->GetStringField("code");
+            const auto Code = Error->GetStringField(TEXT("code"));
             if (Code.Contains("invalid_api_key"))
             {
                 return EOpenAIResponseError::InvalidAPIKey;
@@ -590,12 +592,12 @@ FString UOpenAIFuncLib::GetErrorMessage(const FString& RawError)
 
     if (!FJsonSerializer::Deserialize(JsonReader, JsonObject)) return {};
 
-    if (JsonObject.IsValid() && JsonObject->HasField("error"))
+    if (JsonObject.IsValid() && JsonObject->HasField(TEXT("error")))
     {
-        const auto Error = JsonObject->GetObjectField("error");
-        if (Error->HasField("message"))
+        const auto Error = JsonObject->GetObjectField(TEXT("error"));
+        if (Error->HasField(TEXT("message")))
         {
-            return Error->GetStringField("message");
+            return Error->GetStringField(TEXT("message"));
         }
     }
 

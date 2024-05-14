@@ -8,6 +8,8 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Algo/ForEach.h"
 #include "API/API.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogAPIOverview, All, All);
 

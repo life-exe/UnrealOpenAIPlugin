@@ -6,6 +6,8 @@
 #include "PixelFormat.h"
 #include "Engine/Texture2D.h"
 #include "TextureResource.h"
+#include "Modules/ModuleManager.h"
+#include "IImageWrapperModule.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogImageFuncLib, All, All);
 

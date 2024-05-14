@@ -65,7 +65,7 @@ void UWorldTimeService::Call(const TSharedPtr<FJsonObject>& Args, const FString&
     Super::Call(Args, ToolIDIn);
 
     FString Location{};
-    Args->TryGetStringField("location", Location);
+    Args->TryGetStringField(TEXT("location"), Location);
 
     const FString URL = Location.IsEmpty() ? WorldTime::IP_URL : WorldTime::TIMEZONE_URL + Location;
     UE_LOG(LogWorldTimeService, Display, TEXT("URL: %s"), *URL);
