@@ -788,6 +788,7 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(const FString& URL, const FString& 
     HttpRequest->SetHeader("Content-Type", "application/json");
     HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
     HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
+    HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
     HttpRequest->SetURL(URL);
     HttpRequest->SetVerb(Method);
     return HttpRequest;
@@ -800,6 +801,7 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     HttpRequest->SetHeader("Content-Type", "application/json");
     HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
     HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
+    HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
     HttpRequest->SetURL(URL);
     HttpRequest->SetVerb(Method);
 

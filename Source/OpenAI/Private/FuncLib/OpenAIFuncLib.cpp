@@ -331,9 +331,9 @@ FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFile(const FString& FilePath)
         UE_LOG(LogOpenAIFuncLib, Error, TEXT("Failed loading file: %s"), *FilePath);
         return {};
     }
-    else if (FileLines.Num() != 2)
+    else if (FileLines.Num() < 2)
     {
-        UE_LOG(LogOpenAIFuncLib, Error, TEXT("Auth file might have 2 lines only"));
+        UE_LOG(LogOpenAIFuncLib, Error, TEXT("Auth file might have 2 or 3 lines only"));
         return {};
     }
     FOpenAIAuth Auth;
@@ -344,6 +344,12 @@ FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFile(const FString& FilePath)
 
     FileLines[1].Split("=", &ParamName, &ParamValue);
     Auth.OrganizationID = ParamValue;
+
+    if (FileLines.Num() > 2)
+    {
+        FileLines[2].Split("=", &ParamName, &ParamValue);
+        Auth.ProjectID = ParamValue;
+    }
 
     return Auth;
 }

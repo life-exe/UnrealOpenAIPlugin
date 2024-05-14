@@ -93,6 +93,7 @@ public:
       File content consits of two lines:
       APIKey=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       OrganizationID=org-xxxxxxxxxxxxxxxxxxxxxx
+      ProjectID=proj_xxxxxxxxxxxxxxxxxxxxxx
     */
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FOpenAIAuth LoadAPITokensFromFile(const FString& FilePath);

@@ -192,19 +192,26 @@ public class YourProject : ModuleRules
 
 3. Record your [Organization ID](https://platform.openai.com/account/org-settings):
 `org-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
-4. At the root of your Unreal Engine project, create a file named `OpenAIAuth.ini` (you can use `setup_auth_files.bat` in the plugin root folder. It will copy `.ini` files from [template folder](https://github.com/life-exe/UnrealOpenAIPlugin/tree/master/Templates)) with the following content:
+
+4. Create a [Project ID](https://platform.openai.com/settings/organization/general):
+`proj_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+5. At the root of your Unreal Engine project, create a file named `OpenAIAuth.ini` (you can use `setup_auth_files.bat` in the plugin root folder. It will copy `.ini` files from [template folder](https://github.com/life-exe/UnrealOpenAIPlugin/tree/master/Templates)) with the following content:
 ```
 APIKey=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 OrganizationID=org-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ProjectID=proj_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
-5. Once completed, your Unreal Engine project structure might look like this:
+6. Once completed, your Unreal Engine project structure might look like this:
 
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/3.png)
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/4.png)
 
-6. Actually you can left `OrganizationID` empty. It doesn't affect on auth.
+7. Actually you can left `OrganizationID` empty. It doesn't affect on auth.
 
-7. [Do the authentication steps](#how-to-set-up-default-services) for services if you need them.
+8. If you haven't created a `ProjectID` don't put ```ProjectID=proj_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx``` in the file.
+
+9. [Do the authentication steps](#how-to-set-up-default-services) for services if you need them.
 
 Finally, compile your project and launch the Unreal Editor.
 

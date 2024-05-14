@@ -112,7 +112,10 @@ struct FOpenAIAuth
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
     FString OrganizationID{};
 
-    bool IsEmpty() const { return APIKey.IsEmpty() || OrganizationID.IsEmpty(); }
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    FString ProjectID{};
+
+    bool IsEmpty() const { return APIKey.IsEmpty() || OrganizationID.IsEmpty() || ProjectID.IsEmpty(); }
 };
 
 namespace OpenAI

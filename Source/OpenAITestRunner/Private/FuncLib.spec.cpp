@@ -252,6 +252,7 @@ void FOpenAIFuncLib::Define()
                     const FOpenAIAuth Auth = UOpenAIFuncLib::LoadAPITokensFromFile(FilePath);
                     TestTrueExpr(Auth.APIKey.Equals("sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
                     TestTrueExpr(Auth.OrganizationID.Equals("org-xxxxxxxxxxxxxxxxxxxxxxxx"));
+                    TestTrueExpr(Auth.ProjectID.Equals("proj_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
                 });
 
             It("OpenAIAudioTranscriptToStringShouldReturnCorrectValue",

@@ -350,6 +350,7 @@ private:
         HttpRequest->SetHeader("Content-Type", "application/json");
         HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
         HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
+        HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
         HttpRequest->SetURL(URL);
         HttpRequest->SetVerb(Method);
         HttpRequest->SetContentAsString(SerializeRequest(OutStruct));
