@@ -578,9 +578,9 @@ void FOpenAIProviderActual::Define()
                                     RequestCompleted = true;
                                     return;
                                 }
-                                const auto LocationArg = ArgumentsJsonObject->TryGetField("location");
+                                const auto LocationArg = ArgumentsJsonObject->TryGetField(TEXT("location"));
                                 TestTrueExpr(LocationArg.IsValid());
-                                const auto UnitArg = ArgumentsJsonObject->TryGetField("unit");
+                                const auto UnitArg = ArgumentsJsonObject->TryGetField(TEXT("unit"));
                                 TestTrueExpr(UnitArg.IsValid());
 
                                 FMessage Message;

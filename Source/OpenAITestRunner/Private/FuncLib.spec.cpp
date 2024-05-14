@@ -402,7 +402,7 @@ void FOpenAIFuncLib::Define()
                     const FString String = "{\"object\":\"list\"}";
                     TSharedPtr<FJsonObject> JsonObject;
                     TestTrueExpr(UOpenAIFuncLib::StringToJson(String, JsonObject));
-                    TestTrueExpr(JsonObject->GetStringField("object").Equals("list"));
+                    TestTrueExpr(JsonObject->GetStringField(TEXT("object")).Equals("list"));
                 });
 
             It("JsonToStringShouldMakeConversionCorrectly",

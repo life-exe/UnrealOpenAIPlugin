@@ -23,9 +23,13 @@ public:
         static TArray<uint8> None;
         return None;
     }
+    virtual const FString& GetEffectiveURL() const override { return EffectiveURL; }
+    virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::Succeeded; }
+    virtual EHttpFailureReason GetFailureReason() const override { return EHttpFailureReason::None; }
 
 private:
     FString ReponseData;
+    FString EffectiveURL;
 };
 
 class FFakeHttpRequest : public IHttpRequest
@@ -65,6 +69,8 @@ public:
     virtual FHttpRequestCompleteDelegate& OnProcessRequestComplete() override { return HttpRequestCompleteDelegate; }
     virtual FHttpRequestProgressDelegate& OnRequestProgress() override { return HttpRequestProgressDelegate; }
     virtual FHttpRequestHeaderReceivedDelegate& OnHeaderReceived() override { return HttpHeaderReceivedDelegate; }
+    virtual FHttpRequestProgressDelegate64& OnRequestProgress64() override { return HttpRequestProgressDelegate64; }
+    virtual FHttpRequestStatusCodeReceivedDelegate& OnStatusCodeReceived() override { return HttpRequestStatusCodeReceivedDelegate; }
     virtual void CancelRequest() override {}
     virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::NotStarted; }
     virtual const FHttpResponsePtr GetResponse() const override { return MakeShareable(new FFakeHttpResponse(ReponseData)); }
@@ -76,15 +82,22 @@ public:
     {
         return EHttpRequestDelegateThreadPolicy::CompleteOnGameThread;
     }
+    virtual const FString& GetEffectiveURL() const override { return EffectiveURL; }
+    virtual EHttpFailureReason GetFailureReason() const override { return EHttpFailureReason::None; }
+    virtual void ProcessRequestUntilComplete() override {}
+    virtual void SetActivityTimeout(float InTimeoutSecs) override {}
 
 public:
     FHttpRequestProgressDelegate HttpRequestProgressDelegate;
+    FHttpRequestProgressDelegate64 HttpRequestProgressDelegate64;
     FHttpRequestCompleteDelegate HttpRequestCompleteDelegate;
     FHttpRequestHeaderReceivedDelegate HttpHeaderReceivedDelegate;
     FHttpRequestWillRetryDelegate HttpRequestWillRetryDelegate;
+    FHttpRequestStatusCodeReceivedDelegate HttpRequestStatusCodeReceivedDelegate;
 
 private:
     FString ReponseData;
+    FString EffectiveURL;
 };
 
 UCLASS()
