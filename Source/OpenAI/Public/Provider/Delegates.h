@@ -19,7 +19,6 @@ using FOnCreateCompletionStreamProgresses = FOnCreateCompletionStreamCompleted;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateChatCompletionCompleted, const FChatCompletionResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateChatCompletionStreamCompleted, const TArray<FChatCompletionStreamResponse>&);
 using FOnCreateChatCompletionStreamProgresses = FOnCreateChatCompletionStreamCompleted;
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateEditCompleted, const FEditResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateImageCompleted, const FImageResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateImageEditCompleted, const FImageEditResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateImageVariationCompleted, const FImageVariationResponse&);
@@ -32,10 +31,6 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnUploadFileCompleted, const FUploadFileRes
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeleteFileCompleted, const FDeleteFileResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFileCompleted, const FRetrieveFileResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFileContentCompleted, const FRetrieveFileContentResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateFineTuneCompleted, const FFineTuneResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTunesCompleted, const FListFineTuneResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFineTuneCompleted, const FFineTuneResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnCancelFineTuneCompleted, const FFineTuneResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuneEventsCompleted, const FFineTuneEventsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeleteFineTunedModelCompleted, const FDeleteFineTuneResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateModerationsCompleted, const FModerationsResponse&);

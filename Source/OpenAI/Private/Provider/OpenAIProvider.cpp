@@ -76,17 +76,6 @@ void UOpenAIProvider::CreateChatCompletion(const FChatCompletion& ChatCompletion
     ProcessRequest(HttpRequest);
 }
 
-void UOpenAIProvider::CreateEdit(const FEdit& Edit, const FOpenAIAuth& Auth)
-{
-    check(!Edit.Model.IsEmpty());
-    check(!Edit.Input.IsEmpty());
-    check(!Edit.Instruction.IsEmpty());
-
-    auto HttpRequest = MakeRequest(Edit, API->Edits(), "POST", Auth);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateEditCompleted);
-    ProcessRequest(HttpRequest);
-}
-
 void UOpenAIProvider::CreateImage(const FOpenAIImage& Image, const FOpenAIAuth& Auth)
 {
     check(!Image.Prompt.IsEmpty());
@@ -258,68 +247,6 @@ void UOpenAIProvider::RetrieveFileContent(const FString& FileID, const FOpenAIAu
     ProcessRequest(HttpRequest);
 }
 
-void UOpenAIProvider::CreateFineTune(const FFineTune& FineTune, const FOpenAIAuth& Auth)
-{
-    // The current request is case sensitive for file ids and optional params.
-    // That's why special serialisation is needed.
-
-    auto HttpRequest = MakeRequest(API->FineTunes(), "POST", Auth);
-
-    TSharedPtr<FJsonObject> RequestBody = MakeShareable(new FJsonObject());
-    RequestBody->SetStringField("training_file", FineTune.Training_File);
-    RequestBody->SetStringField("model", FineTune.Model);
-
-    SetOptional(RequestBody, FineTune.Validation_File, "validation_file");
-    SetOptional(RequestBody, FineTune.N_Epochs, "n_epochs");
-    SetOptional(RequestBody, FineTune.Batch_Size, "batch_size");
-    SetOptional(RequestBody, FineTune.Learning_Rate_Multiplier, "learning_rate_multiplier");
-    SetOptional(RequestBody, FineTune.Prompt_Loss_Weight, "prompt_loss_weight");
-    SetOptional(RequestBody, FineTune.Compute_Classification_Metrics, "compute_classification_metrics");
-    SetOptional(RequestBody, FineTune.Classification_N_Classes, "classification_n_classes");
-    SetOptional(RequestBody, FineTune.Classification_Positive_Class, "classification_positive_class");
-    SetOptional(RequestBody, FineTune.Suffix, "suffix");
-    SetOptional(RequestBody, FineTune.Classification_Betas, "classification_betas");
-
-    FString RequestBodyStr;
-    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&RequestBodyStr);
-    FJsonSerializer::Serialize(RequestBody.ToSharedRef(), Writer);
-
-    HttpRequest->SetContentAsString(RequestBodyStr);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateFineTuneCompleted);
-    ProcessRequest(HttpRequest);
-}
-
-void UOpenAIProvider::ListFineTunes(const FOpenAIAuth& Auth)
-{
-    auto HttpRequest = MakeRequest(API->FineTunes(), "GET", Auth);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListFineTunesCompleted);
-    ProcessRequest(HttpRequest);
-}
-
-void UOpenAIProvider::RetrieveFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth)
-{
-    const auto URL = FString(API->FineTunes()).Append("/").Append(FineTuneID);
-    auto HttpRequest = MakeRequest(URL, "GET", Auth);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveFineTuneCompleted);
-    ProcessRequest(HttpRequest);
-}
-
-void UOpenAIProvider::CancelFineTune(const FString& FineTuneID, const FOpenAIAuth& Auth)
-{
-    const auto URL = FString(API->FineTunes()).Append("/").Append(FineTuneID).Append("/cancel");
-    auto HttpRequest = MakeRequest(URL, "POST", Auth);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCancelFineTuneCompleted);
-    ProcessRequest(HttpRequest);
-}
-
-void UOpenAIProvider::ListFineTuneEvents(const FString& FineTuneID, const FOpenAIAuth& Auth)
-{
-    const auto URL = FString(API->FineTunes()).Append("/").Append(FineTuneID).Append("/events");
-    auto HttpRequest = MakeRequest(URL, "GET", Auth);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListFineTuneEventsCompleted);
-    ProcessRequest(HttpRequest);
-}
-
 void UOpenAIProvider::DeleteFineTunedModel(const FString& ModelID, const FOpenAIAuth& Auth)
 {
     const auto URL = FString(API->Models()).Append("/").Append(ModelID);
@@ -437,11 +364,6 @@ void UOpenAIProvider::OnCreateChatCompletionStreamCompleted(FHttpRequestPtr Requ
 void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
 {
     OnStreamProgress<FChatCompletionStreamResponse>(Request, BytesSent, BytesReceived, CreateChatCompletionStreamProgresses);
-}
-
-void UOpenAIProvider::OnCreateEditCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FEditResponse>(Response, WasSuccessful, CreateEditCompleted);
 }
 
 void UOpenAIProvider::OnCreateImageCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -614,31 +536,10 @@ void UOpenAIProvider::OnCreateModerationsCompleted(FHttpRequestPtr Request, FHtt
     CreateModerationsCompleted.Broadcast(ParsedResponse);
 }
 
-void UOpenAIProvider::OnCreateFineTuneCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FFineTuneResponse>(Response, WasSuccessful, CreateFineTuneCompleted);
-}
-
-void UOpenAIProvider::OnListFineTunesCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListFineTuneResponse>(Response, WasSuccessful, ListFineTunesCompleted);
-}
-
-void UOpenAIProvider::OnRetrieveFineTuneCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FFineTuneResponse>(Response, WasSuccessful, RetrieveFineTuneCompleted);
-}
-
-void UOpenAIProvider::OnCancelFineTuneCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FFineTuneResponse>(Response, WasSuccessful, CancelFineTuneCompleted);
-}
-
 void UOpenAIProvider::OnListFineTuneEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FFineTuneEventsResponse>(Response, WasSuccessful, ListFineTuneEventsCompleted);
 }
-
 void UOpenAIProvider::OnDeleteFineTunedModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FDeleteFineTuneResponse>(Response, WasSuccessful, DeleteFineTunedModelCompleted);

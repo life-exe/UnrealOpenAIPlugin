@@ -541,7 +541,6 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Models() const override { return API_URL + "/v1/models"; }
         virtual FString Completion() const override { return API_URL + "/v1/completions"; }
         virtual FString ChatCompletion() const override { return API_URL + "/v1/chat/completions"; }
-        virtual FString Edits() const override { return API_URL + "/v1/edits"; }
         virtual FString ImageGenerations() const override { return API_URL + "/v1/images/generations"; }
         virtual FString ImageEdits() const override { return API_URL + "/v1/images/edits"; }
         virtual FString ImageVariations() const override { return API_URL + "/v1/images/variations"; }
@@ -550,7 +549,6 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
         virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
         virtual FString Files() const override { return API_URL + "/v1/files"; }
-        virtual FString FineTunes() const override { return API_URL + "/v1/fine-tunes"; }
         virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
 

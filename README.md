@@ -16,8 +16,6 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Moderations](https://platform.openai.com/docs/api-reference/moderations)
  - [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning)
  - [Functions](https://platform.openai.com/docs/guides/function-calling)
- - ~~[Edits](https://platform.openai.com/docs/api-reference/edits)~~ [deprecated]
- - ~~[Fine-tunes](https://platform.openai.com/docs/api-reference/fine-tunes)~~ [deprecated]
 
 All requests are available in both C++ and Blueprints:
 ```cpp
