@@ -1,6 +1,8 @@
 ﻿
 # Complete Unreal Engine plugin for the OpenAI API
 
+This is an unofficial community-maintained library.
+
 ![](https://github.com/life-exe/UnrealOpenAIPlugin/blob/master/Media/logo.png)
 
 This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supports all OpenAI endpoints, including:
