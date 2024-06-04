@@ -379,7 +379,6 @@ LogOpenAIFuncLib: Error: Failed loading file: C:/_Projects/UE5/OpenAICpp/Build/W
 
 ## Limitations
 
- - ~~Chat GPT-4 models are not available for everyone via the API. You need to [request access](https://openai.com/waitlist/gpt-4-api) for it.~~ Chat GPT-4 models are now available for everyone. 
  - OpenAI hosts a variety of different models. Please [check the models](https://platform.openai.com/docs/models/model-endpoint-compatibility) that are compatible with the particular request.
 
 ## Miscellaneous
