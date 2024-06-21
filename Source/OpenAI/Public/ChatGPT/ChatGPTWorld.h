@@ -13,7 +13,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGPTRequestCompleted, const FMessa
 
 class UChatGPT;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class OPENAI_API AChatGPTWorld : public AInfo
 {
     GENERATED_BODY()
@@ -29,6 +29,9 @@ protected:
 
     UFUNCTION(BlueprintCallable, Category = "OpenAI")
     void SetAuth(const FOpenAIAuth& OpenAIAuth);
+
+    UFUNCTION(BlueprintCallable, Category = "OpenAI")
+    void SetModel(const FString& ModelName);
 
     UFUNCTION(BlueprintCallable, Category = "OpenAI")
     bool IsInProgress() const { return bIsInProgress; }

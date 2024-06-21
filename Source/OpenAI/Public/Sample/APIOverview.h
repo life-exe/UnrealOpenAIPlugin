@@ -9,7 +9,7 @@
 
 class UOpenAIProvider;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class OPENAI_API AAPIOverview : public AInfo
 {
     GENERATED_BODY()

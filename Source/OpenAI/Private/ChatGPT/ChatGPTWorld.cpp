@@ -27,6 +27,14 @@ void AChatGPTWorld::SetAuth(const FOpenAIAuth& Auth)
     }
 }
 
+void AChatGPTWorld::SetModel(const FString& ModelName)
+{
+    if (ChatGPT)
+    {
+        ChatGPT->SetModel(ModelName);
+    }
+}
+
 void AChatGPTWorld::MakeRequest(const FMessage& Message)
 {
     if (bIsInProgress) return;
