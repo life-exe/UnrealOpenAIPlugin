@@ -8,6 +8,7 @@ UListFilesAction* UListFilesAction::ListFiles(const FOpenAIAuth& Auth, const FSt
 {
     auto* ListFilesAction = NewObject<UListFilesAction>();
     ListFilesAction->Auth = Auth;
+    ListFilesAction->URLOverride = URLOverride;
     return ListFilesAction;
 }
 

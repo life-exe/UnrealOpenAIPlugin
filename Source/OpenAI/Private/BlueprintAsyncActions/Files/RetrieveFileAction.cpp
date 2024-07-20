@@ -9,6 +9,7 @@ URetrieveFileAction* URetrieveFileAction::RetrieveFile(const FString& FileID, co
     auto* RetrieveFileAction = NewObject<URetrieveFileAction>();
     RetrieveFileAction->FileID = FileID;
     RetrieveFileAction->Auth = Auth;
+    RetrieveFileAction->URLOverride = URLOverride;
     return RetrieveFileAction;
 }
 

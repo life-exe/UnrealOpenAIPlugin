@@ -10,6 +10,7 @@ UAudioTranslationAction* UAudioTranslationAction::CreateAudioTranslation(
     auto* AudioTranslationAction = NewObject<UAudioTranslationAction>();
     AudioTranslationAction->AudioTranslation = AudioTranslation;
     AudioTranslationAction->Auth = Auth;
+    AudioTranslationAction->URLOverride = URLOverride;
     return AudioTranslationAction;
 }
 

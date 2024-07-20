@@ -10,6 +10,7 @@ UAudioTranscriptionAction* UAudioTranscriptionAction::CreateAudioTranscription(
     auto* AudioTranscriptionAction = NewObject<UAudioTranscriptionAction>();
     AudioTranscriptionAction->AudioTranscription = AudioTranscription;
     AudioTranscriptionAction->Auth = Auth;
+    AudioTranscriptionAction->URLOverride = URLOverride;
     return AudioTranscriptionAction;
 }
 

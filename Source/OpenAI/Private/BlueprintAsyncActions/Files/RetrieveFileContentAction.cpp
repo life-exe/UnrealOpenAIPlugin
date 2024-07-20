@@ -10,6 +10,7 @@ URetrieveFileContentAction* URetrieveFileContentAction::RetrieveFileContent(
     auto* RetrieveFileContentAction = NewObject<URetrieveFileContentAction>();
     RetrieveFileContentAction->FileID = FileID;
     RetrieveFileContentAction->Auth = Auth;
+    RetrieveFileContentAction->URLOverride = URLOverride;
     return RetrieveFileContentAction;
 }
 

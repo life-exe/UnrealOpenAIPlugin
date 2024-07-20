@@ -9,6 +9,7 @@ UUploadFileAction* UUploadFileAction::UploadFile(const FUploadFile& File, const 
     auto* UploadFileAction = NewObject<UUploadFileAction>();
     UploadFileAction->File = File;
     UploadFileAction->Auth = Auth;
+    UploadFileAction->URLOverride = URLOverride;
     return UploadFileAction;
 }
 

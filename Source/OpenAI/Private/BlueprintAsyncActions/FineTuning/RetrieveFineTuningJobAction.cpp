@@ -7,10 +7,11 @@
 URetrieveFineTuningJobAction* URetrieveFineTuningJobAction::RetrieveFineTuningJob(
     const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
-    auto* CompletionAction = NewObject<URetrieveFineTuningJobAction>();
-    CompletionAction->FineTuningJobID = FineTuningJobID;
-    CompletionAction->Auth = Auth;
-    return CompletionAction;
+    auto* RetrieveFineTuningJobAction = NewObject<URetrieveFineTuningJobAction>();
+    RetrieveFineTuningJobAction->FineTuningJobID = FineTuningJobID;
+    RetrieveFineTuningJobAction->Auth = Auth;
+    RetrieveFineTuningJobAction->URLOverride = URLOverride;
+    return RetrieveFineTuningJobAction;
 }
 
 void URetrieveFineTuningJobAction::Activate()

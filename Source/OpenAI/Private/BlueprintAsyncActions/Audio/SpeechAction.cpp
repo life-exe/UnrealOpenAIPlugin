@@ -10,11 +10,12 @@ DEFINE_LOG_CATEGORY_STATIC(LogSpeechAction, All, All);
 USpeechAction* USpeechAction::CreateSpeech(
     const FSpeech& Speech, const FOpenAIAuth& Auth, const FString& URLOverride, const FSpeechSettings& Settings)
 {
-    auto* AudioTranslationAction = NewObject<USpeechAction>();
-    AudioTranslationAction->Speech = Speech;
-    AudioTranslationAction->Auth = Auth;
-    AudioTranslationAction->Settings = Settings;
-    return AudioTranslationAction;
+    auto* SpeechAction = NewObject<USpeechAction>();
+    SpeechAction->Speech = Speech;
+    SpeechAction->Auth = Auth;
+    SpeechAction->Settings = Settings;
+    SpeechAction->URLOverride = URLOverride;
+    return SpeechAction;
 }
 
 void USpeechAction::Activate()

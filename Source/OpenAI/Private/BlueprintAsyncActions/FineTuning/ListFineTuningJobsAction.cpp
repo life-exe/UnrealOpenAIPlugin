@@ -7,10 +7,11 @@
 UListFineTuningJobsAction* UListFineTuningJobsAction::ListFineTuningJobs(
     const FFineTuningQueryParameters& FineTuningQueryParameters, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
-    auto* CompletionAction = NewObject<UListFineTuningJobsAction>();
-    CompletionAction->FineTuningQueryParameters = FineTuningQueryParameters;
-    CompletionAction->Auth = Auth;
-    return CompletionAction;
+    auto* ListFineTuningJobsAction = NewObject<UListFineTuningJobsAction>();
+    ListFineTuningJobsAction->FineTuningQueryParameters = FineTuningQueryParameters;
+    ListFineTuningJobsAction->Auth = Auth;
+    ListFineTuningJobsAction->URLOverride = URLOverride;
+    return ListFineTuningJobsAction;
 }
 
 void UListFineTuningJobsAction::Activate()

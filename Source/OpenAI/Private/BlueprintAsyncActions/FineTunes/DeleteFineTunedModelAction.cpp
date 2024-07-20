@@ -7,10 +7,11 @@
 UDeleteFineTunedModelAction* UDeleteFineTunedModelAction::DeleteFineTuneModel(
     const FString& ModelID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
-    auto* CompletionAction = NewObject<UDeleteFineTunedModelAction>();
-    CompletionAction->ModelID = ModelID;
-    CompletionAction->Auth = Auth;
-    return CompletionAction;
+    auto* DeleteFineTunedModelAction = NewObject<UDeleteFineTunedModelAction>();
+    DeleteFineTunedModelAction->ModelID = ModelID;
+    DeleteFineTunedModelAction->Auth = Auth;
+    DeleteFineTunedModelAction->URLOverride = URLOverride;
+    return DeleteFineTunedModelAction;
 }
 
 void UDeleteFineTunedModelAction::Activate()

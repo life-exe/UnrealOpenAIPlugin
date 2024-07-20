@@ -24,6 +24,7 @@ UCompletionAction* UCompletionAction::CreateCompletion(const FCompletion& Comple
     auto* CompletionAction = NewObject<UCompletionAction>();
     CompletionAction->Completion = Completion;
     CompletionAction->Auth = Auth;
+    CompletionAction->URLOverride = URLOverride;
     return CompletionAction;
 }
 

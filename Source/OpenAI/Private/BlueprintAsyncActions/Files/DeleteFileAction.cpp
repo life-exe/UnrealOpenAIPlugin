@@ -9,6 +9,7 @@ UDeleteFileAction* UDeleteFileAction::DeleteFile(const FString& FileID, const FO
     auto* DeleteFileAction = NewObject<UDeleteFileAction>();
     DeleteFileAction->FileID = FileID;
     DeleteFileAction->Auth = Auth;
+    DeleteFileAction->URLOverride = URLOverride;
     return DeleteFileAction;
 }
 

@@ -7,10 +7,11 @@
 UCancelFineTuningJobAction* UCancelFineTuningJobAction::CancelFineTuningJob(
     const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
-    auto* CompletionAction = NewObject<UCancelFineTuningJobAction>();
-    CompletionAction->FineTuningJobID = FineTuningJobID;
-    CompletionAction->Auth = Auth;
-    return CompletionAction;
+    auto* CancelFineTuningJobAction = NewObject<UCancelFineTuningJobAction>();
+    CancelFineTuningJobAction->FineTuningJobID = FineTuningJobID;
+    CancelFineTuningJobAction->Auth = Auth;
+    CancelFineTuningJobAction->URLOverride = URLOverride;
+    return CancelFineTuningJobAction;
 }
 
 void UCancelFineTuningJobAction::Activate()

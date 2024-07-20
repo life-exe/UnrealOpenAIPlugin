@@ -7,10 +7,11 @@
 UListFineTuningEventsAction* UListFineTuningEventsAction::ListFineTuningEvents(
     const FString& FineTuningID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
-    auto* CompletionAction = NewObject<UListFineTuningEventsAction>();
-    CompletionAction->FineTuningID = FineTuningID;
-    CompletionAction->Auth = Auth;
-    return CompletionAction;
+    auto* ListFineTuningEventsAction = NewObject<UListFineTuningEventsAction>();
+    ListFineTuningEventsAction->FineTuningID = FineTuningID;
+    ListFineTuningEventsAction->Auth = Auth;
+    ListFineTuningEventsAction->URLOverride = URLOverride;
+    return ListFineTuningEventsAction;
 }
 
 void UListFineTuningEventsAction::Activate()

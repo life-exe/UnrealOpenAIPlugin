@@ -25,6 +25,7 @@ UChatCompletionAction* UChatCompletionAction::CreateChatCompletion(
     auto* ChatCompletionAction = NewObject<UChatCompletionAction>();
     ChatCompletionAction->ChatCompletion = ChatCompletion;
     ChatCompletionAction->Auth = Auth;
+    ChatCompletionAction->URLOverride = URLOverride;
     return ChatCompletionAction;
 }
 
