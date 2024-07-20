@@ -61,6 +61,9 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Turbo).Equals("gpt-4-turbo"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_1106_Vision_Preview)
                                      .Equals("gpt-4-1106-vision-preview"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini).Equals("gpt-4o-mini"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini_2024_07_18).Equals("gpt-4o-mini-2024-07-18"));
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -77,6 +80,7 @@ void FOpenAIFuncLib::Define()
                         UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_Vision_Preview).Equals("gpt-4-vision-preview"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4O_Mini).Equals("gpt-4o-mini"));
                 });
 
             It("OpenAIModerationModelToStringShouldReturnCorrectValue",

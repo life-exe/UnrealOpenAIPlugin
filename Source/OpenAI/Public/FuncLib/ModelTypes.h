@@ -41,7 +41,9 @@ enum class EAllModelEnum : uint8
     GPT_4O,
     GPT_4_Turbo_2024_04_09,
     GPT_4_Turbo,
-    GPT_4_1106_Vision_Preview
+    GPT_4_1106_Vision_Preview,
+    GPT_4O_Mini,
+    GPT_4O_Mini_2024_07_18
 };
 
 UENUM(BlueprintType)
@@ -53,6 +55,7 @@ enum class EMainModelEnum : uint8
     GPT_4_Vision_Preview,
     GPT_4_0613,
     GPT_4_0314,
+    GPT_4O_Mini,
     GPT_3_5_Turbo_0301,
     GPT_3_5_Turbo,
     GPT_3_5_Turbo_Instruct

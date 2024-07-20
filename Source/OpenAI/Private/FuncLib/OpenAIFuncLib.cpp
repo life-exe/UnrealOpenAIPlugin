@@ -45,6 +45,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4_Turbo_2024_04_09: return "gpt-4-turbo-2024-04-09";
         case EAllModelEnum::GPT_4_Turbo: return "gpt-4-turbo";
         case EAllModelEnum::GPT_4_1106_Vision_Preview: return "gpt-4-1106-vision-preview";
+        case EAllModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
+        case EAllModelEnum::GPT_4O_Mini_2024_07_18: return "gpt-4o-mini-2024-07-18";
     }
     checkNoEntry();
     return {};
@@ -63,6 +65,7 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
         case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
         case EMainModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
+        case EMainModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
     }
     checkNoEntry();
     return {};
