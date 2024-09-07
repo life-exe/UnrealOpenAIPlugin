@@ -21,12 +21,8 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Whisper_1).Equals("whisper-1"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301).Equals("gpt-3.5-turbo-0301"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo).Equals("gpt-3.5-turbo"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_16k_0613).Equals("gpt-3.5-turbo-16k-0613"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_16k).Equals("gpt-3.5-turbo-16k"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613).Equals("gpt-3.5-turbo-0613"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct_0914)
                                      .Equals("gpt-3.5-turbo-instruct-0914"));
                     TestTrueExpr(
@@ -64,12 +60,13 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini).Equals("gpt-4o-mini"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini_2024_07_18).Equals("gpt-4o-mini-2024-07-18"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::ChatGPT_4O_Latest).Equals("chatgpt-4o-latest"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_2024_08_06).Equals("gpt-4o-2024-08-06"));
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_0301).Equals("gpt-3.5-turbo-0301"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo).Equals("gpt-3.5-turbo"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4O).Equals("gpt-4o"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4).Equals("gpt-4"));

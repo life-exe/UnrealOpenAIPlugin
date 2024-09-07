@@ -14,11 +14,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
     switch (Model)
     {
         case EAllModelEnum::Whisper_1: return "whisper-1";
-        case EAllModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
         case EAllModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
-        case EAllModelEnum::GPT_3_5_Turbo_16k_0613: return "gpt-3.5-turbo-16k-0613";
         case EAllModelEnum::GPT_3_5_Turbo_16k: return "gpt-3.5-turbo-16k";
-        case EAllModelEnum::GPT_3_5_Turbo_0613: return "gpt-3.5-turbo-0613";
         case EAllModelEnum::GPT_3_5_Turbo_Instruct_0914: return "gpt-3.5-turbo-instruct-0914";
         case EAllModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
         case EAllModelEnum::Text_Embedding_Ada_002: return "text-embedding-ada-002";
@@ -47,6 +44,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4_1106_Vision_Preview: return "gpt-4-1106-vision-preview";
         case EAllModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
         case EAllModelEnum::GPT_4O_Mini_2024_07_18: return "gpt-4o-mini-2024-07-18";
+        case EAllModelEnum::ChatGPT_4O_Latest: return "chatgpt-4o-latest";
+        case EAllModelEnum::GPT_4O_2024_08_06: return "gpt-4o-2024-08-06";
     }
     checkNoEntry();
     return {};
@@ -62,7 +61,6 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
         case EMainModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
         case EMainModelEnum::GPT_4_Vision_Preview: return "gpt-4-vision-preview";
-        case EMainModelEnum::GPT_3_5_Turbo_0301: return "gpt-3.5-turbo-0301";
         case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
         case EMainModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
         case EMainModelEnum::GPT_4O_Mini: return "gpt-4o-mini";

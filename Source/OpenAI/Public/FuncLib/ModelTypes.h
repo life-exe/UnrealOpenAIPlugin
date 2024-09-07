@@ -9,11 +9,8 @@ UENUM(BlueprintType)
 enum class EAllModelEnum : uint8
 {
     Whisper_1,
-    GPT_3_5_Turbo_0301,
     GPT_3_5_Turbo,
-    GPT_3_5_Turbo_16k_0613,
     GPT_3_5_Turbo_16k,
-    GPT_3_5_Turbo_0613,
     GPT_3_5_Turbo_Instruct_0914,
     GPT_3_5_Turbo_Instruct,
     Text_Embedding_Ada_002,
@@ -43,7 +40,9 @@ enum class EAllModelEnum : uint8
     GPT_4_Turbo,
     GPT_4_1106_Vision_Preview,
     GPT_4O_Mini,
-    GPT_4O_Mini_2024_07_18
+    GPT_4O_Mini_2024_07_18,
+    ChatGPT_4O_Latest,
+    GPT_4O_2024_08_06
 };
 
 UENUM(BlueprintType)

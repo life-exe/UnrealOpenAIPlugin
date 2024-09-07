@@ -163,7 +163,7 @@ void AAPIOverview::CreateChatCompletionRequest()
         });
 
     FChatCompletion ChatCompletion;
-    ChatCompletion.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0301);
+    ChatCompletion.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O);
     ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
     ChatCompletion.Stream = true;
     ChatCompletion.Max_Tokens = 100;
@@ -473,7 +473,7 @@ void AAPIOverview::CreateFineTuningJob()
         });
 
     FFineTuningJob FineTuningJob;
-    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0613);
+    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O);
     FineTuningJob.Training_File = "file-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->CreateFineTuningJob(FineTuningJob, Auth);
 }
