@@ -9,6 +9,7 @@
 #include "Misc/Paths.h"
 #include "Widgets/SWindow.h"
 #include "Framework/Application/SlateApplication.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFileSystemFuncLib, All, All);
 
@@ -123,10 +124,10 @@ bool UFileSystemFuncLib::SaveChatHistoryToFile(const TArray<FMessage>& History, 
     const auto FullFilePath = FPaths::ConvertRelativePathToFull(FilePath);
     if (!FFileHelper::SaveStringToFile(FileContent, *FilePath))
     {
-        UE_LOG(LogFileSystemFuncLib, Error, TEXT("File saving error: %s"), *FullFilePath);
+        UE_LOGFMT(LogFileSystemFuncLib, Error, "File saving error: {0}", FullFilePath);
         return false;
     }
 
-    UE_LOG(LogFileSystemFuncLib, Display, TEXT("Chat history saved to the %s"), *FullFilePath);
+    UE_LOGFMT(LogFileSystemFuncLib, Display, "Chat history saved to the {0}", FullFilePath);
     return true;
 }

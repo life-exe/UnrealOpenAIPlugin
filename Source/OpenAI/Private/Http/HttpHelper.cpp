@@ -3,6 +3,7 @@
 #include "Http/HttpHelper.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHttpHelper, All, All);
 
@@ -42,7 +43,7 @@ TArray<uint8> HttpHelper::AddMIMEFile(const FString& FilePath, const FString& Pa
     }
     else
     {
-        UE_LOG(LogHttpHelper, Error, TEXT("Failed to load file's bytes %s"), *FilePath);
+        UE_LOGFMT(LogHttpHelper, Error, "Failed to load file's bytes {0}", FilePath);
     }
 
     return Content;

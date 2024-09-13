@@ -5,6 +5,7 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Provider/RequestTypes.h"
 #include "Algo/ForEach.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeatherService, All, All);
 
@@ -123,7 +124,7 @@ bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FS
 
     const OpenAI::QueryPairs QueryArgs{{"access_key", API_KEY}, {"query", Location}, {"units", Units}};
     WeatherRequestURL = UOpenAIFuncLib::MakeURLWithQuery(Weather::API_URL, QueryArgs);
-    UE_LOG(LogWeatherService, Display, TEXT("Weather reqest URL: %s"), *WeatherRequestURL);
+    UE_LOGFMT(LogWeatherService, Display, "Weather reqest URL: {0}", WeatherRequestURL);
     return true;
 }
 
@@ -134,7 +135,7 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
         ServiceDataError.Broadcast("Response was null");
         return;
     }
-    UE_LOG(LogWeatherService, Display, TEXT("%s"), *Response->GetContentAsString());
+    UE_LOGFMT(LogWeatherService, Display, "{0}", Response->GetContentAsString());
 
     TSharedPtr<FJsonObject> JsonObject;
     if (!UOpenAIFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
@@ -169,6 +170,6 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
 
 void UWeatherService::SendError(const FString& ErrorMessage)
 {
-    UE_LOG(LogWeatherService, Error, TEXT("%s"), *ErrorMessage);
+    UE_LOGFMT(LogWeatherService, Error, "{0}", ErrorMessage);
     ServiceDataError.Broadcast(ErrorMessage);
 }

@@ -6,6 +6,7 @@
 #include "Internationalization/Regex.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Base64.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIFuncLib, All, All);
 
@@ -152,7 +153,7 @@ EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
     if (Model.Equals("dall-e-2")) return EImageModelEnum::DALL_E_2;
     if (Model.Equals("dall-e-3")) return EImageModelEnum::DALL_E_3;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EImageModelEnum: %s"), *Model);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageModelEnum: {0}", Model);
     checkNoEntry();
 
     return {};
@@ -176,7 +177,7 @@ EImageSizeDalle2 UOpenAIFuncLib::StringToOpenAIImageSizeDalle2(const FString& Im
     if (ImageSize.Equals("512x512")) return EImageSizeDalle2::Size_512x512;
     if (ImageSize.Equals("1024x1024")) return EImageSizeDalle2::Size_1024x1024;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EImageSizeDalle2: %s"), *ImageSize);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageSizeDalle2: {0}", ImageSize);
     checkNoEntry();
 
     return {};
@@ -200,7 +201,7 @@ EImageSizeDalle3 UOpenAIFuncLib::StringToOpenAIImageSizeDalle3(const FString& Im
     if (ImageSize.Equals("1024x1792")) return EImageSizeDalle3::Size_1024x1792;
     if (ImageSize.Equals("1792x1024")) return EImageSizeDalle3::Size_1792x1024;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EImageSizeDalle3: %s"), *ImageSize);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageSizeDalle3: {0}", ImageSize);
     checkNoEntry();
 
     return {};
@@ -222,7 +223,7 @@ EOpenAIImageFormat UOpenAIFuncLib::StringToOpenAIImageFormat(const FString& Imag
     if (ImageFormat.Equals("url")) return EOpenAIImageFormat::URL;
     if (ImageFormat.Equals("b64_json")) return EOpenAIImageFormat::B64_JSON;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EOpenAIImageFormat: %s"), *ImageFormat);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageFormat: {0}", ImageFormat);
     checkNoEntry();
 
     return {};
@@ -244,7 +245,7 @@ EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& Im
     if (ImageQuality.Equals("hd")) return EOpenAIImageQuality::HD;
     if (ImageQuality.Equals("standard")) return EOpenAIImageQuality::Standard;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EOpenAIImageQuality: %s"), *ImageQuality);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageQuality: {0}", ImageQuality);
     checkNoEntry();
 
     return {};
@@ -266,7 +267,7 @@ EOpenAIImageStyle UOpenAIFuncLib::StringToOpenAIImageStyle(const FString& ImageS
     if (ImageStyle.Equals("natural")) return EOpenAIImageStyle::Natural;
     if (ImageStyle.Equals("vivid")) return EOpenAIImageStyle::Vivid;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown EOpenAIImageStyle: %s"), *ImageStyle);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageStyle: {0}", ImageStyle);
     checkNoEntry();
 
     return {};
@@ -308,7 +309,7 @@ EOpenAIFinishReason UOpenAIFuncLib::StringToOpenAIFinishReason(const FString& Fi
     if (FinishReason.Equals("tool_calls")) return EOpenAIFinishReason::Tool_Calls;
     if (FinishReason.IsEmpty()) return EOpenAIFinishReason::Null;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown OpenAIFinishReason: %s"), *FinishReason);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown OpenAIFinishReason: {0}", FinishReason);
     checkNoEntry();
     return {};
 }
@@ -321,7 +322,7 @@ ERole UOpenAIFuncLib::StringToOpenAIRole(const FString& Role)
     if (Role.ToLower().Equals("function")) return ERole::Function;
     if (Role.ToLower().Equals("tool")) return ERole::Tool;
 
-    UE_LOG(LogOpenAIFuncLib, Error, TEXT("Unknown OpenAIRole: %s"), *Role);
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown OpenAIRole: {0}", Role);
     checkNoEntry();
     return {};
 }
@@ -331,12 +332,12 @@ FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFile(const FString& FilePath)
     TArray<FString> FileLines;
     if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
     {
-        UE_LOG(LogOpenAIFuncLib, Error, TEXT("Failed loading file: %s"), *FilePath);
+        UE_LOGFMT(LogOpenAIFuncLib, Error, "Failed loading file: {0}", FilePath);
         return {};
     }
     else if (FileLines.Num() < 2)
     {
-        UE_LOG(LogOpenAIFuncLib, Error, TEXT("Auth file might have 2 or 3 lines only"));
+        UE_LOGFMT(LogOpenAIFuncLib, Error, "Auth file might have 2 or 3 lines only");
         return {};
     }
     FOpenAIAuth Auth;
@@ -372,7 +373,7 @@ OpenAI::ServiceSecrets UOpenAIFuncLib::LoadServiceSecretsFromFile(const FString&
     TArray<FString> FileLines;
     if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
     {
-        UE_LOG(LogOpenAIFuncLib, Error, TEXT("Failed loading file: %s"), *FilePath);
+        UE_LOGFMT(LogOpenAIFuncLib, Error, "Failed loading file: {0}", FilePath);
         return {};
     }
 

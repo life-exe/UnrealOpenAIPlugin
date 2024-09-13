@@ -5,6 +5,7 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Provider/RequestTypes.h"
 #include "Algo/ForEach.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogNewsService, All, All);
 
@@ -141,7 +142,7 @@ FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) co
     QueryArgs.Add(MakeTuple("apiKey", API_KEY));
 
     const FString URL = UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs);
-    UE_LOG(LogNewsService, Display, TEXT("News request URL: %s"), *URL);
+    UE_LOGFMT(LogNewsService, Display, "News request URL: {0}", URL);
     return URL;
 }
 
@@ -152,7 +153,7 @@ void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr 
         ServiceDataError.Broadcast("Response was null");
         return;
     }
-    UE_LOG(LogNewsService, Display, TEXT("%s"), *Response->GetContentAsString());
+    UE_LOGFMT(LogNewsService, Display, "{0}", Response->GetContentAsString());
 
     TSharedPtr<FJsonObject> JsonObject;
     if (!UOpenAIFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
@@ -190,6 +191,6 @@ void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr 
 
 void UNewsService::SendError(const FString& ErrorMessage)
 {
-    UE_LOG(LogNewsService, Error, TEXT("%s"), *ErrorMessage);
+    UE_LOGFMT(LogNewsService, Error, "{0}", ErrorMessage);
     ServiceDataError.Broadcast(ErrorMessage);
 }

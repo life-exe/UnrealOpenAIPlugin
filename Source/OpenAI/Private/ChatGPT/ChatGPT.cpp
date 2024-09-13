@@ -5,6 +5,7 @@
 #include "Algo/ForEach.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "ChatGPT/BaseService.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogChatGPT, All, All);
 
@@ -138,12 +139,12 @@ bool UChatGPT::HandleFunctionCall(const FFunctionCommon& FunctionCall, const FSt
     if (!FunctionCall.Arguments.IsEmpty() && !UOpenAIFuncLib::StringToJson(FunctionCall.Arguments, Args))
     {
         LogMsg = FString::Format(TEXT("Can't parse args: {0}"), {FunctionCall.Arguments});
-        UE_LOG(LogChatGPT, Error, TEXT("%s"), *LogMsg);
+        UE_LOGFMT(LogChatGPT, Error, "{0}", LogMsg);
         return false;
     }
 
     LogMsg = FString::Format(TEXT("OpenAI call the function: [{0}] with args: {1}"), {FunctionCall.Name, FunctionCall.Arguments});
-    UE_LOG(LogChatGPT, Display, TEXT("%s"), *LogMsg);
+    UE_LOGFMT(LogChatGPT, Display, "{0}", LogMsg);
 
     FMessage HistoryMessage;
     HistoryMessage.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant);
@@ -166,7 +167,7 @@ bool UChatGPT::HandleFunctionCall(const FFunctionCommon& FunctionCall, const FSt
     }
 
     LogMsg = FString::Format(TEXT("Can't find function by name: [{0}]"), {FunctionCall.Name});
-    UE_LOG(LogChatGPT, Error, TEXT("%s"), *LogMsg);
+    UE_LOGFMT(LogChatGPT, Error, "{0}", LogMsg);
     return false;
 }
 
@@ -180,7 +181,7 @@ bool UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, co
     {
         LogMsg = FString::Format(
             TEXT("Service {0} can't be init. API keys have probably not been loaded. Its functions are not available."), {Service->Name()});
-        UE_LOG(LogChatGPT, Error, TEXT("%s"), *LogMsg);
+        UE_LOGFMT(LogChatGPT, Error, "{0}", LogMsg);
         return false;
     }
     Service->OnServiceDataRecieved().AddLambda(
@@ -198,7 +199,7 @@ bool UChatGPT::RegisterService(const TSubclassOf<UBaseService>& ServiceClass, co
     Services.Add(Service);
 
     LogMsg = FString::Format(TEXT("Service {0} was registered"), {Service->Name()});
-    UE_LOG(LogChatGPT, Display, TEXT("%s"), *LogMsg);
+    UE_LOGFMT(LogChatGPT, Display, "{0}", LogMsg);
     return true;
 }
 
@@ -211,11 +212,11 @@ void UChatGPT::UnRegisterService(const TSubclassOf<UBaseService>& ServiceClass)
         FoundService->Get()->OnServiceDataError().RemoveAll(this);
         Services.Remove(FoundService->Get());
         const auto LogMsg = FString::Format(TEXT("Service {0} was unregistered"), {FoundService->Get()->Name()});
-        UE_LOG(LogChatGPT, Display, TEXT("%s"), *LogMsg);
+        UE_LOGFMT(LogChatGPT, Display, "{0}", LogMsg);
     }
     else
     {
-        UE_LOG(LogChatGPT, Warning, TEXT("Can't unregister service"));
+        UE_LOGFMT(LogChatGPT, Warning, "Can't unregister service");
     }
 }
 

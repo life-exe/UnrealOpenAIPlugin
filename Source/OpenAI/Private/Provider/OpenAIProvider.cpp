@@ -6,6 +6,7 @@
 #include "Serialization/JsonReader.h"
 #include "Http/HttpHelper.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProvider, All, All);
 
@@ -576,7 +577,7 @@ void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
 {
     if (bLogEnabled)
     {
-        UE_LOG(LogOpenAIProvider, Display, TEXT("Request processing started: %s"), *HttpRequest->GetURL());
+        UE_LOGFMT(LogOpenAIProvider, Display, "Request processing started: {0}", HttpRequest->GetURL());
     }
 
     if (!HttpRequest->ProcessRequest())
@@ -619,14 +620,14 @@ void UOpenAIProvider::LogResponse(FHttpResponsePtr Response)
 {
     if (bLogEnabled)
     {
-        UE_LOG(LogOpenAIProvider, Display, TEXT("Request URL: %s"), *Response->GetURL());
-        UE_LOG(LogOpenAIProvider, Display, TEXT("%s"), *Response->GetContentAsString());
+        UE_LOGFMT(LogOpenAIProvider, Display, "Request URL: {0}", Response->GetURL());
+        UE_LOGFMT(LogOpenAIProvider, Display, "{0}", Response->GetContentAsString());
     }
 }
 
 void UOpenAIProvider::LogError(const FString& ErrorText)
 {
-    UE_LOG(LogOpenAIProvider, Error, TEXT("%s"), *ErrorText);
+    UE_LOGFMT(LogOpenAIProvider, Error, "{0}", ErrorText);
 }
 
 void UOpenAIProvider::SetOptional(TSharedPtr<FJsonObject> RequestBody, const TOptional<FString>& Param, const FString& ParamName)

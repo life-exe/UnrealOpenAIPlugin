@@ -8,6 +8,7 @@
 #include "TextureResource.h"
 #include "Modules/ModuleManager.h"
 #include "IImageWrapperModule.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogImageFuncLib, All, All);
 
@@ -44,14 +45,14 @@ void UImageFuncLib::WEBPFormatCheck(const TArray<uint8>& Bytes)
         && Bytes[10] == 'B'  //
         && Bytes[11] == 'P')
     {
-        UE_LOG(LogImageFuncLib, Error,
-            TEXT("This is probably WebP format, Unreal Engine doesn't support it. If this happens during a DALLE 3 request please use the "
-                 "URL "
-                 "format option."));
+        UE_LOGFMT(LogImageFuncLib, Error,
+            "This is probably WebP format, Unreal Engine doesn't support it. If this happens during a DALLE 3 request please use the "
+            "URL "
+            "format option.");
         return;
     }
 
-    UE_LOG(LogImageFuncLib, Error, TEXT("Unknown image format with RIFF header"));
+    UE_LOGFMT(LogImageFuncLib, Error, "Unknown image format with RIFF header");
 }
 
 UTexture2D* UImageFuncLib::Texture2DFromBytes(const FString& RawFileStr)
@@ -59,7 +60,7 @@ UTexture2D* UImageFuncLib::Texture2DFromBytes(const FString& RawFileStr)
     TArray<uint8> RawFileData;
     if (!FBase64::Decode(RawFileStr, RawFileData))
     {
-        UE_LOG(LogTemp, Error, TEXT("Decode failed"));
+        UE_LOGFMT(LogTemp, Error, "Decode failed");
         return nullptr;
     }
 
@@ -70,7 +71,7 @@ UTexture2D* UImageFuncLib::CreateTexture(const TArray<uint8>& RawFileData)
 {
     auto& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
     const EImageFormat ImageFormat = ImageWrapperModule.DetectImageFormat(RawFileData.GetData(), RawFileData.Num());
-    UE_LOG(LogImageFuncLib, Display, TEXT("Detected image format %s"), *ImageFormatToString(ImageFormat));
+    UE_LOGFMT(LogImageFuncLib, Display, "Detected image format {0}", ImageFormatToString(ImageFormat));
 
     if (ImageFormat == EImageFormat::Invalid)
     {
@@ -82,13 +83,13 @@ UTexture2D* UImageFuncLib::CreateTexture(const TArray<uint8>& RawFileData)
 
     if (!ImageWrapper.IsValid())
     {
-        UE_LOG(LogTemp, Error, TEXT("Image wrapper is invalid"));
+        UE_LOGFMT(LogTemp, Error, "Image wrapper is invalid");
         return nullptr;
     }
 
     if (!ImageWrapper->SetCompressed(RawFileData.GetData(), RawFileData.Num()))
     {
-        UE_LOG(LogTemp, Error, TEXT("Setting raw data failed"));
+        UE_LOGFMT(LogTemp, Error, "Setting raw data failed");
         return nullptr;
     }
 

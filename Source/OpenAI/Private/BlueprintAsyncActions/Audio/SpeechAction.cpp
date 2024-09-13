@@ -4,6 +4,7 @@
 #include "Provider/OpenAIProvider.h"
 #include "API/API.h"
 #include "Misc/FileHelper.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSpeechAction, All, All);
 
@@ -43,7 +44,7 @@ void USpeechAction::OnCreateSpeechCompleted(const FSpeechResponse& Response)
 
         if (FFileHelper::SaveArrayToFile(Response.Bytes, *FilePath))
         {
-            UE_LOG(LogSpeechAction, Display, TEXT("File was successfully saved to: %s"), *FilePath);
+            UE_LOGFMT(LogSpeechAction, Display, "File was successfully saved to: {0}", FilePath);
         }
     }
     OnCompleted.Broadcast(FSpeechPayload{Response, FilePath}, {});

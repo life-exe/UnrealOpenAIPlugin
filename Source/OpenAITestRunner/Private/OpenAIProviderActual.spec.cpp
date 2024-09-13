@@ -12,6 +12,7 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Algo/ForEach.h"
 #include "TestUtils.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProviderActual, All, All);
 
@@ -36,7 +37,7 @@ void TestImageResponse(FAutomationTestBase* Test, const TArray<FImageObject>& Da
 {
     if (!Test)
     {
-        UE_LOG(LogOpenAIProviderActual, Error, TEXT("Automation test object is invalid"));
+        UE_LOGFMT(LogOpenAIProviderActual, Error, "Automation test object is invalid");
         return;
     }
 
@@ -62,7 +63,7 @@ void TestStreamResponse(FAutomationTestBase* Test, const ResponseType& Response,
 {
     if (!Test)
     {
-        UE_LOG(LogOpenAIProviderActual, Error, TEXT("Automation test object is invalid"));
+        UE_LOGFMT(LogOpenAIProviderActual, Error, "Automation test object is invalid");
         return;
     }
 
@@ -93,7 +94,7 @@ void TestFineTuningJob(FAutomationTestBase* Test, const FFineTuningJobObjectResp
 {
     if (!Test)
     {
-        UE_LOG(LogOpenAIProviderActual, Error, TEXT("Automation test object is invalid"));
+        UE_LOGFMT(LogOpenAIProviderActual, Error, "Automation test object is invalid");
         return;
     }
 

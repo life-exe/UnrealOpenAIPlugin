@@ -10,6 +10,7 @@
 #include "API/API.h"
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogAPIOverview, All, All);
 
@@ -71,7 +72,7 @@ void AAPIOverview::ListModels()
         {
             FString OutputString{};
             Algo::ForEach(Response.Data, [&](const FOpenAIModel& Model) { OutputString.Append(Model.ID).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
 
     Provider->ListModels(Auth);
@@ -82,7 +83,7 @@ void AAPIOverview::RetrieveModel()
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveModelCompleted().AddLambda([](const FRetrieveModelResponse& Response)
-        { UE_LOG(LogAPIOverview, Display, TEXT("%s"), *UOpenAIFuncLib::OpenAIModelToString(Response)); });
+        { UE_LOGFMT(LogAPIOverview, Display, "{0}", UOpenAIFuncLib::OpenAIModelToString(Response)); });
     const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
     Provider->RetrieveModel("ada", Auth);
 }
@@ -111,7 +112,7 @@ void AAPIOverview::CreateCompletionRequest()
         {
             FString OutputString{};
             Algo::ForEach(Response.Choices, [&](const FChoice& Choice) { OutputString.Append(Choice.Text); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
     Provider->OnCreateCompletionStreamProgresses().AddLambda(
         [](const TArray<FCompletionStreamResponse>& Responses)
@@ -122,11 +123,11 @@ void AAPIOverview::CreateCompletionRequest()
                     OutputString.Append(Choice.Text);
                 });
             });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
     Provider->OnCreateCompletionStreamCompleted().AddLambda([](const TArray<FCompletionStreamResponse>& Responses)  //
         {                                                                                                           //
-            UE_LOG(LogAPIOverview, Display, TEXT("Stream message generation finished"));
+            UE_LOGFMT(LogAPIOverview, Display, "Stream message generation finished");
         });
 
     FCompletion Completion;
@@ -144,7 +145,7 @@ void AAPIOverview::CreateChatCompletionRequest()
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateChatCompletionCompleted().AddLambda([](const FChatCompletionResponse& Response)  //
         {                                                                                              //
-            UE_LOG(LogAPIOverview, Display, TEXT("Message generation finished"));
+            UE_LOGFMT(LogAPIOverview, Display, "Message generation finished");
         });
     Provider->OnCreateChatCompletionStreamProgresses().AddLambda(
         [](const TArray<FChatCompletionStreamResponse>& Responses)
@@ -155,11 +156,11 @@ void AAPIOverview::CreateChatCompletionRequest()
                     OutputString.Append(Choice.Delta.Content);
                 });
             });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
     Provider->OnCreateChatCompletionStreamCompleted().AddLambda([](const TArray<FChatCompletionStreamResponse>& Responses)  //
         {                                                                                                                   //
-            UE_LOG(LogAPIOverview, Display, TEXT("Stream message generation finished"));
+            UE_LOGFMT(LogAPIOverview, Display, "Stream message generation finished");
         });
 
     FChatCompletion ChatCompletion;
@@ -204,7 +205,7 @@ void AAPIOverview::CreateImageDALLE3()
             FString OutputString{};
             Algo::ForEach(
                 Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
 
     FOpenAIImage Image;
@@ -231,7 +232,7 @@ void AAPIOverview::CreateImageEdit()
             FString OutputString{};
             Algo::ForEach(
                 Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
 
     FOpenAIImageEdit ImageEdit;
@@ -256,7 +257,7 @@ void AAPIOverview::CreateImageVariation()
             FString OutputString{};
             Algo::ForEach(
                 Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
 
     FOpenAIImageVariation ImageVariation;
@@ -279,7 +280,7 @@ void AAPIOverview::CreateModerations()
             FString OutputString{};
             Algo::ForEach(Response.Results,
                 [&](const FModerationResults& Results) { OutputString.Append(UOpenAIFuncLib::OpenAIModerationsToString(Results)); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
 
     FModerations Moderations;
@@ -296,7 +297,7 @@ void AAPIOverview::CreateEmbeddings()
         [](const FEmbeddingsResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("CreateEmbeddings request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "CreateEmbeddings request completed!");
         });
 
     FEmbeddings Embeddings;
@@ -318,7 +319,7 @@ void AAPIOverview::CreateSpeech()
             FPaths::ProjectPluginsDir().Append("OpenAI/Saved/").Append("speech_").Append(Date).Append(".").Append(Format);
         if (FFileHelper::SaveArrayToFile(Response.Bytes, *FilePath))
         {
-            UE_LOG(LogAPIOverview, Display, TEXT("File was successfully saved to: %s"), *FilePath);
+            UE_LOGFMT(LogAPIOverview, Display, "File was successfully saved to: {0}", FilePath);
         }
     });
     FSpeech Speech;
@@ -336,7 +337,7 @@ void AAPIOverview::CreateAudioTranscription()
 
     Provider->OnCreateAudioTranscriptionCompleted().AddLambda([](const FAudioTranscriptionResponse& Response)  //
         {                                                                                                      //
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *Response.Text);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Text);
         });
 
     FAudioTranscription AudioTranscription;
@@ -357,7 +358,7 @@ void AAPIOverview::CreateAudioTranslation()
 
     Provider->OnCreateAudioTranslationCompleted().AddLambda([](const FAudioTranslationResponse& Response)  //
         {                                                                                                  //
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *Response.Text);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Text);
         });
 
     FAudioTranslation AudioTranslation;
@@ -378,7 +379,7 @@ void AAPIOverview::UploadFile()
         [](const FUploadFileResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("UploadFile request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "UploadFile request completed!");
         });
 
     FUploadFile UploadFile;
@@ -396,7 +397,7 @@ void AAPIOverview::DeleteFile()
         [](const FDeleteFileResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("DeleteFile request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "DeleteFile request completed!");
         });
 
     const FString FileID{"file-xxxxxxxxxxxxxxxxxxx"};
@@ -413,7 +414,7 @@ void AAPIOverview::ListFiles()
             FString OutputString{};
             Algo::ForEach(
                 Response.Data, [&](const FOpenAIFile& OpenAIFile) { OutputString.Append(OpenAIFile.FileName).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("ListFiles request completed! Files: %s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "ListFiles request completed! Files: {0}", OutputString);
         });
 
     Provider->ListFiles(Auth);
@@ -425,7 +426,7 @@ void AAPIOverview::RetrieveFile()
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnRetrieveFileCompleted().AddLambda([](const FRetrieveFileResponse& Response)  //
         {                                                                                    //
-            UE_LOG(LogAPIOverview, Display, TEXT("RetrieveFile request completed! File name: %s"), *Response.FileName);
+            UE_LOGFMT(LogAPIOverview, Display, "RetrieveFile request completed! File name: {0}", Response.FileName);
         });
 
     const FString FileID{"file-xxxxxxxxxxxxxxxxxxxxxxxxx"};
@@ -440,7 +441,7 @@ void AAPIOverview::RetrieveFileContent()
         [](const FRetrieveFileContentResponse& Response)  //
         {
             //
-            UE_LOG(LogAPIOverview, Display, TEXT("RetrieveFileContent request completed! File content: %s"), *Response.Content);
+            UE_LOGFMT(LogAPIOverview, Display, "RetrieveFileContent request completed! File content: {0}", Response.Content);
         });
 
     const FString FileID{"file-xxxxxxxxxxxxxxxxxxxxxxxx"};
@@ -455,7 +456,7 @@ void AAPIOverview::ListFineTuningJobs()
         [](const FListFineTuningJobsResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("ListFineTuningJobs request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningJobs request completed!");
         });
 
     Provider->ListFineTuningJobs(Auth);
@@ -469,7 +470,7 @@ void AAPIOverview::CreateFineTuningJob()
         [](const FFineTuningJobObjectResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("CreateFineTuningJob request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "CreateFineTuningJob request completed!");
         });
 
     FFineTuningJob FineTuningJob;
@@ -486,7 +487,7 @@ void AAPIOverview::RetriveFineTuningJob()
         [](const FFineTuningJobObjectResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("RetriveFineTuningJob request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "RetriveFineTuningJob request completed!");
         });
 
     const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
@@ -501,7 +502,7 @@ void AAPIOverview::CancelFineTuningJob()
         [&](const FFineTuningJobObjectResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("CancelFineTuningJob request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "CancelFineTuningJob request completed!");
         });
 
     const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
@@ -525,7 +526,7 @@ void AAPIOverview::ListFineTuningEvents()
 
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
 {
-    UE_LOG(LogAPIOverview, Error, TEXT("URL: %s, Content: %s"), *URL, *Content);
+    UE_LOGFMT(LogAPIOverview, Error, "URL: {0}, Content: {1}", URL, Content);
 
     const EOpenAIResponseError Code = UOpenAIFuncLib::GetErrorCode(Content);
     const FString Messsage = UOpenAIFuncLib::GetErrorMessage(Content);
