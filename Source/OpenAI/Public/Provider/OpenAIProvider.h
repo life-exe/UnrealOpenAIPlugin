@@ -6,6 +6,7 @@
 #include "HTTP.h"
 #include "ResponseTypes.h"
 #include "RequestTypes.h"
+#include "Types/BatchTypes.h"
 #include "Types/AudioTypes.h"
 #include "Delegates.h"
 #include "FuncLib/OpenAIFuncLib.h"
@@ -172,103 +173,120 @@ public:
         const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
 
     /**
+      Create large batches of API requests for asynchronous processing.
+      The Batch API returns completions within 24 hours for a 50% discount.
+      https://platform.openai.com/docs/api-reference/batch/create
+    */
+    void CreateBatch(const FCreateBatch& CreateBatch, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves a batch.
+      https://platform.openai.com/docs/api-reference/batch/retrieve
+    */
+    void RetrieveBatch(const FString& BatchId, const FOpenAIAuth& Auth);
+
+    /**
+      Cancels an in-progress batch.
+      The batch will be in status cancelling for up to 10 minutes,
+      before changing to cancelled, where it will have partial
+      results (if any) available in the output file.
+      https://platform.openai.com/docs/api-reference/batch/cancel
+    */
+    void CancelBatch(const FString& BatchId, const FOpenAIAuth& Auth);
+
+    /**
+      List your organization's batches.
+      https://platform.openai.com/docs/api-reference/batch/list
+    */
+    void ListBatch(const FListBatch& ListBatch, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
 
+#define DEFINE_EVENT_GETTER(Name)          \
+public:                                    \
+    FOn##Name& On##Name() { return Name; } \
+                                           \
+private:                                   \
+    FOn##Name Name;
+
 public:
     FOnRequestError& OnRequestError() { return RequestError; };
-    FOnListModelsCompleted& OnListModelsCompleted() { return ListModelsCompleted; }
-    FOnRetrieveModelCompleted& OnRetrieveModelCompleted() { return RetrieveModelCompleted; }
-    FOnCreateCompletionCompleted& OnCreateCompletionCompleted() { return CreateCompletionCompleted; }
-    FOnCreateCompletionStreamCompleted& OnCreateCompletionStreamCompleted() { return CreateCompletionStreamCompleted; }
-    FOnCreateCompletionStreamProgresses& OnCreateCompletionStreamProgresses() { return CreateCompletionStreamProgresses; }
-    FOnCreateChatCompletionCompleted& OnCreateChatCompletionCompleted() { return CreateChatCompletionCompleted; }
-    FOnCreateChatCompletionStreamCompleted& OnCreateChatCompletionStreamCompleted() { return CreateChatCompletionStreamCompleted; }
-    FOnCreateChatCompletionStreamCompleted& OnCreateChatCompletionStreamProgresses() { return CreateChatCompletionStreamProgresses; }
-    FOnCreateImageCompleted& OnCreateImageCompleted() { return CreateImageCompleted; }
-    FOnCreateImageEditCompleted& OnCreateImageEditCompleted() { return CreateImageEditCompleted; }
-    FOnCreateImageVariationCompleted& OnCreateImageVariationCompleted() { return CreateImageVariationCompleted; }
-    FOnCreateEmbeddingsCompleted& OnCreateEmbeddingsCompleted() { return CreateEmbeddingsCompleted; }
-    FOnCreateSpeechCompleted& OnCreateSpeechCompleted() { return CreateSpeechCompleted; }
-    FOnCreateAudioTranscriptionCompleted& OnCreateAudioTranscriptionCompleted() { return CreateAudioTranscriptionCompleted; }
-    FOnCreateAudioTranslationCompleted& OnCreateAudioTranslationCompleted() { return CreateAudioTranslationCompleted; }
-    FOnListFilesCompleted& OnListFilesCompleted() { return ListFilesCompleted; }
-    FOnUploadFileCompleted& OnUploadFileCompleted() { return UploadFileCompleted; }
-    FOnDeleteFileCompleted& OnDeleteFileCompleted() { return DeleteFileCompleted; }
-    FOnRetrieveFileCompleted& OnRetrieveFileCompleted() { return RetrieveFileCompleted; }
-    FOnRetrieveFileContentCompleted& OnRetrieveFileContentCompleted() { return RetrieveFileContentCompleted; }
-    FOnListFineTuneEventsCompleted& OnListFineTuneEventsCompleted() { return ListFineTuneEventsCompleted; }
-    FOnDeleteFineTunedModelCompleted& OnDeleteFineTunedModelCompleted() { return DeleteFineTunedModelCompleted; }
-    FOnCreateModerationsCompleted& OnCreateModerationsCompleted() { return CreateModerationsCompleted; }
-    FOnListFineTuningJobsCompleted& OnListFineTuningJobsCompleted() { return ListFineTuningJobsCompleted; }
-    FOnCreateFineTuningJobCompleted& OnCreateFineTuningJobCompleted() { return CreateFineTuningJobCompleted; }
-    FOnRetrieveFineTuningJobCompleted& OnRetrieveFineTuningJobCompleted() { return RetrieveFineTuningJobCompleted; }
-    FOnCancelFineTuningJobCompleted& OnCancelFineTuningJobCompleted() { return CancelFineTuningJobCompleted; }
-    FOnListFineTuningEventsCompleted& OnListFineTuningEventsCompleted() { return ListFineTuningEventsCompleted; }
+    DEFINE_EVENT_GETTER(ListModelsCompleted)
+    DEFINE_EVENT_GETTER(RetrieveModelCompleted)
+    DEFINE_EVENT_GETTER(CreateCompletionCompleted)
+    DEFINE_EVENT_GETTER(CreateCompletionStreamCompleted)
+    DEFINE_EVENT_GETTER(CreateCompletionStreamProgresses)
+    DEFINE_EVENT_GETTER(CreateChatCompletionCompleted)
+    DEFINE_EVENT_GETTER(CreateChatCompletionStreamCompleted)
+    DEFINE_EVENT_GETTER(CreateChatCompletionStreamProgresses)
+    DEFINE_EVENT_GETTER(CreateImageCompleted)
+    DEFINE_EVENT_GETTER(CreateImageEditCompleted)
+    DEFINE_EVENT_GETTER(CreateImageVariationCompleted)
+    DEFINE_EVENT_GETTER(CreateEmbeddingsCompleted)
+    DEFINE_EVENT_GETTER(CreateSpeechCompleted)
+    DEFINE_EVENT_GETTER(CreateAudioTranscriptionCompleted)
+    DEFINE_EVENT_GETTER(CreateAudioTranslationCompleted)
+    DEFINE_EVENT_GETTER(ListFilesCompleted)
+    DEFINE_EVENT_GETTER(UploadFileCompleted)
+    DEFINE_EVENT_GETTER(DeleteFileCompleted)
+    DEFINE_EVENT_GETTER(RetrieveFileCompleted)
+    DEFINE_EVENT_GETTER(RetrieveFileContentCompleted)
+    DEFINE_EVENT_GETTER(ListFineTuneEventsCompleted)
+    DEFINE_EVENT_GETTER(DeleteFineTunedModelCompleted)
+    DEFINE_EVENT_GETTER(CreateModerationsCompleted)
+    DEFINE_EVENT_GETTER(ListFineTuningJobsCompleted)
+    DEFINE_EVENT_GETTER(CreateFineTuningJobCompleted)
+    DEFINE_EVENT_GETTER(RetrieveFineTuningJobCompleted)
+    DEFINE_EVENT_GETTER(CancelFineTuningJobCompleted)
+    DEFINE_EVENT_GETTER(ListFineTuningEventsCompleted)
+    DEFINE_EVENT_GETTER(ListBatchCompleted)
+    DEFINE_EVENT_GETTER(CreateBatchCompleted)
+    DEFINE_EVENT_GETTER(RetrieveBatchCompleted)
+    DEFINE_EVENT_GETTER(CancelBatchCompleted)
 
 private:
     TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
-
     FOnRequestError RequestError;
-    FOnListModelsCompleted ListModelsCompleted;
-    FOnRetrieveModelCompleted RetrieveModelCompleted;
-    FOnCreateCompletionCompleted CreateCompletionCompleted;
-    FOnCreateCompletionStreamCompleted CreateCompletionStreamCompleted;
-    FOnCreateCompletionStreamProgresses CreateCompletionStreamProgresses;
-    FOnCreateChatCompletionCompleted CreateChatCompletionCompleted;
-    FOnCreateChatCompletionStreamCompleted CreateChatCompletionStreamCompleted;
-    FOnCreateChatCompletionStreamProgresses CreateChatCompletionStreamProgresses;
-    FOnCreateImageCompleted CreateImageCompleted;
-    FOnCreateImageEditCompleted CreateImageEditCompleted;
-    FOnCreateImageVariationCompleted CreateImageVariationCompleted;
-    FOnCreateEmbeddingsCompleted CreateEmbeddingsCompleted;
-    FOnCreateSpeechCompleted CreateSpeechCompleted;
-    FOnCreateAudioTranscriptionCompleted CreateAudioTranscriptionCompleted;
-    FOnCreateAudioTranslationCompleted CreateAudioTranslationCompleted;
-    FOnListFilesCompleted ListFilesCompleted;
-    FOnUploadFileCompleted UploadFileCompleted;
-    FOnDeleteFileCompleted DeleteFileCompleted;
-    FOnRetrieveFileCompleted RetrieveFileCompleted;
-    FOnRetrieveFileContentCompleted RetrieveFileContentCompleted;
-    FOnListFineTuneEventsCompleted ListFineTuneEventsCompleted;
-    FOnDeleteFineTunedModelCompleted DeleteFineTunedModelCompleted;
-    FOnCreateModerationsCompleted CreateModerationsCompleted;
-    FOnListFineTuningJobsCompleted ListFineTuningJobsCompleted;
-    FOnCreateFineTuningJobCompleted CreateFineTuningJobCompleted;
-    FOnRetrieveFineTuningJobCompleted RetrieveFineTuningJobCompleted;
-    FOnCancelFineTuningJobCompleted CancelFineTuningJobCompleted;
-    FOnListFineTuningEventsCompleted ListFineTuningEventsCompleted;
 
-    virtual void OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnRetrieveModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateCompletionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateCompletionStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
-    virtual void OnCreateChatCompletionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateChatCompletionStreamCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateChatCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
-    virtual void OnCreateImageCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateImageVariationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateAudioTranslationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnListFilesCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnUploadFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnDeleteFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnRetrieveFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnRetrieveFileContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnListFineTuneEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnDeleteFineTunedModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateModerationsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnListFineTuningJobsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCreateFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnRetrieveFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnCancelFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-    virtual void OnListFineTuningEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+#define DECLARE_HTTP_CALLBACK(Callback) virtual void Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+#define DECLARE_HTTP_CALLBACK_PROGRESS(Callback) virtual void Callback(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
+
+    DECLARE_HTTP_CALLBACK(OnListModelsCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveModelCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateCompletionCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateCompletionStreamCompleted)
+    DECLARE_HTTP_CALLBACK_PROGRESS(OnCreateCompletionStreamProgress)
+    DECLARE_HTTP_CALLBACK(OnCreateChatCompletionCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateChatCompletionStreamCompleted)
+    DECLARE_HTTP_CALLBACK_PROGRESS(OnCreateChatCompletionStreamProgress)
+    DECLARE_HTTP_CALLBACK(OnCreateImageCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateImageEditCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateImageVariationCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateEmbeddingsCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateSpeechCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateAudioTranscriptionCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateAudioTranslationCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFilesCompleted)
+    DECLARE_HTTP_CALLBACK(OnUploadFileCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteFileCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveFileCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveFileContentCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFineTuneEventsCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteFineTunedModelCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateModerationsCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFineTuningJobsCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateFineTuningJobCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveFineTuningJobCompleted)
+    DECLARE_HTTP_CALLBACK(OnCancelFineTuningJobCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFineTuningEventsCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnCancelBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnListBatchCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
     bool ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse);

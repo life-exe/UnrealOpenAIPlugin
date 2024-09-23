@@ -57,6 +57,11 @@ private:
     void CancelFineTuningJob();
     void ListFineTuningEvents();
 
+    void ListBatch();
+    void CreateBatch();
+    void RetrieveBatch();
+    void CancelBatch();
+
     void OnRequestError(const FString& URL, const FString& Content);
 
     void SetYourOwnAPI();

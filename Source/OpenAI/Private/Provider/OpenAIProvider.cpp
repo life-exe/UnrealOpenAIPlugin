@@ -325,6 +325,37 @@ void UOpenAIProvider::ListFineTuningEvents(
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateBatch(const FCreateBatch& CreateBatch, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateBatch, API->Batches(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveBatch(const FString& BatchId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Batches()).Append("/").Append(BatchId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CancelBatch(const FString& BatchId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Batches()).Append("/").Append(BatchId).Append("/cancel");
+    auto HttpRequest = MakeRequest(URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCancelBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListBatch(const FListBatch& ListBatch, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Batches()).Append(ListBatch.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 void UOpenAIProvider::OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -569,6 +600,26 @@ void UOpenAIProvider::OnCancelFineTuningJobCompleted(FHttpRequestPtr Request, FH
 void UOpenAIProvider::OnListFineTuningEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FFineTuningJobEventResponse>(Response, WasSuccessful, ListFineTuningEventsCompleted);
+}
+
+void UOpenAIProvider::OnCreateBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FCreateBatchResponse>(Response, WasSuccessful, CreateBatchCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FRetrieveBatchResponse>(Response, WasSuccessful, RetrieveBatchCompleted);
+}
+
+void UOpenAIProvider::OnCancelBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FCancelBatchResponse>(Response, WasSuccessful, CancelBatchCompleted);
+}
+
+void UOpenAIProvider::OnListBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FListBatchResponse>(Response, WasSuccessful, ListBatchCompleted);
 }
 
 ///////////////////////////// HELPER FUNCTIONS /////////////////////////////

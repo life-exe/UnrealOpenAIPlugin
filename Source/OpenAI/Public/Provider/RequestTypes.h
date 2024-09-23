@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommonTypes.h"
 #include "ResponseTypes.h"
-#include "ToolsTypes.h"
+#include "Types/ToolsTypes.h"
 #include "RequestTypes.generated.h"
 
 USTRUCT(BlueprintType)
@@ -519,8 +519,12 @@ struct FUploadFile
     FString File;
 
     /**
-      The intended purpose of the uploaded documents.
-      Use "fine-tune" for Fine-tuning. This allows us to validate the format of the uploaded file.
+      The intended purpose of the uploaded file.
+
+      Use "assistants" for Assistants and Message files,
+      "vision" for Assistants image file inputs,
+      "batch" for Batch API, and
+      "fine-tune" for Fine-tuning.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Purpose;
@@ -727,12 +731,12 @@ struct FFineTuningQueryParameters
     FString ToQuery() const
     {
         FString Query{"?"};
-        if (After.IsSet())
+        if (After)
         {
             Query.Append("after=").Append(After.GetValue()).Append("&");
         }
 
-        if (Limit.IsSet())
+        if (Limit)
         {
             Query.Append("limit=").Append(FString::FromInt(Limit.GetValue())).Append("&");
         }

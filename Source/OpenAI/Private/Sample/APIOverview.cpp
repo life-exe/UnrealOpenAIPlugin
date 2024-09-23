@@ -60,6 +60,11 @@ void AAPIOverview::BeginPlay()
     // CancelFineTuningJob();
     // ListFineTuningEvents();
 
+    // ListBatch();
+    // CreateBatch();
+    // RetrieveBatch();
+    // CancelBatch();
+
     // SetYourOwnAPI();
 }
 
@@ -177,12 +182,12 @@ void AAPIOverview::CreateImageDALLE2()
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateImageCompleted().AddLambda(
-        [](const FImageResponse& Response)
+        [&](const FImageResponse& Response)
         {
             FString OutputString{};
             Algo::ForEach(
                 Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
         });
 
     FOpenAIImage Image;
@@ -379,11 +384,12 @@ void AAPIOverview::UploadFile()
         [](const FUploadFileResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "UploadFile request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "UploadFile request completed! {0}", Response.ID);
         });
 
     FUploadFile UploadFile;
-    UploadFile.File = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\data.jsonl";
+    // you can find example here: Plugins\OpenAI\Source\OpenAITestRunner\Data\test_file.jsonl
+    UploadFile.File = "\\..\\test_file.jsonl";
     UploadFile.Purpose = "fine-tune";
 
     Provider->UploadFile(UploadFile, Auth);
@@ -517,11 +523,73 @@ void AAPIOverview::ListFineTuningEvents()
         [&](const FFineTuningJobEventResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("ListFineTuningEvents request completed!"));
+            UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningEvents request completed!");
         });
 
     const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
     Provider->ListFineTuningEvents(JobID, Auth);
+}
+
+void AAPIOverview::CreateBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateBatchCompleted().AddLambda(
+        [&](const FCreateBatchResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "FCreateBatchResponse request completed, id={0}", Response.Id);
+        });
+
+    FCreateBatch Batch;
+    Batch.Input_File_Id = "file-xxxxxxxxxxxxxxxxxxxxxxxx";
+    Batch.Endpoint = "/v1/chat/completions";
+    Batch.Metadata.Add("purpose", "plugin test");
+    Batch.Metadata.Add("user_name", "John Doe");
+    Provider->CreateBatch(Batch, Auth);
+}
+
+void AAPIOverview::ListBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListBatchCompleted().AddLambda(
+        [&](const FListBatchResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "FListBatchResponse request completed!");
+        });
+    FListBatch ListBatch;
+    ListBatch.Limit = 20;
+    Provider->ListBatch(ListBatch, Auth);
+}
+
+void AAPIOverview::RetrieveBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveBatchCompleted().AddLambda(
+        [&](const FRetrieveBatchResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "FRetrieveBatchResponse request completed!");
+        });
+    const FString BatchId = "batchId-xxxxxxxxxxxxxxxxxxxxxxxx";
+    Provider->RetrieveBatch(BatchId, Auth);
+}
+
+void AAPIOverview::CancelBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCancelBatchCompleted().AddLambda(
+        [&](const FCancelBatchResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "FCancelBatchResponse request completed!");
+        });
+    const FString BatchId = "batchId-xxxxxxxxxxxxxxxxxxxxxxxx";
+    Provider->CancelBatch(BatchId, Auth);
 }
 
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
@@ -554,6 +622,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Files() const override { return API_URL + "/v1/files"; }
         virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
+        virtual FString Batches() const override { return API_URL + "/v1/batches"; }
 
     private:
         const FString API_URL;

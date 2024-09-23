@@ -26,6 +26,7 @@ public:
     virtual FString Files() const = 0;
     virtual FString FineTuningJobs() const = 0;
     virtual FString Moderations() const = 0;
+    virtual FString Batches() const = 0;
 };
 
 namespace V1
@@ -49,6 +50,7 @@ public:
     virtual FString Files() const override { return API_URL + "/v1/files"; }
     virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
     virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
+    virtual FString Batches() const override { return API_URL + "/v1/batches"; }
 
 private:
     const FString API_URL;
@@ -70,6 +72,7 @@ struct FOpenAIEndpoints
     FString Files;
     FString FineTuningJobs;
     FString Moderations;
+    FString Batches;
 };
 
 class GenericAPI : public OpenAI::IAPI
@@ -90,6 +93,7 @@ public:
     virtual FString Files() const override { return OpenAIEndpoints.Files; }
     virtual FString FineTuningJobs() const override { return OpenAIEndpoints.FineTuningJobs; }
     virtual FString Moderations() const override { return OpenAIEndpoints.Moderations; }
+    virtual FString Batches() const override { return OpenAIEndpoints.Batches; }
 
 private:
     const FOpenAIEndpoints OpenAIEndpoints;
