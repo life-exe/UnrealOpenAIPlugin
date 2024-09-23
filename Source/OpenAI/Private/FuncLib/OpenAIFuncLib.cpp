@@ -703,3 +703,41 @@ FString UOpenAIFuncLib::FilePathToBase64(const FString& FilePath)
     const FString ImageInBase64 = FBase64::Encode(ImageData);
     return UOpenAIFuncLib::WrapBase64(ImageInBase64);
 }
+
+FString UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose UploadFilePurpose)
+{
+    switch (UploadFilePurpose)
+    {
+        case EUploadFilePurpose::Assistants: return "assistants";
+        case EUploadFilePurpose::Vision: return "vision";
+        case EUploadFilePurpose::Batch: return "batch";
+        case EUploadFilePurpose::FineTune: return "fine-tune";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint BatchEndpoint)
+{
+    switch (BatchEndpoint)
+    {
+        case EBatchEndpoint::ChatCompletions: return "/v1/chat/completions";
+        case EBatchEndpoint::Completions: return "/v1/completions";
+        case EBatchEndpoint::Embeddings: return "/v1/embeddings";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow BatchCompletionWindow)
+{
+    switch (BatchCompletionWindow)
+    {
+        case EBatchCompletionWindow::Window_24h: return "24h";
+    }
+
+    checkNoEntry();
+    return {};
+}

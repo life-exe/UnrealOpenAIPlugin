@@ -9,6 +9,20 @@
 //                 REQUEST TYPES
 ///////////////////////////////////////////////////////
 
+UENUM(BlueprintType)
+enum class EBatchEndpoint : uint8
+{
+    ChatCompletions = 0,
+    Embeddings,
+    Completions
+};
+
+UENUM(BlueprintType)
+enum class EBatchCompletionWindow : uint8
+{
+    Window_24h = 0,
+};
+
 USTRUCT(BlueprintType)
 struct FCreateBatch
 {

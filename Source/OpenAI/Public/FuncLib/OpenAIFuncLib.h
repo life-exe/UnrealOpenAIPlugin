@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ModelTypes.h"
+#include "Provider/Types/BatchTypes.h"
 #include "Provider/CommonTypes.h"
 #include "Provider/ResponseTypes.h"
 #include "Provider/Types/AudioTypes.h"
@@ -136,6 +137,15 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "OpenAI")
     static FString FilePathToBase64(const FString& FilePath);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | File")
+    static FString OpenAIUploadFilePurposeToString(EUploadFilePurpose UploadFilePurpose);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Batch")
+    static FString OpenAIBatchEndpointToString(EBatchEndpoint BatchEndpoint);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Batch")
+    static FString OpenAIBatchCompletionWindowToString(EBatchCompletionWindow BatchCompletionWindow);
 
     static FString BoolToString(bool Value);
     static FString RemoveWhiteSpaces(const FString& Input);

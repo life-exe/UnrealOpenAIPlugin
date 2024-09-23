@@ -460,6 +460,27 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(Secrets[1].Key.Equals("key2"));
                     TestTrueExpr(Secrets[1].Value.Equals("KeYvAlUe2"));
                 });
+
+            It("OpenAIUploadFilePurposeToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Assistants).Equals("assistants"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Vision).Equals("vision"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Batch).Equals("batch"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::FineTune).Equals("fine-tune"));
+                });
+
+            It("OpenAIBatchEndpointToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions).Equals("/v1/chat/completions"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Completions).Equals("/v1/completions"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Embeddings).Equals("/v1/embeddings"));
+                });
+
+            It("OpenAIBatchCompletionWindowToStringShouldReturnCorrectValue", [this]()
+                { TestTrueExpr(UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow::Window_24h).Equals("24h")); });
         });
 
     Describe("FileSystemFuncLib",
@@ -507,14 +528,14 @@ void FOpenAIFuncLib::Define()
                     const FFineTuningQueryParameters Parameters;
                     TestTrueExpr(Parameters.ToQuery().IsEmpty());
                 });
-            It("ShouldBECorrectIfOneParamIsSet",
+            It("ShouldBeCorrectIfOneParamIsSet",
                 [this]()
                 {
                     FFineTuningQueryParameters Parameters;
                     Parameters.After = "event-id";
                     TestTrueExpr(Parameters.ToQuery().Equals("?after=event-id"));
                 });
-            It("ShouldBECorrectIfTwoParamsAreSet",
+            It("ShouldBeCorrectIfTwoParamsAreSet",
                 [this]()
                 {
                     FFineTuningQueryParameters Parameters;

@@ -505,6 +505,15 @@ struct FEmbeddings
     FString User;
 };
 
+UENUM(BlueprintType)
+enum class EUploadFilePurpose : uint8
+{
+    Assistants = 0,
+    Vision,
+    Batch,
+    FineTune
+};
+
 USTRUCT(BlueprintType)
 struct FUploadFile
 {

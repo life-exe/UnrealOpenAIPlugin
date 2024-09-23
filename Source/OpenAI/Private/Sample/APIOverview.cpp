@@ -390,8 +390,8 @@ void AAPIOverview::UploadFile()
     FUploadFile UploadFile;
     // you can find example here: Plugins\OpenAI\Source\OpenAITestRunner\Data\test_file.jsonl
     UploadFile.File = "\\..\\test_file.jsonl";
-    UploadFile.Purpose = "fine-tune";
-
+    // UploadFile.Purpose = UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Batch);
+    UploadFile.Purpose = UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::FineTune);
     Provider->UploadFile(UploadFile, Auth);
 }
 
@@ -543,7 +543,8 @@ void AAPIOverview::CreateBatch()
 
     FCreateBatch Batch;
     Batch.Input_File_Id = "file-xxxxxxxxxxxxxxxxxxxxxxxx";
-    Batch.Endpoint = "/v1/chat/completions";
+    Batch.Endpoint = UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions);
+    Batch.Completion_Window = UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow::Window_24h);
     Batch.Metadata.Add("purpose", "plugin test");
     Batch.Metadata.Add("user_name", "John Doe");
     Provider->CreateBatch(Batch, Auth);
