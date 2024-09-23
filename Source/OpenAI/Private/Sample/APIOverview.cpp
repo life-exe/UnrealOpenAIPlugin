@@ -2,8 +2,6 @@
 
 #include "Sample/APIOverview.h"
 #include "Provider/OpenAIProvider.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
 #include "Provider/Types/AudioTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Algo/ForEach.h"

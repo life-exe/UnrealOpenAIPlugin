@@ -5,7 +5,7 @@
 #if WITH_AUTOMATION_TESTS
 
 #include "TestUtils.h"
-#include "FuncLib\ModelTypes.h"
+#include "Provider/Types/ModelTypes.h"
 #include "Internationalization/Regex.h"
 
 using namespace OpenAI::Tests;

@@ -3,8 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
+#include "Provider/Types/FileTypes.h"
 #include "RetrieveFileAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRetrieveFile, const FRetrieveFileResponse&, Response, const FOpenAIError&, RawError);

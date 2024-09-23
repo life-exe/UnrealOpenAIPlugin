@@ -39,6 +39,16 @@ enum class ETTSAudioFormat : uint8
     FLAC  // Not supported by UnrealEngine
 };
 
+UENUM(BlueprintType)
+enum class ETranscriptFormat : uint8
+{
+    JSON,
+    Text,
+    Str,
+    Verbose_JSON,
+    Vtt
+};
+
 ///////////////////////////////////////////////////////
 //                 REQUEST TYPES
 ///////////////////////////////////////////////////////

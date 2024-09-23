@@ -3,8 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
+#include "Provider/Types/ModelTypes.h"
 #include "ListModelsAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnListModels, const FListModelsResponse&, Response, const FOpenAIError&, RawError);

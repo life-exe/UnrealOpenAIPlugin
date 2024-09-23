@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "HTTP.h"
-#include "ResponseTypes.h"
-#include "RequestTypes.h"
 #include "Types/BatchTypes.h"
 #include "Types/AudioTypes.h"
 #include "Delegates.h"

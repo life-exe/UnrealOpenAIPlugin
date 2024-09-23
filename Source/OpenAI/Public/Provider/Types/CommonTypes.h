@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Types/ToolsTypes.h"
+#include "ToolsTypes.h"
 #include "CommonTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -102,6 +102,24 @@ struct FMessage
 };
 
 USTRUCT(BlueprintType)
+struct FOpenAIEvent
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Created_At{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Level;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Message;
+};
+
+USTRUCT(BlueprintType)
 struct FOpenAIAuth
 {
     GENERATED_BODY()
@@ -116,6 +134,69 @@ struct FOpenAIAuth
     FString ProjectID{};
 
     bool IsEmpty() const { return APIKey.IsEmpty() || OrganizationID.IsEmpty() || ProjectID.IsEmpty(); }
+};
+
+USTRUCT(BlueprintType)
+struct FOpenAIError
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString RawContent{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    bool WasError{false};
+};
+
+/*
+    @todo: add more errors https://platform.openai.com/docs/guides/error-codes
+*/
+UENUM(BlueprintType)
+enum class EOpenAIResponseError : uint8
+{
+    InvalidAPIKey = 0,
+    NetworkError,
+    ModelNotFound,
+    Unknown
+};
+
+// what is that? (=
+USTRUCT(BlueprintType)
+struct FHyperparams
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Batch_Size{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    float Learning_Rate_Multiplier{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 N_Epochs{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    float Prompt_Loss_Weight{};
+};
+
+UENUM(BlueprintType)
+enum class ERole : uint8
+{
+    System,
+    User,
+    Assistant,
+    Function,
+    Tool
+};
+
+UENUM(BlueprintType)
+enum class EOpenAIFinishReason : uint8
+{
+    Stop = 0,
+    Length,
+    Content_Filter,
+    Tool_Calls,
+    Null
 };
 
 namespace OpenAI

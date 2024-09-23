@@ -129,7 +129,7 @@ struct FOpenAIBatchErrorData
       The line number of the input file where the error occurred, if applicable.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Line;
+    int32 Line{};
 };
 
 USTRUCT(BlueprintType)
@@ -159,19 +159,19 @@ struct FOpenAIRequestCounts
       Total number of requests in the batch.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Total;
+    int32 Total{};
 
     /**
       Number of requests that have been completed successfully.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Completed;
+    int32 Completed{};
 
     /**
       Number of requests that have failed.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Failed;
+    int32 Failed{};
 };
 
 USTRUCT(BlueprintType)
@@ -231,55 +231,55 @@ struct FOpenAIBatch
       The Unix timestamp (in seconds) for when the batch was created.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Created_At;
+    int32 Created_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch started processing.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 In_Progress_At;
+    int32 In_Progress_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch will expire.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Expires_At;
+    int32 Expires_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch started finalizing.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Finalizing_At;
+    int32 Finalizing_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch was completed.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Completed_At;
+    int32 Completed_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch failed.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Failed_At;
+    int32 Failed_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch expired.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Expired_At;
+    int32 Expired_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch started cancelling.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Cancelling_At;
+    int32 Cancelling_At{};
 
     /**
       The Unix timestamp (in seconds) for when the batch was cancelled.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Cancelled_At;
+    int32 Cancelled_At{};
 
     /**
       The request counts for different statuses within the batch.

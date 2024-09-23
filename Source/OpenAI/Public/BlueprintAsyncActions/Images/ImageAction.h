@@ -3,8 +3,7 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
+#include "Provider/Types/ImageTypes.h"
 #include "ImageAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnImage, const FImageResponse&, Response, const FOpenAIError&, RawError);

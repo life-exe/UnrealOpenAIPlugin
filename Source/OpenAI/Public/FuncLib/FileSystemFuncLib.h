@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Provider/CommonTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "FileSystemFuncLib.generated.h"
 
 UENUM(BlueprintType)

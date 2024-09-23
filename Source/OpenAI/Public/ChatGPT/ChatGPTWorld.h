@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Info.h"
-#include "Provider/CommonTypes.h"
-#include "FuncLib/ModelTypes.h"
+#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/ModelTypes.h"
 #include "ChatGPTWorld.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGPTRequestUpdated, const FMessage&, Message);

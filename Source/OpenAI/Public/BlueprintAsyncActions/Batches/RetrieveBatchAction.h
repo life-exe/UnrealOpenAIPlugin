@@ -4,7 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/BatchTypes.h"
-#include "Provider/CommonTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "RetrieveBatchAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRetrieveBatch, const FRetrieveBatchResponse&, Response, const FOpenAIError&, RawError);

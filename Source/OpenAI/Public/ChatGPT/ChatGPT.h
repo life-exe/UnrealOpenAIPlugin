@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Provider/CommonTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "Logging/LogVerbosity.h"
 #include "Runtime/CoreUObject/Public/Templates/SubclassOf.h"
 #include "ChatGPT.generated.h"

@@ -3,9 +3,8 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
-#include "Provider/CommonTypes.h"
+#include "Provider/Types/ChatTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "ChatCompletionAction.generated.h"
 
 USTRUCT(BlueprintType)

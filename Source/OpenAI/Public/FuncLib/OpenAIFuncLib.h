@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "ModelTypes.h"
+#include "Provider/Types/ModelTypes.h"
 #include "Provider/Types/BatchTypes.h"
-#include "Provider/CommonTypes.h"
-#include "Provider/ResponseTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "Provider/Types/AudioTypes.h"
+#include "Provider/Types/ImageTypes.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIFuncLib.generated.h"
 

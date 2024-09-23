@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
+#include "Provider/Types/ModerationTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "ModerationsAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnModerations, const FModerationsResponse&, Response, const FOpenAIError&, RawError);

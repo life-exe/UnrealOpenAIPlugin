@@ -1,9 +1,8 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "ChatGPT/Services/Weather/WeatherService.h"
-#include "Provider/CommonTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
-#include "Provider/RequestTypes.h"
 #include "Algo/ForEach.h"
 #include "Logging/StructuredLog.h"
 

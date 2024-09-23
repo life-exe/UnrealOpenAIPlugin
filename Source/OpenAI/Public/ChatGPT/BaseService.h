@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Provider/RequestTypes.h"
 #include "Dom/JsonObject.h"
+#include "Provider/Types/CommonTypes.h"
 #include "BaseService.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnServiceDataRecieved, const FMessage&);

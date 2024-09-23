@@ -5,9 +5,8 @@
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
 #include "OpenAIProviderFake.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
-#include "Provider/CommonTypes.h"
+#include "Provider/Types/ModelTypes.h"
+#include "Provider/Types/CommonTypes.h"
 
 DEFINE_SPEC(FOpenAIProviderFake, "OpenAI.Provider",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)

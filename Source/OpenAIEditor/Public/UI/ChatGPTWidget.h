@@ -5,10 +5,8 @@
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
 #include "UI/ChatMessageWidget.h"
-#include "Provider/ResponseTypes.h"
-#include "Provider/RequestTypes.h"
-#include "Provider/CommonTypes.h"
-#include "FuncLib/ModelTypes.h"
+#include "Provider/Types/ModelTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "ChatGPT/BaseService.h"
 #include "ChatGPTWidget.generated.h"
 
