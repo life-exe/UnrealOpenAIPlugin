@@ -292,8 +292,9 @@ private:
     bool ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
-    void LogResponse(FHttpResponsePtr Response);
-    void LogError(const FString& ErrorText);
+    void Log(const FString& Info) const;
+    void LogResponse(FHttpResponsePtr Response) const;
+    void LogError(const FString& ErrorText) const;
 
     template <typename OutStructType>
     FString SerializeRequest(const OutStructType& OutStruct) const
@@ -314,7 +315,9 @@ private:
         HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
         HttpRequest->SetURL(URL);
         HttpRequest->SetVerb(Method);
-        HttpRequest->SetContentAsString(SerializeRequest(OutStruct));
+        const FString Content = SerializeRequest(OutStruct);
+        Log(FString("Content was set as: ").Append(Content));
+        HttpRequest->SetContentAsString(Content);
         return HttpRequest;
     }
     // specializations

@@ -667,7 +667,15 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
     return true;
 }
 
-void UOpenAIProvider::LogResponse(FHttpResponsePtr Response)
+void UOpenAIProvider::Log(const FString& Info) const
+{
+    if (bLogEnabled)
+    {
+        UE_LOGFMT(LogOpenAIProvider, Display, "{0}", Info);
+    }
+}
+
+void UOpenAIProvider::LogResponse(FHttpResponsePtr Response) const
 {
     if (bLogEnabled)
     {
@@ -676,7 +684,7 @@ void UOpenAIProvider::LogResponse(FHttpResponsePtr Response)
     }
 }
 
-void UOpenAIProvider::LogError(const FString& ErrorText)
+void UOpenAIProvider::LogError(const FString& ErrorText) const
 {
     UE_LOGFMT(LogOpenAIProvider, Error, "{0}", ErrorText);
 }
