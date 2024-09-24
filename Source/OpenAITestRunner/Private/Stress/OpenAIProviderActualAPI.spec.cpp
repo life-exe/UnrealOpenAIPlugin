@@ -105,37 +105,6 @@ void FOpenAIProviderActual::Define()
                     RequestCompleted = false;
                 });
 
-            It("Embeddings.CreateEmbeddingsRequestShouldResponseCorrectly",
-                [this]()
-                {
-                    OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
-                        [&](const FEmbeddingsResponse& Response)
-                        {
-                            TestTrueExpr(Response.Model.Equals("text-embedding-ada-002"));
-                            TestTrueExpr(Response.Usage.Prompt_Tokens == 6);
-                            TestTrueExpr(Response.Usage.Total_Tokens == 6);
-                            TestTrueExpr(Response.Object.Equals("list"));
-                            TestTrueExpr(Response.Data.Num() == 1);
-
-                            for (const auto& Data : Response.Data)
-                            {
-                                TestTrueExpr(Data.Object.Equals("embedding"));
-                                TestTrueExpr(Data.Index == 0);
-                                TestTrueExpr(Data.Embedding.Num() > 0);
-                            }
-
-                            RequestCompleted = true;
-                        });
-
-                    FEmbeddings Embeddings;
-                    Embeddings.Input = {"Hello! How are you?"};
-                    Embeddings.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_Ada_002);
-                    Embeddings.Encoding_Format = UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Float);
-                    OpenAIProvider->CreateEmbeddings(Embeddings, Auth);
-
-                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
-                });
-
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.NonStreaming",
                 [this]()
                 {

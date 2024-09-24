@@ -174,7 +174,7 @@ struct FOpenAIImageEdit
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User; //@todo optional
+    FString User;  //@todo optional
 };
 
 USTRUCT(BlueprintType)
@@ -221,7 +221,7 @@ struct FOpenAIImageVariation
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User; //@todo optional
+    FString User;  //@todo optional
 };
 
 ///////////////////////////////////////////////////////
