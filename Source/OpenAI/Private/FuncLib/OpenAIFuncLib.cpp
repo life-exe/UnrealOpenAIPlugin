@@ -445,8 +445,6 @@ FString UOpenAIFuncLib::OpenAIModelToString(const FOpenAIModel& OpenAIModel)
     Out.Append(FString::Printf(TEXT("object: %s\n"), *OpenAIModel.Object));
     Out.Append(FString::Printf(TEXT("created: %i\n"), OpenAIModel.Created));
     Out.Append(FString::Printf(TEXT("owned_by: %s\n"), *OpenAIModel.Owned_By));
-    Out.Append(FString::Printf(TEXT("root: %s\n"), *OpenAIModel.Root));
-    Out.Append(FString::Printf(TEXT("parent: %s\n"), *OpenAIModel.Parent));
     return Out;
 }
 

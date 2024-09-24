@@ -71,72 +71,32 @@ enum class EMainModelEnum : uint8
 ///////////////////////////////////////////////////////
 
 USTRUCT(BlueprintType)
-struct FPermission
-{
-    GENERATED_BODY()
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString ID{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Object{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Created{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Allow_Create_Engine{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Allow_Sampling{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Allow_Logprobs{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Allow_Search_Indices{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Allow_View{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Allow_Fine_Tuning{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Organization{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Group{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Is_Blocking{};
-};
-
-USTRUCT(BlueprintType)
 struct FOpenAIModel
 {
     GENERATED_BODY()
-
+    /**
+      The model identifier, which can be referenced in the API endpoints.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString ID{};
 
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Object{};
-
+    /**
+      The Unix timestamp (in seconds) when the model was created.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     int32 Created{};
 
+    /**
+      The object type, which is always "model".
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object{};
+
+    /**
+      The organization that owns the model.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Owned_By{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<FPermission> Permission;
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Root{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Parent{};
 };
 
 USTRUCT(BlueprintType)

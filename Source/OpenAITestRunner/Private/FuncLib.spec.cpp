@@ -288,16 +288,10 @@ void FOpenAIFuncLib::Define()
                     OpenAIModel.Object = "obj";
                     OpenAIModel.Created = 9999;
                     OpenAIModel.Owned_By = "owned_by";
-                    OpenAIModel.Root = "openAIID";
-                    OpenAIModel.Parent = "openAIID";
                     const FString ModelsStr = UOpenAIFuncLib::OpenAIModelToString(OpenAIModel);
 
                     FString ExpectedStr = "id: openAIID\n";
-                    ExpectedStr.Append("object: obj\n")
-                        .Append("created: 9999\n")
-                        .Append("owned_by: owned_by\n")
-                        .Append("root: openAIID\n")
-                        .Append("parent: openAIID\n");
+                    ExpectedStr.Append("object: obj\n").Append("created: 9999\n").Append("owned_by: owned_by\n");
                     TestTrueExpr(ModelsStr.Equals(ExpectedStr));
                 });
 
