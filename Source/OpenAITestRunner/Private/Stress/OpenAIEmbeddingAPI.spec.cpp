@@ -38,7 +38,7 @@ void FOpenAIProviderEmbedding::Define()
                     RequestCompleted = false;
                 });
 
-            It("Embeddings.CreateEmbeddingsRequestShouldResponseCorrectly",
+            It("Embedding.CreateEmbeddingsRequestShouldResponseCorrectly",
                 [this]()
                 {
                     OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(

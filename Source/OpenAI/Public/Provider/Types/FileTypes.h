@@ -18,15 +18,18 @@ enum class EUploadFilePurpose : uint8
     FineTune
 };
 
+/**
+  Upload a file that can be used across various endpoints.
+  Individual files can be up to 512 MB, and the size of all files uploaded by one
+  organization can be up to 100 GB.
+*/
 USTRUCT(BlueprintType)
 struct FUploadFile
 {
     GENERATED_BODY()
 
     /**
-      Name of the JSON Lines file to be uploaded.
-      If the purpose is set to "fine-tune", each line is a JSON record with "prompt" and "completion"
-      fields representing your training examples.
+      The File object (not file name) to be uploaded.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString File;
