@@ -656,11 +656,22 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
         return false;
     }
 
-    if (!WasSuccessful || !JsonObject.IsValid() /*|| JsonObject->HasField("error")*/)
+    if (!WasSuccessful || !JsonObject.IsValid())
     {
         LogError(Response->GetContentAsString());
         RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
         return false;
+    }
+
+    if (JsonObject->HasField("error"))
+    {
+        const auto ErrorObject = JsonObject->GetObjectField("error");
+        if (ErrorObject->HasField("type") && ErrorObject->HasField("message") && ErrorObject->HasField("code"))
+        {
+            LogError(Response->GetContentAsString());
+            RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+            return false;
+        }
     }
 
     LogResponse(Response);

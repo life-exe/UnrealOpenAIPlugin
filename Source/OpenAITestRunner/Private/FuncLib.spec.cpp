@@ -358,6 +358,12 @@ void FOpenAIFuncLib::Define()
                         UOpenAIFuncLib::GetErrorCode("{\"error\":{\"message\":\"\",\"type\":\"invalid_request_error\",\"param\":null,"
                                                      "\"code\":\"model_not_found\"}}") == EOpenAIResponseError::ModelNotFound);
                     TestTrueExpr(
+                        UOpenAIFuncLib::GetErrorCode("{\"error\":{\"message\":\"\",\"type\":\"insufficient_quota\",\"param\":null,"
+                                                     "\"code\":\"insufficient_quota\"}}") == EOpenAIResponseError::InsufficientQuota);
+                    TestTrueExpr(UOpenAIFuncLib::GetErrorCode(
+                                     "{\"error\":{\"message\":\"\",\"type\":\"invalid_request_error\",\"param\":null,"
+                                     "\"code\":\"invalid_language_format\"}}") == EOpenAIResponseError::InvalidLanguageFormat);
+                    TestTrueExpr(
                         UOpenAIFuncLib::GetErrorCode(
                             "{\"error\":{\"message\":\"\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid\"}}") ==
                         EOpenAIResponseError::Unknown);

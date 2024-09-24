@@ -157,6 +157,8 @@ enum class EOpenAIResponseError : uint8
     InvalidAPIKey = 0,
     NetworkError,
     ModelNotFound,
+    InsufficientQuota,
+    InvalidLanguageFormat,
     Unknown
 };
 

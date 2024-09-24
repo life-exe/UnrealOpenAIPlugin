@@ -581,6 +581,14 @@ EOpenAIResponseError UOpenAIFuncLib::GetErrorCode(const FString& RawError)
             {
                 return EOpenAIResponseError::ModelNotFound;
             }
+            else if (Code.Contains("insufficient_quota"))
+            {
+                return EOpenAIResponseError::InsufficientQuota;
+            }
+            else if (Code.Contains("invalid_language_format"))
+            {
+                return EOpenAIResponseError::InvalidLanguageFormat;
+            }
         }
     }
 
@@ -613,6 +621,8 @@ FString UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError Code)
         case EOpenAIResponseError::InvalidAPIKey: return "Invalid API key";
         case EOpenAIResponseError::NetworkError: return "Network error";
         case EOpenAIResponseError::ModelNotFound: return "Model not found";
+        case EOpenAIResponseError::InsufficientQuota: return "Insufficient quota";
+        case EOpenAIResponseError::InvalidLanguageFormat: return "Invalid language format";
         case EOpenAIResponseError::Unknown: return "Unknown error";
     }
 
