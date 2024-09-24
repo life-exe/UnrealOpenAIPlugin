@@ -95,7 +95,7 @@ void UChatGPT::MakeRequest()
     FChatCompletion ChatCompletion;
     ChatCompletion.Model = OpenAIModel;
     ChatCompletion.Messages = ChatHistory;
-    ChatCompletion.Max_Tokens = MaxTokens;
+    ChatCompletion.Max_Completion_Tokens = MaxCompletionTokens;
     ChatCompletion.Stream = true;
     ChatCompletion.Tools = AvailableTools;
     Provider->CreateChatCompletion(ChatCompletion, Auth);
@@ -237,7 +237,7 @@ FString UChatGPT::GetModel() const
 
 void UChatGPT::SetMaxTokens(int32 Tokens)
 {
-    MaxTokens = Tokens;
+    MaxCompletionTokens = Tokens;
 }
 
 void UChatGPT::AddMessage(const FMessage& Message)

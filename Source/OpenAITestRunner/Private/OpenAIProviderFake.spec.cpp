@@ -139,7 +139,7 @@ void FOpenAIProviderFake::Define()
                     ChatCompletion.Model = "gpt-4";
                     ChatCompletion.Stream = false;
                     ChatCompletion.N = 1;
-                    ChatCompletion.Max_Tokens = 2000;
+                    ChatCompletion.Max_Completion_Tokens = 2000;
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, FOpenAIAuth{});
 
                     TestTrueExpr(ChatCompletionResponse.ID.Equals("chatcmpl-xxxxxxxxxxxxxxxxxx"));

@@ -17,160 +17,12 @@ enum class EChatResponseFormat : uint8
 ///////////////////////////////////////////////////////
 
 USTRUCT(BlueprintType)
-struct FCompletion
-{
-    GENERATED_BODY()
-
-    /**
-      ID of the model to use.
-      You can use the List models API to see all of your available models,
-      or see our Model overview for descriptions of them.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
-    FString Model;
-
-    /**
-      The prompt(s) to generate completions for, encoded as a string,
-      array of strings, array of tokens, or array of token arrays.
-
-      Note that <|endoftext|> is the document separator that the model sees during training,
-      so if a prompt is not specified the model will generate as if from the beginning of a new document.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Prompt;
-
-    /**
-      The suffix that comes after a completion of inserted text.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Suffix;
-
-    /**
-      The maximum number of tokens to generate in the chat completion.
-      The total length of input tokens and generated tokens is limited by the model's context length.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Max_Tokens{16};
-
-    /**
-      What sampling temperature to use, between 0 and 2.
-      Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
-      We generally recommend altering this or top_p but not both.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    float Temperature{1.0f};
-
-    /**
-      An alternative to sampling with temperature, called nucleus sampling,
-      where the model considers the results of the tokens with top_p probability mass.
-      So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-      We generally recommend altering this or temperature but not both.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    float Top_P{1.0f};
-
-    /**
-      How many completions to generate for each prompt.
-      Note: Because this parameter generates many completions,
-      it can quickly consume your token quota.
-      Use carefully and ensure that you have reasonable settings for max_tokens and stop.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 N{1};
-
-    /**
-      Whether to stream back partial progress.
-      If set, tokens will be sent as data-only server-sent events as they become available,
-      with the stream terminated by a data: [DONE] message.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    bool Stream{false};
-
-    /**
-      Include the log probabilities on the logprobs most likely tokens, as well the chosen tokens.
-      For example, if logprobs is 5, the API will return a list of the 5 most likely tokens.
-      The API will always return the logprob of the sampled token, so there may be up to logprobs+1 elements in the response.
-      The maximum value for logprobs is 5.
-      If you need more than this, please contact us through our Help center and describe your use case.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Logprobs{0};
-
-    /**
-      Echo back the prompt in addition to the completion.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    bool Echo{false};
-
-    /**
-      Number between -2.0 and 2.0.
-      Positive values penalize new tokens based on whether they appear in the text so far,
-      increasing the model's likelihood to talk about new topics.
-
-      See more information about frequency and presence penalties:
-      https://platform.openai.com/docs/api-reference/parameter-details
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    float Presence_Penalty{0.0f};
-
-    /**
-      Number between -2.0 and 2.0.
-      Positive values penalize new tokens based on their existing frequency in the text so far,
-      decreasing the model's likelihood to repeat the same line verbatim.
-
-      See more information about frequency and presence penalties:
-      https://platform.openai.com/docs/api-reference/parameter-details
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    float Frequency_Penalty{0.0f};
-
-    /**
-      Generates best_of completions server-side and returns the "best"
-      (the one with the highest log probability per token).
-      Results cannot be streamed.
-      When used with n, best_of controls the number of candidate completions
-      and n specifies how many to return – best_of must be greater than n.
-
-      Note: Because this parameter generates many completions, it can quickly consume your token quota.
-      Use carefully and ensure that you have reasonable settings for max_tokens and stop.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Best_Of{1};
-
-    /**
-      Modify the likelihood of specified tokens appearing in the completion.
-      Accepts a json object that maps tokens
-      (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100.
-      You can use this tokenizer tool (which works for both GPT-2 and GPT-3) to convert text to token IDs.
-      Mathematically, the bias is added to the logits generated by the model prior to sampling.
-      The exact effect will vary per model, but values between -1 and 1 should decrease or increase
-      likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.
-
-      As an example, you can pass {"50256": -100} to prevent the <|endoftext|> token from being generated.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    TMap<FString, int32> Logit_Bias;
-
-    /**
-      A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;
-
-    /**
-      Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
-    */
-    // UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    // TArray<FString> Stop;
-};
-
-USTRUCT(BlueprintType)
 struct FChatCompletionResponseFormat
 {
     GENERATED_BODY()
 
     /**
-      Must be one of text or json_object.
+      Must be one of text, json_object or json_schema
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Type{"text"};
@@ -182,10 +34,10 @@ struct FChatCompletion
     GENERATED_BODY()
 
     /**
-        A list of messages comprising the conversation so far.
+      A list of messages comprising the conversation so far.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
-    TArray<FMessage> Messages;
+    TArray<FMessage> Messages;  //@todo: check
 
     /**
       ID of the model to use.
@@ -215,14 +67,33 @@ struct FChatCompletion
     TMap<FString, int32> Logit_Bias;
 
     /**
-      The maximum number of tokens to generate in the chat completion.
-      The total length of input tokens and generated tokens is limited by the model's context length.
+      Whether to return log probabilities of the output tokens or not.
+      If true, returns the log probabilities of each output token returned in the content of message.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Max_Tokens{1};
+    bool Logprobs{false};
+
+    /**
+      An integer between 0 and 20 specifying the number of most likely tokens
+      to return at each token position, each with an associated log probability.
+      logprobs must be set to true if this parameter is used.
+
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    int32 Top_Logprobs{0};
+    // @todo: as optional
+    */
+
+    /**
+      An upper bound for the number of tokens that can be generated for a completion,
+      including visible output tokens and reasoning tokens.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    int32 Max_Completion_Tokens{100};
 
     /**
       How many chat completion choices to generate for each input message.
+      Note that you will be charged based on the number of generated tokens across all of the choices.
+      Keep n as 1 to minimize costs.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     int32 N{1};
@@ -256,10 +127,19 @@ struct FChatCompletion
       to monitor changes in the backend.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    int32 Seed{0};
+    int32 Seed{0};  // @todo: optional
+
+    /**
+      Specifies the latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier
+    service:
+
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Service_Tier;
+    // @todo: optional
+    */
 
     /** Up to 4 sequences where the API will stop generating further tokens. */
-    UPROPERTY(BlueprintReadWrite, Category = "Optional")
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     TArray<FString> Stop;
 
     /**
@@ -271,6 +151,8 @@ struct FChatCompletion
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     bool Stream{false};
+
+    // @todo: stream options
 
     /**
       What sampling temperature to use, between 0 and 2.
@@ -293,21 +175,31 @@ struct FChatCompletion
       A list of tools the model may call.
       Currently, only functions are supported as a tool.
       Use this to provide a list of functions the model may generate JSON inputs for.
+      A max of 128 functions are supported.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     TArray<FTools> Tools;
 
     /**
-      Controls which (if any) function is called by the model. none means the model will not call
-      a function and instead generates a message.
-      auto means the model can pick between generating a message or calling a function.
-      Specifying a particular function via {"type: "function", "function": {"name": "my_function"}}
-      forces the model to call that function.
+      Controls which (if any) tool is called by the model.
+      "none" means the model will not call any tool and instead generates a message.
+      "auto" means the model can pick between generating a message or calling one or more tools.
+      "required" means the model must call one or more tools.
+      Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}}
+      forces the model to call that tool.
 
       none is the default when no functions are present. auto is the default if functions are present.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FToolChoice Tool_Choice;
+
+    /**
+      Whether to enable parallel function calling during tool use.
+
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    bool Parallel_Tool_Calls{true};
+    // todo: optional
+    */
 
     /**
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
@@ -319,48 +211,6 @@ struct FChatCompletion
 ///////////////////////////////////////////////////////
 //                 RESPONSE TYPES
 ///////////////////////////////////////////////////////
-
-USTRUCT(BlueprintType)
-struct FLogProbs
-{
-    GENERATED_BODY()
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<FString> Tokens;
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<double> Token_Logprobs;
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Top_Logprobs{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<int32> Text_Offset;
-};
-
-USTRUCT(BlueprintType)
-struct FUsage
-{
-    GENERATED_BODY()
-
-    /**
-      Number of tokens in the prompt.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Prompt_Tokens{};
-
-    /**
-      Number of tokens in the generated completion.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Completion_Tokens{};
-
-    /**
-      Total number of tokens used in the request (prompt + completion).
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Total_Tokens{};
-};
 
 USTRUCT(BlueprintType)
 struct FDelta
@@ -381,36 +231,12 @@ struct FDelta
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Role;
-};
-
-USTRUCT(BlueprintType)
-struct FBaseChoice
-{
-    GENERATED_BODY()
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Text{};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Index{};
-};
-
-USTRUCT(BlueprintType)
-struct FChoice : public FBaseChoice
-{
-    GENERATED_BODY()
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FLogProbs LogProbs;
 
     /**
-      The reason the model stopped generating tokens.
-      This will be stop if the model hit a natural stop point or a provided stop sequence,
-      length if the maximum number of tokens specified in the request was reached, or
-      content_filter if content was omitted due to a flag from our content filters.
+       The refusal message generated by the model.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Finish_Reason{};
+    FString Refusal;
 };
 
 USTRUCT(BlueprintType)
@@ -442,60 +268,6 @@ struct FChatChoice
 };
 
 USTRUCT(BlueprintType)
-struct FCompletionResponseBase
-{
-    GENERATED_BODY()
-
-    /**
-       A unique identifier for the completion.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString ID{};
-
-    /**
-       The object type, which is always "text_completion"
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Object{};
-
-    /**
-       The Unix timestamp (in seconds) of when the completion was created.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Created{};
-
-    /**
-       The model used for completion.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Model{};
-
-    /**
-       The list of completion choices the model generated for the input prompt.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<FChoice> Choices;
-};
-
-USTRUCT(BlueprintType)
-struct FCompletionResponse : public FCompletionResponseBase
-{
-    GENERATED_BODY()
-
-    /**
-       Usage statistics for the completion request.
-    */
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FUsage Usage;
-};
-
-USTRUCT(BlueprintType)
-struct FCompletionStreamResponse : public FCompletionResponseBase
-{
-    GENERATED_BODY()
-};
-
-USTRUCT(BlueprintType)
 struct FChatCompletionResponseBase
 {
     GENERATED_BODY()
@@ -517,6 +289,13 @@ struct FChatCompletionResponseBase
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Model;
+
+    /**
+      The service tier used for processing the request.
+      This field is only included if the service_tier parameter is specified in the request.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Service_Tier;
 
     /**
       This fingerprint represents the backend configuration that the model runs with.
@@ -561,6 +340,8 @@ struct FChatStreamChoice
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FDelta Delta{};
 
+    // todo: logprobs
+
     /**
        The reason the model stopped generating tokens.
        This will be stop if the model hit a natural stop point or a provided stop sequence,
@@ -588,4 +369,13 @@ struct FChatCompletionStreamResponse : public FChatCompletionResponseBase
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<FChatStreamChoice> Choices;
+
+    /**
+      An optional field that will only be present when you set stream_options:
+      {"include_usage": true} in your request.
+      When present, it contains a null value except for the last chunk which
+      contains the token usage statistics for the entire request.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FUsage Usage;
 };

@@ -54,7 +54,7 @@ private:
 
     FOpenAIAuth Auth;
     FString OpenAIModel;
-    int32 MaxTokens{100};
+    int32 MaxCompletionTokens{100};
 
     TArray<FMessage> ChatHistory;
     FMessage AssistantMessage;

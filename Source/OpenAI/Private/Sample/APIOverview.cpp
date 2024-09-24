@@ -171,7 +171,7 @@ void AAPIOverview::CreateChatCompletionRequest()
     ChatCompletion.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O);
     ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
     ChatCompletion.Stream = true;
-    ChatCompletion.Max_Tokens = 100;
+    ChatCompletion.Max_Completion_Tokens = 100;
 
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }

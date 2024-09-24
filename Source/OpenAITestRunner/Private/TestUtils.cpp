@@ -7,6 +7,7 @@
 #include "TestUtils.h"
 #include "Provider/Types/ModelTypes.h"
 #include "Internationalization/Regex.h"
+#include "FuncLib/OpenAIFuncLib.h"
 
 using namespace OpenAI::Tests;
 
@@ -91,6 +92,16 @@ bool TestUtils::IsValidURL(const FString& URL)
     FRegexMatcher Matcher(Pattern, URL);
 
     return Matcher.FindNext();
+}
+
+bool TestUtils::TestFinishReason(const FString& Reason)
+{
+    const TSet<FString> FinishReson{UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Stop),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Tool_Calls),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter),
+        UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Null)};
+    return FinishReson.Contains(Reason);
 }
 
 #endif

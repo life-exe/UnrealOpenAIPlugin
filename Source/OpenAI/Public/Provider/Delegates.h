@@ -11,6 +11,7 @@
 #include "Types/ModerationTypes.h"
 #include "Types/FileTypes.h"
 #include "Types/ChatTypes.h"
+#include "Types/Legacy/CompletionTypes.h"
 #include "Types/EmbeddingTypes.h"
 
 // ============================ C++ delegates ============================

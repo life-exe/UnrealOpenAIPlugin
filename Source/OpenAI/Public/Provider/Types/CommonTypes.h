@@ -181,6 +181,30 @@ struct FHyperparams
     float Prompt_Loss_Weight{};
 };
 
+USTRUCT(BlueprintType)
+struct FUsage
+{
+    GENERATED_BODY()
+
+    /**
+      Number of tokens in the generated completion.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Completion_Tokens{};
+
+    /**
+      Number of tokens in the prompt.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Prompt_Tokens{};
+
+    /**
+      Total number of tokens used in the request (prompt + completion).
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Total_Tokens{};
+};
+
 UENUM(BlueprintType)
 enum class ERole : uint8
 {
