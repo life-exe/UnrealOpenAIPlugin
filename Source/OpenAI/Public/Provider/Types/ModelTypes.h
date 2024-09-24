@@ -55,7 +55,6 @@ enum class EMainModelEnum : uint8
     GPT_4_0613,
     GPT_4_0314,
     GPT_4O_Mini,
-    GPT_3_5_Turbo_0301,
     GPT_3_5_Turbo,
     GPT_3_5_Turbo_Instruct
 };
