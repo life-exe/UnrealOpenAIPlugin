@@ -115,7 +115,7 @@ struct FOpenAIImage
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;
+    FString User;  //@todo optional
 };
 
 USTRUCT(BlueprintType)
@@ -163,7 +163,9 @@ struct FOpenAIImageEdit
     FString Size{"1024x1024"};
 
     /**
-      The format in which the generated images are returned. Must be one of url or b64_json.
+      The format in which the generated images are returned.
+      Must be one of url or b64_json.
+      URLs are only valid for 60 minutes after the image has been generated.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Response_Format{"url"};
@@ -172,7 +174,7 @@ struct FOpenAIImageEdit
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;
+    FString User; //@todo optional
 };
 
 USTRUCT(BlueprintType)
@@ -189,19 +191,22 @@ struct FOpenAIImageVariation
 
     /**
       The model to use for image generation.
-      Defaults to dall-e-2.
+      Only dall-e-2 is supported at this time.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Model{"dall-e-2"};
 
     /**
-      The number of images to generate. Must be between 1 and 10.
+      The number of images to generate.
+      Must be between 1 and 10. For dall-e-3, only n=1 is supported.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     int32 N{1};
 
     /**
-      The format in which the generated images are returned. Must be one of url or b64_json.
+      The format in which the generated images are returned.
+      Must be one of url or b64_json.
+      URLs are only valid for 60 minutes after the image has been generated.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Response_Format{"url"};
@@ -216,7 +221,7 @@ struct FOpenAIImageVariation
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;
+    FString User; //@todo optional
 };
 
 ///////////////////////////////////////////////////////
