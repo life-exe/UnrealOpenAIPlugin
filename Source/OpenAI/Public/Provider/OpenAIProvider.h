@@ -226,6 +226,7 @@ public:
     DEFINE_EVENT_GETTER(CreateEmbeddingsCompleted)
     DEFINE_EVENT_GETTER(CreateSpeechCompleted)
     DEFINE_EVENT_GETTER(CreateAudioTranscriptionCompleted)
+    DEFINE_EVENT_GETTER(CreateAudioTranscriptionVerboseCompleted)
     DEFINE_EVENT_GETTER(CreateAudioTranslationCompleted)
     DEFINE_EVENT_GETTER(ListFilesCompleted)
     DEFINE_EVENT_GETTER(UploadFileCompleted)

@@ -43,6 +43,7 @@ private:
 
     void CreateSpeech();
     void CreateAudioTranscription();
+    void CreateAudioTranscriptionVerbose();
     void CreateAudioTranslation();
 
     void UploadFile();

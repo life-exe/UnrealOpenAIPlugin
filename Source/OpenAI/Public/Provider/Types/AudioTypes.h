@@ -65,7 +65,8 @@ struct FAudioBase
     FString File;
 
     /**
-      ID of the model to use. Only whisper-1 is currently available.
+      ID of the model to use. Only whisper-1 (which is powered by our open source Whisper V2 model)
+      is currently available.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Model{"whisper-1"};
@@ -75,7 +76,7 @@ struct FAudioBase
       The prompt should match the audio language.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Prompt;
+    FString Prompt;  // @todo: optional
 
     /**
       The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
@@ -105,7 +106,17 @@ struct FAudioTranscription : public FAudioBase
       will improve accuracy and latency.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Language;
+    FString Language;  // @todo: optional
+
+    /**
+      The timestamp granularities to populate for this transcription.
+      response_format must be set verbose_json to use timestamp granularities.
+      Either or both of these options are supported: word, or segment.
+      Note: There is no additional latency for segment timestamps, but generating
+      word timestamps incurs additional latency.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    TArray<int32> Timestamp_Granularities;  // @todo: optional
 };
 
 USTRUCT(BlueprintType)
@@ -141,13 +152,13 @@ struct FSpeech
     /**
       The format to audio in. Supported formats are mp3, opus, aac, and flac.
     */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Response_Format{"mp3"};
 
     /**
       The speed of the generated audio. Select a value from 0.25 to 4.0. 1.0 is the default.
     */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     float Speed{1.0f};
 };
 
@@ -155,6 +166,9 @@ struct FSpeech
 //                 RESPONSE TYPES
 ///////////////////////////////////////////////////////
 
+/**
+  Represents a transcription response returned by model, based on the provided input.
+*/
 USTRUCT(BlueprintType)
 struct FAudioTranscriptionResponse
 {
@@ -162,6 +176,136 @@ struct FAudioTranscriptionResponse
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Text;
+};
+
+USTRUCT(BlueprintType)
+struct FAudioTranscriptionWord
+{
+    GENERATED_BODY()
+
+    /**
+      The text content of the word.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Word;
+
+    /**
+      Start time of the word in seconds.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Start{};
+
+    /**
+      End time of the word in seconds.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 End{};
+};
+
+USTRUCT(BlueprintType)
+struct FAudioTranscriptionSegment
+{
+    GENERATED_BODY()
+
+    /**
+      Unique identifier of the segment.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Id{};
+
+    /**
+      Seek offset of the segment.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Seek{};
+
+    /**
+      Start time of the segment in seconds.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Start{};
+
+    /**
+      End time of the segment in seconds.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 End{};
+
+    /**
+      Text content of the segment.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Text;
+
+    /**
+      Array of token IDs for the text content.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<int32> Tokens;
+
+    /**
+      Temperature parameter used for generating the segment.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    double Temperature{};
+
+    /**
+      Average logprob of the segment. If the value is lower than -1, consider the logprobs failed.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    double Avg_Logprob{};
+
+    /**
+      Compression ratio of the segment. If the value is greater than 2.4, consider the compression failed.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    double Compression_Ratio{};
+
+    /**
+      CProbability of no speech in the segment.
+      If the value is higher than 1.0 and the avg_logprob is below -1, consider this segment silent.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    double No_Speech_Prob{};
+};
+
+/**
+  Represents a verbose json transcription response returned by model, based on the provided input.
+*/
+USTRUCT(BlueprintType)
+struct FAudioTranscriptionVerboseResponse
+{
+    GENERATED_BODY()
+
+    /**
+      The language of the input audio.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Language;
+
+    /**
+      The duration of the input audio.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Duration;
+
+    /**
+      The transcribed text.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Text;
+
+    /**
+      Extracted words and their corresponding timestamps.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FAudioTranscriptionWord> Words;
+
+    /**
+      Segments of the transcribed text and their corresponding details.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FAudioTranscriptionSegment> Segments;
 };
 
 USTRUCT(BlueprintType)

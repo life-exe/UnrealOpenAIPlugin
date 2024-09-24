@@ -44,6 +44,7 @@ void AAPIOverview::BeginPlay()
 
     // CreateSpeech();
     // CreateAudioTranscription();
+    // CreateAudioTranscriptionVerbose();
     // CreateAudioTranslation();
 
     // UploadFile();
@@ -312,17 +313,17 @@ void AAPIOverview::CreateEmbeddings()
 void AAPIOverview::CreateSpeech()
 {
     // Make sure that WMFCodecs plugin is enabled (Edit->Plugins->WMFCodecs)
-
     const FString Format = UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::MP3);
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateSpeechCompleted().AddLambda([Format](const FSpeechResponse& Response) {  //
         const FString Date = FDateTime::Now().ToString();
-        const FString FilePath =
-            FPaths::ProjectPluginsDir().Append("OpenAI/Saved/").Append("speech_").Append(Date).Append(".").Append(Format);
-        if (FFileHelper::SaveArrayToFile(Response.Bytes, *FilePath))
+        const FString FilePath = FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("OpenAI"), TEXT("Saved"));
+        const FString FileName = FString("speech_").Append(Date).Append(".").Append(Format);
+        const FString FileFullName = FPaths::Combine(FilePath, FileName);
+        if (FFileHelper::SaveArrayToFile(Response.Bytes, *FileFullName))
         {
-            UE_LOGFMT(LogAPIOverview, Display, "File was successfully saved to: {0}", FilePath);
+            UE_LOGFMT(LogAPIOverview, Display, "File was successfully saved to: {0}", FileFullName);
         }
     });
     FSpeech Speech;
@@ -337,20 +338,45 @@ void AAPIOverview::CreateAudioTranscription()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-
     Provider->OnCreateAudioTranscriptionCompleted().AddLambda([](const FAudioTranscriptionResponse& Response)  //
         {                                                                                                      //
-            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Text);
+            UE_LOGFMT(LogAPIOverview, Display, "TranscriptionResponse: {0}", Response.Text);
         });
 
     FAudioTranscription AudioTranscription;
-    AudioTranscription.Language = "ru";
+    // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+    AudioTranscription.Language = "fr";
     AudioTranscription.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Whisper_1);
     AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
     AudioTranscription.Temperature = 0.0f;
-    // absolute paths to your audio files
-    AudioTranscription.File = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\video.mp4";
+    // absolute path to your file
+    AudioTranscription.File = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), TEXT("bonjour.mp3"));
+    Provider->CreateAudioTranscription(AudioTranscription, Auth);
+}
 
+void AAPIOverview::CreateAudioTranscriptionVerbose()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateAudioTranscriptionVerboseCompleted().AddLambda([](const FAudioTranscriptionVerboseResponse& Response)  //
+        {                                                                                                                    //
+            UE_LOGFMT(LogAPIOverview, Display, "TranscriptionVerboseResponse: text:{0}", Response.Text);
+            if (Response.Segments.Num() > 0)
+            {
+                UE_LOGFMT(LogAPIOverview, Display, "TranscriptionVerboseResponse: compression:{0}", Response.Segments[0].Compression_Ratio);
+            }
+        });
+
+    FAudioTranscription AudioTranscription;
+    // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+    AudioTranscription.Language = "fr";
+    AudioTranscription.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Whisper_1);
+    AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Verbose_JSON);
+    AudioTranscription.Temperature = 0.0f;
+    // absolute path to your file
+    AudioTranscription.File = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), TEXT("bonjour.mp3"));
     Provider->CreateAudioTranscription(AudioTranscription, Auth);
 }
 
@@ -358,7 +384,6 @@ void AAPIOverview::CreateAudioTranslation()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-
     Provider->OnCreateAudioTranslationCompleted().AddLambda([](const FAudioTranslationResponse& Response)  //
         {                                                                                                  //
             UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Text);
@@ -368,9 +393,9 @@ void AAPIOverview::CreateAudioTranslation()
     AudioTranslation.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Whisper_1);
     AudioTranslation.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
     AudioTranslation.Temperature = 0.0f;
-    // absolute paths to your audio files
-    AudioTranslation.File = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\video.mp4";
-
+    // absolute path to your file
+    AudioTranslation.File = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), TEXT("bonjour.mp3"));
     Provider->CreateAudioTranslation(AudioTranslation, Auth);
 }
 

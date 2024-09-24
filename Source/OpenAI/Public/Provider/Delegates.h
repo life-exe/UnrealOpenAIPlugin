@@ -37,6 +37,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateEmbeddingsCompleted, const FEmbeddi
 // audio + speech
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateSpeechCompleted, const FSpeechResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateAudioTranscriptionCompleted, const FAudioTranscriptionResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateAudioTranscriptionVerboseCompleted, const FAudioTranscriptionVerboseResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateAudioTranslationCompleted, const FAudioTranslationResponse&);
 // files
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFilesCompleted, const FListFilesResponse&);
