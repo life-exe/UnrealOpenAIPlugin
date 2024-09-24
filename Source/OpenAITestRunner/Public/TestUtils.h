@@ -5,6 +5,12 @@
 #include "CoreMinimal.h"
 #include "Provider/Types/ModelTypes.h"
 
+DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FWaitForRequestCompleted, bool&, RequestCompleted);
+bool FWaitForRequestCompleted::Update()
+{
+    return RequestCompleted;
+}
+
 namespace OpenAI
 {
 namespace Tests

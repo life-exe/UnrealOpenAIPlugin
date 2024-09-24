@@ -22,12 +22,6 @@ FOpenAIAuth Auth;
 bool RequestCompleted{false};
 END_DEFINE_SPEC(FOpenAIProviderActual)
 
-DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FWaitForRequestCompleted, bool&, RequestCompleted);
-bool FWaitForRequestCompleted::Update()
-{
-    return RequestCompleted;
-}
-
 using namespace OpenAI::Tests;
 
 namespace
@@ -323,89 +317,6 @@ void FOpenAIProviderActual::Define()
                     OpenAIImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
                     OpenAIProvider->CreateImageEdit(OpenAIImageEdit, Auth);
-                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
-                });
-
-            It("Audio.CreateTranscriptionRequestShouldResponseCorrectly",
-                [this]()
-                {
-                    OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
-                        [&](const FAudioTranscriptionResponse& Response)
-                        {
-                            TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
-                            RequestCompleted = true;
-                        });
-
-                    FAudioTranscription AudioTranscription;
-                    AudioTranscription.Language = "en";
-                    AudioTranscription.Model = UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1);
-                    AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
-                    AudioTranscription.Temperature = 0.0f;
-                    AudioTranscription.File = TestUtils::FileFullPath("hello.mp3");
-
-                    OpenAIProvider->CreateAudioTranscription(AudioTranscription, Auth);
-                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
-                });
-
-            It("Audio.CreateTranslationRequestShouldResponseCorrectly",
-                [this]()
-                {
-                    OpenAIProvider->OnCreateAudioTranslationCompleted().AddLambda(
-                        [&](const FAudioTranslationResponse& Response)
-                        {
-                            TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
-                            RequestCompleted = true;
-                        });
-
-                    FAudioTranslation AudioTranslation;
-                    AudioTranslation.Model = UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1);
-                    AudioTranslation.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
-                    AudioTranslation.Temperature = 0.0f;
-                    AudioTranslation.File = TestUtils::FileFullPath("bonjour.mp3");
-
-                    OpenAIProvider->CreateAudioTranslation(AudioTranslation, Auth);
-                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
-                });
-
-            It("Audio.CreateSpeechRequestShouldResponseCorrectly",
-                [this]()
-                {
-                    const FString Format = UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::MP3);
-
-                    OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
-                        [&](const FAudioTranscriptionResponse& Response)
-                        {
-                            TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
-                            RequestCompleted = true;
-                        });
-
-                    OpenAIProvider->OnCreateSpeechCompleted().AddLambda([&, Format](const FSpeechResponse& Response) {  //
-                        const FString Date = FDateTime::Now().ToString();
-                        const FString FilePath =
-                            FPaths::ProjectPluginsDir().Append("OpenAI/Saved/").Append("speech_").Append(Date).Append(".").Append(Format);
-                        if (!FFileHelper::SaveArrayToFile(Response.Bytes, *FilePath))
-                        {
-                            AddError(FString::Format(TEXT("File wasn't successfully saved to: {0}"), {FilePath}));
-                            RequestCompleted = true;
-                            return;
-                        }
-
-                        FAudioTranscription AudioTranscription;
-                        AudioTranscription.Language = "en";
-                        AudioTranscription.Model = UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1);
-                        AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON);
-                        AudioTranscription.Temperature = 0.0f;
-                        AudioTranscription.File = FilePath;
-                        OpenAIProvider->CreateAudioTranscription(AudioTranscription, Auth);
-                    });
-
-                    FSpeech Speech;
-                    Speech.Input = "hi how are you";
-                    Speech.Model = UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::TTS_1);
-                    Speech.Response_Format = Format;
-                    Speech.Speed = 1.0f;
-
-                    OpenAIProvider->CreateSpeech(Speech, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 

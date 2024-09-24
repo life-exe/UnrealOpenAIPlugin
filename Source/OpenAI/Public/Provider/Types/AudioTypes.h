@@ -76,7 +76,7 @@ struct FAudioBase
       The prompt should match the audio language.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Prompt;  // @todo: optional
+    FString Prompt;
 
     /**
       The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.
@@ -106,7 +106,7 @@ struct FAudioTranscription : public FAudioBase
       will improve accuracy and latency.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Language;  // @todo: optional
+    FString Language;
 
     /**
       The timestamp granularities to populate for this transcription.
@@ -116,7 +116,7 @@ struct FAudioTranscription : public FAudioBase
       word timestamps incurs additional latency.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    TArray<int32> Timestamp_Granularities;  // @todo: optional
+    TArray<int32> Timestamp_Granularities;
 };
 
 USTRUCT(BlueprintType)

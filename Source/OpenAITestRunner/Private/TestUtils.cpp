@@ -79,7 +79,9 @@ FString TestUtils::OpenAIModelNameToPluginEnum(const FString& ModelName)
 
 FString TestUtils::FileFullPath(const FString& FileName)
 {
-    return FPaths::ConvertRelativePathToFull(FPaths::ProjectPluginsDir().Append("OpenAI/Source/OpenAITestRunner/Data/").Append(FileName));
+    const FString RelativeFilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), FileName);
+    return FPaths::ConvertRelativePathToFull(RelativeFilePath);
 }
 
 bool TestUtils::IsValidURL(const FString& URL)
