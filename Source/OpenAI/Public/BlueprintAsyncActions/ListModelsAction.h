@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/ModelTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "ListModelsAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnListModels, const FListModelsResponse&, Response, const FOpenAIError&, RawError);

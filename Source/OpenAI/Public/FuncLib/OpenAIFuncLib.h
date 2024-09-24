@@ -10,6 +10,9 @@
 #include "Provider/Types/AudioTypes.h"
 #include "Provider/Types/ImageTypes.h"
 #include "Provider/Types/ModerationTypes.h"
+#include "Provider/Types/EmbeddingTypes.h"
+#include "Provider/Types/FileTypes.h"
+#include "Provider/Types/ChatTypes.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIFuncLib.generated.h"
 

@@ -6,6 +6,7 @@
 #include "Misc/AutomationTest.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/FileSystemFuncLib.h"
+#include "Provider/Types/FineTuneTypes.h"
 #include "TestUtils.h"
 
 DEFINE_SPEC(FOpenAIFuncLib, "OpenAI",

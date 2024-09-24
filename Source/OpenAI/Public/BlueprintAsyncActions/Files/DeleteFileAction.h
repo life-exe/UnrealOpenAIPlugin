@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/FileTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "DeleteFileAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeleteFile, const FDeleteFileResponse&, Response, const FOpenAIError&, RawError);

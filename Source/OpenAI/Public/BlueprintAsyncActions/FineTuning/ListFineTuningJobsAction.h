@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/FineTuneTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "ListFineTuningJobsAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(

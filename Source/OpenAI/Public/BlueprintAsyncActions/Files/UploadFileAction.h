@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/FileTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "UploadFileAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUploadFile, const FUploadFileResponse&, Response, const FOpenAIError&, RawError);

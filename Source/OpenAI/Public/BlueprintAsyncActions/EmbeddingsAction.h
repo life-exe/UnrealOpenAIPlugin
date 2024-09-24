@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/EmbeddingTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "EmbeddingsAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEmbeddings, const FEmbeddingsResponse&, Response, const FOpenAIError&, RawError);

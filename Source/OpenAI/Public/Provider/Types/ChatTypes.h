@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonTypes.h"
+#include "ToolsTypes.h"
 #include "ChatTypes.generated.h"
 
 UENUM(BlueprintType)

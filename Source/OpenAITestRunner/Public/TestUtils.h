@@ -7,11 +7,6 @@
 #include "Logging/StructuredLog.h"
 
 DEFINE_LATENT_AUTOMATION_COMMAND_ONE_PARAMETER(FWaitForRequestCompleted, bool&, RequestCompleted);
-bool FWaitForRequestCompleted::Update()
-{
-    return RequestCompleted;
-}
-
 DEFINE_LOG_CATEGORY_STATIC(LogTestUtils, All, All);
 
 namespace OpenAI

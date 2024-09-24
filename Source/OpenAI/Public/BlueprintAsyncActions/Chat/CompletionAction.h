@@ -4,6 +4,7 @@
 
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/Legacy/CompletionTypes.h"
+#include "Provider/Types/CommonTypes.h"
 #include "CompletionAction.generated.h"
 
 USTRUCT(BlueprintType)

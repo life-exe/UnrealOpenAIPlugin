@@ -11,6 +11,11 @@
 
 using namespace OpenAI::Tests;
 
+bool FWaitForRequestCompleted::Update()
+{
+    return RequestCompleted;
+}
+
 FString TestUtils::RemovePunctuation(const FString& Input)
 {
     FRegexPattern Pattern(TEXT("[\\p{P}\\p{S}]"));

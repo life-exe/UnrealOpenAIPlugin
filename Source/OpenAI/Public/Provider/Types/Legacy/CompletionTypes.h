@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Provider/Types/CommonTypes.h"
 #include "CompletionTypes.generated.h"
 
 ///////////////////////////////////////////////////////
