@@ -9,6 +9,7 @@
 #include "Provider/Types/CommonTypes.h"
 #include "Provider/Types/AudioTypes.h"
 #include "Provider/Types/ImageTypes.h"
+#include "Provider/Types/ModerationTypes.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIFuncLib.generated.h"
 

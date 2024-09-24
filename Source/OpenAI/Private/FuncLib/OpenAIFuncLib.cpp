@@ -534,7 +534,11 @@ FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& Mode
     FString Out;
     Out.Append(FString::Printf(TEXT("hate: %s\n"), *BoolToString(ModerationResults.Categories.Hate)));
     Out.Append(FString::Printf(TEXT("hate/threatening: %s\n"), *BoolToString(ModerationResults.Categories.Hate_Threatening)));
+    Out.Append(FString::Printf(TEXT("harassment: %s\n"), *BoolToString(ModerationResults.Categories.Harassment)));
+    Out.Append(FString::Printf(TEXT("harassment/threatening: %s\n"), *BoolToString(ModerationResults.Categories.Harassment_Threatening)));
     Out.Append(FString::Printf(TEXT("self-harm: %s\n"), *BoolToString(ModerationResults.Categories.Self_Harm)));
+    Out.Append(FString::Printf(TEXT("self-harm/intent: %s\n"), *BoolToString(ModerationResults.Categories.Self_Harm_Intent)));
+    Out.Append(FString::Printf(TEXT("self-harm/instructions: %s\n"), *BoolToString(ModerationResults.Categories.Self_Harm_Instructions)));
     Out.Append(FString::Printf(TEXT("sexual: %s\n"), *BoolToString(ModerationResults.Categories.Sexual)));
     Out.Append(FString::Printf(TEXT("sexual/minors: %s\n"), *BoolToString(ModerationResults.Categories.Sexual_Minors)));
     Out.Append(FString::Printf(TEXT("violence: %s\n"), *BoolToString(ModerationResults.Categories.Violence)));
@@ -542,7 +546,11 @@ FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& Mode
 
     Out.Append(FString::Printf(TEXT("hate: %f\n"), ModerationResults.Category_Scores.Hate));
     Out.Append(FString::Printf(TEXT("hate/threatening: %f\n"), ModerationResults.Category_Scores.Hate_Threatening));
+    Out.Append(FString::Printf(TEXT("harassment: %f\n"), ModerationResults.Category_Scores.Harassment));
+    Out.Append(FString::Printf(TEXT("harassment/threatening: %f\n"), ModerationResults.Category_Scores.Harassment_Threatening));
     Out.Append(FString::Printf(TEXT("self-harm: %f\n"), ModerationResults.Category_Scores.Self_Harm));
+    Out.Append(FString::Printf(TEXT("self-harm/intent: %f\n"), ModerationResults.Category_Scores.Self_Harm_Intent));
+    Out.Append(FString::Printf(TEXT("self-harm/instructions: %f\n"), ModerationResults.Category_Scores.Self_Harm_Instructions));
     Out.Append(FString::Printf(TEXT("sexual: %f\n"), ModerationResults.Category_Scores.Sexual));
     Out.Append(FString::Printf(TEXT("sexual/minors: %f\n"), ModerationResults.Category_Scores.Sexual_Minors));
     Out.Append(FString::Printf(TEXT("violence: %f\n"), ModerationResults.Category_Scores.Violence));

@@ -549,17 +549,25 @@ void UOpenAIProvider::OnCreateModerationsCompleted(FHttpRequestPtr Request, FHtt
         FModerationCategories Categories;
         Categories.Hate = CategoriesObject->GetBoolField("hate");
         Categories.Hate_Threatening = CategoriesObject->GetBoolField("hate/threatening");
+        Categories.Harassment = CategoriesObject->GetBoolField("harassment");
+        Categories.Harassment_Threatening = CategoriesObject->GetBoolField("harassment/threatening");
         Categories.Self_Harm = CategoriesObject->GetBoolField("self-harm");
+        Categories.Self_Harm_Intent = CategoriesObject->GetBoolField("self-harm/intent");
+        Categories.Self_Harm_Instructions = CategoriesObject->GetBoolField("self-harm/instructions");
         Categories.Sexual = CategoriesObject->GetBoolField("sexual");
         Categories.Sexual_Minors = CategoriesObject->GetBoolField("sexual/minors");
         Categories.Violence = CategoriesObject->GetBoolField("violence");
         Categories.Violence_Graphic = CategoriesObject->GetBoolField("violence/graphic");
 
         const auto& CategoryScoreObject = ResultObject->AsObject()->GetObjectField("category_scores");
-        FModerationScores CategoryScores;
+        FModerationCategoryScores CategoryScores;
         CategoryScores.Hate = CategoryScoreObject->GetNumberField("hate");
         CategoryScores.Hate_Threatening = CategoryScoreObject->GetNumberField("hate/threatening");
+        CategoryScores.Harassment = CategoriesObject->GetBoolField("harassment");
+        CategoryScores.Harassment_Threatening = CategoriesObject->GetBoolField("harassment/threatening");
         CategoryScores.Self_Harm = CategoryScoreObject->GetNumberField("self-harm");
+        CategoryScores.Self_Harm_Intent = CategoriesObject->GetBoolField("self-harm/intent");
+        CategoryScores.Self_Harm_Instructions = CategoriesObject->GetBoolField("self-harm/instructions");
         CategoryScores.Sexual = CategoryScoreObject->GetNumberField("sexual");
         CategoryScores.Sexual_Minors = CategoryScoreObject->GetNumberField("sexual/minors");
         CategoryScores.Violence = CategoryScoreObject->GetNumberField("violence");

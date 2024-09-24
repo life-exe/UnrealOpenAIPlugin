@@ -313,13 +313,18 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     FModerationResults ModerationResults;
-                    ModerationResults.Categories = FModerationCategories{true, false, true, false, true, false, true};
-                    ModerationResults.Category_Scores = FModerationScores{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
+                    ModerationResults.Categories =
+                        FModerationCategories{true, false, false, false, true, true, true, false, true, false, true};
+                    ModerationResults.Category_Scores = FModerationCategoryScores{0.1, 0.2, 0.1, 0.1, 0.3, 0.33, 0.35, 0.4, 0.5, 0.6, 0.7};
                     ModerationResults.Flagged = true;
 
                     FString ExpectedStr = "hate: true\n";
                     ExpectedStr.Append("hate/threatening: false\n");
+                    ExpectedStr.Append("harassment: false\n");
+                    ExpectedStr.Append("harassment/threatening: false\n");
                     ExpectedStr.Append("self-harm: true\n");
+                    ExpectedStr.Append("self-harm/intent: true\n");
+                    ExpectedStr.Append("self-harm/instructions: true\n");
                     ExpectedStr.Append("sexual: false\n");
                     ExpectedStr.Append("sexual/minors: true\n");
                     ExpectedStr.Append("violence: false\n");
@@ -327,7 +332,11 @@ void FOpenAIFuncLib::Define()
 
                     ExpectedStr.Append("hate: 0.100000\n");
                     ExpectedStr.Append("hate/threatening: 0.200000\n");
+                    ExpectedStr.Append("harassment: 0.100000\n");
+                    ExpectedStr.Append("harassment/threatening: 0.100000\n");
                     ExpectedStr.Append("self-harm: 0.300000\n");
+                    ExpectedStr.Append("self-harm/intent: 0.330000\n");
+                    ExpectedStr.Append("self-harm/instructions: 0.350000\n");
                     ExpectedStr.Append("sexual: 0.400000\n");
                     ExpectedStr.Append("sexual/minors: 0.500000\n");
                     ExpectedStr.Append("violence: 0.600000\n");
