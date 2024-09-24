@@ -9,6 +9,41 @@
 
 class UOpenAIProvider;
 
+UENUM(BlueprintType)
+enum class EAPIOverviewAction : uint8
+{
+    ListModels = 0,
+    RetrieveModel,
+    DeleteFineTuneModel,
+    CreateCompletionRequest,
+    CreateChatCompletionRequest,
+    CreateImageDALLE2,
+    CreateImageDALLE3,
+    CreateImageEdit,
+    CreateImageVariation,
+    CreateModerations,
+    CreateEmbeddings,
+    CreateSpeech,
+    CreateAudioTranscription,
+    CreateAudioTranscriptionVerbose,
+    CreateAudioTranslation,
+    UploadFile,
+    DeleteFile,
+    ListFiles,
+    RetrieveFile,
+    RetrieveFileContent,
+    ListFineTuningJobs,
+    CreateFineTuningJob,
+    RetriveFineTuningJob,
+    CancelFineTuningJob,
+    ListFineTuningEvents,
+    ListBatch,
+    CreateBatch,
+    RetrieveBatch,
+    CancelBatch,
+    SetYourOwnAPI
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class OPENAI_API AAPIOverview : public AInfo
 {
@@ -16,6 +51,9 @@ class OPENAI_API AAPIOverview : public AInfo
 
 public:
     AAPIOverview();
+
+    UPROPERTY(EditAnywhere, Category = "OpenAI")
+    EAPIOverviewAction Action;
 
 protected:
     virtual void BeginPlay() override;
@@ -25,6 +63,8 @@ private:
     UOpenAIProvider* Provider;
 
     FOpenAIAuth Auth;
+
+    TMap<EAPIOverviewAction, TFunction<void()>> ActionMap;
 
     void ListModels();
     void RetrieveModel();

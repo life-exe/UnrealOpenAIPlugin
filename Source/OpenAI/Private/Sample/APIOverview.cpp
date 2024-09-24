@@ -18,6 +18,37 @@ DEFINE_LOG_CATEGORY_STATIC(LogAPIOverview, All, All);
 AAPIOverview::AAPIOverview()
 {
     PrimaryActorTick.bCanEverTick = false;
+
+    ActionMap.Add(EAPIOverviewAction::ListModels, [&]() { ListModels(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveModel, [&]() { RetrieveModel(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteFineTuneModel, [&]() { DeleteFineTuneModel(); });
+    ActionMap.Add(EAPIOverviewAction::CreateCompletionRequest, [&]() { CreateCompletionRequest(); });
+    ActionMap.Add(EAPIOverviewAction::CreateChatCompletionRequest, [&]() { CreateChatCompletionRequest(); });
+    ActionMap.Add(EAPIOverviewAction::CreateImageDALLE2, [&]() { CreateImageDALLE2(); });
+    ActionMap.Add(EAPIOverviewAction::CreateImageDALLE3, [&]() { CreateImageDALLE3(); });
+    ActionMap.Add(EAPIOverviewAction::CreateImageEdit, [&]() { CreateImageEdit(); });
+    ActionMap.Add(EAPIOverviewAction::CreateImageVariation, [&]() { CreateImageVariation(); });
+    ActionMap.Add(EAPIOverviewAction::CreateModerations, [&]() { CreateModerations(); });
+    ActionMap.Add(EAPIOverviewAction::CreateEmbeddings, [&]() { CreateEmbeddings(); });
+    ActionMap.Add(EAPIOverviewAction::CreateSpeech, [&]() { CreateSpeech(); });
+    ActionMap.Add(EAPIOverviewAction::CreateAudioTranscription, [&]() { CreateAudioTranscription(); });
+    ActionMap.Add(EAPIOverviewAction::CreateAudioTranscriptionVerbose, [&]() { CreateAudioTranscriptionVerbose(); });
+    ActionMap.Add(EAPIOverviewAction::CreateAudioTranslation, [&]() { CreateAudioTranslation(); });
+    ActionMap.Add(EAPIOverviewAction::UploadFile, [&]() { UploadFile(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteFile, [&]() { DeleteFile(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveFile, [&]() { RetrieveFile(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveFileContent, [&]() { RetrieveFileContent(); });
+    ActionMap.Add(EAPIOverviewAction::ListFiles, [&]() { ListFiles(); });
+    ActionMap.Add(EAPIOverviewAction::ListFineTuningJobs, [&]() { ListFineTuningJobs(); });
+    ActionMap.Add(EAPIOverviewAction::CreateFineTuningJob, [&]() { CreateFineTuningJob(); });
+    ActionMap.Add(EAPIOverviewAction::RetriveFineTuningJob, [&]() { RetriveFineTuningJob(); });
+    ActionMap.Add(EAPIOverviewAction::CancelFineTuningJob, [&]() { CancelFineTuningJob(); });
+    ActionMap.Add(EAPIOverviewAction::ListFineTuningEvents, [&]() { ListFineTuningEvents(); });
+    ActionMap.Add(EAPIOverviewAction::ListBatch, [&]() { ListBatch(); });
+    ActionMap.Add(EAPIOverviewAction::CreateBatch, [&]() { CreateBatch(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveBatch, [&]() { RetrieveBatch(); });
+    ActionMap.Add(EAPIOverviewAction::CancelBatch, [&]() { CancelBatch(); });
+    ActionMap.Add(EAPIOverviewAction::SetYourOwnAPI, [&]() { SetYourOwnAPI(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -25,46 +56,13 @@ void AAPIOverview::BeginPlay()
     Super::BeginPlay();
 
     Provider = NewObject<UOpenAIProvider>();
-    Auth = UOpenAIFuncLib::LoadAPITokensFromFile(FPaths::ProjectDir().Append("OpenAIAuth.ini"));
+    const FString FilePath = FPaths::Combine(FPaths::ProjectDir(), TEXT("OpenAIAuth.ini"));
+    Auth = UOpenAIFuncLib::LoadAPITokensFromFile(FilePath);
 
-    // ListModels();
-    // RetrieveModel();
-    // DeleteFineTuneModel();
-
-    // CreateCompletionRequest();
-    // CreateChatCompletionRequest();
-
-    // CreateImageDALLE2();
-    CreateImageDALLE3();
-    // CreateImageEdit();
-    // CreateImageVariation();
-
-    // CreateModerations();
-    // CreateEmbeddings();
-
-    // CreateSpeech();
-    // CreateAudioTranscription();
-    // CreateAudioTranscriptionVerbose();
-    // CreateAudioTranslation();
-
-    // UploadFile();
-    // DeleteFile();
-    // RetrieveFile();
-    // RetrieveFileContent();
-    // ListFiles();
-
-    // ListFineTuningJobs();
-    // CreateFineTuningJob();
-    // RetriveFineTuningJob();
-    // CancelFineTuningJob();
-    // ListFineTuningEvents();
-
-    // ListBatch();
-    // CreateBatch();
-    // RetrieveBatch();
-    // CancelBatch();
-
-    // SetYourOwnAPI();
+    if (ActionMap.Contains(Action))
+    {
+        ActionMap[Action]();
+    }
 }
 
 void AAPIOverview::ListModels()
@@ -89,7 +87,7 @@ void AAPIOverview::RetrieveModel()
     Provider->OnRetrieveModelCompleted().AddLambda([](const FRetrieveModelResponse& Response)
         { UE_LOGFMT(LogAPIOverview, Display, "{0}", UOpenAIFuncLib::OpenAIModelToString(Response)); });
     const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
-    Provider->RetrieveModel("ada", Auth);
+    Provider->RetrieveModel(ModelName, Auth);
 }
 
 void AAPIOverview::DeleteFineTuneModel()
@@ -240,11 +238,17 @@ void AAPIOverview::CreateImageEdit()
         });
 
     FOpenAIImageEdit ImageEdit;
+
     // absolute paths to your images
-    ImageEdit.Image = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\image.png";
-    ImageEdit.Mask = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\image_mask.png";
+    const FString ImageFilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "whale.png");
+    const FString ImageMaskFilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "whale_mask.png");
+
+    ImageEdit.Image = FPaths::ConvertRelativePathToFull(ImageFilePath);
+    ImageEdit.Mask = FPaths::ConvertRelativePathToFull(ImageMaskFilePath);
     ImageEdit.N = 1;
-    ImageEdit.Prompt = "Draw flamingo";
+    ImageEdit.Prompt = "Draw a hat";
     ImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
     ImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
@@ -266,7 +270,9 @@ void AAPIOverview::CreateImageVariation()
 
     FOpenAIImageVariation ImageVariation;
     // absolute path to your image
-    ImageVariation.Image = "c:\\_Projects\\UE5\\UnrealOpenAISample\\Media\\image.png";
+    const FString ImageFilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "whale.png");
+    ImageVariation.Image = FPaths::ConvertRelativePathToFull(ImageFilePath);
     ImageVariation.N = 1;
     ImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
     ImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
@@ -411,8 +417,10 @@ void AAPIOverview::UploadFile()
         });
 
     FUploadFile UploadFile;
-    // you can find example here: Plugins\OpenAI\Source\OpenAITestRunner\Data\test_file.jsonl
-    UploadFile.File = "\\..\\test_file.jsonl";
+    // absolute path to your file
+    const FString FilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "test_file.jsonl");
+    UploadFile.File = FilePath;
     // UploadFile.Purpose = UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Batch);
     UploadFile.Purpose = UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::FineTune);
     Provider->UploadFile(UploadFile, Auth);
@@ -561,7 +569,7 @@ void AAPIOverview::CreateBatch()
         [&](const FCreateBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "FCreateBatchResponse request completed, id={0}", Response.Id);
+            UE_LOGFMT(LogAPIOverview, Display, "CreateBatchResponse request completed, id={0}", Response.Id);
         });
 
     FCreateBatch Batch;
@@ -581,7 +589,7 @@ void AAPIOverview::ListBatch()
         [&](const FListBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "FListBatchResponse request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "ListBatchResponse request completed!");
         });
     FListBatch ListBatch;
     ListBatch.Limit = 20;
@@ -596,7 +604,7 @@ void AAPIOverview::RetrieveBatch()
         [&](const FRetrieveBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "FRetrieveBatchResponse request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "RetrieveBatchResponse request completed!");
         });
     const FString BatchId = "batchId-xxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->RetrieveBatch(BatchId, Auth);
@@ -610,7 +618,7 @@ void AAPIOverview::CancelBatch()
         [&](const FCancelBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "FCancelBatchResponse request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "CancelBatchResponse request completed!");
         });
     const FString BatchId = "batchId-xxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->CancelBatch(BatchId, Auth);
