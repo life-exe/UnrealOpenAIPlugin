@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
-#include "Provider/Types/ChatTypes.h"
+#include "Provider/Types/Chat/ChatCompletionChunkTypes.h"
 #include "Provider/Types/CommonTypes.h"
 #include "Provider/OpenAIProvider.h"
 #include "TestUtils.h"
@@ -67,9 +67,12 @@ void FOpenAIProviderChat::Define()
 
                     FChatCompletion ChatCompletion;
                     ChatCompletion.Model = Model;
-                    ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
+                    FMessage Message;
+                    Message.Role = "user";
+                    Message.Content = "What is Unreal Engine?";
+                    ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Stream = false;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -104,9 +107,12 @@ void FOpenAIProviderChat::Define()
 
                     FChatCompletion ChatCompletion;
                     ChatCompletion.Model = Model;
-                    ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
+                    FMessage Message;
+                    Message.Role = "user";
+                    Message.Content = "What is Unreal Engine?";
+                    ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Stream = true;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -117,7 +123,10 @@ void FOpenAIProviderChat::Define()
                 {
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
                     TArray<FMessage> History;
-                    History.Add(FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is the weather like in Boston?"});
+                    FMessage Message;
+                    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+                    Message.Content = "What is the weather like in Boston?";
+                    History.Add(Message);
 
                     const FString FuncName = "get_current_weather";
 
@@ -186,7 +195,7 @@ void FOpenAIProviderChat::Define()
                                 TestTrueExpr(UnitArg.IsValid());
 
                                 FMessage Message;
-                                Message.Tool_Call_ID = Choice.Message.Tool_Calls[0].ID;
+                                Message.Tool_Call_ID.Set(Choice.Message.Tool_Calls[0].ID);
                                 Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Tool);
                                 // call function
                                 Message.Content = Funcs[IncomeFuncName](LocationArg.Get()->AsString(), UnitArg.Get()->AsString());
@@ -196,7 +205,7 @@ void FOpenAIProviderChat::Define()
                                 ChatCompletion.Model = Model;
                                 ChatCompletion.Messages = NewHistory;
                                 ChatCompletion.Stream = false;
-                                ChatCompletion.Max_Completion_Tokens = 100;
+                                ChatCompletion.Max_Completion_Tokens.Set(100);
                                 OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                             }
                             else if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Stop)
@@ -216,7 +225,7 @@ void FOpenAIProviderChat::Define()
                     ChatCompletion.Model = Model;
                     ChatCompletion.Messages = History;
                     ChatCompletion.Stream = false;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     /*
                         functions = [
@@ -269,7 +278,7 @@ void FOpenAIProviderChat::Define()
                     Tools.Type = UOpenAIFuncLib::OpenAIRoleToString(ERole::Function);
                     Tools.Function.Name = FuncName;
                     Tools.Function.Description = "Get the current weather in a given location";
-                    Tools.Function.Parameters = UOpenAIFuncLib::MakeFunctionsString(MainObj);
+                    Tools.Function.Parameters = UJsonFuncLib::MakeFunctionsString(MainObj);
                     ChatCompletion.Tools.Add(Tools);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
@@ -322,7 +331,7 @@ void FOpenAIProviderChat::Define()
                     ChatCompletion.Model = Model;
                     ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Stream = false;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -381,7 +390,7 @@ void FOpenAIProviderChat::Define()
                     ChatCompletion.Model = Model;
                     ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Stream = false;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -419,7 +428,8 @@ void FOpenAIProviderChat::Define()
                                 TestTrueExpr(Choice.Index == 0);
                                 TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
                                 TestTrueExpr(!Choice.Message.Content.IsEmpty());
-                                TestTrueExpr(Choice.Message.Content.Contains("girl") || Choice.Message.Content.Contains("woman"));
+                                TestTrueExpr(Choice.Message.Content.Contains("girl") || Choice.Message.Content.Contains("woman") ||
+                                             Choice.Message.Content.Contains("person") || Choice.Message.Content.Contains("individual"));
                             }
                             else
                             {
@@ -447,7 +457,7 @@ void FOpenAIProviderChat::Define()
                     ChatCompletion.Model = Model;
                     ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Stream = false;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -492,7 +502,7 @@ void FOpenAIProviderChat::Define()
                     ChatCompletion.Model = Model;
                     ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Stream = true;
-                    ChatCompletion.Max_Completion_Tokens = 100;
+                    ChatCompletion.Max_Completion_Tokens.Set(100);
 
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));

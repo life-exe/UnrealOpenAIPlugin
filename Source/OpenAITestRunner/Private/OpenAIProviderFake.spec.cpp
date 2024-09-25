@@ -135,11 +135,14 @@ void FOpenAIProviderFake::Define()
                         "\"finish_reason\":\"stop\",\"index\":0}]}");
 
                     FChatCompletion ChatCompletion;
-                    ChatCompletion.Messages = {{"user", "What is Unreal Engine?"}};
+                    FMessage Message;
+                    Message.Role = "user";
+                    Message.Content = "What is Unreal Engine?";
+                    ChatCompletion.Messages.Add(Message);
                     ChatCompletion.Model = "gpt-4";
                     ChatCompletion.Stream = false;
                     ChatCompletion.N = 1;
-                    ChatCompletion.Max_Completion_Tokens = 2000;
+                    ChatCompletion.Max_Completion_Tokens.Set(2000);
                     OpenAIProvider->CreateChatCompletion(ChatCompletion, FOpenAIAuth{});
 
                     TestTrueExpr(ChatCompletionResponse.ID.Equals("chatcmpl-xxxxxxxxxxxxxxxxxx"));

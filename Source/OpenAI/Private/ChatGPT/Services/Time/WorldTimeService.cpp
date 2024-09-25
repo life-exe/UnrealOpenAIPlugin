@@ -1,7 +1,7 @@
 // OpenAI ServiceSample, Copyright LifeEXE. All Rights Reserved.
 
 #include "ChatGPT/Services/Time/WorldTimeService.h"
-#include "Funclib/OpenAIFuncLib.h"
+#include "Funclib/JsonFuncLib.h"
 #include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWorldTimeService, All, All);
@@ -58,7 +58,7 @@ FString UWorldTimeService::MakeFunction() const
     TArray<TSharedPtr<FJsonValue>> RequiredArray;
     ParamsObj->SetArrayField("required", RequiredArray);
 
-    return UOpenAIFuncLib::MakeFunctionsString(ParamsObj);
+    return UJsonFuncLib::MakeFunctionsString(ParamsObj);
 }
 
 void UWorldTimeService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
@@ -88,7 +88,7 @@ void UWorldTimeService::OnRequestCompleted(FHttpRequestPtr Request, FHttpRespons
     }
 
     FWorldTime WorldTime;
-    if (!UOpenAIFuncLib::ParseJSONToStruct<FWorldTime>(Response->GetContentAsString(), &WorldTime))
+    if (!UJsonFuncLib::ParseJSONToStruct<FWorldTime>(Response->GetContentAsString(), &WorldTime))
     {
         const FString ErroStr = FString::Format(TEXT("Can't parse JSON: {0}"), {Response->GetContentAsString()});
         UE_LOGFMT(LogWorldTimeService, Display, "{0}", ErroStr);

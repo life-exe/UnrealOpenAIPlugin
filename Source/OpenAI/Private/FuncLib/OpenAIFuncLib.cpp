@@ -1,12 +1,12 @@
 // OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
 
 #include "FuncLib/OpenAIFuncLib.h"
-#include "Serialization/JsonReader.h"
-#include "Serialization/JsonSerializer.h"
 #include "Internationalization/Regex.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Base64.h"
 #include "Logging/StructuredLog.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIFuncLib, All, All);
 
@@ -327,82 +327,6 @@ ERole UOpenAIFuncLib::StringToOpenAIRole(const FString& Role)
     return {};
 }
 
-FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFile(const FString& FilePath)
-{
-    TArray<FString> FileLines;
-    if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
-    {
-        UE_LOGFMT(LogOpenAIFuncLib, Error, "Failed loading file: {0}", FilePath);
-        return {};
-    }
-    else if (FileLines.Num() < 2)
-    {
-        UE_LOGFMT(LogOpenAIFuncLib, Error, "Auth file might have 2 or 3 lines only");
-        return {};
-    }
-    FOpenAIAuth Auth;
-
-    FString ParamName, ParamValue;
-    FileLines[0].Split("=", &ParamName, &ParamValue);
-    Auth.APIKey = ParamValue;
-
-    FileLines[1].Split("=", &ParamName, &ParamValue);
-    Auth.OrganizationID = ParamValue;
-
-    if (FileLines.Num() > 2)
-    {
-        FileLines[2].Split("=", &ParamName, &ParamValue);
-        Auth.ProjectID = ParamValue;
-    }
-
-    return Auth;
-}
-
-FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFileOnce(const FString& FilePath)
-{
-    static FOpenAIAuth Auth;
-    if (Auth.IsEmpty())
-    {
-        Auth = LoadAPITokensFromFile(FilePath);
-    }
-    return Auth;
-}
-
-OpenAI::ServiceSecrets UOpenAIFuncLib::LoadServiceSecretsFromFile(const FString& FilePath)
-{
-    TArray<FString> FileLines;
-    if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
-    {
-        UE_LOGFMT(LogOpenAIFuncLib, Error, "Failed loading file: {0}", FilePath);
-        return {};
-    }
-
-    OpenAI::ServiceSecrets Secrets;
-    for (const auto& Line : FileLines)
-    {
-        FString SecretName, SecretValue;
-        Line.Split("=", &SecretName, &SecretValue);
-        Secrets.Add(MakeTuple(SecretName, SecretValue));
-    }
-
-    return Secrets;
-}
-
-bool UOpenAIFuncLib::LoadSecretByName(const OpenAI::ServiceSecrets& Secrets, const FString& SecretName, FString& SecretValue)
-{
-    const auto* Found =
-        Secrets.FindByPredicate([&](const TTuple<FString, FString>& SecretData) { return SecretData.Key.Equals(SecretName); });
-
-    if (Found)
-    {
-        SecretValue = *Found->Value;
-        return true;
-    }
-
-    SecretValue = {};
-    return false;
-}
-
 FString UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat TranscriptFormat)
 {
     switch (TranscriptFormat)
@@ -479,56 +403,6 @@ FString UOpenAIFuncLib::RemoveWhiteSpaces(const FString& Input)
     return Result;
 }
 
-bool UOpenAIFuncLib::StringToJson(const FString& JsonString, TSharedPtr<FJsonObject>& JsonObject)
-{
-    TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonString);
-    return FJsonSerializer::Deserialize(JsonReader, JsonObject);
-}
-
-namespace
-{
-void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value);
-
-void ConvertObjectKeysToLowercase(TSharedPtr<FJsonObject> JsonObject)
-{
-    TSharedPtr<FJsonObject> NewJsonObject = MakeShareable(new FJsonObject);
-
-    for (const auto& Elem : JsonObject->Values)
-    {
-        const FString LowerKey = Elem.Key.ToLower();
-        ConvertKeysToLowercaseRecursive(Elem.Value);
-        NewJsonObject->SetField(LowerKey, Elem.Value);
-    }
-
-    *JsonObject = *NewJsonObject;
-}
-
-void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value)
-{
-    if (Value->Type == EJson::Object)
-    {
-        ConvertObjectKeysToLowercase(Value->AsObject());
-    }
-    else if (Value->Type == EJson::Array)
-    {
-        const TArray<TSharedPtr<FJsonValue>>& Array = Value->AsArray();
-        for (const auto& Item : Array)
-        {
-            ConvertKeysToLowercaseRecursive(Item);
-        }
-    }
-}
-
-}  // namespace
-
-bool UOpenAIFuncLib::JsonToString(const TSharedPtr<FJsonObject>& JsonObject, FString& JsonString)
-{
-    TSharedPtr<FJsonObject> NewJsonObject = JsonObject;
-    ConvertObjectKeysToLowercase(NewJsonObject);
-    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
-    return FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
-}
-
 FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& ModerationResults)
 {
     FString Out;
@@ -559,6 +433,56 @@ FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& Mode
     Out.Append(FString::Printf(TEXT("flagged: %s"), *BoolToString(ModerationResults.Flagged)));
 
     return Out;
+}
+
+FString UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose UploadFilePurpose)
+{
+    switch (UploadFilePurpose)
+    {
+        case EUploadFilePurpose::Assistants: return "assistants";
+        case EUploadFilePurpose::Vision: return "vision";
+        case EUploadFilePurpose::Batch: return "batch";
+        case EUploadFilePurpose::FineTune: return "fine-tune";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint BatchEndpoint)
+{
+    switch (BatchEndpoint)
+    {
+        case EBatchEndpoint::ChatCompletions: return "/v1/chat/completions";
+        case EBatchEndpoint::Completions: return "/v1/completions";
+        case EBatchEndpoint::Embeddings: return "/v1/embeddings";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow BatchCompletionWindow)
+{
+    switch (BatchCompletionWindow)
+    {
+        case EBatchCompletionWindow::Window_24h: return "24h";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier ServiceTier)
+{
+    switch (ServiceTier)
+    {
+        case EServiceTier::Auto: return "auto";
+        case EServiceTier::Default: return "default";
+    }
+
+    checkNoEntry();
+    return {};
 }
 
 EOpenAIResponseError UOpenAIFuncLib::GetErrorCode(const FString& RawError)
@@ -635,57 +559,7 @@ FString UOpenAIFuncLib::ResponseErrorToString(EOpenAIResponseError Code)
     return "Unknown error code";
 }
 
-// we need two markes to make clean JSON object during request serialization
-// basically to remove quotes
-
-const FString UOpenAIFuncLib::START_FUNCTION_OBJECT_MARKER = "START_FUNCTION_OBJECT_MARKER";
-const FString UOpenAIFuncLib::END_FUNCTION_OBJECT_MARKER = "END_FUNCTION_OBJECT_MARKER";
-
-FString UOpenAIFuncLib::MakeFunctionsString(const TSharedPtr<FJsonObject>& Json)
-{
-    FString Functions;
-    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&Functions);
-    FJsonSerializer::Serialize(Json.ToSharedRef(), Writer);
-
-    Functions.Append(END_FUNCTION_OBJECT_MARKER);
-    Functions = START_FUNCTION_OBJECT_MARKER + Functions;
-
-    return RemoveWhiteSpaces(Functions);
-}
-
-FString UOpenAIFuncLib::CleanUpFunctionsObject(const FString& Input)
-{
-    FString Output{Input};
-    const FString StartMarker = FString::Format(TEXT("\"{0}"), {START_FUNCTION_OBJECT_MARKER});
-    const FString EndMarker = FString::Format(TEXT("{0}\""), {END_FUNCTION_OBJECT_MARKER});
-
-    const auto Find = [&](const FString& Str, int32 StartIndex)
-    { return Output.Find(Str, ESearchCase::IgnoreCase, ESearchDir::FromStart, StartIndex); };
-
-    int32 StartIndex = Find(StartMarker, 0);
-    int32 EndIndex = Find(EndMarker, StartIndex);
-
-    while (StartIndex != INDEX_NONE && EndIndex != INDEX_NONE)
-    {
-        int32 ContentStart = StartIndex + StartMarker.Len();
-        int32 ContentEnd = EndIndex;
-
-        // Extract the substring that needs to have backslashes removed
-        FString ContentToClean = Output.Mid(ContentStart, ContentEnd - ContentStart);
-        // Replace backslashes within the extracted content
-        FString CleanedContent = ContentToClean.Replace(TEXT("\\"), TEXT(""));
-        // Replace old content with cleaned content
-        Output = Output.Left(ContentStart) + CleanedContent + Output.Mid(EndIndex);
-
-        StartIndex = Find(StartMarker, EndIndex);
-        EndIndex = Find(EndMarker, StartIndex);
-    }
-
-    Output = Output.Replace(*StartMarker, TEXT(""));
-    Output = Output.Replace(*EndMarker, TEXT(""));
-
-    return Output;
-}
+// misc
 
 FString UOpenAIFuncLib::MakeURLWithQuery(const FString& URL, const OpenAI::QueryPairs& Args)
 {
@@ -720,40 +594,78 @@ FString UOpenAIFuncLib::FilePathToBase64(const FString& FilePath)
     return UOpenAIFuncLib::WrapBase64(ImageInBase64);
 }
 
-FString UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose UploadFilePurpose)
+FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFile(const FString& FilePath)
 {
-    switch (UploadFilePurpose)
+    TArray<FString> FileLines;
+    if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
     {
-        case EUploadFilePurpose::Assistants: return "assistants";
-        case EUploadFilePurpose::Vision: return "vision";
-        case EUploadFilePurpose::Batch: return "batch";
-        case EUploadFilePurpose::FineTune: return "fine-tune";
+        UE_LOGFMT(LogOpenAIFuncLib, Error, "Failed loading file: {0}", FilePath);
+        return {};
+    }
+    else if (FileLines.Num() < 2)
+    {
+        UE_LOGFMT(LogOpenAIFuncLib, Error, "Auth file might have 2 or 3 lines only");
+        return {};
+    }
+    FOpenAIAuth Auth;
+
+    FString ParamName, ParamValue;
+    FileLines[0].Split("=", &ParamName, &ParamValue);
+    Auth.APIKey = ParamValue;
+
+    FileLines[1].Split("=", &ParamName, &ParamValue);
+    Auth.OrganizationID = ParamValue;
+
+    if (FileLines.Num() > 2)
+    {
+        FileLines[2].Split("=", &ParamName, &ParamValue);
+        Auth.ProjectID = ParamValue;
     }
 
-    checkNoEntry();
-    return {};
+    return Auth;
 }
 
-FString UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint BatchEndpoint)
+FOpenAIAuth UOpenAIFuncLib::LoadAPITokensFromFileOnce(const FString& FilePath)
 {
-    switch (BatchEndpoint)
+    static FOpenAIAuth Auth;
+    if (Auth.IsEmpty())
     {
-        case EBatchEndpoint::ChatCompletions: return "/v1/chat/completions";
-        case EBatchEndpoint::Completions: return "/v1/completions";
-        case EBatchEndpoint::Embeddings: return "/v1/embeddings";
+        Auth = LoadAPITokensFromFile(FilePath);
     }
-
-    checkNoEntry();
-    return {};
+    return Auth;
 }
 
-FString UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow BatchCompletionWindow)
+OpenAI::ServiceSecrets UOpenAIFuncLib::LoadServiceSecretsFromFile(const FString& FilePath)
 {
-    switch (BatchCompletionWindow)
+    TArray<FString> FileLines;
+    if (!FFileHelper::LoadFileToStringArray(FileLines, *FilePath))
     {
-        case EBatchCompletionWindow::Window_24h: return "24h";
+        UE_LOGFMT(LogOpenAIFuncLib, Error, "Failed loading file: {0}", FilePath);
+        return {};
     }
 
-    checkNoEntry();
-    return {};
+    OpenAI::ServiceSecrets Secrets;
+    for (const auto& Line : FileLines)
+    {
+        FString SecretName, SecretValue;
+        Line.Split("=", &SecretName, &SecretValue);
+        Secrets.Add(MakeTuple(SecretName, SecretValue));
+    }
+
+    return Secrets;
+}
+
+bool UOpenAIFuncLib::LoadSecretByName(const OpenAI::ServiceSecrets& Secrets, const FString& SecretName, FString& SecretValue)
+{
+    const auto* Found =
+        Secrets.FindByPredicate([&](const TTuple<FString, FString>& SecretData) { return SecretData.Key.Equals(SecretName); });
+
+    if (Found)
+    {
+        SecretValue = *Found->Value;
+        return true;
+    }
+
+    SecretValue = {};
+    return false;
 }

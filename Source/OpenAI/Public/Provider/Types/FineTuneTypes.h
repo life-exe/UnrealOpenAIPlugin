@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Provider/Types/CommonTypes.h"
+#include "Provider/OpenAIOptional.h"
 #include "FineTuneTypes.generated.h"
 
 USTRUCT(BlueprintType)
@@ -189,24 +190,26 @@ struct FFineTuningQueryParameters
     /**
       Identifier for the last event from the previous pagination request.
     */
-    TOptional<FString> After;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalString After;
 
     /**
       Number of events to retrieve.
     */
-    TOptional<int32> Limit;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalInt Limit;
 
     FString ToQuery() const
     {
         FString Query{"?"};
-        if (After)
+        if (After.IsSet)
         {
-            Query.Append("after=").Append(After.GetValue()).Append("&");
+            Query.Append("after=").Append(After.Value).Append("&");
         }
 
-        if (Limit)
+        if (Limit.IsSet)
         {
-            Query.Append("limit=").Append(FString::FromInt(Limit.GetValue())).Append("&");
+            Query.Append("limit=").Append(FString::FromInt(Limit.Value)).Append("&");
         }
 
         return Query.LeftChop(1);
@@ -216,6 +219,24 @@ struct FFineTuningQueryParameters
 ///////////////////////////////////////////////////////
 //                 RESPONSE TYPES
 ///////////////////////////////////////////////////////
+
+USTRUCT(BlueprintType)
+struct FOpenAIEvent
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Created_At{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Level;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Message;
+};
 
 USTRUCT(BlueprintType)
 struct FFineTuneEventsResponse

@@ -183,7 +183,8 @@ void UChatGPTWidget::OnSendMessage()
 
     ChatGPT->AddMessage(Message);
 
-    const auto AssistantMessage = FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant), {}};
+    FMessage AssistantMessage;
+    AssistantMessage.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant);
     ChatGPT->SetAssistantMessage(AssistantMessage);
 
     CreateMessageWidget(Message);

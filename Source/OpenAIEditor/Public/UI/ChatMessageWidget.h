@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/Chat/ChatCompletionChunkTypes.h"
 #include "Provider/Types/ModelTypes.h"
 #include "ChatMessageWidget.generated.h"
 

@@ -167,9 +167,14 @@ void AAPIOverview::CreateChatCompletionRequest()
 
     FChatCompletion ChatCompletion;
     ChatCompletion.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O);
-    ChatCompletion.Messages = {FMessage{UOpenAIFuncLib::OpenAIRoleToString(ERole::User), "What is Unreal Engine?"}};
+
+    FMessage Message;
+    Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);
+    Message.Content = "What is Unreal Engine?";
+
+    ChatCompletion.Messages.Add(Message);
     ChatCompletion.Stream = true;
-    ChatCompletion.Max_Completion_Tokens = 100;
+    ChatCompletion.Max_Completion_Tokens.Set(100);
 
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }
@@ -592,7 +597,7 @@ void AAPIOverview::ListBatch()
             UE_LOGFMT(LogAPIOverview, Display, "ListBatchResponse request completed!");
         });
     FListBatch ListBatch;
-    ListBatch.Limit = 20;
+    ListBatch.Limit.Set(20);
     Provider->ListBatch(ListBatch, Auth);
 }
 

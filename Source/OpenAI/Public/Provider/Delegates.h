@@ -3,16 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Types/ModelTypes.h"
-#include "Types/AudioTypes.h"
-#include "Types/BatchTypes.h"
-#include "Types/ImageTypes.h"
-#include "Types/FineTuneTypes.h"
-#include "Types/ModerationTypes.h"
-#include "Types/FileTypes.h"
-#include "Types/ChatTypes.h"
-#include "Types/Legacy/CompletionTypes.h"
-#include "Types/EmbeddingTypes.h"
+#include "Provider/Types/AllTypesHeader.h"
 
 // ============================ C++ delegates ============================
 // common

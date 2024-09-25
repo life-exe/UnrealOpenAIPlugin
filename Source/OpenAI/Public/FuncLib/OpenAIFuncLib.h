@@ -4,16 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Provider/Types/ModelTypes.h"
-#include "Provider/Types/BatchTypes.h"
-#include "Provider/Types/CommonTypes.h"
-#include "Provider/Types/AudioTypes.h"
-#include "Provider/Types/ImageTypes.h"
-#include "Provider/Types/ModerationTypes.h"
-#include "Provider/Types/EmbeddingTypes.h"
-#include "Provider/Types/FileTypes.h"
-#include "Provider/Types/ChatTypes.h"
-#include "JsonObjectConverter.h"
+#include "Provider/Types/AllTypesHeader.h"
 #include "OpenAIFuncLib.generated.h"
 
 UCLASS()
@@ -22,16 +13,22 @@ class OPENAI_API UOpenAIFuncLib : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Model")
     static FString OpenAIAllModelToString(EAllModelEnum Model);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Model")
     static FString OpenAIMainModelToString(EMainModelEnum Model);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Model")
+    static FString OpenAIModelToString(const FOpenAIModel& OpenAIModel);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Moderation")
     static FString OpenAIModerationModelToString(EModerationsModelEnum Model);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Moderations")
+    static FString OpenAIModerationsToString(const FModerationResults& ModerationResults);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Model | Vision")
     static bool ModelSupportsVision(const FString& Model);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
@@ -45,6 +42,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "OpenAI| Audio")
     static FString OpenAITTSAudioFormatToString(ETTSAudioFormat Format);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Audio")
+    static FString OpenAIAudioTranscriptToString(ETranscriptFormat TranscriptFormat);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static FString OpenAIImageModelToString(EImageModelEnum Model);
@@ -82,65 +82,17 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static EOpenAIImageStyle StringToOpenAIImageStyle(const FString& ImageStyle);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIRoleToString(ERole Role);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIFinishReasonToString(EOpenAIFinishReason FinishReason);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static EOpenAIFinishReason StringToOpenAIFinishReason(const FString& FinishReason);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static ERole StringToOpenAIRole(const FString& Role);
-
-    /**
-      File content consits of two lines:
-      APIKey=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-      OrganizationID=org-xxxxxxxxxxxxxxxxxxxxxx
-      ProjectID=proj_xxxxxxxxxxxxxxxxxxxxxx
-    */
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FOpenAIAuth LoadAPITokensFromFile(const FString& FilePath);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FOpenAIAuth LoadAPITokensFromFileOnce(const FString& FilePath);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIAudioTranscriptToString(ETranscriptFormat TranscriptFormat);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat EmbeddingsEncodingFormat);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Chat")
     static FString OpenAIChatResponseFormatToString(EChatResponseFormat ChatResponseFormat);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIModelToString(const FOpenAIModel& OpenAIModel);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Chat")
     static FString OpenAIMessageContentTypeToString(EMessageContentType MessageContentType);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString OpenAIModerationsToString(const FModerationResults& ModerationResults);
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Chat")
+    static FString OpenAIServiceTierToString(EServiceTier ServiceTier);
 
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static EOpenAIResponseError GetErrorCode(const FString& RawError);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString GetErrorMessage(const FString& RawError);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString ResponseErrorToString(EOpenAIResponseError Code);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString WrapBase64(const FString& Base64String);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString UnWrapBase64(const FString& Base64String);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI")
-    static FString FilePathToBase64(const FString& FilePath);
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Embeddings")
+    static FString OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat EmbeddingsEncodingFormat);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | File")
     static FString OpenAIUploadFilePurposeToString(EUploadFilePurpose UploadFilePurpose);
@@ -151,33 +103,56 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI | Batch")
     static FString OpenAIBatchCompletionWindowToString(EBatchCompletionWindow BatchCompletionWindow);
 
+    // common
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
+    static FString OpenAIRoleToString(ERole Role);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
+    static FString OpenAIFinishReasonToString(EOpenAIFinishReason FinishReason);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
+    static EOpenAIFinishReason StringToOpenAIFinishReason(const FString& FinishReason);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
+    static ERole StringToOpenAIRole(const FString& Role);
+
+    // errors
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Error")
+    static EOpenAIResponseError GetErrorCode(const FString& RawError);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Error")
+    static FString GetErrorMessage(const FString& RawError);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Error")
+    static FString ResponseErrorToString(EOpenAIResponseError Code);
+
+    // base64
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Base64")
+    static FString WrapBase64(const FString& Base64String);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Base64")
+    static FString UnWrapBase64(const FString& Base64String);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Base64")
+    static FString FilePathToBase64(const FString& FilePath);
+
+    // API
+    /**
+      File content consits of two lines:
+      APIKey=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      OrganizationID=org-xxxxxxxxxxxxxxxxxxxxxx
+      ProjectID=proj_xxxxxxxxxxxxxxxxxxxxxx
+    */
+    UFUNCTION(BlueprintPure, Category = "OpenAI | API")
+    static FOpenAIAuth LoadAPITokensFromFile(const FString& FilePath);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | API")
+    static FOpenAIAuth LoadAPITokensFromFileOnce(const FString& FilePath);
+
+    // misc helpers
     static FString BoolToString(bool Value);
     static FString RemoveWhiteSpaces(const FString& Input);
-
     static OpenAI::ServiceSecrets LoadServiceSecretsFromFile(const FString& FilePath);
     static bool LoadSecretByName(const OpenAI::ServiceSecrets& Secrets, const FString& SecretName, FString& SecretValue);
-
-    static bool StringToJson(const FString& JsonString, TSharedPtr<FJsonObject>& JsonObject);
-    static bool JsonToString(const TSharedPtr<FJsonObject>& JsonObject, FString& JsonString);
-
-    template <typename OutStructType>
-    static bool ParseJSONToStruct(const FString& Data, OutStructType* OutStruct)
-    {
-        TSharedPtr<FJsonObject> JsonObject;
-        if (!UOpenAIFuncLib::StringToJson(Data, JsonObject)) return false;
-
-        FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), OutStruct, 0, 0);
-        return true;
-    }
-
     static FString MakeURLWithQuery(const FString& URL, const OpenAI::QueryPairs& Args);
-
-public:
-    // helpers for OpeanAI 'functions'
-    static FString MakeFunctionsString(const TSharedPtr<FJsonObject>& Json);
-    static FString CleanUpFunctionsObject(const FString& Input);
-
-private:
-    static const FString START_FUNCTION_OBJECT_MARKER;
-    static const FString END_FUNCTION_OBJECT_MARKER;
 };

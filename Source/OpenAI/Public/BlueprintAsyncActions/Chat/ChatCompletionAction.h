@@ -3,7 +3,8 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "Provider/Types/ChatTypes.h"
+#include "Provider/Types/Chat/ChatCompletionTypes.h"
+#include "Provider/Types/Chat/ChatCompletionChunkTypes.h"
 #include "Provider/Types/CommonTypes.h"
 #include "ChatCompletionAction.generated.h"
 

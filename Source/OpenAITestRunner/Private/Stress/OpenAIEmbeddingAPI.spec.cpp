@@ -68,6 +68,40 @@ void FOpenAIProviderEmbedding::Define()
 
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
+
+            It("Embedding.CreateEmbeddingsRequestWithOptionalFieldsShouldResponseCorrectly",
+                [this]()
+                {
+                    const auto Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_3_Small);
+                    OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
+                        [&, SaveModel = Model](const FEmbeddingsResponse& Response)
+                        {
+                            TestTrueExpr(Response.Model.Equals(SaveModel));
+                            TestTrueExpr(Response.Usage.Prompt_Tokens == 6);
+                            TestTrueExpr(Response.Usage.Total_Tokens == 6);
+                            TestTrueExpr(Response.Object.Equals("list"));
+                            TestTrueExpr(Response.Data.Num() == 1);
+
+                            for (const auto& Data : Response.Data)
+                            {
+                                TestTrueExpr(Data.Object.Equals("embedding"));
+                                TestTrueExpr(Data.Index == 0);
+                                TestTrueExpr(Data.Embedding.Num() > 0);
+                            }
+
+                            RequestCompleted = true;
+                        });
+
+                    FEmbeddings Embeddings;
+                    Embeddings.Input = {"Hello! How are you?"};
+                    Embeddings.Model = Model;
+                    Embeddings.Encoding_Format = UOpenAIFuncLib::OpenAIEmbeddingsEncodingFormatToString(EEmbeddingsEncodingFormat::Float);
+                    Embeddings.User.Set("John Doe");
+                    Embeddings.Dimensions.Set(2);
+                    OpenAIProvider->CreateEmbeddings(Embeddings, Auth);
+
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
         });
 }
 

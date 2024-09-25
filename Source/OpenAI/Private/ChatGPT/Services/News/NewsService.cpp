@@ -3,6 +3,7 @@
 #include "ChatGPT/Services/News/NewsService.h"
 #include "Provider/Types/CommonTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "FuncLib/JsonFuncLib.h"
 #include "Algo/ForEach.h"
 #include "Logging/StructuredLog.h"
 
@@ -104,7 +105,7 @@ FString UNewsService::MakeFunction() const
     TArray<TSharedPtr<FJsonValue>> RequiredArray;
     MainObj->SetArrayField("required", RequiredArray);
 
-    return UOpenAIFuncLib::MakeFunctionsString(MainObj);
+    return UJsonFuncLib::MakeFunctionsString(MainObj);
 }
 
 void UNewsService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
@@ -122,7 +123,7 @@ void UNewsService::Call(const TSharedPtr<FJsonObject>& Args, const FString& Tool
 FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) const
 {
     FString ArgsStr;
-    if (UOpenAIFuncLib::JsonToString(ArgsJson, ArgsStr))
+    if (UJsonFuncLib::JsonToString(ArgsJson, ArgsStr))
     {
         UE_LOG(LogNewsService, Display, TEXT("Args for the news request: %s"), *ArgsStr);
     }
@@ -155,14 +156,14 @@ void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr 
     UE_LOGFMT(LogNewsService, Display, "{0}", Response->GetContentAsString());
 
     TSharedPtr<FJsonObject> JsonObject;
-    if (!UOpenAIFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
+    if (!UJsonFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
     {
         SendError("Can't parse response");
         return;
     }
 
     FNews News;
-    if (!UOpenAIFuncLib::ParseJSONToStruct<FNews>(Response->GetContentAsString(), &News))
+    if (!UJsonFuncLib::ParseJSONToStruct<FNews>(Response->GetContentAsString(), &News))
     {
         SendError("Can't parse news response");
         return;

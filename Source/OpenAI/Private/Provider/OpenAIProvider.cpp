@@ -1,11 +1,13 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "Provider/OpenAIProvider.h"
+#include "Provider/JsonHelpers/ChatStructTransform.h"
 #include "API/API.h"
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonReader.h"
 #include "Http/HttpHelper.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "FuncLib/JsonFuncLib.h"
 #include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProvider, All, All);
@@ -106,7 +108,10 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     RequestContent.Append(HttpHelper::AddMIME("n", FString::FromInt(ImageEdit.N), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("size", ImageEdit.Size, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("response_format", ImageEdit.Response_Format, BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("user", ImageEdit.User, BeginBoundary));
+    if (ImageEdit.User.IsSet)
+    {
+        RequestContent.Append(HttpHelper::AddMIME("user", ImageEdit.User.Value, BeginBoundary));
+    }
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
     HttpRequest->SetContent(RequestContent);
@@ -129,7 +134,10 @@ void UOpenAIProvider::CreateImageVariation(const FOpenAIImageVariation& ImageVar
     RequestContent.Append(HttpHelper::AddMIME("n", FString::FromInt(ImageVariation.N), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("size", ImageVariation.Size, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("response_format", ImageVariation.Response_Format, BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("user", ImageVariation.User, BeginBoundary));
+    if (ImageVariation.User.IsSet)
+    {
+        RequestContent.Append(HttpHelper::AddMIME("user", ImageVariation.User.Value, BeginBoundary));
+    }
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
     HttpRequest->SetContent(RequestContent);
@@ -671,22 +679,11 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
         return false;
     }
 
-    if (!WasSuccessful || !JsonObject.IsValid())
+    if (!WasSuccessful || !JsonObject.IsValid() || UJsonFuncLib::OpenAIResponseContainsError(JsonObject))
     {
         LogError(Response->GetContentAsString());
         RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
         return false;
-    }
-
-    if (JsonObject->HasField("error"))
-    {
-        const auto ErrorObject = JsonObject->GetObjectField("error");
-        if (ErrorObject->HasField("type") && ErrorObject->HasField("message") && ErrorObject->HasField("code"))
-        {
-            LogError(Response->GetContentAsString());
-            RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
-            return false;
-        }
     }
 
     LogResponse(Response);
@@ -718,7 +715,6 @@ void UOpenAIProvider::LogError(const FString& ErrorText) const
 void UOpenAIProvider::SetOptional(TSharedPtr<FJsonObject> RequestBody, const TOptional<FString>& Param, const FString& ParamName)
 {
     if (!Param.IsSet()) return;
-
     RequestBody->SetStringField(ParamName, Param.GetValue());
 }
 
@@ -752,23 +748,6 @@ TTuple<FString, FString> UOpenAIProvider::GetErrorData(FHttpRequestPtr Request, 
     return MakeTuple(Response->GetURL(), Status);
 }
 
-bool UOpenAIProvider::HandleString(FString& IncomeString, bool& LastString) const
-{
-    if (IncomeString.StartsWith("data: "))
-    {
-        IncomeString.RemoveFromStart("data: ");
-    }
-
-    // igone role chunck // @todo handle this case in another struct
-    // if (IncomeString.Find("role") != INDEX_NONE) return false;
-    if (IncomeString.Equals("[DONE]"))
-    {
-        LastString = true;
-    }
-
-    return true;
-}
-
 FHttpRequestRef UOpenAIProvider::MakeRequest(const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
 {
     auto HttpRequest = CreateRequest();
@@ -792,85 +771,11 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     HttpRequest->SetURL(URL);
     HttpRequest->SetVerb(Method);
 
-    TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(ChatCompletion);
-    CleanChatCompletionFieldsThatCantBeEmpty(ChatCompletion, Json);
-
-    FString RequestBodyStr;
-    UOpenAIFuncLib::JsonToString(Json, RequestBodyStr);
-    RequestBodyStr = UOpenAIFuncLib::CleanUpFunctionsObject(RequestBodyStr);
-
+    const FString RequestBodyStr = ChatStructTransform::StructToJsonString(ChatCompletion);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
     HttpRequest->SetContentAsString(RequestBodyStr);
+
     return HttpRequest;
-}
-
-void UOpenAIProvider::CleanChatCompletionFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPtr<FJsonObject>& Json) const
-{
-    if (ChatCompletion.Tools.IsEmpty())
-    {
-        Json->RemoveField("Tools");
-    }
-
-    if (ChatCompletion.Tool_Choice.Function.Name.IsEmpty())
-    {
-        Json->RemoveField("Tool_Choice");
-    }
-
-    if (ChatCompletion.Stop.IsEmpty())
-    {
-        Json->RemoveField("Stop");
-    }
-
-    if (ChatCompletion.Logit_Bias.IsEmpty())
-    {
-        Json->RemoveField("Logit_Bias");
-    }
-
-    if (ChatCompletion.Model == UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview))
-    {
-        Json->RemoveField("Response_Format");
-    }
-
-    for (int32 i = 0; i < ChatCompletion.Messages.Num(); ++i)
-    {
-        const auto& Message = ChatCompletion.Messages[i];
-        auto& MessageObj = Json->GetArrayField("Messages")[i]->AsObject();
-
-        if (Message.Tool_Calls.IsEmpty())
-        {
-            MessageObj->RemoveField("Tool_Calls");
-        }
-        if (Message.Tool_Call_ID.IsEmpty())
-        {
-            MessageObj->RemoveField("Tool_Call_ID");
-        }
-        if (Message.Name.IsEmpty())
-        {
-            MessageObj->RemoveField("Name");
-        }
-        if (Message.ContentArray.IsEmpty())
-        {
-            MessageObj->RemoveField("ContentArray");
-        }
-        else
-        {
-            auto Content = MessageObj->GetArrayField("ContentArray");
-
-            for (int32 j = 0; j < Content.Num(); ++j)
-            {
-                TSharedPtr<FJsonObject> MessageContent = Content[j]->AsObject();
-                if (MessageContent->GetStringField("Type").Equals("text"))
-                {
-                    MessageContent->RemoveField("Image_URL");
-                }
-                else
-                {
-                    MessageContent->RemoveField("Text");
-                }
-            }
-            MessageObj->SetArrayField("Content", Content);
-            MessageObj->RemoveField("ContentArray");
-        }
-    }
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

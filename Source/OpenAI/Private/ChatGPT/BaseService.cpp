@@ -56,7 +56,7 @@ FFunctionRequest UBaseService::Function() const
 FMessage UBaseService::MakeMessage(const FString& Content) const
 {
     FMessage Message;
-    Message.Tool_Call_ID = ToolID;
+    Message.Tool_Call_ID.Set(ToolID);
     Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::Tool);
     Message.Content = Content;
     return Message;

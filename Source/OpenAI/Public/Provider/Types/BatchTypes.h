@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Provider/OpenAIOptional.h"
 #include "BatchTypes.generated.h"
 
 ///////////////////////////////////////////////////////
@@ -73,25 +74,27 @@ struct FListBatch
       if you make a list request and receive 100 objects, ending with obj_foo,
       your subsequent call can include after=obj_foo in order to fetch the next page of the list.
     */
-    TOptional<FString> After;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalString After;
 
     /**
       A limit on the number of objects to be returned.
       Limit can range between 1 and 100, and the default is 20.
     */
-    TOptional<int32> Limit;
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalInt Limit;
 
     FString ToQuery() const
     {
         FString Query{"?"};
-        if (After)
+        if (After.IsSet)
         {
-            Query.Append("after=").Append(After.GetValue()).Append("&");
+            Query.Append("after=").Append(After.Value).Append("&");
         }
 
-        if (Limit)
+        if (Limit.IsSet)
         {
-            Query.Append("limit=").Append(FString::FromInt(Limit.GetValue())).Append("&");
+            Query.Append("limit=").Append(FString::FromInt(Limit.Value)).Append("&");
         }
 
         return Query.LeftChop(1);
@@ -335,3 +338,6 @@ struct FListBatchResponse
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     bool Has_More{};
 };
+
+// @todo: https://platform.openai.com/docs/api-reference/batch/request-input
+// @todo: https://platform.openai.com/docs/api-reference/batch/request-output

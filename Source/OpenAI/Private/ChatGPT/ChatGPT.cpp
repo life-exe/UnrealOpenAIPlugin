@@ -4,6 +4,7 @@
 #include "Provider/OpenAIProvider.h"
 #include "Algo/ForEach.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "FuncLib/JsonFuncLib.h"
 #include "ChatGPT/BaseService.h"
 #include "Logging/StructuredLog.h"
 
@@ -95,7 +96,7 @@ void UChatGPT::MakeRequest()
     FChatCompletion ChatCompletion;
     ChatCompletion.Model = OpenAIModel;
     ChatCompletion.Messages = ChatHistory;
-    ChatCompletion.Max_Completion_Tokens = MaxCompletionTokens;
+    ChatCompletion.Max_Completion_Tokens.Set(MaxCompletionTokens);
     ChatCompletion.Stream = true;
     ChatCompletion.Tools = AvailableTools;
     Provider->CreateChatCompletion(ChatCompletion, Auth);
@@ -136,7 +137,7 @@ bool UChatGPT::HandleFunctionCall(const FFunctionCommon& FunctionCall, const FSt
     FString LogMsg;
 
     TSharedPtr<FJsonObject> Args;
-    if (!FunctionCall.Arguments.IsEmpty() && !UOpenAIFuncLib::StringToJson(FunctionCall.Arguments, Args))
+    if (!FunctionCall.Arguments.IsEmpty() && !UJsonFuncLib::StringToJson(FunctionCall.Arguments, Args))
     {
         LogMsg = FString::Format(TEXT("Can't parse args: {0}"), {FunctionCall.Arguments});
         UE_LOGFMT(LogChatGPT, Error, "{0}", LogMsg);

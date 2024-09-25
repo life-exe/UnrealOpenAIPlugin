@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/Chat/ChatTypesHeader.h"
 #include "CompletionTypes.generated.h"
 
 ///////////////////////////////////////////////////////
@@ -163,21 +164,21 @@ struct FCompletion
 ///////////////////////////////////////////////////////
 
 USTRUCT(BlueprintType)
-struct FLogProbs
+struct FCompletionLogProbs
 {
     GENERATED_BODY()
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<FString> Tokens;
+    TArray<int32> Text_Offset;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<double> Token_Logprobs;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Top_Logprobs{};
+    TArray<FString> Tokens;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TArray<int32> Text_Offset;
+    FString Top_Logprobs{};
 };
 
 USTRUCT(BlueprintType)
@@ -198,7 +199,7 @@ struct FChoice : public FBaseChoice
     GENERATED_BODY()
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FLogProbs LogProbs;
+    FCompletionLogProbs LogProbs;
 
     /**
       The reason the model stopped generating tokens.
@@ -255,7 +256,7 @@ struct FCompletionResponse : public FCompletionResponseBase
        Usage statistics for the completion request.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FUsage Usage;
+    FCompletionUsage Usage;
 };
 
 USTRUCT(BlueprintType)

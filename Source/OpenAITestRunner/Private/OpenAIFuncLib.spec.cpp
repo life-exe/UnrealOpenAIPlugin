@@ -406,34 +406,6 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::RemoveWhiteSpaces(StringWithWhiteSpaces).Equals(NormalString));
                 });
 
-            It("StringWithValidJsonShouldMakeConversionCorrectly",
-                [this]()
-                {
-                    const FString String = "{\"object\":\"list\"}";
-                    TSharedPtr<FJsonObject> JsonObject;
-                    TestTrueExpr(UOpenAIFuncLib::StringToJson(String, JsonObject));
-                    TestTrueExpr(JsonObject->GetStringField(TEXT("object")).Equals("list"));
-                });
-
-            It("JsonToStringShouldMakeConversionCorrectly",
-                [this]()
-                {
-                    TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
-                    JsonObject->SetStringField("String", "value");
-                    JsonObject->SetStringField("STrinG_NEW", "VALUE");
-
-                    TSharedPtr<FJsonObject> JsonSubObject = MakeShareable(new FJsonObject());
-                    JsonSubObject->SetStringField("SUBObJect", "vaLue");
-                    JsonObject->SetObjectField("ObjecT_NEW", JsonSubObject);
-
-                    FString String;
-                    TestTrueExpr(UOpenAIFuncLib::JsonToString(JsonObject, String));
-
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
-                    TestTrueExpr(
-                        ResultString.Equals("{\"string\": \"value\",\"string_new\": \"VALUE\",\"object_new\":{\"subobject\": \"vaLue\"}}"));
-                });
-
             It("URLWithQueryCanBECreatedCorrectly",
                 [this]()
                 {
@@ -490,6 +462,13 @@ void FOpenAIFuncLib::Define()
 
             It("OpenAIBatchCompletionWindowToStringShouldReturnCorrectValue", [this]()
                 { TestTrueExpr(UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow::Window_24h).Equals("24h")); });
+
+            It("OpenAIServiceTierToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Auto).Equals("auto"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Default).Equals("default"));
+                });
         });
 
     Describe("FileSystemFuncLib",
@@ -509,7 +488,17 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     const FString FilePath = FPaths::ProjectPluginsDir().Append("OpenAI/Source/OpenAITestRunner/Data/History.txt");
-                    const TArray<FMessage> History = {FMessage{"user", "hello!"}, FMessage{"assistant", "hello bro!"}};
+                    TArray<FMessage> History;
+
+                    FMessage Message;
+                    Message.Role = "user";
+                    Message.Content = "hello!";
+                    History.Add(Message);
+
+                    Message.Role = "assistant";
+                    Message.Content = "hello bro!";
+                    History.Add(Message);
+
                     const FString ModelName = "gpt-4";
                     TestTrueExpr(UFileSystemFuncLib::SaveChatHistoryToFile(History, ModelName, FilePath));
 
@@ -541,15 +530,15 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     FFineTuningQueryParameters Parameters;
-                    Parameters.After = "event-id";
+                    Parameters.After.Set("event-id");
                     TestTrueExpr(Parameters.ToQuery().Equals("?after=event-id"));
                 });
             It("ShouldBeCorrectIfTwoParamsAreSet",
                 [this]()
                 {
                     FFineTuningQueryParameters Parameters;
-                    Parameters.After = "event-id";
-                    Parameters.Limit = 20;
+                    Parameters.After.Set("event-id");
+                    Parameters.Limit.Set(20);
                     TestTrueExpr(Parameters.ToQuery().Equals("?after=event-id&limit=20"));
                 });
         });

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Provider/OpenAIOptional.h"
 #include "ImageTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -115,7 +116,7 @@ struct FOpenAIImage
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;  //@todo optional
+    FOptionalString User;
 };
 
 USTRUCT(BlueprintType)
@@ -174,7 +175,7 @@ struct FOpenAIImageEdit
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;  //@todo optional
+    FOptionalString User;
 };
 
 USTRUCT(BlueprintType)
@@ -221,7 +222,7 @@ struct FOpenAIImageVariation
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;  //@todo optional
+    FOptionalString User;
 };
 
 ///////////////////////////////////////////////////////

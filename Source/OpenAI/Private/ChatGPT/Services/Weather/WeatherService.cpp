@@ -3,6 +3,7 @@
 #include "ChatGPT/Services/Weather/WeatherService.h"
 #include "Provider/Types/CommonTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "FuncLib/JsonFuncLib.h"
 #include "Algo/ForEach.h"
 #include "Logging/StructuredLog.h"
 
@@ -83,7 +84,7 @@ FString UWeatherService::MakeFunction() const
     RequiredArray.Add(MakeShareable(new FJsonValueString("unit")));
     MainObj->SetArrayField("required", RequiredArray);
 
-    return UOpenAIFuncLib::MakeFunctionsString(MainObj);
+    return UJsonFuncLib::MakeFunctionsString(MainObj);
 }
 
 void UWeatherService::Call(const TSharedPtr<FJsonObject>& Args, const FString& ToolIDIn)
@@ -137,7 +138,7 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
     UE_LOGFMT(LogWeatherService, Display, "{0}", Response->GetContentAsString());
 
     TSharedPtr<FJsonObject> JsonObject;
-    if (!UOpenAIFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
+    if (!UJsonFuncLib::StringToJson(Response->GetContentAsString(), JsonObject))
     {
         SendError("Can't parse response");
         return;
@@ -151,7 +152,7 @@ void UWeatherService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponseP
     }
 
     FWeather Weather;
-    if (!UOpenAIFuncLib::ParseJSONToStruct<FWeather>(Response->GetContentAsString(), &Weather))
+    if (!UJsonFuncLib::ParseJSONToStruct<FWeather>(Response->GetContentAsString(), &Weather))
     {
         SendError("Can't parse weather response");
         return;

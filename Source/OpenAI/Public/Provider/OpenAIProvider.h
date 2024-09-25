@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "HTTP.h"
-#include "Types/BatchTypes.h"
-#include "Types/AudioTypes.h"
 #include "Delegates.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "FuncLib/JsonFuncLib.h"
+#include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
 class FJsonObject;
@@ -300,7 +300,7 @@ private:
     {
         TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(OutStruct);
         FString RequestBodyStr;
-        UOpenAIFuncLib::JsonToString(Json, RequestBodyStr);
+        UJsonFuncLib::JsonToString(Json, RequestBodyStr);
         return RequestBodyStr;
     }
 
@@ -314,9 +314,14 @@ private:
         HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
         HttpRequest->SetURL(URL);
         HttpRequest->SetVerb(Method);
+
         const FString Content = SerializeRequest(OutStruct);
-        Log(FString("Content was set as: ").Append(Content));
-        HttpRequest->SetContentAsString(Content);
+        Log(FString("Content: ").Append(Content));
+
+        const FString PostprocessedContent = UJsonFuncLib::PostprocessOptionalValues(Content);
+        Log(FString("Postprocessed content was set as: ").Append(PostprocessedContent));
+
+        HttpRequest->SetContentAsString(PostprocessedContent);
         return HttpRequest;
     }
     // specializations
@@ -330,7 +335,7 @@ private:
         if (!Success(Response, WasSuccessful)) return;
 
         ParsedResponseType ParsedResponse;
-        if (UOpenAIFuncLib::ParseJSONToStruct(Response->GetContentAsString(), &ParsedResponse))
+        if (UJsonFuncLib::ParseJSONToStruct(Response->GetContentAsString(), &ParsedResponse))
         {
             Delegate.Broadcast(ParsedResponse);
         }
@@ -357,7 +362,6 @@ private:
 
 private:
     TTuple<FString, FString> GetErrorData(FHttpRequestPtr Request, FHttpResponsePtr Response) const;
-    bool HandleString(FString& IncomeString, bool& LastString) const;
 
     template <typename ResponseType>
     bool ParseStreamRequest(FHttpResponsePtr Response, TArray<ResponseType>& Responses)
@@ -370,14 +374,14 @@ private:
         for (auto& String : StringArray)
         {
             bool LastString{false};
-            if (HandleString(String, LastString))
+            if (UJsonFuncLib::CleanChunkResponseString(String, LastString))
             {
                 if (LastString)
                 {
                     break;
                 }
                 ResponseType ParsedResponse;
-                if (!UOpenAIFuncLib::ParseJSONToStruct(String, &ParsedResponse)) continue;
+                if (!UJsonFuncLib::ParseJSONToStruct(String, &ParsedResponse)) continue;
 
                 Responses.Add(ParsedResponse);
             }

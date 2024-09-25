@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Provider/OpenAIOptional.h"
 #include "EmbeddingTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -45,17 +46,17 @@ struct FEmbeddings
     FString Encoding_Format{"float"};
 
     /**
-      The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 and later models.
-
-      UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-      int32 Dimensions{}; //@todo: optional
+      The number of dimensions the resulting output embeddings should have.
+      Only supported in text-embedding-3 and later models.
     */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalInt Dimensions;
 
     /**
       A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString User;  //@todo: optional
+    FOptionalString User;
 };
 
 ///////////////////////////////////////////////////////
