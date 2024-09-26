@@ -2,10 +2,12 @@
 
 #pragma once
 
-#include "Provider/JsonHelpers/ChatTransforms.h"
+#include "Provider/JsonParsers/ChatParser.h"
 #include "JsonObjectConverter.h"
 #include "FuncLib/JsonFuncLib.h"
 #include "FuncLib/OpenAIFuncLib.h"
+
+using namespace OpenAI;
 
 namespace
 {
@@ -59,7 +61,7 @@ void CleanFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPt
 }
 }  // namespace
 
-FString ChatTransforms::ChatCompletionToJsonRepresentation(const FChatCompletion& ChatCompletion)
+FString ChatParser::ChatCompletionToJsonRepresentation(const FChatCompletion& ChatCompletion)
 {
     TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(ChatCompletion);
     UJsonFuncLib::RemoveEmptyArrays(Json);
@@ -74,7 +76,7 @@ FString ChatTransforms::ChatCompletionToJsonRepresentation(const FChatCompletion
     return TransformedString;
 }
 
-bool ChatTransforms::CleanChunkResponseString(FString& IncomeString, bool& LastString)
+bool ChatParser::CleanChunkResponseString(FString& IncomeString, bool& LastString)
 {
     if (IncomeString.StartsWith("data: "))
     {

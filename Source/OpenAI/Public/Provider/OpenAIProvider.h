@@ -7,7 +7,7 @@
 #include "Delegates.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/JsonFuncLib.h"
-#include "Provider/JsonHelpers/ChatTransforms.h"
+#include "Provider/JsonParsers/ChatParser.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
@@ -296,7 +296,6 @@ private:
     DECLARE_HTTP_CALLBACK(OnListBatchCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
-    bool ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
     void Log(const FString& Info) const;
@@ -380,7 +379,7 @@ private:
         for (auto& String : StringArray)
         {
             bool LastString{false};
-            if (ChatTransforms::CleanChunkResponseString(String, LastString))
+            if (OpenAI::ChatParser::CleanChunkResponseString(String, LastString))
             {
                 if (LastString)
                 {

@@ -1,6 +1,9 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "Provider/OpenAIProvider.h"
+#include "Provider/JsonParsers/ModerationParser.h"
+#include "Provider/JsonParsers/ImageParser.h"
+#include "Provider/JsonParsers/AudioParser.h"
 #include "API/API.h"
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonReader.h"
@@ -407,10 +410,16 @@ void UOpenAIProvider::OnCreateImageCompleted(FHttpRequestPtr Request, FHttpRespo
     if (!Success(Response, WasSuccessful)) return;
 
     FImageResponse ImageResponse;
-    if (ParseImageRequest(Response, ImageResponse))
+    const bool Status = ImageParser::DeserializeResponse(Response->GetContentAsString(), ImageResponse);
+
+    if (!Status || ImageResponse.Data.Num() == 0)
     {
-        CreateImageCompleted.Broadcast(ImageResponse);
+        LogError("Failed to parse image response");
+        LogError(Response->GetContentAsString());
+        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        return;
     }
+    CreateImageCompleted.Broadcast(ImageResponse);
 }
 
 void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -418,10 +427,16 @@ void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpR
     if (!Success(Response, WasSuccessful)) return;
 
     FImageEditResponse ImageEditResponse;
-    if (ParseImageRequest(Response, ImageEditResponse))
+    const bool Status = ImageParser::DeserializeResponse(Response->GetContentAsString(), ImageEditResponse);
+
+    if (!Status || ImageEditResponse.Data.Num() == 0)
     {
-        CreateImageEditCompleted.Broadcast(ImageEditResponse);
+        LogError("Failed to parse image edit response");
+        LogError(Response->GetContentAsString());
+        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        return;
     }
+    CreateImageEditCompleted.Broadcast(ImageEditResponse);
 }
 
 void UOpenAIProvider::OnCreateImageVariationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -429,39 +444,16 @@ void UOpenAIProvider::OnCreateImageVariationCompleted(FHttpRequestPtr Request, F
     if (!Success(Response, WasSuccessful)) return;
 
     FImageVariationResponse ImageVariationResponse;
-    if (ParseImageRequest(Response, ImageVariationResponse))
+    const bool Status = ImageParser::DeserializeResponse(Response->GetContentAsString(), ImageVariationResponse);
+
+    if (!Status || ImageVariationResponse.Data.Num() == 0)
     {
-        CreateImageVariationCompleted.Broadcast(ImageVariationResponse);
-    }
-}
-
-bool UOpenAIProvider::ParseImageRequest(FHttpResponsePtr Response, FImageResponse& ImageResponse)
-{
-    TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-    TSharedPtr<FJsonObject> JsonObject;
-    FJsonSerializer::Deserialize(JsonReader, JsonObject);
-
-    ImageResponse.Created = JsonObject->GetNumberField("created");
-
-    const auto& DataArray = JsonObject->GetArrayField("data");
-    for (const auto& DataElem : DataArray)
-    {
-        FImageObject ImageObject;
-        if (FJsonObjectConverter::JsonObjectToUStruct(DataElem->AsObject().ToSharedRef(), &ImageObject, 0, 0))
-        {
-            ImageResponse.Data.Push(ImageObject);
-        }
-    }
-
-    if (ImageResponse.Data.Num() == 0)
-    {
-        LogError("JSON deserialization error");
+        LogError("Failed to parse image variation response");
         LogError(Response->GetContentAsString());
         RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
-        return false;
+        return;
     }
-
-    return true;
+    CreateImageVariationCompleted.Broadcast(ImageVariationResponse);
 }
 
 void UOpenAIProvider::OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -486,7 +478,7 @@ void UOpenAIProvider::OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResp
 
 void UOpenAIProvider::OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (Response->GetContentAsString().Find("segments") != INDEX_NONE)
+    if (AudioParser::IsVerboseResponse(Response->GetContentAsString()))
     {
         HandleResponse<FAudioTranscriptionVerboseResponse>(Response, WasSuccessful, CreateAudioTranscriptionVerboseCompleted);
     }
@@ -538,53 +530,16 @@ void UOpenAIProvider::OnCreateModerationsCompleted(FHttpRequestPtr Request, FHtt
 {
     if (!Success(Response, WasSuccessful)) return;
 
-    TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-    TSharedPtr<FJsonObject> JsonObject;
-    if (!FJsonSerializer::Deserialize(JsonReader, JsonObject)) return;
-
-    FModerationsResponse ParsedResponse;
-    ParsedResponse.ID = JsonObject->GetStringField("id");
-    ParsedResponse.Model = JsonObject->GetStringField("Model");
-
-    const auto& ResultsObject = JsonObject->GetArrayField("results");
-    for (const auto& ResultObject : ResultsObject)
+    FModerationsResponse ModerationResponse;
+    const bool Status = ModerationParser::DeserializeResponse(Response->GetContentAsString(), ModerationResponse);
+    if (!Status)
     {
-        const auto& CategoriesObject = ResultObject->AsObject()->GetObjectField("categories");
-        FModerationCategories Categories;
-        Categories.Hate = CategoriesObject->GetBoolField("hate");
-        Categories.Hate_Threatening = CategoriesObject->GetBoolField("hate/threatening");
-        Categories.Harassment = CategoriesObject->GetBoolField("harassment");
-        Categories.Harassment_Threatening = CategoriesObject->GetBoolField("harassment/threatening");
-        Categories.Self_Harm = CategoriesObject->GetBoolField("self-harm");
-        Categories.Self_Harm_Intent = CategoriesObject->GetBoolField("self-harm/intent");
-        Categories.Self_Harm_Instructions = CategoriesObject->GetBoolField("self-harm/instructions");
-        Categories.Sexual = CategoriesObject->GetBoolField("sexual");
-        Categories.Sexual_Minors = CategoriesObject->GetBoolField("sexual/minors");
-        Categories.Violence = CategoriesObject->GetBoolField("violence");
-        Categories.Violence_Graphic = CategoriesObject->GetBoolField("violence/graphic");
-
-        const auto& CategoryScoreObject = ResultObject->AsObject()->GetObjectField("category_scores");
-        FModerationCategoryScores CategoryScores;
-        CategoryScores.Hate = CategoryScoreObject->GetNumberField("hate");
-        CategoryScores.Hate_Threatening = CategoryScoreObject->GetNumberField("hate/threatening");
-        CategoryScores.Harassment = CategoriesObject->GetBoolField("harassment");
-        CategoryScores.Harassment_Threatening = CategoriesObject->GetBoolField("harassment/threatening");
-        CategoryScores.Self_Harm = CategoryScoreObject->GetNumberField("self-harm");
-        CategoryScores.Self_Harm_Intent = CategoriesObject->GetBoolField("self-harm/intent");
-        CategoryScores.Self_Harm_Instructions = CategoriesObject->GetBoolField("self-harm/instructions");
-        CategoryScores.Sexual = CategoryScoreObject->GetNumberField("sexual");
-        CategoryScores.Sexual_Minors = CategoryScoreObject->GetNumberField("sexual/minors");
-        CategoryScores.Violence = CategoryScoreObject->GetNumberField("violence");
-        CategoryScores.Violence_Graphic = CategoryScoreObject->GetNumberField("violence/graphic");
-
-        FModerationResults ModerationResults;
-        ModerationResults.Categories = Categories;
-        ModerationResults.Category_Scores = CategoryScores;
-        ModerationResults.Flagged = ResultObject->AsObject()->GetBoolField("flagged");
-        ParsedResponse.Results.Add(ModerationResults);
+        LogError("Failed to parse moderations response");
+        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        return;
     }
 
-    CreateModerationsCompleted.Broadcast(ParsedResponse);
+    CreateModerationsCompleted.Broadcast(ModerationResponse);
 }
 
 void UOpenAIProvider::OnCreateFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -755,7 +710,7 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     HttpRequest->SetURL(URL);
     HttpRequest->SetVerb(Method);
 
-    const FString RequestBodyStr = ChatTransforms::ChatCompletionToJsonRepresentation(ChatCompletion);
+    const FString RequestBodyStr = ChatParser::ChatCompletionToJsonRepresentation(ChatCompletion);
     Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
     HttpRequest->SetContentAsString(RequestBodyStr);
 
