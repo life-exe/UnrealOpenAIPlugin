@@ -12,6 +12,7 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Images (DALL·E 3, DALL·E 2)](https://platform.openai.com/docs/api-reference/images)
  - [Vision](https://platform.openai.com/docs/guides/vision)
  - [Embeddings](https://platform.openai.com/docs/api-reference/embeddings)
+ - [Batch](https://platform.openai.com/docs/api-reference/batch)
  - [Speech](https://platform.openai.com/docs/api-reference/audio/createSpeech)
  - [Audio](https://platform.openai.com/docs/api-reference/audio)
  - [Files](https://platform.openai.com/docs/api-reference/files)
