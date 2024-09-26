@@ -395,7 +395,7 @@ struct FLogProb
       Otherwise, the value -9999.0 is used to signify that the token is very unlikely.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Logprob;
+    int32 Logprob{};
 
     /**
       A list of integers representing the UTF-8 bytes

@@ -77,7 +77,7 @@ struct FOpenAIModel
       The model identifier, which can be referenced in the API endpoints.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString ID{};
+    FString ID;
 
     /**
       The Unix timestamp (in seconds) when the model was created.
@@ -89,13 +89,13 @@ struct FOpenAIModel
       The object type, which is always "model".
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Object{};
+    FString Object;
 
     /**
       The organization that owns the model.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Owned_By{};
+    FString Owned_By;
 };
 
 USTRUCT(BlueprintType)
@@ -104,7 +104,7 @@ struct FListModelsResponse
     GENERATED_BODY()
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Object{};
+    FString Object;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<FOpenAIModel> Data;
@@ -114,4 +114,19 @@ USTRUCT(BlueprintType)
 struct FRetrieveModelResponse : public FOpenAIModel
 {
     GENERATED_BODY()
+};
+
+USTRUCT(BlueprintType)
+struct FDeleteFineTunedModelResponse
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Deleted;
 };

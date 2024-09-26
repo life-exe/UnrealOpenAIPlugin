@@ -29,8 +29,6 @@ public:
     static void RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject);
     static void ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& JsonArray);
 
-    static bool CleanChunkResponseString(FString& IncomeString, bool& LastString);
-
     // helpers for OpeanAI 'functions'
     static FString MakeFunctionsString(const TSharedPtr<FJsonObject>& Json);
     static FString CleanUpFunctionsObject(const FString& Input);

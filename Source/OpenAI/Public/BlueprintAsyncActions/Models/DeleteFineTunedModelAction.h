@@ -3,23 +3,24 @@
 #pragma once
 
 #include "Kismet/BlueprintAsyncActionBase.h"
+#include "Provider/Types/ModelTypes.h"
 #include "Provider/Types/FineTuneTypes.h"
 #include "Provider/Types/CommonTypes.h"
-#include "ListFineTuningEventsAction.generated.h"
+#include "DeleteFineTunedModelAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnListFineTuningEvents, const FListFineTuningEventsResponse&, Response, const FOpenAIError&, RawError);
+    FOnDeleteFineTunedModel, const FDeleteFineTunedModelResponse&, Response, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
 UCLASS()
-class UListFineTuningEventsAction : public UBlueprintAsyncActionBase
+class UDeleteFineTunedModelAction : public UBlueprintAsyncActionBase
 {
     GENERATED_BODY()
 
 public:
     UPROPERTY(BlueprintAssignable)
-    FOnListFineTuningEvents OnCompleted;
+    FOnDeleteFineTunedModel OnCompleted;
 
     virtual void Activate() override;
 
@@ -29,16 +30,15 @@ private:
      * If this functionality is not required, this parameter can be left blank.
      */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | FineTunes")
-    static UListFineTuningEventsAction* ListFineTuningEvents(
-        const FString& FineTuningID, const FOpenAIAuth& Auth, const FString& URLOverride);
+    static UDeleteFineTunedModelAction* DeleteFineTuneModel(const FString& ModelID, const FOpenAIAuth& Auth, const FString& URLOverride);
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnListFineTuningEventsCompleted(const FListFineTuningEventsResponse& Response);
+    void OnDeleteFineTunedModelCompleted(const FDeleteFineTunedModelResponse& Response);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:
-    FString FineTuningID;
+    FString ModelID;
     FOpenAIAuth Auth;
     FString URLOverride{};
 };

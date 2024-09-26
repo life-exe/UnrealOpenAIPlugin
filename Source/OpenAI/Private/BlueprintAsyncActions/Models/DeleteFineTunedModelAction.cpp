@@ -1,6 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
-#include "BlueprintAsyncActions/FineTunes/DeleteFineTunedModelAction.h"
+#include "BlueprintAsyncActions/Models/DeleteFineTunedModelAction.h"
 #include "Provider/OpenAIProvider.h"
 #include "API/API.h"
 
@@ -23,7 +23,7 @@ void UDeleteFineTunedModelAction::Activate()
     Provider->DeleteFineTunedModel(ModelID, Auth);
 }
 
-void UDeleteFineTunedModelAction::OnDeleteFineTunedModelCompleted(const FDeleteFineTuneResponse& Response)
+void UDeleteFineTunedModelAction::OnDeleteFineTunedModelCompleted(const FDeleteFineTunedModelResponse& Response)
 {
     OnCompleted.Broadcast(Response, {});
 }

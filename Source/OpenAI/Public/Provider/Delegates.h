@@ -13,6 +13,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequestError, const FString& /* URL */, 
 // models
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListModelsCompleted, const FListModelsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveModelCompleted, const FRetrieveModelResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeleteFineTunedModelCompleted, const FDeleteFineTunedModelResponse&);
 // chat
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateCompletionCompleted, const FCompletionResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateCompletionStreamCompleted, const TArray<FCompletionStreamResponse>&);
@@ -38,13 +39,13 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeleteFileCompleted, const FDeleteFileRes
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFileCompleted, const FRetrieveFileResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFileContentCompleted, const FRetrieveFileContentResponse&);
 // fine tunes
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuneEventsCompleted, const FFineTuneEventsResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeleteFineTunedModelCompleted, const FDeleteFineTuneResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningJobsCompleted, const FListFineTuningJobsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateFineTuningJobCompleted, const FFineTuningJobObjectResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningJobsCompleted, const FListFineTuningJobsResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningEventsCompleted, const FListFineTuningEventsResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningCheckpointsCompleted, const FListFineTuningCheckpointsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFineTuningJobCompleted, const FFineTuningJobObjectResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCancelFineTuningJobCompleted, const FFineTuningJobObjectResponse&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningEventsCompleted, const FFineTuningJobEventResponse&);
+
 // moderations
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateModerationsCompleted, const FModerationsResponse&);
 // batches

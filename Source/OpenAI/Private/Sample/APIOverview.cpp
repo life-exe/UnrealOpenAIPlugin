@@ -21,7 +21,7 @@ AAPIOverview::AAPIOverview()
 
     ActionMap.Add(EAPIOverviewAction::ListModels, [&]() { ListModels(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveModel, [&]() { RetrieveModel(); });
-    ActionMap.Add(EAPIOverviewAction::DeleteFineTuneModel, [&]() { DeleteFineTuneModel(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteFineTunedModel, [&]() { DeleteFinedTuneModel(); });
     ActionMap.Add(EAPIOverviewAction::CreateCompletionRequest, [&]() { CreateCompletionRequest(); });
     ActionMap.Add(EAPIOverviewAction::CreateChatCompletionRequest, [&]() { CreateChatCompletionRequest(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageDALLE2, [&]() { CreateImageDALLE2(); });
@@ -40,10 +40,11 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::RetrieveFileContent, [&]() { RetrieveFileContent(); });
     ActionMap.Add(EAPIOverviewAction::ListFiles, [&]() { ListFiles(); });
     ActionMap.Add(EAPIOverviewAction::ListFineTuningJobs, [&]() { ListFineTuningJobs(); });
+    ActionMap.Add(EAPIOverviewAction::ListFineTuningEvents, [&]() { ListFineTuningEvents(); });
+    ActionMap.Add(EAPIOverviewAction::ListFineTuningCheckpoints, [&]() { ListFineTuningCheckpoints(); });
     ActionMap.Add(EAPIOverviewAction::CreateFineTuningJob, [&]() { CreateFineTuningJob(); });
     ActionMap.Add(EAPIOverviewAction::RetriveFineTuningJob, [&]() { RetriveFineTuningJob(); });
     ActionMap.Add(EAPIOverviewAction::CancelFineTuningJob, [&]() { CancelFineTuningJob(); });
-    ActionMap.Add(EAPIOverviewAction::ListFineTuningEvents, [&]() { ListFineTuningEvents(); });
     ActionMap.Add(EAPIOverviewAction::ListBatch, [&]() { ListBatch(); });
     ActionMap.Add(EAPIOverviewAction::CreateBatch, [&]() { CreateBatch(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveBatch, [&]() { RetrieveBatch(); });
@@ -90,15 +91,15 @@ void AAPIOverview::RetrieveModel()
     Provider->RetrieveModel(ModelName, Auth);
 }
 
-void AAPIOverview::DeleteFineTuneModel()
+void AAPIOverview::DeleteFinedTuneModel()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnDeleteFineTunedModelCompleted().AddLambda(
-        [](const FDeleteFineTuneResponse& Response)
+        [](const FDeleteFineTunedModelResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOG(LogAPIOverview, Display, TEXT("DeleteFineTuneModel request completed!"));
+            UE_LOG(LogAPIOverview, Display, TEXT("DeleteFineTunedModel request completed!"));
         });
 
     const FString ModelID{"curie:ft-lifeexe-2023-06-12-19-57-37"};
@@ -516,9 +517,39 @@ void AAPIOverview::CreateFineTuningJob()
         });
 
     FFineTuningJob FineTuningJob;
-    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O);
+    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
     FineTuningJob.Training_File = "file-xxxxxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->CreateFineTuningJob(FineTuningJob, Auth);
+}
+
+void AAPIOverview::ListFineTuningEvents()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListFineTuningEventsCompleted().AddLambda(
+        [&](const FListFineTuningEventsResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningEvents request completed!");
+        });
+
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->ListFineTuningEvents(JobID, Auth);
+}
+
+void AAPIOverview::ListFineTuningCheckpoints()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListFineTuningCheckpointsCompleted().AddLambda(
+        [&](const FListFineTuningCheckpointsResponse& Response)
+        {
+            // decide what to print from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningCheckpoints request completed!");
+        });
+
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->ListFineTuningCheckpoints(JobID, Auth);
 }
 
 void AAPIOverview::RetriveFineTuningJob()
@@ -549,21 +580,6 @@ void AAPIOverview::CancelFineTuningJob()
 
     const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
     Provider->CancelFineTuningJob(JobID, Auth);
-}
-
-void AAPIOverview::ListFineTuningEvents()
-{
-    Provider->SetLogEnabled(true);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnListFineTuningEventsCompleted().AddLambda(
-        [&](const FFineTuningJobEventResponse& Response)
-        {
-            // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningEvents request completed!");
-        });
-
-    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxx"};
-    Provider->ListFineTuningEvents(JobID, Auth);
 }
 
 void AAPIOverview::CreateBatch()

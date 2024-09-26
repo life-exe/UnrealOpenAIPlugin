@@ -14,7 +14,7 @@ enum class EAPIOverviewAction : uint8
 {
     ListModels = 0,
     RetrieveModel,
-    DeleteFineTuneModel,
+    DeleteFineTunedModel,
     CreateCompletionRequest,
     CreateChatCompletionRequest,
     CreateImageDALLE2,
@@ -32,11 +32,12 @@ enum class EAPIOverviewAction : uint8
     ListFiles,
     RetrieveFile,
     RetrieveFileContent,
-    ListFineTuningJobs,
     CreateFineTuningJob,
+    ListFineTuningJobs,
+    ListFineTuningEvents,
+    ListFineTuningCheckpoints,
     RetriveFineTuningJob,
     CancelFineTuningJob,
-    ListFineTuningEvents,
     ListBatch,
     CreateBatch,
     RetrieveBatch,
@@ -68,7 +69,7 @@ private:
 
     void ListModels();
     void RetrieveModel();
-    void DeleteFineTuneModel();
+    void DeleteFinedTuneModel();
 
     void CreateCompletionRequest();
     void CreateChatCompletionRequest();
@@ -92,11 +93,12 @@ private:
     void RetrieveFile();
     void RetrieveFileContent();
 
-    void ListFineTuningJobs();
     void CreateFineTuningJob();
+    void ListFineTuningJobs();
+    void ListFineTuningEvents();
+    void ListFineTuningCheckpoints();
     void RetriveFineTuningJob();
     void CancelFineTuningJob();
-    void ListFineTuningEvents();
 
     void ListBatch();
     void CreateBatch();

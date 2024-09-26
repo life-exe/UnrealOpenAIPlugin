@@ -7,6 +7,7 @@
 #include "Delegates.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/JsonFuncLib.h"
+#include "Provider/JsonHelpers/ChatTransforms.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
@@ -39,6 +40,12 @@ public:
       https://platform.openai.com/docs/api-reference/models/retrieve
     */
     void RetrieveModel(const FString& ModelName, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a fine-tuned model. You must have the Owner role in your organization.
+      https://platform.openai.com/docs/api-reference/models/delete
+    */
+    void DeleteFineTunedModel(const FString& ModelID, const FOpenAIAuth& Auth);
 
     /**
       Creates a completion for the provided prompt and parameters.
@@ -127,16 +134,17 @@ public:
     void RetrieveFileContent(const FString& FileID, const FOpenAIAuth& Auth);
 
     /**
-      Delete a fine-tuned model. You must have the Owner role in your organization.
-      https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
-    */
-    void DeleteFineTunedModel(const FString& ModelID, const FOpenAIAuth& Auth);
-
-    /**
       Classifies if text violates OpenAI's Content Policy
       https://platform.openai.com/docs/api-reference/moderations/create
     */
     void CreateModerations(const FModerations& Moderations, const FOpenAIAuth& Auth);
+
+    /**
+      Creates a job that fine-tunes a specified model from a given dataset.
+      Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
+      https://platform.openai.com/docs/api-reference/fine-tuning/create
+    */
+    void CreateFineTuningJob(const FFineTuningJob& FineTuningJob, const FOpenAIAuth& Auth);
 
     /**
       List your organization's fine-tuning jobs.
@@ -145,11 +153,18 @@ public:
     void ListFineTuningJobs(const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
 
     /**
-      Creates a job that fine-tunes a specified model from a given dataset.
-      Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.
-      https://platform.openai.com/docs/api-reference/fine-tuning/create
+      Get status updates for a fine-tuning job.
+      https://platform.openai.com/docs/api-reference/fine-tuning/list-events
     */
-    void CreateFineTuningJob(const FFineTuningJob& FineTuningJob, const FOpenAIAuth& Auth);
+    void ListFineTuningEvents(
+        const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
+
+    /**
+      Get status updates for a fine-tuning job.
+      https://platform.openai.com/docs/api-reference/fine-tuning/list-events
+    */
+    void ListFineTuningCheckpoints(
+        const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
 
     /**
       Get info about a fine-tuning job.
@@ -162,13 +177,6 @@ public:
       https://platform.openai.com/docs/api-reference/fine-tuning/cancel
     */
     void CancelFineTuningJob(const FString& FineTuneID, const FOpenAIAuth& Auth);
-
-    /**
-      Get status updates for a fine-tuning job.
-      https://platform.openai.com/docs/api-reference/fine-tuning/list-events
-    */
-    void ListFineTuningEvents(
-        const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FFineTuningQueryParameters& FineTuningQueryParameters = {});
 
     /**
       Create large batches of API requests for asynchronous processing.
@@ -233,14 +241,14 @@ public:
     DEFINE_EVENT_GETTER(DeleteFileCompleted)
     DEFINE_EVENT_GETTER(RetrieveFileCompleted)
     DEFINE_EVENT_GETTER(RetrieveFileContentCompleted)
-    DEFINE_EVENT_GETTER(ListFineTuneEventsCompleted)
+    DEFINE_EVENT_GETTER(CreateFineTuningJobCompleted)
+    DEFINE_EVENT_GETTER(ListFineTuningJobsCompleted)
+    DEFINE_EVENT_GETTER(ListFineTuningEventsCompleted)
+    DEFINE_EVENT_GETTER(ListFineTuningCheckpointsCompleted)
     DEFINE_EVENT_GETTER(DeleteFineTunedModelCompleted)
     DEFINE_EVENT_GETTER(CreateModerationsCompleted)
-    DEFINE_EVENT_GETTER(ListFineTuningJobsCompleted)
-    DEFINE_EVENT_GETTER(CreateFineTuningJobCompleted)
     DEFINE_EVENT_GETTER(RetrieveFineTuningJobCompleted)
     DEFINE_EVENT_GETTER(CancelFineTuningJobCompleted)
-    DEFINE_EVENT_GETTER(ListFineTuningEventsCompleted)
     DEFINE_EVENT_GETTER(ListBatchCompleted)
     DEFINE_EVENT_GETTER(CreateBatchCompleted)
     DEFINE_EVENT_GETTER(RetrieveBatchCompleted)
@@ -274,14 +282,14 @@ private:
     DECLARE_HTTP_CALLBACK(OnDeleteFileCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveFileCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveFileContentCompleted)
-    DECLARE_HTTP_CALLBACK(OnListFineTuneEventsCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteFineTunedModelCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateModerationsCompleted)
-    DECLARE_HTTP_CALLBACK(OnListFineTuningJobsCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateFineTuningJobCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFineTuningJobsCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFineTuningEventsCompleted)
+    DECLARE_HTTP_CALLBACK(OnListFineTuningCheckpointsCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveFineTuningJobCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelFineTuningJobCompleted)
-    DECLARE_HTTP_CALLBACK(OnListFineTuningEventsCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelBatchCompleted)
@@ -304,14 +312,12 @@ private:
         return RequestBodyStr;
     }
 
+    FHttpRequestRef MakeRequestHeaders(const FOpenAIAuth& Auth) const;
+
     template <typename OutStructType>
     FHttpRequestRef MakeRequest(const OutStructType& OutStruct, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
     {
-        auto HttpRequest = CreateRequest();
-        HttpRequest->SetHeader("Content-Type", "application/json");
-        HttpRequest->SetHeader("Authorization", FString("Bearer ").Append(Auth.APIKey));
-        HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
-        HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
+        auto HttpRequest = MakeRequestHeaders(Auth);
         HttpRequest->SetURL(URL);
         HttpRequest->SetVerb(Method);
 
@@ -374,7 +380,7 @@ private:
         for (auto& String : StringArray)
         {
             bool LastString{false};
-            if (UJsonFuncLib::CleanChunkResponseString(String, LastString))
+            if (ChatTransforms::CleanChunkResponseString(String, LastString))
             {
                 if (LastString)
                 {
@@ -441,6 +447,4 @@ private:
             RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
         }
     }
-
-    void CleanChatCompletionFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPtr<FJsonObject>& Json) const;
 };

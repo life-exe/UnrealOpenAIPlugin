@@ -17,13 +17,13 @@ UListFineTuningEventsAction* UListFineTuningEventsAction::ListFineTuningEvents(
 void UListFineTuningEventsAction::Activate()
 {
     auto* Provider = NewObject<UOpenAIProvider>();
-    Provider->OnListFineTuneEventsCompleted().AddUObject(this, &ThisClass::OnListFineTuningEventsCompleted);
+    Provider->OnListFineTuningEventsCompleted().AddUObject(this, &ThisClass::OnListFineTuningEventsCompleted);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     TryToOverrideURL(Provider);
     Provider->ListFineTuningEvents(FineTuningID, Auth);
 }
 
-void UListFineTuningEventsAction::OnListFineTuningEventsCompleted(const FFineTuneEventsResponse& Response)
+void UListFineTuningEventsAction::OnListFineTuningEventsCompleted(const FListFineTuningEventsResponse& Response)
 {
     OnCompleted.Broadcast(Response, {});
 }

@@ -7,13 +7,12 @@
 #include "Provider/OpenAIProvider.h"
 #include "Provider/Types/ModelTypes.h"
 #include "Provider/Types/CommonTypes.h"
-#include "Provider/Types/ModelTypes.h"
+#include "Provider/Types/FineTuneTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
-#include "Algo/ForEach.h"
 #include "TestUtils.h"
 #include "Logging/StructuredLog.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProviderActual, All, All);
+DEFINE_LOG_CATEGORY_STATIC(LogOpenAIFineTuneAPI, All, All);
 
 BEGIN_DEFINE_SPEC(FOpenAIProviderActual, "OpenAI.Provider",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
@@ -28,7 +27,6 @@ namespace
 {
 const FString JobID = "ftjob-HwfVFJki16yQveB1iwPqBaeF";
 const FString FileID = "file-xm3aonDNpFhE4CMnzUdgoKUU";
-const int32 FileBytes = 3138;
 
 struct FFineTunePayload
 {
@@ -42,7 +40,7 @@ void TestFineTuningJob(FAutomationTestBase* Test, const FFineTuningJobObjectResp
 {
     if (!Test)
     {
-        UE_LOGFMT(LogOpenAIProviderActual, Error, "Automation test object is invalid");
+        UE_LOGFMT(LogOpenAIFineTuneAPI, Error, "Automation test object is invalid");
         return;
     }
 
@@ -143,20 +141,45 @@ void FOpenAIProviderActual::Define()
             It("Fine-tuning.CancelFineTuningJobShouldResponseCorrectly",
                 [this]()
                 {
-                    OpenAIProvider->OnCancelFineTuningJobCompleted().AddLambda(
-                        [&](const FFineTuningJobObjectResponse& Response) { RequestCompleted = true; });
+                    OpenAIProvider->OnCreateFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was created: {0}", Response.ID);
+                            OpenAIProvider->CancelFineTuningJob(Response.ID, Auth);
+                        });
 
-                    OpenAIProvider->CancelFineTuningJob(JobID, Auth);
+                    // start new fine tune job and then cancel it
+                    FFineTuningJob FineTuningJob;
+                    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
+                    FineTuningJob.Training_File = FileID;
+                    OpenAIProvider->CreateFineTuningJob(FineTuningJob, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+
+                    OpenAIProvider->OnCancelFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was canceled: {0}", Response.ID);
+                            RequestCompleted = true;
+                        });
                 });
 
             It("Fine-tuning.ListFineTuningEventsShouldResponseCorrectly",
                 [this]()
                 {
                     OpenAIProvider->OnListFineTuningEventsCompleted().AddLambda(
-                        [&](const FFineTuningJobEventResponse& Response) { RequestCompleted = true; });
+                        [&](const FListFineTuningEventsResponse& Response) { RequestCompleted = true; });
 
                     OpenAIProvider->ListFineTuningEvents(JobID, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Fine-tuning.ListFineTuningCheckpointsShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnListFineTuningCheckpointsCompleted().AddLambda(
+                        [&](const FListFineTuningCheckpointsResponse& Response) { RequestCompleted = true; });
+
+                    OpenAIProvider->ListFineTuningCheckpoints(JobID, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
         });

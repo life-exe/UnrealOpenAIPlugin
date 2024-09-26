@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Provider/JsonHelpers/ChatStructTransform.h"
+#include "Provider/JsonHelpers/ChatTransforms.h"
 #include "JsonObjectConverter.h"
 #include "FuncLib/JsonFuncLib.h"
 #include "FuncLib/OpenAIFuncLib.h"
@@ -59,7 +59,7 @@ void CleanFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPt
 }
 }  // namespace
 
-FString ChatStructTransform::StructToJsonString(const FChatCompletion& ChatCompletion)
+FString ChatTransforms::ChatCompletionToJsonRepresentation(const FChatCompletion& ChatCompletion)
 {
     TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(ChatCompletion);
     UJsonFuncLib::RemoveEmptyArrays(Json);
@@ -72,4 +72,21 @@ FString ChatStructTransform::StructToJsonString(const FChatCompletion& ChatCompl
     TransformedString = UJsonFuncLib::PostprocessOptionalValues(TransformedString);
 
     return TransformedString;
+}
+
+bool ChatTransforms::CleanChunkResponseString(FString& IncomeString, bool& LastString)
+{
+    if (IncomeString.StartsWith("data: "))
+    {
+        IncomeString.RemoveFromStart("data: ");
+    }
+
+    // igone role chunck // @todo handle this case in another struct
+    // if (IncomeString.Find("role") != INDEX_NONE) return false;
+    if (IncomeString.Equals("[DONE]"))
+    {
+        LastString = true;
+    }
+
+    return true;
 }

@@ -1,6 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
-#include "BlueprintAsyncActions/RetrieveModelAction.h"
+#include "BlueprintAsyncActions/Models/RetrieveModelAction.h"
 #include "Provider/OpenAIProvider.h"
 #include "API/API.h"
 

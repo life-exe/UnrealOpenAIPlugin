@@ -217,23 +217,6 @@ void UJsonFuncLib::ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& JsonAr
     }
 }
 
-bool UJsonFuncLib::CleanChunkResponseString(FString& IncomeString, bool& LastString)
-{
-    if (IncomeString.StartsWith("data: "))
-    {
-        IncomeString.RemoveFromStart("data: ");
-    }
-
-    // igone role chunck // @todo handle this case in another struct
-    // if (IncomeString.Find("role") != INDEX_NONE) return false;
-    if (IncomeString.Equals("[DONE]"))
-    {
-        LastString = true;
-    }
-
-    return true;
-}
-
 void UJsonFuncLib::RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject)
 {
     TMap<FString, TSharedPtr<FJsonValue>>& JsonValues = JsonObject->Values;
