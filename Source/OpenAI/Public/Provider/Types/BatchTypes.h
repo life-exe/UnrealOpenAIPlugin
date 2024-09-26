@@ -297,7 +297,7 @@ struct FOpenAIBatch
       64 characters long and values can be a maxium of 512 characters long.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    TMap<FString, FString> metadata;
+    TMap<FString, FString> Metadata;
 };
 
 USTRUCT(BlueprintType)

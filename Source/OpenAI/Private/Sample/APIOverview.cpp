@@ -590,11 +590,11 @@ void AAPIOverview::CreateBatch()
         [&](const FCreateBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "CreateBatchResponse request completed, id={0}", Response.Id);
+            UE_LOGFMT(LogAPIOverview, Display, "CreateBatch request completed, id={0}", Response.Id);
         });
 
     FCreateBatch Batch;
-    Batch.Input_File_Id = "file-xxxxxxxxxxxxxxxxxxxxxxxx";
+    Batch.Input_File_Id = "batch_xxxxxxxxxxxxxxxxxxxxxxxx";
     Batch.Endpoint = UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions);
     Batch.Completion_Window = UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow::Window_24h);
     Batch.Metadata.Add("purpose", "plugin test");
@@ -610,7 +610,7 @@ void AAPIOverview::ListBatch()
         [&](const FListBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "ListBatchResponse request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "ListBatch request completed!");
         });
     FListBatch ListBatch;
     ListBatch.Limit.Set(20);
@@ -625,9 +625,9 @@ void AAPIOverview::RetrieveBatch()
         [&](const FRetrieveBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "RetrieveBatchResponse request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "RetrieveBatch request completed!");
         });
-    const FString BatchId = "batchId-xxxxxxxxxxxxxxxxxxxxxxxx";
+    const FString BatchId = "batch_xxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->RetrieveBatch(BatchId, Auth);
 }
 
@@ -639,9 +639,9 @@ void AAPIOverview::CancelBatch()
         [&](const FCancelBatchResponse& Response)
         {
             // decide what to print from the struct by yourself (=
-            UE_LOGFMT(LogAPIOverview, Display, "CancelBatchResponse request completed!");
+            UE_LOGFMT(LogAPIOverview, Display, "CancelBatch request completed!");
         });
-    const FString BatchId = "batchId-xxxxxxxxxxxxxxxxxxxxxxxx";
+    const FString BatchId = "batch_xxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->CancelBatch(BatchId, Auth);
 }
 
