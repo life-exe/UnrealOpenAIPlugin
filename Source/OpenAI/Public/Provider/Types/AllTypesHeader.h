@@ -12,5 +12,6 @@
 #include "Provider/Types/Chat/ChatCompletionTypes.h"
 #include "Provider/Types/Chat/ChatCompletionChunkTypes.h"
 #include "Provider/Types/EmbeddingTypes.h"
+#include "Provider/Types/UploadTypes.h"
 
 #include "Provider/Types/Legacy/CompletionTypes.h"

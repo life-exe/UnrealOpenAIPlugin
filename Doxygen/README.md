@@ -16,6 +16,7 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Speech](https://platform.openai.com/docs/api-reference/audio/createSpeech)
  - [Audio](https://platform.openai.com/docs/api-reference/audio)
  - [Files](https://platform.openai.com/docs/api-reference/files)
+ - [Uploads](https://platform.openai.com/docs/api-reference/uploads)
  - [Moderations](https://platform.openai.com/docs/api-reference/moderations)
  - [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning)
  - [Functions](https://platform.openai.com/docs/guides/function-calling)

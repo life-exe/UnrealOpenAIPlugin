@@ -358,6 +358,48 @@ void UOpenAIProvider::ListBatch(const FListBatch& ListBatch, const FOpenAIAuth& 
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateUpload(const FCreateUpload& CreateUpload, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateUpload, API->Uploads(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateUploadCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::AddUploadPart(const FString& UploadId, const FAddUploadPart& AddUploadPart, const FOpenAIAuth& Auth)
+{
+    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
+    auto HttpRequest = CreateRequest();
+    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
+    const FString URL = API->Uploads().Append("/").Append(UploadId).Append("/parts");
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetVerb("POST");
+
+    TArray<uint8> RequestContent;
+    RequestContent.Append(HttpHelper::AddMIMEFile(AddUploadPart.Data, "data", BeginBoundary));
+    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+
+    HttpRequest->SetContent(RequestContent);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnAddUploadPartCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CompleteUpload(const FString& UploadId, const FCompleteUpload& CompleteUpload, const FOpenAIAuth& Auth)
+{
+    const FString URL = API->Uploads().Append("/").Append(UploadId).Append("/complete");
+    auto HttpRequest = MakeRequest(CompleteUpload, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCompleteUploadCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CancelUpload(const FString& UploadId, const FOpenAIAuth& Auth)
+{
+    const FString URL = API->Uploads().Append("/").Append(UploadId).Append("/cancel");
+    auto HttpRequest = MakeRequest(URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCancelUploadCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 void UOpenAIProvider::OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -590,6 +632,26 @@ void UOpenAIProvider::OnCancelBatchCompleted(FHttpRequestPtr Request, FHttpRespo
 void UOpenAIProvider::OnListBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FListBatchResponse>(Response, WasSuccessful, ListBatchCompleted);
+}
+
+void UOpenAIProvider::OnCreateUploadCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FUploadObjectResponse>(Response, WasSuccessful, CreateUploadCompleted);
+}
+
+void UOpenAIProvider::OnAddUploadPartCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FUploadPartObjectResponse>(Response, WasSuccessful, AddUploadPartCompleted);
+}
+
+void UOpenAIProvider::OnCompleteUploadCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FUploadObjectResponse>(Response, WasSuccessful, CompleteUploadCompleted);
+}
+
+void UOpenAIProvider::OnCancelUploadCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FUploadObjectResponse>(Response, WasSuccessful, CancelUploadCompleted);
 }
 
 ///////////////////////////// HELPER FUNCTIONS /////////////////////////////

@@ -103,6 +103,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI | Batch")
     static FString OpenAIBatchCompletionWindowToString(EBatchCompletionWindow BatchCompletionWindow);
 
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Upload")
+    static FString OpenAIUploadStatusToString(EUploadStatus UploadStatus);
+
     // common
     UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
     static FString OpenAIRoleToString(ERole Role);

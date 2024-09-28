@@ -49,6 +49,10 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::CreateBatch, [&]() { CreateBatch(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveBatch, [&]() { RetrieveBatch(); });
     ActionMap.Add(EAPIOverviewAction::CancelBatch, [&]() { CancelBatch(); });
+    ActionMap.Add(EAPIOverviewAction::CreateUpload, [&]() { CreateUpload(); });
+    ActionMap.Add(EAPIOverviewAction::AddUploadPart, [&]() { AddUploadPart(); });
+    ActionMap.Add(EAPIOverviewAction::CompleteUpload, [&]() { CompleteUpload(); });
+    ActionMap.Add(EAPIOverviewAction::CancelUpload, [&]() { CancelUpload(); });
     ActionMap.Add(EAPIOverviewAction::SetYourOwnAPI, [&]() { SetYourOwnAPI(); });
 }
 
@@ -98,7 +102,7 @@ void AAPIOverview::DeleteFinedTuneModel()
     Provider->OnDeleteFineTunedModelCompleted().AddLambda(
         [](const FDeleteFineTunedModelResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOG(LogAPIOverview, Display, TEXT("DeleteFineTunedModel request completed!"));
         });
 
@@ -312,7 +316,7 @@ void AAPIOverview::CreateEmbeddings()
     Provider->OnCreateEmbeddingsCompleted().AddLambda(
         [](const FEmbeddingsResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "CreateEmbeddings request completed!");
         });
 
@@ -418,7 +422,7 @@ void AAPIOverview::UploadFile()
     Provider->OnUploadFileCompleted().AddLambda(
         [](const FUploadFileResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "UploadFile request completed! {0}", Response.ID);
         });
 
@@ -439,7 +443,7 @@ void AAPIOverview::DeleteFile()
     Provider->OnDeleteFileCompleted().AddLambda(
         [](const FDeleteFileResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "DeleteFile request completed!");
         });
 
@@ -498,7 +502,7 @@ void AAPIOverview::ListFineTuningJobs()
     Provider->OnListFineTuningJobsCompleted().AddLambda(
         [](const FListFineTuningJobsResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningJobs request completed!");
         });
 
@@ -512,7 +516,7 @@ void AAPIOverview::CreateFineTuningJob()
     Provider->OnCreateFineTuningJobCompleted().AddLambda(
         [](const FFineTuningJobObjectResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "CreateFineTuningJob request completed!");
         });
 
@@ -529,7 +533,7 @@ void AAPIOverview::ListFineTuningEvents()
     Provider->OnListFineTuningEventsCompleted().AddLambda(
         [&](const FListFineTuningEventsResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningEvents request completed!");
         });
 
@@ -544,7 +548,7 @@ void AAPIOverview::ListFineTuningCheckpoints()
     Provider->OnListFineTuningCheckpointsCompleted().AddLambda(
         [&](const FListFineTuningCheckpointsResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "ListFineTuningCheckpoints request completed!");
         });
 
@@ -559,7 +563,7 @@ void AAPIOverview::RetriveFineTuningJob()
     Provider->OnRetrieveFineTuningJobCompleted().AddLambda(
         [](const FFineTuningJobObjectResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "RetriveFineTuningJob request completed!");
         });
 
@@ -574,7 +578,7 @@ void AAPIOverview::CancelFineTuningJob()
     Provider->OnCancelFineTuningJobCompleted().AddLambda(
         [&](const FFineTuningJobObjectResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "CancelFineTuningJob request completed!");
         });
 
@@ -589,7 +593,7 @@ void AAPIOverview::CreateBatch()
     Provider->OnCreateBatchCompleted().AddLambda(
         [&](const FCreateBatchResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "CreateBatch request completed, id={0}", Response.Id);
         });
 
@@ -609,7 +613,7 @@ void AAPIOverview::ListBatch()
     Provider->OnListBatchCompleted().AddLambda(
         [&](const FListBatchResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "ListBatch request completed!");
         });
     FListBatch ListBatch;
@@ -624,7 +628,7 @@ void AAPIOverview::RetrieveBatch()
     Provider->OnRetrieveBatchCompleted().AddLambda(
         [&](const FRetrieveBatchResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "RetrieveBatch request completed!");
         });
     const FString BatchId = "batch_xxxxxxxxxxxxxxxxxxxxxxxx";
@@ -638,11 +642,84 @@ void AAPIOverview::CancelBatch()
     Provider->OnCancelBatchCompleted().AddLambda(
         [&](const FCancelBatchResponse& Response)
         {
-            // decide what to print from the struct by yourself (=
+            // decide what to use from the struct by yourself (= (=
             UE_LOGFMT(LogAPIOverview, Display, "CancelBatch request completed!");
         });
     const FString BatchId = "batch_xxxxxxxxxxxxxxxxxxxxxxxx";
     Provider->CancelBatch(BatchId, Auth);
+}
+
+void AAPIOverview::CreateUpload()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateUploadCompleted().AddLambda(
+        [&](const FUploadObjectResponse& Response)
+        {
+            // decide what to use from the struct by yourself (= (=
+            UE_LOGFMT(LogAPIOverview, Display, "CreateUpload request completed! filename: {0}", Response.Filename);
+        });
+
+    FCreateUpload CreateUpload;
+    CreateUpload.Purpose = UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::FineTune);
+    CreateUpload.Filename = "training_examples";
+    CreateUpload.Bytes = 3138;
+    CreateUpload.Mime_Type = "text/jsonl";
+    Provider->CreateUpload(CreateUpload, Auth);
+}
+
+void AAPIOverview::AddUploadPart()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnAddUploadPartCompleted().AddLambda(
+        [&](const FUploadPartObjectResponse& Response)
+        {
+            // decide what to use from the struct by yourself (= (=
+            UE_LOGFMT(LogAPIOverview, Display, "AddUploadPart request completed! id: {0}", Response.Id);
+        });
+
+    // absolute path to your file
+    const FString FilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "test_file.jsonl");
+
+    FAddUploadPart AddUploadPart;
+    AddUploadPart.Data = FPaths::ConvertRelativePathToFull(FilePath);
+    const FString UploadId = "upload_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";  // id from create upload response
+    Provider->AddUploadPart(UploadId, AddUploadPart, Auth);
+}
+
+void AAPIOverview::CompleteUpload()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCompleteUploadCompleted().AddLambda(
+        [&](const FUploadObjectResponse& Response)
+        {
+            // decide what to use from the struct by yourself (= (=
+            UE_LOGFMT(LogAPIOverview, Display, "CompleteUpload request completed! id: {0}", Response.Id);
+        });
+
+    const FString UploadPartId = "part_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    FCompleteUpload CompleteUpload;
+    CompleteUpload.Part_Ids.Add(UploadPartId);
+
+    const FString UploadId = "upload_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    Provider->CompleteUpload(UploadId, CompleteUpload, Auth);
+}
+
+void AAPIOverview::CancelUpload()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCancelUploadCompleted().AddLambda(
+        [&](const FUploadObjectResponse& Response)
+        {
+            // decide what to use from the struct by yourself (=
+            UE_LOGFMT(LogAPIOverview, Display, "CancelUpload request completed! id: {0}", Response.Id);
+        });
+    const FString UploadId = "upload_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    Provider->CancelUpload(UploadId, Auth);
 }
 
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
@@ -676,6 +753,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
         virtual FString Batches() const override { return API_URL + "/v1/batches"; }
+        virtual FString Uploads() const override { return API_URL + "/v1/uploads"; }
 
     private:
         const FString API_URL;

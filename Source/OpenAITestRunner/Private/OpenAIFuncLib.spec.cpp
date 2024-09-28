@@ -469,6 +469,14 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Auto).Equals("auto"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Default).Equals("default"));
                 });
+
+            It("OpenAIUploadStatusToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Pending).Equals("pending"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Completed).Equals("completed"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Cancelled).Equals("cancelled"));
+                });
         });
 
     Describe("FileSystemFuncLib",

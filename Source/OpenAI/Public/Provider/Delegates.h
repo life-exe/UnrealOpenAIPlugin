@@ -45,7 +45,6 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningEventsCompleted, const FLis
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnListFineTuningCheckpointsCompleted, const FListFineTuningCheckpointsResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveFineTuningJobCompleted, const FFineTuningJobObjectResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCancelFineTuningJobCompleted, const FFineTuningJobObjectResponse&);
-
 // moderations
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateModerationsCompleted, const FModerationsResponse&);
 // batches
@@ -53,3 +52,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnListBatchCompleted, const FListBatchRespo
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateBatchCompleted, const FCreateBatchResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRetrieveBatchCompleted, const FRetrieveBatchResponse&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCancelBatchCompleted, const FCancelBatchResponse&);
+// uploads
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCreateUploadCompleted, const FUploadObjectResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddUploadPartCompleted, const FUploadPartObjectResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCompleteUploadCompleted, const FUploadObjectResponse&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCancelUploadCompleted, const FUploadObjectResponse&);

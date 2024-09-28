@@ -10,6 +10,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogJsonFuncLib, All, All);
 
 namespace
 {
+
 void ProcessJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
 {
     TArray<FString> FieldNames;
@@ -17,15 +18,14 @@ void ProcessJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
 
     for (const FString& FieldName : FieldNames)
     {
+        // Handle objects
         const TSharedPtr<FJsonObject>* FieldObject = nullptr;
         const bool IsObject = JsonObject->TryGetObjectField(FStringView(FieldName), FieldObject);
-
         if (IsObject && FieldObject->IsValid())
         {
             if (FieldObject->Get()->HasField(TEXT("isset")))
             {
-                const bool IsSet = FieldObject->Get()->GetBoolField(TEXT("isset"));
-                if (IsSet)
+                if (const bool IsSet = FieldObject->Get()->GetBoolField(TEXT("isset")))
                 {
                     const auto Value = FieldObject->Get()->TryGetField(TEXT("value"));
                     JsonObject->RemoveField(FieldName);
@@ -38,7 +38,6 @@ void ProcessJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
             }
             else
             {
-                // Recursively process nested objects
                 ProcessJsonObject(*FieldObject);
             }
         }
@@ -53,10 +52,10 @@ void ProcessJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
             {
                 if (Element->Type == EJson::Object)
                 {
-                    TSharedPtr<FJsonObject> ArrayElementObject = Element->AsObject();
-                    if (ArrayElementObject.IsValid())
+                    TSharedPtr<FJsonObject> Object = Element->AsObject();
+                    if (Object.IsValid())
                     {
-                        ProcessJsonObject(ArrayElementObject);  // Recursively process array objects
+                        ProcessJsonObject(Object);
                     }
                 }
             }
@@ -168,7 +167,9 @@ bool UJsonFuncLib::OpenAIResponseContainsError(const TSharedPtr<FJsonObject>& Js
     if (JsonObject->HasField(TEXT("error")))
     {
         const auto ErrorObject = JsonObject->GetObjectField(TEXT("error"));
-        return ErrorObject->HasField(TEXT("type")) && ErrorObject->HasField(TEXT("message")) && ErrorObject->HasField(TEXT("code"));
+        return ErrorObject->HasField(TEXT("type"))        //
+               && ErrorObject->HasField(TEXT("message"))  //
+               && ErrorObject->HasField(TEXT("code"));
     }
     return false;
 }

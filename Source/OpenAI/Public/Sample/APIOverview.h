@@ -42,6 +42,10 @@ enum class EAPIOverviewAction : uint8
     CreateBatch,
     RetrieveBatch,
     CancelBatch,
+    CreateUpload,
+    AddUploadPart,
+    CompleteUpload,
+    CancelUpload,
     SetYourOwnAPI
 };
 
@@ -104,6 +108,11 @@ private:
     void CreateBatch();
     void RetrieveBatch();
     void CancelBatch();
+
+    void CreateUpload();
+    void AddUploadPart();
+    void CompleteUpload();
+    void CancelUpload();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

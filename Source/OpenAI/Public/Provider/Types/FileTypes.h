@@ -51,7 +51,7 @@ struct FUploadFile
 ///////////////////////////////////////////////////////
 
 USTRUCT(BlueprintType)
-struct FOpenAIFile
+struct FOpenAIFileBase
 {
     GENERATED_BODY()
 
@@ -91,6 +91,12 @@ struct FOpenAIFile
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Purpose;
+};
+
+USTRUCT(BlueprintType)
+struct FOpenAIFile : public FOpenAIFileBase
+{
+    GENERATED_BODY()
 
     /**
       The current status of the file,

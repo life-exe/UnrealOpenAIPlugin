@@ -473,6 +473,19 @@ FString UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWind
     return {};
 }
 
+FString UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus UploadStatus)
+{
+    switch (UploadStatus)
+    {
+        case EUploadStatus::Pending: return "pending";
+        case EUploadStatus::Completed: return "completed";
+        case EUploadStatus::Cancelled: return "cancelled";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
 FString UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier ServiceTier)
 {
     switch (ServiceTier)

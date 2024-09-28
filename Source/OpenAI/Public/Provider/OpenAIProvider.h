@@ -26,6 +26,7 @@
 #include "CoreMinimal.h"
 #include "HTTP.h"
 #include "Delegates.h"
+#include "Types/AllTypesHeader.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/JsonFuncLib.h"
 #include "Provider/JsonParsers/ChatParser.h"
@@ -228,6 +229,34 @@ public:
     void ListBatch(const FListBatch& ListBatch, const FOpenAIAuth& Auth);
 
     /**
+      Creates an intermediate Upload object that you can add Parts to.
+      Currently, an Upload can accept at most 8 GB in total and expires after an hour after you create it.
+      https://platform.openai.com/docs/api-reference/uploads/create
+    */
+    void CreateUpload(const FCreateUpload& CreateUpload, const FOpenAIAuth& Auth);
+
+    /**
+      Adds a Part to an Upload object.
+      A Part represents a chunk of bytes from the file you are trying to upload.
+      https://platform.openai.com/docs/api-reference/uploads/add-part
+    */
+    void AddUploadPart(const FString& UploadId, const FAddUploadPart& AddUploadPart, const FOpenAIAuth& Auth);
+
+    /**
+      Completes the Upload.
+      Within the returned Upload object, there is a nested File object
+      that is ready to use in the rest of the platform.
+      https://platform.openai.com/docs/api-reference/uploads/complete
+    */
+    void CompleteUpload(const FString& UploadId, const FCompleteUpload& CompleteUpload, const FOpenAIAuth& Auth);
+
+    /**
+      Cancels the Upload. No Parts may be added after an Upload is cancelled.
+      https://platform.openai.com/docs/api-reference/uploads/cancel
+    */
+    void CancelUpload(const FString& UploadId, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -274,6 +303,10 @@ public:
     DEFINE_EVENT_GETTER(CreateBatchCompleted)
     DEFINE_EVENT_GETTER(RetrieveBatchCompleted)
     DEFINE_EVENT_GETTER(CancelBatchCompleted)
+    DEFINE_EVENT_GETTER(CreateUploadCompleted)
+    DEFINE_EVENT_GETTER(AddUploadPartCompleted)
+    DEFINE_EVENT_GETTER(CompleteUploadCompleted)
+    DEFINE_EVENT_GETTER(CancelUploadCompleted)
 
 private:
     TSharedPtr<OpenAI::IAPI> API;
@@ -315,6 +348,10 @@ private:
     DECLARE_HTTP_CALLBACK(OnRetrieveBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnListBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateUploadCompleted)
+    DECLARE_HTTP_CALLBACK(OnAddUploadPartCompleted)
+    DECLARE_HTTP_CALLBACK(OnCompleteUploadCompleted)
+    DECLARE_HTTP_CALLBACK(OnCancelUploadCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
@@ -327,6 +364,7 @@ private:
     FString SerializeRequest(const OutStructType& OutStruct) const
     {
         TSharedPtr<FJsonObject> Json = FJsonObjectConverter::UStructToJsonObject(OutStruct);
+        UJsonFuncLib::RemoveEmptyArrays(Json);
         FString RequestBodyStr;
         UJsonFuncLib::JsonToString(Json, RequestBodyStr);
         return RequestBodyStr;
