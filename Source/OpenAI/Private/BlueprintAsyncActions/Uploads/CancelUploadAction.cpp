@@ -37,7 +37,7 @@ void UCancelUploadAction::TryToOverrideURL(UOpenAIProvider* Provider)
     if (URLOverride.IsEmpty()) return;
 
     OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Models = URLOverride;
+    Endpoints.Uploads = URLOverride;
     const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
     Provider->SetAPI(API);
 }
