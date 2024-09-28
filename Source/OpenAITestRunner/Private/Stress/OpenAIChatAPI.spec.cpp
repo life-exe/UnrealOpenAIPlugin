@@ -8,6 +8,7 @@
 #include "Provider/Types/CommonTypes.h"
 #include "Provider/OpenAIProvider.h"
 #include "TestUtils.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIChatAPI, All, All);
 

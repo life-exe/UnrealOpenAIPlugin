@@ -10,59 +10,6 @@ DEFINE_LOG_CATEGORY_STATIC(LogJsonFuncLib, All, All);
 
 namespace
 {
-
-void ProcessJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
-{
-    TArray<FString> FieldNames;
-    JsonObject->Values.GetKeys(FieldNames);
-
-    for (const FString& FieldName : FieldNames)
-    {
-        // Handle objects
-        const TSharedPtr<FJsonObject>* FieldObject = nullptr;
-        const bool IsObject = JsonObject->TryGetObjectField(FStringView(FieldName), FieldObject);
-        if (IsObject && FieldObject->IsValid())
-        {
-            if (FieldObject->Get()->HasField(TEXT("isset")))
-            {
-                if (const bool IsSet = FieldObject->Get()->GetBoolField(TEXT("isset")))
-                {
-                    const auto Value = FieldObject->Get()->TryGetField(TEXT("value"));
-                    JsonObject->RemoveField(FieldName);
-                    JsonObject->SetField(FieldName, Value);
-                }
-                else
-                {
-                    JsonObject->RemoveField(FieldName);
-                }
-            }
-            else
-            {
-                ProcessJsonObject(*FieldObject);
-            }
-        }
-
-        // Handle arrays of objects
-        const TArray<TSharedPtr<FJsonValue>>* FieldArray = nullptr;
-        const bool IsArray = JsonObject->TryGetArrayField(FStringView(FieldName), FieldArray);
-
-        if (IsArray && FieldArray)
-        {
-            for (const auto& Element : *FieldArray)
-            {
-                if (Element->Type == EJson::Object)
-                {
-                    TSharedPtr<FJsonObject> Object = Element->AsObject();
-                    if (Object.IsValid())
-                    {
-                        ProcessJsonObject(Object);
-                    }
-                }
-            }
-        }
-    }
-}
-
 void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value);
 
 void ConvertObjectKeysToLowercase(TSharedPtr<FJsonObject> JsonObject)
@@ -174,14 +121,14 @@ bool UJsonFuncLib::OpenAIResponseContainsError(const TSharedPtr<FJsonObject>& Js
     return false;
 }
 
-FString UJsonFuncLib::PostprocessOptionalValues(const FString& JsonString)
+FString UJsonFuncLib::RemoveOptionalValuesThatNotSet(const FString& JsonString)
 {
     TSharedPtr<FJsonObject> JsonObject;
     TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 
     if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
     {
-        ProcessJsonObject(JsonObject);
+        RemoveOptionalValuesInJsonObject(JsonObject);
 
         // Convert the modified JsonObject back to a string
         FString OutputString;
@@ -189,30 +136,58 @@ FString UJsonFuncLib::PostprocessOptionalValues(const FString& JsonString)
         if (FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer)) return OutputString;
     }
 
-    UE_LOGFMT(LogJsonFuncLib, Error, "Error in JSON postprocessing: {0}", JsonString);
+    UE_LOGFMT(LogJsonFuncLib, Error, "Error in JSON when removing optional values: {0}", JsonString);
     return {};
 }
 
-void UJsonFuncLib::ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& JsonArray)
+void UJsonFuncLib::RemoveOptionalValuesInJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
 {
-    for (int32 i = JsonArray.Num() - 1; i >= 0; --i)
+    TArray<FString> FieldNames;
+    JsonObject->Values.GetKeys(FieldNames);
+
+    for (const FString& FieldName : FieldNames)
     {
-        TSharedPtr<FJsonValue> JsonValue = JsonArray[i];
+        // Handle objects
+        const TSharedPtr<FJsonObject>* FieldObject = nullptr;
+        const bool IsObject = JsonObject->TryGetObjectField(FStringView(FieldName), FieldObject);
 
-        if (JsonValue->Type == EJson::Object)
+        if (IsObject && FieldObject->IsValid())
         {
-            TSharedPtr<FJsonObject> JsonSubObject = JsonValue->AsObject();
-            RemoveEmptyArrays(JsonSubObject);
-        }
-        else if (JsonValue->Type == EJson::Array)
-        {
-            const TArray<TSharedPtr<FJsonValue>>& SubArray = JsonValue->AsArray();
-            ProcessJsonArray(SubArray);
-
-            // If the sub-array is now empty, remove it from the parent array
-            if (SubArray.Num() == 0)
+            if (FieldObject->Get()->HasField(TEXT("isset")))
             {
-                // JsonArray.RemoveAt(i);
+                if (const bool IsSet = FieldObject->Get()->GetBoolField(TEXT("isset")))
+                {
+                    const auto Value = FieldObject->Get()->TryGetField(TEXT("value"));
+                    JsonObject->RemoveField(FieldName);
+                    JsonObject->SetField(FieldName, Value);
+                }
+                else
+                {
+                    JsonObject->RemoveField(FieldName);
+                }
+            }
+            else
+            {
+                RemoveOptionalValuesInJsonObject(*FieldObject);
+            }
+        }
+
+        // Handle arrays
+        const TArray<TSharedPtr<FJsonValue>>* FieldArray = nullptr;
+        const bool IsArray = JsonObject->TryGetArrayField(FStringView(FieldName), FieldArray);
+
+        if (IsArray && FieldArray)
+        {
+            for (const auto& Element : *FieldArray)
+            {
+                if (Element->Type == EJson::Object)
+                {
+                    TSharedPtr<FJsonObject> Object = Element->AsObject();
+                    if (Object.IsValid())
+                    {
+                        RemoveOptionalValuesInJsonObject(Object);
+                    }
+                }
             }
         }
     }
@@ -220,34 +195,60 @@ void UJsonFuncLib::ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& JsonAr
 
 void UJsonFuncLib::RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject)
 {
-    TMap<FString, TSharedPtr<FJsonValue>>& JsonValues = JsonObject->Values;
     TArray<FString> KeysToRemove;
+    TMap<FString, TArray<TSharedPtr<FJsonValue>>> UpdatedNotEmptyAtrrays;
 
-    for (const auto& Pair : JsonValues)
+    for (const auto& [Key, JsonValue] : JsonObject->Values)
     {
-        TSharedPtr<FJsonValue> JsonValue = Pair.Value;
         if (JsonValue->Type == EJson::Array)
         {
-            const TArray<TSharedPtr<FJsonValue>>& JsonArray = JsonValue->AsArray();
-            ProcessJsonArray(JsonArray);
-
-            // If the array is empty, mark it for removal
-            if (JsonArray.Num() == 0)
+            TArray<TSharedPtr<FJsonValue>> MutableArray = JsonValue->AsArray();
+            ProcessJsonArrayRemovingEmptyArrays(MutableArray);
+            if (MutableArray.Num() == 0)
             {
-                KeysToRemove.Add(Pair.Key);
+                KeysToRemove.Add(Key);
+            }
+            else
+            {
+                UpdatedNotEmptyAtrrays.Add(Key, MutableArray);
             }
         }
-        // If the value is an object, recursively process it
         else if (JsonValue->Type == EJson::Object)
         {
-            TSharedPtr<FJsonObject> JsonSubObject = JsonValue->AsObject();
-            RemoveEmptyArrays(JsonSubObject);
+            RemoveEmptyArrays(JsonValue->AsObject());
         }
     }
 
-    // Remove the empty arrays from the parent object
-    for (const FString& Key : KeysToRemove)
+    for (const auto& Key : KeysToRemove)
     {
         JsonObject->RemoveField(Key);
+    }
+
+    for (const auto& [Key, Array] : UpdatedNotEmptyAtrrays)
+    {
+        JsonObject->SetArrayField(Key, Array);
+    }
+}
+
+void UJsonFuncLib::ProcessJsonArrayRemovingEmptyArrays(TArray<TSharedPtr<FJsonValue>>& JsonArray)
+{
+    for (int32 i = JsonArray.Num() - 1; i >= 0; --i)
+    {
+        const auto& JsonValue = JsonArray[i];
+        if (JsonValue->Type == EJson::Object)
+        {
+            RemoveEmptyArrays(JsonValue->AsObject());
+        }
+        else if (JsonValue->Type == EJson::Array)
+        {
+            auto SubArray = JsonValue->AsArray();
+            ProcessJsonArrayRemovingEmptyArrays(SubArray);
+
+            // If the sub-array is now empty, remove it from the parent array
+            if (SubArray.Num() == 0)
+            {
+                JsonArray.RemoveAt(i);
+            }
+        }
     }
 }

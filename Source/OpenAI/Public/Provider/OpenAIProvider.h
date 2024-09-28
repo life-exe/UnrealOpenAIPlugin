@@ -382,7 +382,7 @@ private:
         const FString Content = SerializeRequest(OutStruct);
         Log(FString("Content: ").Append(Content));
 
-        const FString PostprocessedContent = UJsonFuncLib::PostprocessOptionalValues(Content);
+        const FString PostprocessedContent = UJsonFuncLib::RemoveOptionalValuesThatNotSet(Content);
         Log(FString("Postprocessed content was set as: ").Append(PostprocessedContent));
 
         HttpRequest->SetContentAsString(PostprocessedContent);

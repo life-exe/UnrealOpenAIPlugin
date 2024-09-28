@@ -25,9 +25,8 @@ public:
         FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), OutStruct, 0, 0);
         return true;
     }
-    static FString PostprocessOptionalValues(const FString& JsonString);
+    static FString RemoveOptionalValuesThatNotSet(const FString& JsonString);
     static void RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject);
-    static void ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& JsonArray);
 
     // helpers for OpeanAI 'functions'
     static FString MakeFunctionsString(const TSharedPtr<FJsonObject>& Json);
@@ -39,4 +38,7 @@ public:
 private:
     static const FString START_FUNCTION_OBJECT_MARKER;
     static const FString END_FUNCTION_OBJECT_MARKER;
+
+    static void RemoveOptionalValuesInJsonObject(const TSharedPtr<FJsonObject>& JsonObject);
+    static void ProcessJsonArrayRemovingEmptyArrays(TArray<TSharedPtr<FJsonValue>>& JsonArray);
 };

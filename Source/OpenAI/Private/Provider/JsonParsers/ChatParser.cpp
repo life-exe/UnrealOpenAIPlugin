@@ -71,7 +71,7 @@ FString ChatParser::ChatCompletionToJsonRepresentation(const FChatCompletion& Ch
     UJsonFuncLib::JsonToString(Json, TransformedString);
 
     TransformedString = UJsonFuncLib::CleanUpFunctionsObject(TransformedString);
-    TransformedString = UJsonFuncLib::PostprocessOptionalValues(TransformedString);
+    TransformedString = UJsonFuncLib::RemoveOptionalValuesThatNotSet(TransformedString);
 
     return TransformedString;
 }

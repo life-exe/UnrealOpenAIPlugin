@@ -10,6 +10,7 @@
 #include "Provider/OpenAIProvider.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "TestUtils.h"
+#include "Logging/StructuredLog.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIBatchAPI, All, All);
 
