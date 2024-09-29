@@ -37,10 +37,10 @@ void FJsonFuncLib::Define()
                     JsonSubObject->SetStringField("SUBObJect", "vaLue");
                     JsonObject->SetObjectField("ObjecT_NEW", JsonSubObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(
                         ResultString.Equals("{\"string\": \"value\",\"string_new\": \"VALUE\",\"object_new\":{\"subobject\": \"vaLue\"}}"));
                 });
@@ -58,10 +58,10 @@ void FJsonFuncLib::Define()
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(ResultString.Equals("{\"array\": [ 10 ]}"));
                 });
 
@@ -78,10 +78,10 @@ void FJsonFuncLib::Define()
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(ResultString.Equals("{\"nestedarray\": [ 10 ]}"));
                 });
 
@@ -102,10 +102,10 @@ void FJsonFuncLib::Define()
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(ResultString.Equals("{\"multiplenestedemptyarrays\": [ 25 ]}"));
                 });
 
@@ -128,10 +128,10 @@ void FJsonFuncLib::Define()
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(ResultString.Equals("{\"mixednestedarrays\": [[ 5 ],42 ]}"));
                 });
 
@@ -152,10 +152,10 @@ void FJsonFuncLib::Define()
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(ResultString.Equals("{\"deeplynestedemptyarrays\": [ 100 ]}"));
                 });
 
@@ -177,17 +177,49 @@ void FJsonFuncLib::Define()
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
-                    FString String;
-                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, String));
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
-                    const FString ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(String);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
                     TestTrueExpr(ResultString.Equals("{\"multiplelevelsofnesting\": [[[ 15 ]],50 ]}"));
                 });
 
             It("OptionalValuesThatIsNotSetShouldBeRemoved",
                 [this]()
                 {
-                    // UE_LOGFMT(LogTemp, Display, "{0}", String);
+                    TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+                    JsonObject->SetStringField("value", "string");
+                    JsonObject->SetStringField("isset", "false");
+
+                    TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
+                    RootJsonObject->SetObjectField("object", JsonObject);
+
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
+
+                    ResultString = UJsonFuncLib::RemoveOptionalValuesThatNotSet(ResultString);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
+
+                    TestTrueExpr(ResultString.Equals("{}"));
+                });
+
+            It("OptionalValuesThatIsSetShouldNotBeRemovedButSetDirectly",
+                [this]()
+                {
+                    TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+                    JsonObject->SetStringField("value", "string");
+                    JsonObject->SetStringField("isset", "true");
+
+                    TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
+                    RootJsonObject->SetObjectField("object", JsonObject);
+
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
+
+                    ResultString = UJsonFuncLib::RemoveOptionalValuesThatNotSet(ResultString);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
+
+                    TestTrueExpr(ResultString.Equals("{\"object\": \"string\"}"));
                 });
         });
 }
