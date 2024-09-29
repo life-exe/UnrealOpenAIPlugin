@@ -81,7 +81,7 @@ void UWorldTimeService::Call(const TSharedPtr<FJsonObject>& Args, const FString&
 
 void UWorldTimeService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!Response)
+    if (!Response.IsValid())
     {
         ServiceDataError.Broadcast("Response was null");
         return;

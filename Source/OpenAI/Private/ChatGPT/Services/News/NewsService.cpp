@@ -148,7 +148,7 @@ FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) co
 
 void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!Response)
+    if (!Response.IsValid())
     {
         ServiceDataError.Broadcast("Response was null");
         return;

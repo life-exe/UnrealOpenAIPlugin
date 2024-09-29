@@ -398,15 +398,18 @@ private:
     {
         if (!Success(Response, WasSuccessful)) return;
 
+        const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
+        const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
+
         ParsedResponseType ParsedResponse;
-        if (UJsonFuncLib::ParseJSONToStruct(Response->GetContentAsString(), &ParsedResponse))
+        if (UJsonFuncLib::ParseJSONToStruct(Content, &ParsedResponse))
         {
             Delegate.Broadcast(ParsedResponse);
         }
         else
         {
             LogError("JSON deserialization error");
-            RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+            RequestError.Broadcast(ResponseURL, Content);
         }
     }
 
@@ -430,7 +433,7 @@ private:
     template <typename ResponseType>
     bool ParseStreamRequest(FHttpResponsePtr Response, TArray<ResponseType>& Responses)
     {
-        if (!Response) return false;
+        if (!Response.IsValid()) return false;
 
         TArray<FString> StringArray;
         Response->GetContentAsString().ParseIntoArrayLines(StringArray);
@@ -464,7 +467,7 @@ private:
             LogResponse(Response);
             Delegate.Broadcast(ParsedResponses);
         }
-        else if (Response)
+        else if (Response.IsValid())
         {
             LogError(Response->GetContentAsString());
             // RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
@@ -500,9 +503,12 @@ private:
         }
         else
         {
+            const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
+            const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
+
             LogError("JSON deserialization error");
-            LogError(Response->GetContentAsString());
-            RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+            LogError(Content);
+            RequestError.Broadcast(ResponseURL, Content);
         }
     }
 };
