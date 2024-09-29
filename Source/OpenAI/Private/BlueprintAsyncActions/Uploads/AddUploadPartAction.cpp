@@ -24,14 +24,15 @@ void UAddUploadPartAction::Activate()
     Provider->AddUploadPart(UploadId, UploadPartRequest, Auth);
 }
 
-void UAddUploadPartAction::OnAddUploadPartCompleted(const FUploadPartObjectResponse& Response)
+void UAddUploadPartAction::OnAddUploadPartCompleted(
+    const FUploadPartObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UAddUploadPartAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UAddUploadPartAction::TryToOverrideURL(UOpenAIProvider* Provider)

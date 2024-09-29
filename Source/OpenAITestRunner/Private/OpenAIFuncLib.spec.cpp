@@ -477,6 +477,33 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Completed).Equals("completed"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Cancelled).Equals("cancelled"));
                 });
+
+            It("OpenAIHeaderTypeToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIHeaderTypeToString(EOpenAIHttpHeaderType::XRequestId).Equals("x-request-id"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIHeaderTypeToString(EOpenAIHttpHeaderType::OpenAIProcessingMS).Equals("openai-processing-ms"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIHeaderTypeToString(EOpenAIHttpHeaderType::OpenAIOrganization).Equals("openai-organization"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIHeaderTypeToString(EOpenAIHttpHeaderType::OpenAIVersion).Equals("openai-version"));
+                });
+
+            It("AIHttpHeadersShouldBeFound",
+                [this]()
+                {
+                    FOpenAIResponseMetadata Metadata;
+                    Metadata.HttpHeaders = {TEXT("x-request-id: req_d6d70ef9bcbf2f0e4f74d76bff6dc01a"), TEXT("openai-processing-ms: 9106"),
+                        TEXT("openai-organization: my-org"), TEXT("openai-version: v1")};
+
+                    TestTrueExpr(UOpenAIFuncLib::FindOpenAIHttpHeaderByType(Metadata, EOpenAIHttpHeaderType::XRequestId)
+                                     .Equals("req_d6d70ef9bcbf2f0e4f74d76bff6dc01a"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::FindOpenAIHttpHeaderByType(Metadata, EOpenAIHttpHeaderType::OpenAIProcessingMS).Equals("9106"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::FindOpenAIHttpHeaderByType(Metadata, EOpenAIHttpHeaderType::OpenAIOrganization).Equals("my-org"));
+                    TestTrueExpr(UOpenAIFuncLib::FindOpenAIHttpHeaderByType(Metadata, EOpenAIHttpHeaderType::OpenAIVersion).Equals("v1"));
+                });
         });
 
     Describe("FileSystemFuncLib",

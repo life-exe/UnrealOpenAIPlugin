@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "AudioTranslationAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnAudioTranslation, const FAudioTranslationResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAudioTranslation, const FAudioTranslationResponse&, Response,
+    const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -34,7 +34,7 @@ private:
 
     void TryToOverrideURL();
 
-    void OnCreateAudioTranslationCompleted(const FAudioTranslationResponse& Response);
+    void OnCreateAudioTranslationCompleted(const FAudioTranslationResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

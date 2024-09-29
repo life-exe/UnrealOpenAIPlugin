@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "RetrieveFineTuningJobAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnRetrieveFineTuningJob, const FFineTuningJobObjectResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnRetrieveFineTuningJob, const FFineTuningJobObjectResponse&, Response,
+    const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -34,7 +34,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnRetrieveFineTuningJobCompleted(const FFineTuningJobObjectResponse& Response);
+    void OnRetrieveFineTuningJobCompleted(const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

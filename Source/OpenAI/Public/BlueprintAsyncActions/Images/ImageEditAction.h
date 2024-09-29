@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "ImageEditAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnImageEdit, const FImageEditResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnImageEdit, const FImageEditResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -32,7 +33,7 @@ private:
 
     void TryToOverrideURL();
 
-    void OnCreateImageEditCompleted(const FImageEditResponse& Response);
+    void OnCreateImageEditCompleted(const FImageEditResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "AudioTranscriptionVerboseAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnAudioTranscriptionVerbose, const FAudioTranscriptionVerboseResponse&, VerboseResponse, const FOpenAIError&, VerboseRawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAudioTranscriptionVerbose, const FAudioTranscriptionVerboseResponse&, Response,
+    const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -34,7 +34,8 @@ private:
 
     void TryToOverrideURL();
 
-    void OnCreateAudioTranscriptionVerboseCompleted(const FAudioTranscriptionVerboseResponse& Response);
+    void OnCreateAudioTranscriptionVerboseCompleted(
+        const FAudioTranscriptionVerboseResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

@@ -119,6 +119,12 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
     static ERole StringToOpenAIRole(const FString& Role);
 
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
+    static FString OpenAIHeaderTypeToString(EOpenAIHttpHeaderType Type);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
+    static FString FindOpenAIHttpHeaderByType(const FOpenAIResponseMetadata& Headers, EOpenAIHttpHeaderType Type);
+
     // errors
     UFUNCTION(BlueprintPure, Category = "OpenAI | Error")
     static EOpenAIResponseError GetErrorCode(const FString& RawError);

@@ -42,7 +42,7 @@ void FOpenAIProviderEmbedding::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
-                        [&](const FEmbeddingsResponse& Response)
+                        [&](const FEmbeddingsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Model.Equals("text-embedding-ada-002"));
                             TestTrueExpr(Response.Usage.Prompt_Tokens == 6);
@@ -74,7 +74,7 @@ void FOpenAIProviderEmbedding::Define()
                 {
                     const auto Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_3_Small);
                     OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
-                        [&, SaveModel = Model](const FEmbeddingsResponse& Response)
+                        [&, SaveModel = Model](const FEmbeddingsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Model.Equals(SaveModel));
                             TestTrueExpr(Response.Usage.Prompt_Tokens == 6);

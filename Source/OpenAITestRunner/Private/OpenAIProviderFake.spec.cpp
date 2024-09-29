@@ -21,8 +21,9 @@ void FOpenAIProviderFake::Define()
                 {
                     FListModelsResponse ListModelsResponse;
                     auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
-                    OpenAIProvider->OnListModelsCompleted().AddLambda([&](const FListModelsResponse& Response)  //
-                        {                                                                                       //
+                    OpenAIProvider->OnListModelsCompleted().AddLambda(
+                        [&](const FListModelsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)  //
+                        {                                                                                          //
                             ListModelsResponse = Response;
                         });
                     OpenAIProvider->SetResponse(
@@ -49,7 +50,8 @@ void FOpenAIProviderFake::Define()
                 {
                     FRetrieveModelResponse RetrieveModelResponse;
                     auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
-                    OpenAIProvider->OnRetrieveModelCompleted().AddLambda([&](const FRetrieveModelResponse& Response)  //
+                    OpenAIProvider->OnRetrieveModelCompleted().AddLambda(
+                        [&](const FRetrieveModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)  //
                         {                                                                                             //
                             RetrieveModelResponse = Response;
                         });
@@ -67,8 +69,9 @@ void FOpenAIProviderFake::Define()
                 {
                     FCompletionResponse CompletionResponse;
                     auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
-                    OpenAIProvider->OnCreateCompletionCompleted().AddLambda([&](const FCompletionResponse& Response)  //
-                        {                                                                                             //
+                    OpenAIProvider->OnCreateCompletionCompleted().AddLambda(
+                        [&](const FCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)  //
+                        {                                                                                          //
                             CompletionResponse = Response;
                         });
                     OpenAIProvider->SetResponse(
@@ -120,8 +123,9 @@ void FOpenAIProviderFake::Define()
                 {
                     FChatCompletionResponse ChatCompletionResponse;
                     auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
-                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda([&](const FChatCompletionResponse& Response)  //
-                        {                                                                                                     //
+                    OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
+                        [&](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)  //
+                        {                                                                                              //
                             ChatCompletionResponse = Response;
                         });
                     OpenAIProvider->SetResponse(

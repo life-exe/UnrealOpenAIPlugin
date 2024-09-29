@@ -51,7 +51,7 @@ void FOpenAIProviderFile::Define()
                 [this]()
                 {
                     OpenAIProvider->OnListFilesCompleted().AddLambda(
-                        [&](const FListFilesResponse& Response)
+                        [&](const FListFilesResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             for (const auto& File : Response.Data)
                             {
@@ -78,7 +78,7 @@ void FOpenAIProviderFile::Define()
                     const FString FileName = "test_file.jsonl";
 
                     OpenAIProvider->OnUploadFileCompleted().AddLambda(
-                        [&, FileName](const FUploadFileResponse& File)
+                        [&, FileName](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(File.FileName.Equals(FileName));
                             TestTrueExpr(File.Purpose.Equals("fine-tune"));
@@ -93,7 +93,7 @@ void FOpenAIProviderFile::Define()
 
                     // delete file after upload
                     OpenAIProvider->OnDeleteFileCompleted().AddLambda(
-                        [&](const FDeleteFileResponse& File)
+                        [&](const FDeleteFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(File.Object.Equals("file"));
                             TestTrueExpr(File.Deleted);
@@ -115,7 +115,7 @@ void FOpenAIProviderFile::Define()
                     const FString _FileID{File::FileID};
 
                     OpenAIProvider->OnRetrieveFileCompleted().AddLambda(
-                        [&, FileName, _FileID](const FRetrieveFileResponse& File)
+                        [&, FileName, _FileID](const FRetrieveFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(File.FileName.Equals(FileName));
                             TestTrueExpr(File.Purpose.Equals("fine-tune"));
@@ -144,7 +144,7 @@ void FOpenAIProviderFile::Define()
                     }
 
                     OpenAIProvider->OnRetrieveFileContentCompleted().AddLambda(
-                        [&, FileContent](const FRetrieveFileContentResponse& File)
+                        [&, FileContent](const FRetrieveFileContentResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(FileContent.Equals(File.Content));
                             RequestCompleted = true;

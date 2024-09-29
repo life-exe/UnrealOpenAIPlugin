@@ -46,7 +46,7 @@ void FOpenAIProviderCompletion::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct);
 
                     OpenAIProvider->OnCreateCompletionCompleted().AddLambda(
-                        [&, Model](const FCompletionResponse& Response)
+                        [&, Model](const FCompletionResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestUtils::TestStreamResponse<FCompletionResponse>(this, Response, Model, "text_completion");
                             RequestCompleted = true;
@@ -68,7 +68,7 @@ void FOpenAIProviderCompletion::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct);
 
                     OpenAIProvider->OnCreateCompletionStreamCompleted().AddLambda(
-                        [&, Model](const TArray<FCompletionStreamResponse>& Responses)
+                        [&, Model](const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& Metadata)
                         {
                             for (const auto& Response : Responses)
                             {
@@ -78,7 +78,7 @@ void FOpenAIProviderCompletion::Define()
                         });
 
                     OpenAIProvider->OnCreateCompletionStreamProgresses().AddLambda(
-                        [&, Model](const TArray<FCompletionStreamResponse>& Responses)
+                        [&, Model](const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& Metadata)
                         {
                             for (const auto& Response : Responses)
                             {

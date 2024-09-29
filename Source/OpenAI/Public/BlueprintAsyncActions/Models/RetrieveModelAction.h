@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "RetrieveModelAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnRetrieveModelResponse, const FRetrieveModelResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnRetrieveModel, const FRetrieveModelResponse&, Response, const FOpenAIResponseMetadata&,
+    ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -19,7 +19,7 @@ class URetrieveModelAction : public UBlueprintAsyncActionBase
 
 public:
     UPROPERTY(BlueprintAssignable)
-    FOnRetrieveModelResponse OnCompleted;
+    FOnRetrieveModel OnCompleted;
 
     virtual void Activate() override;
 
@@ -33,7 +33,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnRetrieveModelCompleted(const FRetrieveModelResponse& Response);
+    void OnRetrieveModelCompleted(const FRetrieveModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

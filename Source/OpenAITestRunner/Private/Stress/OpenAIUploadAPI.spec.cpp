@@ -52,7 +52,7 @@ void FOpenAIProviderUpload::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateUploadCompleted().AddLambda(
-                        [&](const FUploadObjectResponse& Response)
+                        [&](const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload"));
                             TestTrueExpr(Response.Filename.Equals(Filename));
@@ -77,7 +77,7 @@ void FOpenAIProviderUpload::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateUploadCompleted().AddLambda(
-                        [&](const FUploadObjectResponse& Response)
+                        [&](const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload"));
                             TestTrueExpr(Response.Filename.Equals(Filename));
@@ -91,7 +91,7 @@ void FOpenAIProviderUpload::Define()
                         });
 
                     OpenAIProvider->OnAddUploadPartCompleted().AddLambda(
-                        [&](const FUploadPartObjectResponse& Response)
+                        [&](const FUploadPartObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload.part"));
                             RequestCompleted = true;
@@ -113,7 +113,7 @@ void FOpenAIProviderUpload::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateUploadCompleted().AddLambda(
-                        [&](const FUploadObjectResponse& Response)
+                        [&](const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload"));
                             TestTrueExpr(Response.Filename.Equals(Filename));
@@ -127,7 +127,7 @@ void FOpenAIProviderUpload::Define()
                         });
 
                     OpenAIProvider->OnAddUploadPartCompleted().AddLambda(
-                        [&](const FUploadPartObjectResponse& Response)
+                        [&](const FUploadPartObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload.part"));
 
@@ -138,7 +138,7 @@ void FOpenAIProviderUpload::Define()
                         });
 
                     OpenAIProvider->OnCompleteUploadCompleted().AddLambda(
-                        [&](const FUploadObjectResponse& Response)
+                        [&](const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Status.Equals(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Completed)));
                             TestTrueExpr(Response.Filename.Equals(Filename));
@@ -163,7 +163,7 @@ void FOpenAIProviderUpload::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateUploadCompleted().AddLambda(
-                        [&](const FUploadObjectResponse& Response)
+                        [&](const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload"));
                             TestTrueExpr(Response.Filename.Equals(Filename));
@@ -178,7 +178,7 @@ void FOpenAIProviderUpload::Define()
                         });
 
                     OpenAIProvider->OnAddUploadPartCompleted().AddLambda(
-                        [&](const FUploadPartObjectResponse& Response)
+                        [&](const FUploadPartObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("upload.part"));
                             // 3. cancel upload
@@ -186,7 +186,7 @@ void FOpenAIProviderUpload::Define()
                         });
 
                     OpenAIProvider->OnCancelUploadCompleted().AddLambda(
-                        [&](const FUploadObjectResponse& Response)
+                        [&](const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Filename.Equals(Filename));
                             TestTrueExpr(Response.Purpose.Equals(Purpose));

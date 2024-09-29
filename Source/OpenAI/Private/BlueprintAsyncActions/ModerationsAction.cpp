@@ -23,14 +23,14 @@ void UModerationsAction::Activate()
     Provider->CreateModerations(Moderations, Auth);
 }
 
-void UModerationsAction::OnCreateModerationsCompleted(const FModerationsResponse& Response)
+void UModerationsAction::OnCreateModerationsCompleted(const FModerationsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UModerationsAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UModerationsAction::TryToOverrideURL(UOpenAIProvider* Provider)

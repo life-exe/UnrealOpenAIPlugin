@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "RetrieveBatchAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRetrieveBatch, const FRetrieveBatchResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnRetrieveBatch, const FRetrieveBatchResponse&, Response, const FOpenAIResponseMetadata&,
+    ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -32,7 +33,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnRetrieveBatchCompleted(const FRetrieveBatchResponse& Response);
+    void OnRetrieveBatchCompleted(const FRetrieveBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

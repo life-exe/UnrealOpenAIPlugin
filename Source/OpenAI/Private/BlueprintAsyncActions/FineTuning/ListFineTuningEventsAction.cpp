@@ -23,14 +23,15 @@ void UListFineTuningEventsAction::Activate()
     Provider->ListFineTuningEvents(FineTuningID, Auth);
 }
 
-void UListFineTuningEventsAction::OnListFineTuningEventsCompleted(const FListFineTuningEventsResponse& Response)
+void UListFineTuningEventsAction::OnListFineTuningEventsCompleted(
+    const FListFineTuningEventsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UListFineTuningEventsAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UListFineTuningEventsAction::TryToOverrideURL(UOpenAIProvider* Provider)

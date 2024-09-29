@@ -42,7 +42,7 @@ void FOpenAIProviderAudio::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
-                        [&](const FAudioTranscriptionResponse& Response)
+                        [&](const FAudioTranscriptionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
                             RequestCompleted = true;
@@ -63,7 +63,7 @@ void FOpenAIProviderAudio::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateAudioTranscriptionVerboseCompleted().AddLambda(
-                        [&](const FAudioTranscriptionVerboseResponse& Response)
+                        [&](const FAudioTranscriptionVerboseResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
                             TestTrueExpr(Response.Segments.Num() > 0);
@@ -87,7 +87,7 @@ void FOpenAIProviderAudio::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateAudioTranslationCompleted().AddLambda(
-                        [&](const FAudioTranslationResponse& Response)
+                        [&](const FAudioTranslationResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
                             RequestCompleted = true;
@@ -109,13 +109,14 @@ void FOpenAIProviderAudio::Define()
                     const FString Format = UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::MP3);
 
                     OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
-                        [&](const FAudioTranscriptionResponse& Response)
+                        [&](const FAudioTranscriptionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hi how are you"));
                             RequestCompleted = true;
                         });
 
-                    OpenAIProvider->OnCreateSpeechCompleted().AddLambda([&, Format](const FSpeechResponse& Response) {  //
+                    OpenAIProvider->OnCreateSpeechCompleted().AddLambda([&, Format](const FSpeechResponse& Response,
+                                                                            const FOpenAIResponseMetadata& ResponseMetadata) {  //
                         const FString Date = FDateTime::Now().ToString();
                         const FString FileName = FString("speech_").Append(Date).Append(".").Append(Format);
                         const FString FilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //

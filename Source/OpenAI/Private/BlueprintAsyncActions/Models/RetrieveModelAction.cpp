@@ -22,14 +22,14 @@ void URetrieveModelAction::Activate()
     Provider->RetrieveModel(ModelName, Auth);
 }
 
-void URetrieveModelAction::OnRetrieveModelCompleted(const FRetrieveModelResponse& Response)
+void URetrieveModelAction::OnRetrieveModelCompleted(const FRetrieveModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void URetrieveModelAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void URetrieveModelAction::TryToOverrideURL(UOpenAIProvider* Provider)

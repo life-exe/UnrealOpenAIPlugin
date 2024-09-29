@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "RetrieveFileAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRetrieveFile, const FRetrieveFileResponse&, Response, const FOpenAIError&, RawError);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnRetrieveFile, const FRetrieveFileResponse&, Response, const FOpenAIResponseMetadata&,
+    ResponseMetadata, const FOpenAIError&, RawError);
 class UOpenAIProvider;
 
 UCLASS()
@@ -32,7 +32,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnRetrieveFileCompleted(const FRetrieveFileResponse& Response);
+    void OnRetrieveFileCompleted(const FRetrieveFileResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

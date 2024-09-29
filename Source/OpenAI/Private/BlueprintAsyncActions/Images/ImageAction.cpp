@@ -22,14 +22,14 @@ void UImageAction::Activate()
     Provider->CreateImage(Image, Auth);
 }
 
-void UImageAction::OnCreateImageCompleted(const FImageResponse& Response)
+void UImageAction::OnCreateImageCompleted(const FImageResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UImageAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UImageAction::TryToOverrideURL()

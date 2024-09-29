@@ -23,14 +23,15 @@ void UImageVariationAction::Activate()
     Provider->CreateImageVariation(ImageVariation, Auth);
 }
 
-void UImageVariationAction::OnCreateImageVariationCompleted(const FImageVariationResponse& Response)
+void UImageVariationAction::OnCreateImageVariationCompleted(
+    const FImageVariationResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UImageVariationAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UImageVariationAction::TryToOverrideURL()

@@ -78,7 +78,7 @@ void FOpenAIProviderActual::Define()
                 {
                     const FString OrgId = Auth.OrganizationID;
                     OpenAIProvider->OnListFineTuningJobsCompleted().AddLambda(
-                        [&, OrgId](const FListFineTuningJobsResponse& Response)
+                        [&, OrgId](const FListFineTuningJobsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Object.Equals("list"));
                             for (const auto& FineTune : Response.Data)
@@ -104,7 +104,7 @@ void FOpenAIProviderActual::Define()
                     Payload.OrgId = Auth.OrganizationID;
 
                     OpenAIProvider->OnCreateFineTuningJobCompleted().AddLambda(
-                        [&, Payload](const FFineTuningJobObjectResponse& Response)
+                        [&, Payload](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestFineTuningJob(this, Response, Payload);
                             RequestCompleted = true;
@@ -127,7 +127,7 @@ void FOpenAIProviderActual::Define()
                     Payload.OrgId = Auth.OrganizationID;
 
                     OpenAIProvider->OnRetrieveFineTuningJobCompleted().AddLambda(
-                        [&, Payload](const FFineTuningJobObjectResponse& Response)
+                        [&, Payload](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestFineTuningJob(this, Response, Payload);
                             TestTrueExpr(Response.ID.Equals(Payload.JobID));
@@ -142,7 +142,7 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateFineTuningJobCompleted().AddLambda(
-                        [&](const FFineTuningJobObjectResponse& Response)
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was created: {0}", Response.ID);
                             OpenAIProvider->CancelFineTuningJob(Response.ID, Auth);
@@ -156,7 +156,7 @@ void FOpenAIProviderActual::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
 
                     OpenAIProvider->OnCancelFineTuningJobCompleted().AddLambda(
-                        [&](const FFineTuningJobObjectResponse& Response)
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was canceled: {0}", Response.ID);
                             RequestCompleted = true;
@@ -167,7 +167,8 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnListFineTuningEventsCompleted().AddLambda(
-                        [&](const FListFineTuningEventsResponse& Response) { RequestCompleted = true; });
+                        [&](const FListFineTuningEventsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        { RequestCompleted = true; });
 
                     OpenAIProvider->ListFineTuningEvents(JobID, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -177,7 +178,8 @@ void FOpenAIProviderActual::Define()
                 [this]()
                 {
                     OpenAIProvider->OnListFineTuningCheckpointsCompleted().AddLambda(
-                        [&](const FListFineTuningCheckpointsResponse& Response) { RequestCompleted = true; });
+                        [&](const FListFineTuningCheckpointsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        { RequestCompleted = true; });
 
                     OpenAIProvider->ListFineTuningCheckpoints(JobID, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));

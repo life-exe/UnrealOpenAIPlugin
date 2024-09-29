@@ -22,14 +22,14 @@ void UListBatchAction::Activate()
     Provider->ListBatch(ListBatchData, Auth);
 }
 
-void UListBatchAction::OnListBatchCompleted(const FListBatchResponse& Response)
+void UListBatchAction::OnListBatchCompleted(const FListBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UListBatchAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UListBatchAction::TryToOverrideURL(UOpenAIProvider* Provider)

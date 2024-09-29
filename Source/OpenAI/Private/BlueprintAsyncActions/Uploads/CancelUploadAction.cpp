@@ -22,14 +22,14 @@ void UCancelUploadAction::Activate()
     Provider->CancelUpload(UploadId, Auth);
 }
 
-void UCancelUploadAction::OnCancelUploadCompleted(const FUploadObjectResponse& Response)
+void UCancelUploadAction::OnCancelUploadCompleted(const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UCancelUploadAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCancelUploadAction::TryToOverrideURL(UOpenAIProvider* Provider)

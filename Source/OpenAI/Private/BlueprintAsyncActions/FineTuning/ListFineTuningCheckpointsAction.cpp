@@ -23,14 +23,15 @@ void UListFineTuningCheckpointsAction::Activate()
     Provider->ListFineTuningEvents(FineTuningID, Auth);
 }
 
-void UListFineTuningCheckpointsAction::OnListFineTuningCheckpointsCompleted(const FListFineTuningCheckpointsResponse& Response)
+void UListFineTuningCheckpointsAction::OnListFineTuningCheckpointsCompleted(
+    const FListFineTuningCheckpointsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UListFineTuningCheckpointsAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UListFineTuningCheckpointsAction::TryToOverrideURL(UOpenAIProvider* Provider)

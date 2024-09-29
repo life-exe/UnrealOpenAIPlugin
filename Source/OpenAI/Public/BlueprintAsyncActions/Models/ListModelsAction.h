@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "ListModelsAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnListModels, const FListModelsResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnListModels, const FListModelsResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -32,7 +33,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnListModelsCompleted(const FListModelsResponse& Response);
+    void OnListModelsCompleted(const FListModelsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

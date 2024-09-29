@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "AddUploadPartAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAddUploadPart, const FUploadPartObjectResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAddUploadPart, const FUploadPartObjectResponse&, Response, const FOpenAIResponseMetadata&,
+    ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -33,7 +34,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnAddUploadPartCompleted(const FUploadPartObjectResponse& Response);
+    void OnAddUploadPartCompleted(const FUploadPartObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

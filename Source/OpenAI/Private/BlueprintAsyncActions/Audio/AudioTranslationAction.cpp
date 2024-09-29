@@ -22,14 +22,15 @@ void UAudioTranslationAction::Activate()
     Provider->CreateAudioTranslation(AudioTranslation, Auth);
 }
 
-void UAudioTranslationAction::OnCreateAudioTranslationCompleted(const FAudioTranslationResponse& Response)
+void UAudioTranslationAction::OnCreateAudioTranslationCompleted(
+    const FAudioTranslationResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UAudioTranslationAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UAudioTranslationAction::TryToOverrideURL()

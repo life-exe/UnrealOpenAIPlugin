@@ -23,14 +23,14 @@ void UCreateUploadAction::Activate()
     Provider->CreateUpload(CreateUploadRequest, Auth);
 }
 
-void UCreateUploadAction::OnCreateUploadCompleted(const FUploadObjectResponse& Response)
+void UCreateUploadAction::OnCreateUploadCompleted(const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UCreateUploadAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCreateUploadAction::TryToOverrideURL(UOpenAIProvider* Provider)

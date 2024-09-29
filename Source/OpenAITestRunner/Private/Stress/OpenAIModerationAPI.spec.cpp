@@ -42,7 +42,7 @@ void FOpenAIProviderModeration::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateModerationsCompleted().AddLambda(
-                        [&](const FModerationsResponse& Response)
+                        [&](const FModerationsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(!Response.Model.IsEmpty());

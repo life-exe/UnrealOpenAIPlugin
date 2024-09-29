@@ -35,6 +35,24 @@ struct FOpenAIError
     bool WasError{false};
 };
 
+UENUM(BlueprintType)
+enum class EOpenAIHttpHeaderType : uint8
+{
+    XRequestId = 0,
+    OpenAIProcessingMS,
+    OpenAIOrganization,
+    OpenAIVersion
+};
+
+USTRUCT(BlueprintType)
+struct FOpenAIResponseMetadata
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> HttpHeaders{};
+};
+
 /*
     @todo: add more errors https://platform.openai.com/docs/guides/error-codes
 */

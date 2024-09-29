@@ -42,7 +42,7 @@ void FOpenAIProviderModel::Define()
                 [this]()
                 {
                     OpenAIProvider->OnListModelsCompleted().AddLambda(
-                        [&](const FListModelsResponse& Response)
+                        [&](const FListModelsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.Object.IsEmpty());
                             TestTrueExpr(Response.Data.Num() != 0);
@@ -97,7 +97,7 @@ void FOpenAIProviderModel::Define()
                 [this]()
                 {
                     OpenAIProvider->OnRetrieveModelCompleted().AddLambda(
-                        [&](const FRetrieveModelResponse& Response)
+                        [&](const FRetrieveModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(Response.Created > 0);
                             TestTrueExpr(!Response.ID.IsEmpty());

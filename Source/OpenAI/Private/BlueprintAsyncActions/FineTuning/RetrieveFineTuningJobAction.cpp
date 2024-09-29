@@ -23,14 +23,15 @@ void URetrieveFineTuningJobAction::Activate()
     Provider->RetrieveFineTuningJob(FineTuningJobID, Auth);
 }
 
-void URetrieveFineTuningJobAction::OnRetrieveFineTuningJobCompleted(const FFineTuningJobObjectResponse& Response)
+void URetrieveFineTuningJobAction::OnRetrieveFineTuningJobCompleted(
+    const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void URetrieveFineTuningJobAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void URetrieveFineTuningJobAction::TryToOverrideURL(UOpenAIProvider* Provider)

@@ -59,7 +59,7 @@ void FOpenAIProviderBatch::Define()
                     const auto Endpoint = UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions);
 
                     OpenAIProvider->OnUploadFileCompleted().AddLambda(
-                        [&, Endpoint](const FUploadFileResponse& File)
+                        [&, Endpoint](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "File upload request completed, id={0}", File.ID);
                             // 2. Create batch
@@ -74,7 +74,7 @@ void FOpenAIProviderBatch::Define()
                         });
 
                     OpenAIProvider->OnCreateBatchCompleted().AddLambda(
-                        [&, Endpoint](const FCreateBatchResponse& Response)
+                        [&, Endpoint](const FCreateBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "Batch request completed, id={0}", Response.Id);
                             TestTrueExpr(Response.Metadata["purpose"].Equals("plugin test"));
@@ -93,7 +93,7 @@ void FOpenAIProviderBatch::Define()
                 [this]()
                 {
                     OpenAIProvider->OnRetrieveBatchCompleted().AddLambda(
-                        [&](const FRetrieveBatchResponse& Response)
+                        [&](const FRetrieveBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "RetrieveBatch request completed!");
                             TestTrueExpr(Response.Metadata["purpose"].Equals("plugin test"));
@@ -111,7 +111,7 @@ void FOpenAIProviderBatch::Define()
                 [this]()
                 {
                     OpenAIProvider->OnListBatchCompleted().AddLambda(
-                        [&](const FListBatchResponse& Response)
+                        [&](const FListBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "ListBatch request completed!");
                             RequestCompleted = true;
@@ -134,7 +134,7 @@ void FOpenAIProviderBatch::Define()
                     const auto Endpoint = UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions);
 
                     OpenAIProvider->OnUploadFileCompleted().AddLambda(
-                        [&, Endpoint](const FUploadFileResponse& File)
+                        [&, Endpoint](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "File upload request completed, id={0}", File.ID);
                             // 2. Create batch
@@ -149,7 +149,7 @@ void FOpenAIProviderBatch::Define()
                         });
 
                     OpenAIProvider->OnCreateBatchCompleted().AddLambda(
-                        [&, Endpoint](const FCreateBatchResponse& Response)
+                        [&, Endpoint](const FCreateBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "Batch request completed, id={0}", Response.Id);
                             TestTrueExpr(Response.Metadata["purpose"].Equals("plugin test"));
@@ -162,7 +162,7 @@ void FOpenAIProviderBatch::Define()
                         });
 
                     OpenAIProvider->OnCancelBatchCompleted().AddLambda(
-                        [&](const FCancelBatchResponse& Response)
+                        [&](const FCancelBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             UE_LOGFMT(LogOpenAIBatchAPI, Display, "CancelBatch request completed!");
                             RequestCompleted = true;

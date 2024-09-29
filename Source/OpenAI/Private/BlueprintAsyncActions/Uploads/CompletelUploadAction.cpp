@@ -24,14 +24,15 @@ void UCompleteUploadAction::Activate()
     Provider->CompleteUpload(UploadId, CompleteUploadRequest, Auth);
 }
 
-void UCompleteUploadAction::OnCompleteUploadCompleted(const FUploadObjectResponse& Response)
+void UCompleteUploadAction::OnCompleteUploadCompleted(
+    const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UCompleteUploadAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCompleteUploadAction::TryToOverrideURL(UOpenAIProvider* Provider)

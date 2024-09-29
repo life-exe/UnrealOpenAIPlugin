@@ -22,14 +22,14 @@ void UImageEditAction::Activate()
     Provider->CreateImageEdit(ImageEdit, Auth);
 }
 
-void UImageEditAction::OnCreateImageEditCompleted(const FImageEditResponse& Response)
+void UImageEditAction::OnCreateImageEditCompleted(const FImageEditResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UImageEditAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UImageEditAction::TryToOverrideURL()

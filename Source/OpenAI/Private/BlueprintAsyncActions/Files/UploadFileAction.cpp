@@ -22,14 +22,14 @@ void UUploadFileAction::Activate()
     Provider->UploadFile(File, Auth);
 }
 
-void UUploadFileAction::OnUploadFileCompleted(const FUploadFileResponse& Response)
+void UUploadFileAction::OnUploadFileCompleted(const FUploadFileResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UUploadFileAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UUploadFileAction::TryToOverrideURL(UOpenAIProvider* Provider)

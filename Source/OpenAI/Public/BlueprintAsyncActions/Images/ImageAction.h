@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "ImageAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnImage, const FImageResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnImage, const FImageResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -32,7 +33,7 @@ private:
 
     void TryToOverrideURL();
 
-    void OnCreateImageCompleted(const FImageResponse& Response);
+    void OnCreateImageCompleted(const FImageResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

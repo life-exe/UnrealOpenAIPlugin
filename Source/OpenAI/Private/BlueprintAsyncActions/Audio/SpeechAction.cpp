@@ -27,7 +27,7 @@ void USpeechAction::Activate()
     Provider->CreateSpeech(Speech, Auth);
 }
 
-void USpeechAction::OnCreateSpeechCompleted(const FSpeechResponse& Response)
+void USpeechAction::OnCreateSpeechCompleted(const FSpeechResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FString FilePath{};
     if (Settings.SaveToFile && !Settings.AbsolutePath.IsEmpty() && !Settings.BaseName.IsEmpty())
@@ -47,12 +47,12 @@ void USpeechAction::OnCreateSpeechCompleted(const FSpeechResponse& Response)
             UE_LOGFMT(LogSpeechAction, Display, "File was successfully saved to: {0}", FilePath);
         }
     }
-    OnCompleted.Broadcast(FSpeechPayload{Response, FilePath}, {});
+    OnCompleted.Broadcast(FSpeechPayload{Response, FilePath}, ResponseMetadata, {});
 }
 
 void USpeechAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void USpeechAction::TryToOverrideURL()

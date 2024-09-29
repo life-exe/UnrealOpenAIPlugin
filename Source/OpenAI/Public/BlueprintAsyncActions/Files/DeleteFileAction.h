@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "DeleteFileAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeleteFile, const FDeleteFileResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnDeleteFile, const FDeleteFileResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -32,7 +33,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnDeleteFileCompleted(const FDeleteFileResponse& Response);
+    void OnDeleteFileCompleted(const FDeleteFileResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

@@ -22,14 +22,14 @@ void UCancelBatchAction::Activate()
     Provider->CancelBatch(BatchID, Auth);
 }
 
-void UCancelBatchAction::OnCancelBatchCompleted(const FCancelBatchResponse& Response)
+void UCancelBatchAction::OnCancelBatchCompleted(const FCancelBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UCancelBatchAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCancelBatchAction::TryToOverrideURL(UOpenAIProvider* Provider)

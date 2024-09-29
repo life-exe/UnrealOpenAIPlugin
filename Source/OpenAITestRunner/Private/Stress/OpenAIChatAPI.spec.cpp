@@ -47,7 +47,7 @@ void FOpenAIProviderChat::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
-                        [&, Model](const FChatCompletionResponse& Response)
+                        [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(Response.Object.Equals("chat.completion"));
@@ -85,7 +85,7 @@ void FOpenAIProviderChat::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
 
                     OpenAIProvider->OnCreateChatCompletionStreamCompleted().AddLambda(
-                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             for (const auto& Response : Responses)
                             {
@@ -97,7 +97,7 @@ void FOpenAIProviderChat::Define()
                         });
 
                     OpenAIProvider->OnCreateChatCompletionStreamProgresses().AddLambda(
-                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             for (const auto& Response : Responses)
                             {
@@ -132,7 +132,8 @@ void FOpenAIProviderChat::Define()
                     const FString FuncName = "get_current_weather";
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
-                        [&, Model, FuncName, History](const FChatCompletionResponse& Response)
+                        [&, Model, FuncName, History](
+                            const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(Response.Object.Equals("chat.completion"));
@@ -292,7 +293,7 @@ void FOpenAIProviderChat::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
-                        [&, Model](const FChatCompletionResponse& Response)
+                        [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(Response.Object.Equals("chat.completion"));
@@ -344,7 +345,7 @@ void FOpenAIProviderChat::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
-                        [&, Model](const FChatCompletionResponse& Response)
+                        [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(Response.Object.Equals("chat.completion"));
@@ -410,7 +411,7 @@ void FOpenAIProviderChat::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
-                        [&, Model](const FChatCompletionResponse& Response)
+                        [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(!Response.ID.IsEmpty());
                             TestTrueExpr(Response.Object.Equals("chat.completion"));
@@ -470,7 +471,7 @@ void FOpenAIProviderChat::Define()
                     const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
 
                     OpenAIProvider->OnCreateChatCompletionStreamCompleted().AddLambda(
-                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             for (const auto& Response : Responses)
                             {
@@ -482,7 +483,7 @@ void FOpenAIProviderChat::Define()
                         });
 
                     OpenAIProvider->OnCreateChatCompletionStreamProgresses().AddLambda(
-                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses)
+                        [&, Model](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             for (const auto& Response : Responses)
                             {

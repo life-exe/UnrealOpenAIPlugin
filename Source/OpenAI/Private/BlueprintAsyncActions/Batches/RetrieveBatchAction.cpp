@@ -22,14 +22,14 @@ void URetrieveBatchAction::Activate()
     Provider->RetrieveBatch(BatchID, Auth);
 }
 
-void URetrieveBatchAction::OnRetrieveBatchCompleted(const FRetrieveBatchResponse& Response)
+void URetrieveBatchAction::OnRetrieveBatchCompleted(const FRetrieveBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void URetrieveBatchAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void URetrieveBatchAction::TryToOverrideURL(UOpenAIProvider* Provider)

@@ -23,14 +23,15 @@ void URetrieveFileContentAction::Activate()
     Provider->RetrieveFileContent(FileID, Auth);
 }
 
-void URetrieveFileContentAction::OnRetrieveFileContentCompleted(const FRetrieveFileContentResponse& Response)
+void URetrieveFileContentAction::OnRetrieveFileContentCompleted(
+    const FRetrieveFileContentResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void URetrieveFileContentAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void URetrieveFileContentAction::TryToOverrideURL(UOpenAIProvider* Provider)

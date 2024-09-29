@@ -22,14 +22,15 @@ void UAudioTranscriptionVerboseAction::Activate()
     Provider->CreateAudioTranscription(AudioTranscription, Auth);
 }
 
-void UAudioTranscriptionVerboseAction::OnCreateAudioTranscriptionVerboseCompleted(const FAudioTranscriptionVerboseResponse& Response)
+void UAudioTranscriptionVerboseAction::OnCreateAudioTranscriptionVerboseCompleted(
+    const FAudioTranscriptionVerboseResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UAudioTranscriptionVerboseAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UAudioTranscriptionVerboseAction::TryToOverrideURL()

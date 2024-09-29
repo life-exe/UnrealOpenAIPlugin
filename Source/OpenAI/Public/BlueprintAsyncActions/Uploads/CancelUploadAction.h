@@ -7,7 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "CancelUploadAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCancelUpload, const FUploadObjectResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCancelUpload, const FUploadObjectResponse&, Response, const FOpenAIResponseMetadata&,
+    ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -32,7 +33,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnCancelUploadCompleted(const FUploadObjectResponse& Response);
+    void OnCancelUploadCompleted(const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

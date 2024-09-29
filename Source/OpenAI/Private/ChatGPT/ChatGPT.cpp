@@ -52,12 +52,13 @@ UChatGPT::UChatGPT()
             HandleError(Content);
             HandleRequestCompletion();
         });
-    Provider->OnCreateChatCompletionStreamProgresses().AddLambda([&](const TArray<FChatCompletionStreamResponse>& Responses) {  //
-        const FString GatherdChunk = GatherChunkResponse(Responses);
-        UpdateAssistantMessage(GatherdChunk);
-    });
+    Provider->OnCreateChatCompletionStreamProgresses().AddLambda(
+        [&](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata) {  //
+            const FString GatherdChunk = GatherChunkResponse(Responses);
+            UpdateAssistantMessage(GatherdChunk);
+        });
     Provider->OnCreateChatCompletionStreamCompleted().AddLambda(
-        [&](const TArray<FChatCompletionStreamResponse>& Responses)  //
+        [&](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)  //
         {
             FFunctionCommon FunctionCall{};
             FString ID;

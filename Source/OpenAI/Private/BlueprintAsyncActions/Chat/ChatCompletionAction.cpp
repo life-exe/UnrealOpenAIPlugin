@@ -46,38 +46,41 @@ void UChatCompletionAction::Activate()
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }
 
-void UChatCompletionAction::OnCreateChatCompletionCompleted(const FChatCompletionResponse& Response)
+void UChatCompletionAction::OnCreateChatCompletionCompleted(
+    const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FChatCompletionPayload Payload;
     Payload.bStream = false;
     Payload.bCompleted = true;
     Payload.Response = Response;
-    OnUpdate.Broadcast(Payload, {});
+    OnUpdate.Broadcast(Payload, ResponseMetadata, {});
 }
 
-void UChatCompletionAction::OnCreateChatCompletionStreamProgresses(const TArray<FChatCompletionStreamResponse>& Responses)
+void UChatCompletionAction::OnCreateChatCompletionStreamProgresses(
+    const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FChatCompletionPayload Payload;
     Payload.bStream = true;
     Payload.bCompleted = false;
     Payload.StreamResponseString = ParseResponses(Responses);
     Payload.StreamResponse = Responses;
-    OnUpdate.Broadcast(Payload, {});
+    OnUpdate.Broadcast(Payload, ResponseMetadata, {});
 }
 
-void UChatCompletionAction::OnCreateChatCompletionStreamCompleted(const TArray<FChatCompletionStreamResponse>& Responses)
+void UChatCompletionAction::OnCreateChatCompletionStreamCompleted(
+    const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FChatCompletionPayload Payload;
     Payload.bStream = true;
     Payload.bCompleted = true;
     Payload.StreamResponseString = ParseResponses(Responses);
     Payload.StreamResponse = Responses;
-    OnUpdate.Broadcast(Payload, {});
+    OnUpdate.Broadcast(Payload, ResponseMetadata, {});
 }
 
 void UChatCompletionAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnUpdate.Broadcast({}, FOpenAIError{Content, true});
+    OnUpdate.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UChatCompletionAction::TryToOverrideURL(UOpenAIProvider* Provider)

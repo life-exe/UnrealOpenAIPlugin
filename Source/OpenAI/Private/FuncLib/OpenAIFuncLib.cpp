@@ -327,6 +327,33 @@ ERole UOpenAIFuncLib::StringToOpenAIRole(const FString& Role)
     return {};
 }
 
+FString UOpenAIFuncLib::OpenAIHeaderTypeToString(EOpenAIHttpHeaderType Type)
+{
+    switch (Type)
+    {
+        case EOpenAIHttpHeaderType::XRequestId: return "x-request-id";
+        case EOpenAIHttpHeaderType::OpenAIProcessingMS: return "openai-processing-ms";
+        case EOpenAIHttpHeaderType::OpenAIOrganization: return "openai-organization";
+        case EOpenAIHttpHeaderType::OpenAIVersion: return "openai-version";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::FindOpenAIHttpHeaderByType(const FOpenAIResponseMetadata& Headers, EOpenAIHttpHeaderType Type)
+{
+    const FString HeaderName = OpenAIHeaderTypeToString(Type);
+    for (const auto& Header : Headers.HttpHeaders)
+    {
+        FString Name, Value;
+        if (Header.Split(TEXT(": "), &Name, &Value))
+        {
+            if (HeaderName.Equals(Name)) return Value;
+        }
+    }
+    return {};
+}
+
 FString UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat TranscriptFormat)
 {
     switch (TranscriptFormat)

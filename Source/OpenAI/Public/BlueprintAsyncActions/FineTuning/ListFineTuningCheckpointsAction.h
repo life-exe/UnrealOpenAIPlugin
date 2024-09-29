@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "ListFineTuningCheckpointsAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnListFineTuningCheckpoints, const FListFineTuningCheckpointsResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnListFineTuningCheckpoints, const FListFineTuningCheckpointsResponse&, Response,
+    const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -34,7 +34,8 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnListFineTuningCheckpointsCompleted(const FListFineTuningCheckpointsResponse& Response);
+    void OnListFineTuningCheckpointsCompleted(
+        const FListFineTuningCheckpointsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

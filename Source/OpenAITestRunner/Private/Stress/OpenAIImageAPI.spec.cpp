@@ -62,7 +62,7 @@ void FOpenAIProviderImage::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
-                        [&](const FImageResponse& Response)
+                        [&](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 2);
@@ -84,7 +84,7 @@ void FOpenAIProviderImage::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
-                        [&](const FImageResponse& Response)
+                        [&](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 1);
@@ -110,7 +110,7 @@ void FOpenAIProviderImage::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageVariationCompleted().AddLambda(
-                        [&](const FImageVariationResponse& Response)
+                        [&](const FImageVariationResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 2);
@@ -131,7 +131,7 @@ void FOpenAIProviderImage::Define()
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageEditCompleted().AddLambda(
-                        [&](const FImageEditResponse& Response)
+                        [&](const FImageEditResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
                             TestImageResponse(this, Response.Data, 2);

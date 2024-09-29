@@ -22,14 +22,14 @@ void UCreateBatchAction::Activate()
     Provider->CreateBatch(CreateBatchData, Auth);
 }
 
-void UCreateBatchAction::OnCreateBatchCompleted(const FCreateBatchResponse& Response)
+void UCreateBatchAction::OnCreateBatchCompleted(const FCreateBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UCreateBatchAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCreateBatchAction::TryToOverrideURL(UOpenAIProvider* Provider)

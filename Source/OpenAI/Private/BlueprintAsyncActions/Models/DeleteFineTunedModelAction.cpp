@@ -23,14 +23,15 @@ void UDeleteFineTunedModelAction::Activate()
     Provider->DeleteFineTunedModel(ModelID, Auth);
 }
 
-void UDeleteFineTunedModelAction::OnDeleteFineTunedModelCompleted(const FDeleteFineTunedModelResponse& Response)
+void UDeleteFineTunedModelAction::OnDeleteFineTunedModelCompleted(
+    const FDeleteFineTunedModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UDeleteFineTunedModelAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UDeleteFineTunedModelAction::TryToOverrideURL(UOpenAIProvider* Provider)

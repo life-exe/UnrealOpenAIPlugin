@@ -23,14 +23,15 @@ void UCreateFineTuningJobAction::Activate()
     Provider->CreateFineTuningJob(FineTuningJob, Auth);
 }
 
-void UCreateFineTuningJobAction::OnCreateFineTuningJobCompleted(const FFineTuningJobObjectResponse& Response)
+void UCreateFineTuningJobAction::OnCreateFineTuningJobCompleted(
+    const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UCreateFineTuningJobAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCreateFineTuningJobAction::TryToOverrideURL(UOpenAIProvider* Provider)

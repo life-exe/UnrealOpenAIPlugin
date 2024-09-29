@@ -31,7 +31,8 @@ struct FCompletionPayload
     bool bCompleted{};
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCompletion, const FCompletionPayload&, Payload, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FOnCompletion, const FCompletionPayload&, Payload, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -56,9 +57,11 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnCreateCompletionCompleted(const FCompletionResponse& Response);
-    void OnCreateCompletionStreamProgresses(const TArray<FCompletionStreamResponse>& Responses);
-    void OnCreateCompletionStreamCompleted(const TArray<FCompletionStreamResponse>& Responses);
+    void OnCreateCompletionCompleted(const FCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
+    void OnCreateCompletionStreamProgresses(
+        const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata);
+    void OnCreateCompletionStreamCompleted(
+        const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

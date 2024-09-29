@@ -21,14 +21,14 @@ void UListFilesAction::Activate()
     Provider->ListFiles(Auth);
 }
 
-void UListFilesAction::OnListFilesCompleted(const FListFilesResponse& Response)
+void UListFilesAction::OnListFilesCompleted(const FListFilesResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UListFilesAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UListFilesAction::TryToOverrideURL(UOpenAIProvider* Provider)

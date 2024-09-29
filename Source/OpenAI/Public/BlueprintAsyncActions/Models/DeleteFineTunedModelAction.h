@@ -8,8 +8,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "DeleteFineTunedModelAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-    FOnDeleteFineTunedModel, const FDeleteFineTunedModelResponse&, Response, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnDeleteFineTunedModel, const FDeleteFineTunedModelResponse&, Response,
+    const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
@@ -34,7 +34,7 @@ private:
 
     void TryToOverrideURL(UOpenAIProvider* Provider);
 
-    void OnDeleteFineTunedModelCompleted(const FDeleteFineTunedModelResponse& Response);
+    void OnDeleteFineTunedModelCompleted(const FDeleteFineTunedModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnRequestError(const FString& URL, const FString& Content);
 
 private:

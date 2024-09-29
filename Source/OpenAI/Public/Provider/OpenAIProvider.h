@@ -371,6 +371,7 @@ private:
     }
 
     FHttpRequestRef MakeRequestHeaders(const FOpenAIAuth& Auth) const;
+    FOpenAIResponseMetadata GetResponseHeaders(FHttpResponsePtr Response) const;
 
     template <typename OutStructType>
     FHttpRequestRef MakeRequest(const OutStructType& OutStruct, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
@@ -404,7 +405,7 @@ private:
         ParsedResponseType ParsedResponse;
         if (UJsonFuncLib::ParseJSONToStruct(Content, &ParsedResponse))
         {
-            Delegate.Broadcast(ParsedResponse);
+            Delegate.Broadcast(ParsedResponse, GetResponseHeaders(Response));
         }
         else
         {
@@ -465,7 +466,7 @@ private:
         if (ParseStreamRequest(Response, ParsedResponses))
         {
             LogResponse(Response);
-            Delegate.Broadcast(ParsedResponses);
+            Delegate.Broadcast(ParsedResponses, GetResponseHeaders(Response));
         }
         else if (Response.IsValid())
         {
@@ -499,7 +500,7 @@ private:
         if (ParseStreamRequest(Response, ParsedResponses))
         {
             LogResponse(Response);
-            Delegate.Broadcast(ParsedResponses);
+            Delegate.Broadcast(ParsedResponses, GetResponseHeaders(Response));
         }
         else
         {

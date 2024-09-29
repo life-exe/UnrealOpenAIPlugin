@@ -21,14 +21,14 @@ void UListModelsAction::Activate()
     Provider->ListModels(Auth);
 }
 
-void UListModelsAction::OnListModelsCompleted(const FListModelsResponse& Response)
+void UListModelsAction::OnListModelsCompleted(const FListModelsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UListModelsAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UListModelsAction::TryToOverrideURL(UOpenAIProvider* Provider)

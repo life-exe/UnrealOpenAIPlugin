@@ -22,14 +22,14 @@ void UEmbeddingsAction::Activate()
     Provider->CreateEmbeddings(Embeddings, Auth);
 }
 
-void UEmbeddingsAction::OnCreateEmbeddingsCompleted(const FEmbeddingsResponse& Response)
+void UEmbeddingsAction::OnCreateEmbeddingsCompleted(const FEmbeddingsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
-    OnCompleted.Broadcast(Response, {});
+    OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }
 
 void UEmbeddingsAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnCompleted.Broadcast({}, FOpenAIError{Content, true});
+    OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UEmbeddingsAction::TryToOverrideURL(UOpenAIProvider* Provider)

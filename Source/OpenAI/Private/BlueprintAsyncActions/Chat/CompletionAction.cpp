@@ -46,38 +46,40 @@ void UCompletionAction::Activate()
     Provider->CreateCompletion(Completion, Auth);
 }
 
-void UCompletionAction::OnCreateCompletionCompleted(const FCompletionResponse& Response)
+void UCompletionAction::OnCreateCompletionCompleted(const FCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FCompletionPayload Payload;
     Payload.bStream = false;
     Payload.bCompleted = true;
     Payload.Response = Response;
-    OnUpdate.Broadcast(Payload, {});
+    OnUpdate.Broadcast(Payload, ResponseMetadata, {});
 }
 
-void UCompletionAction::OnCreateCompletionStreamProgresses(const TArray<FCompletionStreamResponse>& Responses)
+void UCompletionAction::OnCreateCompletionStreamProgresses(
+    const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FCompletionPayload Payload;
     Payload.bStream = true;
     Payload.bCompleted = false;
     Payload.StreamResponseString = ParseResponses(Responses);
     Payload.StreamResponse = Responses;
-    OnUpdate.Broadcast(Payload, {});
+    OnUpdate.Broadcast(Payload, ResponseMetadata, {});
 }
 
-void UCompletionAction::OnCreateCompletionStreamCompleted(const TArray<FCompletionStreamResponse>& Responses)
+void UCompletionAction::OnCreateCompletionStreamCompleted(
+    const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     FCompletionPayload Payload;
     Payload.bStream = true;
     Payload.bCompleted = true;
     Payload.StreamResponseString = ParseResponses(Responses);
     Payload.StreamResponse = Responses;
-    OnUpdate.Broadcast(Payload, {});
+    OnUpdate.Broadcast(Payload, ResponseMetadata, {});
 }
 
 void UCompletionAction::OnRequestError(const FString& URL, const FString& Content)
 {
-    OnUpdate.Broadcast({}, FOpenAIError{Content, true});
+    OnUpdate.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
 void UCompletionAction::TryToOverrideURL(UOpenAIProvider* Provider)

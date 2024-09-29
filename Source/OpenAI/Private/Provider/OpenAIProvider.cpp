@@ -463,7 +463,8 @@ void UOpenAIProvider::OnCreateImageCompleted(FHttpRequestPtr Request, FHttpRespo
         RequestError.Broadcast(ResponseURL, Content);
         return;
     }
-    CreateImageCompleted.Broadcast(ImageResponse);
+
+    CreateImageCompleted.Broadcast(ImageResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -483,7 +484,7 @@ void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpR
         RequestError.Broadcast(ResponseURL, Content);
         return;
     }
-    CreateImageEditCompleted.Broadcast(ImageEditResponse);
+    CreateImageEditCompleted.Broadcast(ImageEditResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateImageVariationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -503,7 +504,7 @@ void UOpenAIProvider::OnCreateImageVariationCompleted(FHttpRequestPtr Request, F
         RequestError.Broadcast(ResponseURL, Content);
         return;
     }
-    CreateImageVariationCompleted.Broadcast(ImageVariationResponse);
+    CreateImageVariationCompleted.Broadcast(ImageVariationResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -517,7 +518,7 @@ void UOpenAIProvider::OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResp
     {
         FSpeechResponse SpeechResponse;
         SpeechResponse.Bytes = Response->GetContent();  //@todo move semantics needed
-        CreateSpeechCompleted.Broadcast(SpeechResponse);
+        CreateSpeechCompleted.Broadcast(SpeechResponse, GetResponseHeaders(Response));
     }
     else
     {
@@ -576,7 +577,7 @@ void UOpenAIProvider::OnRetrieveFileContentCompleted(FHttpRequestPtr Request, FH
 
     FRetrieveFileContentResponse ParsedResponse;
     ParsedResponse.Content = Content;
-    RetrieveFileContentCompleted.Broadcast(ParsedResponse);
+    RetrieveFileContentCompleted.Broadcast(ParsedResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateModerationsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -595,7 +596,7 @@ void UOpenAIProvider::OnCreateModerationsCompleted(FHttpRequestPtr Request, FHtt
         return;
     }
 
-    CreateModerationsCompleted.Broadcast(ModerationResponse);
+    CreateModerationsCompleted.Broadcast(ModerationResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
@@ -686,12 +687,13 @@ void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
 
 bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!Response)
+    if (!Response.IsValid())
     {
         LogError("Response is nullptr");
         RequestError.Broadcast("null", "null");
         return false;
     }
+
     const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
     const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
 
@@ -805,6 +807,16 @@ FHttpRequestRef UOpenAIProvider::MakeRequestHeaders(const FOpenAIAuth& Auth) con
     HttpRequest->SetHeader("OpenAI-Organization", Auth.OrganizationID);
     HttpRequest->SetHeader("OpenAI-Project", Auth.ProjectID);
     return HttpRequest;
+}
+
+FOpenAIResponseMetadata UOpenAIProvider::GetResponseHeaders(FHttpResponsePtr Response) const
+{
+    FOpenAIResponseMetadata Metadata;
+    if (Response.IsValid())
+    {
+        Metadata.HttpHeaders = Response->GetAllHeaders();
+    }
+    return {};
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
