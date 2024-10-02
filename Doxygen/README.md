@@ -20,27 +20,29 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Moderations](https://platform.openai.com/docs/api-reference/moderations)
  - [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning)
  - [Functions](https://platform.openai.com/docs/guides/function-calling)
+ - [Debugging requests](https://platform.openai.com/docs/api-reference/debugging-requests)
 
 All requests are available in both C++ and Blueprints:
 ```cpp
 void AAPIOverview::CreateImage()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
-    Provider->SetLogEnabled(false);
+    Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
     Provider->OnCreateImageCompleted().AddLambda(
-        [](const FImageResponse& Response)
+        [](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
         {
-            FString OutputString{};
-            Algo::ForEach(Response.Data, [&](const FString& Data) { OutputString.Append(Data).Append(LINE_TERMINATOR); });
-            UE_LOG(LogAPIOverview, Display, TEXT("%s"), *OutputString);
+            auto* ArtTexture = UImageFuncLib::Texture2DFromBytes(Response.Data[0].B64_JSON);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Data[0].B64_JSON);
         });
 
     FOpenAIImage Image;
-    Image.Prompt = "Tiger is eating pizza";
-    Image.Size = UOpenAIFuncLib::OpenAIImageSizeToString(EImageSize::Size_512x512);
-    Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
-    Image.N = 2;
+    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
+    Image.N = 1;
+    Image.Prompt = "Bear with beard drinking beer";
+    Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
+    Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON);
+    Image.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
+    Image.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
 
     Provider->CreateImage(Image, Auth);
 }

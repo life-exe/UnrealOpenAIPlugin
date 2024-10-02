@@ -4,6 +4,7 @@
 #include "Provider/OpenAIProvider.h"
 #include "Provider/Types/AudioTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
+#include "FuncLib/ImageFuncLib.h"
 #include "Algo/ForEach.h"
 #include "API/API.h"
 #include "Misc/Paths.h"
@@ -218,19 +219,16 @@ void AAPIOverview::CreateImageDALLE3()
     Provider->OnCreateImageCompleted().AddLambda(
         [](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
         {
-            FString OutputString{};
-            Algo::ForEach(
-                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
+            auto* ArtTexture = UImageFuncLib::Texture2DFromBytes(Response.Data[0].B64_JSON);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Data[0].B64_JSON);
         });
 
     FOpenAIImage Image;
     Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
-    Image.N = 1;  // only one image is now supported.
+    Image.N = 1;  // DALLE3 only supports one image at the moment.
     Image.Prompt = "Bear with beard drinking beer";
     Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
-    Image.Response_Format =
-        UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);  // B64_JSON is not currently supported by the plugin.
+    Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON);
     Image.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
     Image.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
 
