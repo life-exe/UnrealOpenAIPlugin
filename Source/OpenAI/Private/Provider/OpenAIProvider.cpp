@@ -828,7 +828,7 @@ FHttpRequestRef UOpenAIProvider::MakeRequestHeaders(const FOpenAIAuth& Auth) con
 FOpenAIResponseMetadata UOpenAIProvider::GetResponseHeaders(FHttpResponsePtr Response) const
 {
     FOpenAIResponseMetadata Metadata;
-    if (Response.IsValid())
+    if (Response.IsValid() && Response->GetStatus() != EHttpRequestStatus::Processing)
     {
         Metadata.HttpHeaders = Response->GetAllHeaders();
     }
