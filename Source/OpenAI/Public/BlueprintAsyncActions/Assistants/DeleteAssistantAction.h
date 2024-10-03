@@ -29,8 +29,7 @@ private:
      * If this functionality is not required, this parameter can be left blank.
      */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Audio")
-    static UDeleteAssistantAction* DeleteAssistantAction(
-        const FString& AssistantId, const FOpenAIAuth& Auth, const FString& URLOverride);
+    static UDeleteAssistantAction* DeleteAssistantAction(const FString& AssistantId, const FOpenAIAuth& Auth, const FString& URLOverride);
 
     void TryToOverrideURL();
 

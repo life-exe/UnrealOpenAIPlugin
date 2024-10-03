@@ -7,8 +7,8 @@
 #include "Provider/Types/CommonTypes.h"
 #include "ListAssistantsAction.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnListAssistants, const FListAssistantsResponse&, Response,
-    const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnListAssistants, const FListAssistantsResponse&, Response, const FOpenAIResponseMetadata&,
+    ResponseMetadata, const FOpenAIError&, RawError);
 
 class UOpenAIProvider;
 
