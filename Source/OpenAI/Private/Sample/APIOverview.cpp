@@ -55,6 +55,11 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::CompleteUpload, [&]() { CompleteUpload(); });
     ActionMap.Add(EAPIOverviewAction::CancelUpload, [&]() { CancelUpload(); });
     ActionMap.Add(EAPIOverviewAction::SetYourOwnAPI, [&]() { SetYourOwnAPI(); });
+    ActionMap.Add(EAPIOverviewAction::CreateAssistant, [&]() { CreateAssistant(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteAssistant, [&]() { DeleteAssistant(); });
+    ActionMap.Add(EAPIOverviewAction::ListAssistants, [&]() { ListAssistants(); });
+    ActionMap.Add(EAPIOverviewAction::ModifyAssistant, [&]() { ModifyAssistant(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveAssistant, [&]() { RetrieveAssistant(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -727,6 +732,78 @@ void AAPIOverview::CancelUpload()
     Provider->CancelUpload(UploadId, Auth);
 }
 
+void AAPIOverview::CreateAssistant()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateAssistantCompleted().AddLambda(
+        [&](const FAssistantObjectResponse& AssistantObjectResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Assistant was created! id: {0}", AssistantObjectResponse.Id); });
+
+    FCreateAssistant CreateAssistant;
+    CreateAssistant.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O);
+    CreateAssistant.Instructions =
+        "You are a personal math tutor. When asked a question, write and run Python code to answer the question.";
+    CreateAssistant.Name = "Math Tutor";
+
+    FAssistantTool AssistantTool;
+    AssistantTool.Type = UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType::CodeInterpreter);
+    CreateAssistant.Tools.Add(AssistantTool);
+
+    Provider->CreateAssistant(CreateAssistant, Auth);
+}
+
+void AAPIOverview::DeleteAssistant()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteAssistantCompleted().AddLambda(
+        [&](const FDeleteAssistantResponse& DeleteAssistantResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Assistant was deleted! id: {0}", DeleteAssistantResponse.Id); });
+
+    const FString AssistantId = "assistantId_xxxxxxxxxxxx";
+    Provider->DeleteAssistant(AssistantId, Auth);
+}
+
+void AAPIOverview::ListAssistants()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListAssistantsCompleted().AddLambda(
+        [&](const FListAssistantsResponse& ListAssistantsResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Assistants count: {0}", ListAssistantsResponse.Data.Num()); });
+
+    FListAssistants ListAssistantsRequest;
+    ListAssistantsRequest.Limit = 10;
+    Provider->ListAssistants(ListAssistantsRequest, Auth);
+}
+
+void AAPIOverview::ModifyAssistant()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnModifyAssistantCompleted().AddLambda(
+        [&](const FAssistantObjectResponse& AssistantObjectResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Assistant was modified: {0}", AssistantObjectResponse.Id); });
+
+    FModifyAssistant ModifyAssistant{};
+    ModifyAssistant.Description = "New description";
+    const FString AssistantId = "assistantId_xxxxxxxxxxxx";
+    Provider->ModifyAssistant(AssistantId, ModifyAssistant, Auth);
+}
+
+void AAPIOverview::RetrieveAssistant()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveAssistantCompleted().AddLambda(
+        [&](const FAssistantObjectResponse& AssistantObjectResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Assistant was retrieved: {0}", AssistantObjectResponse.Id); });
+
+    const FString AssistantId = "assistantId_xxxxxxxxxxxx";
+    Provider->RetrieveAssistant(AssistantId, Auth);
+}
+
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
 {
     UE_LOGFMT(LogAPIOverview, Error, "URL: {0}, Content: {1}", URL, Content);
@@ -759,6 +836,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
         virtual FString Batches() const override { return API_URL + "/v1/batches"; }
         virtual FString Uploads() const override { return API_URL + "/v1/uploads"; }
+        virtual FString Assistants() const override { return API_URL + "/v1/assistants"; }
 
     private:
         const FString API_URL;

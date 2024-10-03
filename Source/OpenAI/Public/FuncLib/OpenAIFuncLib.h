@@ -106,6 +106,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI | Upload")
     static FString OpenAIUploadStatusToString(EUploadStatus UploadStatus);
 
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Upload")
+    static FString OpenAIAssistantToolTypeToString(EAssistantToolType AssistantToolType);
+
     // common
     UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
     static FString OpenAIRoleToString(ERole Role);

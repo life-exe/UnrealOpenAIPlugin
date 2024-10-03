@@ -257,6 +257,36 @@ public:
     void CancelUpload(const FString& UploadId, const FOpenAIAuth& Auth);
 
     /**
+      Create an assistant with a model and instructions.
+      https://platform.openai.com/docs/api-reference/assistants/createAssistant
+    */
+    void CreateAssistant(const FCreateAssistant& CreateAssistant, const FOpenAIAuth& Auth);
+
+    /**
+      Returns a list of assistants.
+      https://platform.openai.com/docs/api-reference/assistants/listAssistants
+    */
+    void ListAssistants(const FListAssistants& ListAssistants, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves an assistant.
+      https://platform.openai.com/docs/api-reference/assistants/getAssistant
+    */
+    void RetrieveAssistant(const FString& AssistantId, const FOpenAIAuth& Auth);
+
+    /**
+      Modifies an assistant.
+      https://platform.openai.com/docs/api-reference/assistants/modifyAssistant
+    */
+    void ModifyAssistant(const FString& AssistantId, const FModifyAssistant& ModifyAssistant, const FOpenAIAuth& Auth);
+
+    /**
+      Delete an assistant.
+      https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
+    */
+    void DeleteAssistant(const FString& AssistantId, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -307,6 +337,11 @@ public:
     DEFINE_EVENT_GETTER(AddUploadPartCompleted)
     DEFINE_EVENT_GETTER(CompleteUploadCompleted)
     DEFINE_EVENT_GETTER(CancelUploadCompleted)
+    DEFINE_EVENT_GETTER(CreateAssistantCompleted)
+    DEFINE_EVENT_GETTER(ListAssistantsCompleted)
+    DEFINE_EVENT_GETTER(RetrieveAssistantCompleted)
+    DEFINE_EVENT_GETTER(ModifyAssistantCompleted)
+    DEFINE_EVENT_GETTER(DeleteAssistantCompleted)
 
 private:
     TSharedPtr<OpenAI::IAPI> API;
@@ -352,6 +387,11 @@ private:
     DECLARE_HTTP_CALLBACK(OnAddUploadPartCompleted)
     DECLARE_HTTP_CALLBACK(OnCompleteUploadCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelUploadCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateAssistantCompleted)
+    DECLARE_HTTP_CALLBACK(OnListAssistantsCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveAssistantCompleted)
+    DECLARE_HTTP_CALLBACK(OnModifyAssistantCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteAssistantCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
 

@@ -518,6 +518,19 @@ FString UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus UploadStatus)
     return {};
 }
 
+FString UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType AssistantToolType)
+{
+    switch (AssistantToolType)
+    {
+        case EAssistantToolType::CodeInterpreter: return "code_interpreter";
+        case EAssistantToolType::FileSearch: return "file_search";
+        case EAssistantToolType::Function: return "function";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
 FString UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier ServiceTier)
 {
     switch (ServiceTier)

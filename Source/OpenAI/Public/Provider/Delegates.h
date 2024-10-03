@@ -65,3 +65,9 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateUploadCompleted, const FUploadObje
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAddUploadPartCompleted, const FUploadPartObjectResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCompleteUploadCompleted, const FUploadObjectResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCancelUploadCompleted, const FUploadObjectResponse&, const FOpenAIResponseMetadata&);
+// assistants
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateAssistantCompleted, const FAssistantObjectResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListAssistantsCompleted, const FListAssistantsResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveAssistantCompleted, const FAssistantObjectResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnModifyAssistantCompleted, const FAssistantObjectResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteAssistantCompleted, const FDeleteAssistantResponse&, const FOpenAIResponseMetadata&);

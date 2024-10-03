@@ -46,6 +46,12 @@ enum class EAPIOverviewAction : uint8
     AddUploadPart,
     CompleteUpload,
     CancelUpload,
+    CreateAssistant,
+    DeleteAssistant,
+    ListAssistants,
+    ModifyAssistant,
+    RetrieveAssistant,
+
     SetYourOwnAPI
 };
 
@@ -113,6 +119,12 @@ private:
     void AddUploadPart();
     void CompleteUpload();
     void CancelUpload();
+
+    void CreateAssistant();
+    void DeleteAssistant();
+    void ListAssistants();
+    void ModifyAssistant();
+    void RetrieveAssistant();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

@@ -400,22 +400,60 @@ void UOpenAIProvider::CancelUpload(const FString& UploadId, const FOpenAIAuth& A
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateAssistant(const FCreateAssistant& CreateAssistant, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateAssistant, API->Assistants(), "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateAssistantCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListAssistants(const FListAssistants& ListAssistants, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Assistants()).Append(ListAssistants.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListAssistantsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveAssistant(const FString& AssistantId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Assistants()).Append("/").Append(AssistantId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveAssistantCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ModifyAssistant(const FString& AssistantId, const FModifyAssistant& ModifyAssistant, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Assistants()).Append("/").Append(AssistantId);
+    auto HttpRequest = MakeRequest(ModifyAssistant, URL, "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnModifyAssistantCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteAssistant(const FString& AssistantId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Assistants()).Append("/").Append(AssistantId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteAssistantCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
-void UOpenAIProvider::OnListModelsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListModelsResponse>(Response, WasSuccessful, ListModelsCompleted);
-}
-
-void UOpenAIProvider::OnRetrieveModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FRetrieveModelResponse>(Response, WasSuccessful, RetrieveModelCompleted);
-}
-
-void UOpenAIProvider::OnDeleteFineTunedModelCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FDeleteFineTunedModelResponse>(Response, WasSuccessful, DeleteFineTunedModelCompleted);
-}
+#define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
+    void UOpenAIProvider::On##Name##Completed(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful) \
+    {                                                                                                                 \
+        HandleResponse<F##Name##Response>(Response, WasSuccessful, Name##Completed);                                  \
+    }
+DEFINE_HTTP_CALLBACK(ListModels)
+DEFINE_HTTP_CALLBACK(RetrieveModel)
+DEFINE_HTTP_CALLBACK(DeleteFineTunedModel)
 
 void UOpenAIProvider::OnCreateCompletionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
@@ -544,25 +582,10 @@ void UOpenAIProvider::OnCreateAudioTranslationCompleted(FHttpRequestPtr Request,
     HandleResponse<FAudioTranslationResponse>(Response, WasSuccessful, CreateAudioTranslationCompleted);
 }
 
-void UOpenAIProvider::OnListFilesCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListFilesResponse>(Response, WasSuccessful, ListFilesCompleted);
-}
-
-void UOpenAIProvider::OnUploadFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FUploadFileResponse>(Response, WasSuccessful, UploadFileCompleted);
-}
-
-void UOpenAIProvider::OnDeleteFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FDeleteFileResponse>(Response, WasSuccessful, DeleteFileCompleted);
-}
-
-void UOpenAIProvider::OnRetrieveFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FRetrieveFileResponse>(Response, WasSuccessful, RetrieveFileCompleted);
-}
+DEFINE_HTTP_CALLBACK(ListFiles)
+DEFINE_HTTP_CALLBACK(UploadFile)
+DEFINE_HTTP_CALLBACK(DeleteFile)
+DEFINE_HTTP_CALLBACK(RetrieveFile)
 
 void UOpenAIProvider::OnRetrieveFileContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
@@ -604,20 +627,9 @@ void UOpenAIProvider::OnCreateFineTuningJobCompleted(FHttpRequestPtr Request, FH
     HandleResponse<FFineTuningJobObjectResponse>(Response, WasSuccessful, CreateFineTuningJobCompleted);
 }
 
-void UOpenAIProvider::OnListFineTuningJobsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListFineTuningJobsResponse>(Response, WasSuccessful, ListFineTuningJobsCompleted);
-}
-
-void UOpenAIProvider::OnListFineTuningEventsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListFineTuningEventsResponse>(Response, WasSuccessful, ListFineTuningEventsCompleted);
-}
-
-void UOpenAIProvider::OnListFineTuningCheckpointsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListFineTuningCheckpointsResponse>(Response, WasSuccessful, ListFineTuningCheckpointsCompleted);
-}
+DEFINE_HTTP_CALLBACK(ListFineTuningJobs)
+DEFINE_HTTP_CALLBACK(ListFineTuningEvents)
+DEFINE_HTTP_CALLBACK(ListFineTuningCheckpoints)
 
 void UOpenAIProvider::OnRetrieveFineTuningJobCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
@@ -629,25 +641,10 @@ void UOpenAIProvider::OnCancelFineTuningJobCompleted(FHttpRequestPtr Request, FH
     HandleResponse<FFineTuningJobObjectResponse>(Response, WasSuccessful, CancelFineTuningJobCompleted);
 }
 
-void UOpenAIProvider::OnCreateBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FCreateBatchResponse>(Response, WasSuccessful, CreateBatchCompleted);
-}
-
-void UOpenAIProvider::OnRetrieveBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FRetrieveBatchResponse>(Response, WasSuccessful, RetrieveBatchCompleted);
-}
-
-void UOpenAIProvider::OnCancelBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FCancelBatchResponse>(Response, WasSuccessful, CancelBatchCompleted);
-}
-
-void UOpenAIProvider::OnListBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    HandleResponse<FListBatchResponse>(Response, WasSuccessful, ListBatchCompleted);
-}
+DEFINE_HTTP_CALLBACK(CreateBatch)
+DEFINE_HTTP_CALLBACK(RetrieveBatch)
+DEFINE_HTTP_CALLBACK(CancelBatch)
+DEFINE_HTTP_CALLBACK(ListBatch)
 
 void UOpenAIProvider::OnCreateUploadCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
@@ -669,13 +666,32 @@ void UOpenAIProvider::OnCancelUploadCompleted(FHttpRequestPtr Request, FHttpResp
     HandleResponse<FUploadObjectResponse>(Response, WasSuccessful, CancelUploadCompleted);
 }
 
+void UOpenAIProvider::OnCreateAssistantCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FAssistantObjectResponse>(Response, WasSuccessful, CreateAssistantCompleted);
+}
+
+DEFINE_HTTP_CALLBACK(ListAssistants)
+
+void UOpenAIProvider::OnRetrieveAssistantCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FAssistantObjectResponse>(Response, WasSuccessful, RetrieveAssistantCompleted);
+}
+
+void UOpenAIProvider::OnModifyAssistantCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FAssistantObjectResponse>(Response, WasSuccessful, ModifyAssistantCompleted);
+}
+
+DEFINE_HTTP_CALLBACK(DeleteAssistant)
+
 ///////////////////////////// HELPER FUNCTIONS /////////////////////////////
 
 void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
 {
     if (bLogEnabled)
     {
-        UE_LOGFMT(LogOpenAIProvider, Display, "Request processing started: {0}", HttpRequest->GetURL());
+        UE_LOGFMT(LogOpenAIProvider, Display, "Request processing started: {0} {1}", HttpRequest->GetVerb(), HttpRequest->GetURL());
     }
 
     if (!HttpRequest->ProcessRequest())

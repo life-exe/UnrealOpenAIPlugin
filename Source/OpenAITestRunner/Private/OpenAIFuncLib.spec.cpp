@@ -484,6 +484,15 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Cancelled).Equals("cancelled"));
                 });
 
+            It("OpenAIAssistantToolTypeToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType::CodeInterpreter).Equals("code_interpreter"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType::FileSearch).Equals("file_search"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType::Function).Equals("function"));
+                });
+
             It("OpenAIHeaderTypeToStringShouldReturnCorrectValue",
                 [this]()
                 {
