@@ -15,7 +15,7 @@
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIBatchAPI, All, All);
 
 BEGIN_DEFINE_SPEC(FOpenAIProviderBatch, "OpenAI.Provider",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
 TObjectPtr<UOpenAIProvider> OpenAIProvider;
 FOpenAIAuth Auth;
 bool RequestCompleted{false};

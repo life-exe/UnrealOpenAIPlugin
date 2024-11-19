@@ -9,8 +9,7 @@
 #include "TestUtils.h"
 #include "Logging/StructuredLog.h"
 
-DEFINE_SPEC(FJsonFuncLib, "OpenAI",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
+DEFINE_SPEC(FJsonFuncLib, "OpenAI", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
 
 void FJsonFuncLib::Define()
 {

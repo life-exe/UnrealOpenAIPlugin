@@ -10,7 +10,7 @@
 #include "TestUtils.h"
 
 DEFINE_SPEC(FOpenAIFuncLib, "OpenAI",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
 
 void FOpenAIFuncLib::Define()
 {

@@ -11,7 +11,7 @@
 #include "Algo/AnyOf.h"
 
 BEGIN_DEFINE_SPEC(FOpenAIAssistants, "OpenAI.Provider",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
 TObjectPtr<UOpenAIProvider> OpenAIProvider;
 FOpenAIAuth Auth;
 bool RequestCompleted{false};

@@ -61,7 +61,7 @@ void UOpenAIProvider::CreateCompletion(const FCompletion& Completion, const FOpe
     if (Completion.Stream)
     {
         HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateCompletionStreamCompleted);
-        HttpRequest->OnRequestProgress().BindUObject(this, &ThisClass::OnCreateCompletionStreamProgress);
+        HttpRequest->OnRequestProgress64().BindUObject(this, &ThisClass::OnCreateCompletionStreamProgress);
     }
     else
     {
@@ -80,7 +80,7 @@ void UOpenAIProvider::CreateChatCompletion(const FChatCompletion& ChatCompletion
     if (ChatCompletion.Stream)
     {
         HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateChatCompletionStreamCompleted);
-        HttpRequest->OnRequestProgress().BindUObject(this, &ThisClass::OnCreateChatCompletionStreamProgress);
+        HttpRequest->OnRequestProgress64().BindUObject(this, &ThisClass::OnCreateChatCompletionStreamProgress);
     }
     else
     {
@@ -465,7 +465,7 @@ void UOpenAIProvider::OnCreateCompletionStreamCompleted(FHttpRequestPtr Request,
     OnStreamCompleted<FCompletionStreamResponse>(Request, Response, WasSuccessful, CreateCompletionStreamCompleted);
 }
 
-void UOpenAIProvider::OnCreateCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
+void UOpenAIProvider::OnCreateCompletionStreamProgress(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived)
 {
     OnStreamProgress<FCompletionStreamResponse>(Request, BytesSent, BytesReceived, CreateCompletionStreamProgresses);
 }
@@ -480,7 +480,7 @@ void UOpenAIProvider::OnCreateChatCompletionStreamCompleted(FHttpRequestPtr Requ
     OnStreamCompleted<FChatCompletionStreamResponse>(Request, Response, WasSuccessful, CreateChatCompletionStreamCompleted);
 }
 
-void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived)
+void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived)
 {
     OnStreamProgress<FChatCompletionStreamResponse>(Request, BytesSent, BytesReceived, CreateChatCompletionStreamProgresses);
 }

@@ -9,7 +9,7 @@
 #include "Provider/Types/CommonTypes.h"
 
 DEFINE_SPEC(FOpenAIProviderFake, "OpenAI.Provider",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 
 void FOpenAIProviderFake::Define()
 {

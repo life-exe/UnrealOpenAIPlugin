@@ -9,4 +9,4 @@ void FOpenAITestRunnerModule::ShutdownModule() {}
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FOpenAITestRunnerModule, OpenAITestRunnerModule)
+IMPLEMENT_MODULE(FOpenAITestRunnerModule, OpenAITestRunner)

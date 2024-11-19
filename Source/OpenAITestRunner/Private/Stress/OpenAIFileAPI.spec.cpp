@@ -10,7 +10,7 @@
 #include "TestUtils.h"
 
 BEGIN_DEFINE_SPEC(FOpenAIProviderFile, "OpenAI.Provider",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
 TObjectPtr<UOpenAIProvider> OpenAIProvider;
 FOpenAIAuth Auth;
 bool RequestCompleted{false};

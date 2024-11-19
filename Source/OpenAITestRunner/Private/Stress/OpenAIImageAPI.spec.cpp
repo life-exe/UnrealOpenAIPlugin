@@ -13,7 +13,7 @@
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIImageAPI, All, All);
 
 BEGIN_DEFINE_SPEC(FOpenAIProviderImage, "OpenAI.Provider",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
 TObjectPtr<UOpenAIProvider> OpenAIProvider;
 FOpenAIAuth Auth;
 bool RequestCompleted{false};

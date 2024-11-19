@@ -67,7 +67,6 @@ public:
         return true;
     }
     virtual FHttpRequestCompleteDelegate& OnProcessRequestComplete() override { return HttpRequestCompleteDelegate; }
-    virtual FHttpRequestProgressDelegate& OnRequestProgress() override { return HttpRequestProgressDelegate; }
     virtual FHttpRequestHeaderReceivedDelegate& OnHeaderReceived() override { return HttpHeaderReceivedDelegate; }
     virtual FHttpRequestProgressDelegate64& OnRequestProgress64() override { return HttpRequestProgressDelegate64; }
     virtual FHttpRequestStatusCodeReceivedDelegate& OnStatusCodeReceived() override { return HttpRequestStatusCodeReceivedDelegate; }
@@ -86,6 +85,9 @@ public:
     virtual EHttpFailureReason GetFailureReason() const override { return EHttpFailureReason::None; }
     virtual void ProcessRequestUntilComplete() override {}
     virtual void SetActivityTimeout(float InTimeoutSecs) override {}
+    virtual FString GetOption(const FName Option) const override { return {}; }
+    virtual void SetOption(const FName Option, const FString& OptionValue) override {}
+    virtual void ResetTimeoutStatus() override {}
 
 public:
     FHttpRequestProgressDelegate HttpRequestProgressDelegate;

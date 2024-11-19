@@ -13,7 +13,7 @@
 DEFINE_LOG_CATEGORY_STATIC(LogOpenAIChatAPI, All, All);
 
 BEGIN_DEFINE_SPEC(FOpenAIProviderChat, "OpenAI.Provider",
-    EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::StressFilter | EAutomationTestFlags::HighPriority)
 TObjectPtr<UOpenAIProvider> OpenAIProvider;
 FOpenAIAuth Auth;
 bool RequestCompleted{false};
@@ -364,7 +364,7 @@ void FOpenAIProviderChat::Define()
                                 TestTrueExpr(Choice.Index == 0);
                                 TestTrueExpr(Choice.Message.Role.Equals(UOpenAIFuncLib::OpenAIRoleToString(ERole::Assistant)));
                                 TestTrueExpr(!Choice.Message.Content.IsEmpty());
-                                const bool Cats = Choice.Message.Content.Contains("cat") || Choice.Message.Content.Contains("kitten");
+                                const bool Cats = Choice.Message.Content.Contains("bird") || Choice.Message.Content.Contains("hummingbird");
                                 TestTrueExpr(Cats);
                             }
                             else
@@ -385,7 +385,7 @@ void FOpenAIProviderChat::Define()
 
                     FMessageContent MessageContent2;
                     MessageContent2.Type = UOpenAIFuncLib::OpenAIMessageContentTypeToString(EMessageContentType::Image_URL);
-                    MessageContent2.Image_URL.URL = "https://cdn.freecodecamp.org/curriculum/cat-photo-app/cats.jpg";
+                    MessageContent2.Image_URL.URL = "https://farm4.staticflickr.com/3075/3168662394_7d7103de7d_z_d.jpg";
                     Message.ContentArray.Add(MessageContent2);
 
                     FChatCompletion ChatCompletion;

@@ -349,7 +349,7 @@ private:
     FOnRequestError RequestError;
 
 #define DECLARE_HTTP_CALLBACK(Callback) virtual void Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
-#define DECLARE_HTTP_CALLBACK_PROGRESS(Callback) virtual void Callback(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived);
+#define DECLARE_HTTP_CALLBACK_PROGRESS(Callback) virtual void Callback(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived);
 
     DECLARE_HTTP_CALLBACK(OnListModelsCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveModelCompleted)
@@ -498,7 +498,7 @@ private:
     }
 
     template <typename ResponseType, typename DelegateType>
-    void OnStreamProgress(FHttpRequestPtr Request, int32 BytesSent, int32 BytesReceived, DelegateType& Delegate)
+    void OnStreamProgress(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived, DelegateType& Delegate)
     {
         const auto& Response = Request->GetResponse();
         TArray<ResponseType> ParsedResponses;
