@@ -51,6 +51,10 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::O1_Preview_2024_09_12: return "o1-preview-2024-09-12";
         case EAllModelEnum::O1_Mini: return "o1-mini";
         case EAllModelEnum::O1_Mini_2024_09_12: return "o1-mini-2024-09-12";
+        case EAllModelEnum::GPT_4O_Audio_Preview: return "gpt-4o-audio-preview";
+        case EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01: return "gpt-4o-audio-preview-2024-10-01";
+        case EAllModelEnum::GPT_4O_Realtime_Preview: return "gpt-4o-realtime-preview";
+        case EAllModelEnum::GPT_4O_Realtime_Preview_2024_10_01: return "gpt-4o-realtime-preview-2024-10-01";
     }
     checkNoEntry();
     return {};

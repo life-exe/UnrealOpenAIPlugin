@@ -9,4 +9,4 @@ void FOpenAIEditorModule::ShutdownModule() {}
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FOpenAIEditorModule, OpenAIEditorModule)
+IMPLEMENT_MODULE(FOpenAIEditorModule, OpenAIEditor)

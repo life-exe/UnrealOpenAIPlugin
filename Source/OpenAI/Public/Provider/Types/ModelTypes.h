@@ -46,7 +46,11 @@ enum class EAllModelEnum : uint8
     O1_Preview,
     O1_Preview_2024_09_12,
     O1_Mini,
-    O1_Mini_2024_09_12
+    O1_Mini_2024_09_12,
+    GPT_4O_Audio_Preview,
+    GPT_4O_Audio_Preview_2024_10_01,
+    GPT_4O_Realtime_Preview,
+    GPT_4O_Realtime_Preview_2024_10_01
 };
 
 UENUM(BlueprintType)

@@ -67,6 +67,14 @@ void FOpenAIFuncLib::Define()
                         UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Preview_2024_09_12).Equals("o1-preview-2024-09-12"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Mini).Equals("o1-mini"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Mini_2024_09_12).Equals("o1-mini-2024-09-12"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Audio_Preview).Equals("gpt-4o-audio-preview"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01)
+                                     .Equals("gpt-4o-audio-preview-2024-10-01"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Realtime_Preview).Equals("gpt-4o-realtime-preview"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Realtime_Preview_2024_10_01)
+                                     .Equals("gpt-4o-realtime-preview-2024-10-01"));
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
