@@ -23,7 +23,7 @@ protected:
     virtual void BeginPlay() override;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "OpenAI")
-    EMainModelEnum Model{EMainModelEnum::GPT_4_Vision_Preview};
+    EMainModelEnum Model{EMainModelEnum::O1};
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "OpenAI")
     int32 MaxTokens{2000};

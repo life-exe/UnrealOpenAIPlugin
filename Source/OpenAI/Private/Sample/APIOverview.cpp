@@ -98,7 +98,7 @@ void AAPIOverview::RetrieveModel()
     Provider->OnRetrieveModelCompleted().AddLambda(
         [](const FRetrieveModelResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
         { UE_LOGFMT(LogAPIOverview, Display, "{0}", UOpenAIFuncLib::OpenAIModelToString(Response)); });
-    const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+    const auto ModelName = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1);
     Provider->RetrieveModel(ModelName, Auth);
 }
 

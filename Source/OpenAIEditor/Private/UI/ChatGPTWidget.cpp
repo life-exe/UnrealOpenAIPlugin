@@ -91,12 +91,16 @@ void UChatGPTWidget::InitModelsComboBox()
     };
 
     ChatGPTModelComboBox->ClearOptions();
-    AddModel(EMainModelEnum::GPT_4O);
-    AddModel(EMainModelEnum::GPT_4);
-    AddModel(EMainModelEnum::GPT_4_Vision_Preview);
-    AddModel(EMainModelEnum::GPT_4_0314);
-    AddModel(EMainModelEnum::GPT_4_0613);
-    AddModel(EMainModelEnum::GPT_3_5_Turbo);
+
+    const UEnum* Enum = StaticEnum<EMainModelEnum>();
+    for (int32 i = 0; i < Enum->NumEnums() - 1; ++i)
+    {
+        const EMainModelEnum Model = static_cast<EMainModelEnum>(i);
+        if (Enum->IsValidEnumValue(i))
+        {
+            AddModel(Model);
+        }
+    }
 
     ChatGPTModelComboBox->SetSelectedOption(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4O));
     ChatGPT->SetModel(ChatGPTModelComboBox->GetSelectedOption());

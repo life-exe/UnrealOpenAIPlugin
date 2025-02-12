@@ -23,11 +23,6 @@ void CleanFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPt
         Json->RemoveField(TEXT("Logit_Bias"));
     }
 
-    if (ChatCompletion.Model == UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview))
-    {
-        Json->RemoveField(TEXT("Response_Format"));
-    }
-
     if (Json->GetObjectField(TEXT("Stream_Options"))->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset")) == false)
     {
         Json->RemoveField(TEXT("Stream_Options"));

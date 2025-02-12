@@ -12,6 +12,12 @@
 DEFINE_SPEC(FOpenAIFuncLib, "OpenAI",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
 
+#define TEST_OPENAI_ALL_MODEL_TO_STRING(EnumValue, ExpectedString) \
+    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EnumValue).Equals(ExpectedString))
+
+#define TEST_OPENAI_MODEL_TO_STRING(EnumValue, ExpectedString) \
+    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EnumValue).Equals(ExpectedString))
+
 void FOpenAIFuncLib::Define()
 {
     Describe("OpenAIFuncLib",
@@ -20,78 +26,78 @@ void FOpenAIFuncLib::Define()
             It("AllModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Whisper_1).Equals("whisper-1"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo).Equals("gpt-3.5-turbo"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_16k).Equals("gpt-3.5-turbo-16k"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct_0914)
-                                     .Equals("gpt-3.5-turbo-instruct-0914"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_Ada_002).Equals("text-embedding-ada-002"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4).Equals("gpt-4"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::DALL_E_2).Equals("dall-e-2"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::DALL_E_3).Equals("dall-e-3"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_1106_Preview).Equals("gpt-4-1106-preview"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview).Equals("gpt-4-vision-preview"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_1106).Equals("gpt-3.5-turbo-1106"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1).Equals("tts-1"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_HD).Equals("tts-1-hd"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_1106).Equals("tts-1-1106"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::TTS_1_HD_1106).Equals("tts-1-hd-1106"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_3_Large).Equals("text-embedding-3-large"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_32K_0314).Equals("gpt-4-32k-0314"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo_0125).Equals("gpt-3.5-turbo-0125"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::Text_Embedding_3_Small).Equals("text-embedding-3-small"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_0125_Preview).Equals("gpt-4-0125-preview"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Turbo_Preview).Equals("gpt-4-turbo-preview"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_2024_05_13).Equals("gpt-4o-2024-05-13"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O).Equals("gpt-4o"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Turbo_2024_04_09).Equals("gpt-4-turbo-2024-04-09"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Turbo).Equals("gpt-4-turbo"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_1106_Vision_Preview)
-                                     .Equals("gpt-4-1106-vision-preview"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini).Equals("gpt-4o-mini"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini_2024_07_18).Equals("gpt-4o-mini-2024-07-18"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::ChatGPT_4O_Latest).Equals("chatgpt-4o-latest"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_2024_08_06).Equals("gpt-4o-2024-08-06"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Preview).Equals("o1-preview"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Preview_2024_09_12).Equals("o1-preview-2024-09-12"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Mini).Equals("o1-mini"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::O1_Mini_2024_09_12).Equals("o1-mini-2024-09-12"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Audio_Preview).Equals("gpt-4o-audio-preview"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01)
-                                     .Equals("gpt-4o-audio-preview-2024-10-01"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Realtime_Preview).Equals("gpt-4o-realtime-preview"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Realtime_Preview_2024_10_01)
-                                     .Equals("gpt-4o-realtime-preview-2024-10-01"));
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Whisper_1, "whisper-1");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo, "gpt-3.5-turbo");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_16k, "gpt-3.5-turbo-16k");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_Instruct_0914, "gpt-3.5-turbo-instruct-0914");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_Instruct, "gpt-3.5-turbo-instruct");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_Ada_002, "text-embedding-ada-002");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4, "gpt-4");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0314, "gpt-4-0314");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0613, "gpt-4-0613");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::DALL_E_2, "dall-e-2");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::DALL_E_3, "dall-e-3");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_1106_Preview, "gpt-4-1106-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_1106, "gpt-3.5-turbo-1106");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::TTS_1, "tts-1");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::TTS_1_HD, "tts-1-hd");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::TTS_1_1106, "tts-1-1106");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::TTS_1_HD_1106, "tts-1-hd-1106");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_3_Large, "text-embedding-3-large");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_32K_0314, "gpt-4-32k-0314");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_0125, "gpt-3.5-turbo-0125");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_3_Small, "text-embedding-3-small");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0125_Preview, "gpt-4-0125-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_Turbo_Preview, "gpt-4-turbo-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_05_13, "gpt-4o-2024-05-13");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O, "gpt-4o");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_Turbo_2024_04_09, "gpt-4-turbo-2024-04-09");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_Turbo, "gpt-4-turbo");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini, "gpt-4o-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_2024_07_18, "gpt-4o-mini-2024-07-18");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::ChatGPT_4O_Latest, "chatgpt-4o-latest");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_08_06, "gpt-4o-2024-08-06");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Preview, "o1-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Preview_2024_09_12, "o1-preview-2024-09-12");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Mini, "o1-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Mini_2024_09_12, "o1-mini-2024-09-12");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview, "gpt-4o-audio-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01, "gpt-4o-audio-preview-2024-10-01");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Realtime_Preview, "gpt-4o-realtime-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(
+                        EAllModelEnum::GPT_4O_Realtime_Preview_2024_10_01, "gpt-4o-realtime-preview-2024-10-01");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(
+                        EAllModelEnum::GPT_4O_Mini_Realtime_Preview_2024_12_17, "gpt-4o-mini-realtime-preview-2024-12-17");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Realtime_Preview, "gpt-4o-mini-realtime-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(
+                        EAllModelEnum::GPT_4O_Mini_Audio_Preview_2024_12_17, "gpt-4o-mini-audio-preview-2024-12-17");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Audio_Preview, "gpt-4o-mini-audio-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Omni_Moderation_Latest, "omni-moderation-latest");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Omni_Moderation_2024_09_26, "omni-moderation-2024-09-26");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview_2024_12_17, "gpt-4o-audio-preview-2024-12-17");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1, "o1");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_2024_12_17, "o1-2024-12-17");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Mini_2025_01_31, "o3-mini-2025-01-31");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Mini, "o3-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_11_20, "gpt-4o-2024-11-20");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Realtime_Preview_2024_12_17, "gpt-4o-realtim-preview-2024-12-17");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_16K_0613, "gpt-3.5-turbo-16K-0613");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo).Equals("gpt-3.5-turbo"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4O).Equals("gpt-4o"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4).Equals("gpt-4"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0314).Equals("gpt-4-0314"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_0613).Equals("gpt-4-0613"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_1106_Preview).Equals("gpt-4-1106-preview"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4_Vision_Preview).Equals("gpt-4-vision-preview"));
-                    TestTrueExpr(
-                        UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_3_5_Turbo_Instruct).Equals("gpt-3.5-turbo-instruct"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::GPT_4O_Mini).Equals("gpt-4o-mini"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum::O1_Mini).Equals("o1-mini"));
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4O, "gpt-4o");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4, "gpt-4");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1106_Preview, "gpt-4-1106-preview");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_0613, "gpt-4-0613");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_0314, "gpt-4-0314");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4O_Mini, "gpt-4o-mini");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_3_5_Turbo, "gpt-3.5-turbo");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_3_5_Turbo_Instruct, "gpt-3.5-turbo-instruct");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O1_Mini, "o1-mini");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O1, "o1");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O3_Mini, "o3-mini");
                 });
 
             It("OpenAIModerationModelToStringShouldReturnCorrectValue",

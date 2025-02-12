@@ -290,7 +290,7 @@ void FOpenAIProviderChat::Define()
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.Text.NonStreaming",
                 [this]()
                 {
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
                         [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
@@ -342,7 +342,7 @@ void FOpenAIProviderChat::Define()
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.TextImage.URL.NonStreaming",
                 [this]()
                 {
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
                         [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
@@ -408,7 +408,7 @@ void FOpenAIProviderChat::Define()
                         return;
                     }
                     const FString ImageInBase64 = FBase64::Encode(ImageData);
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
                         [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
@@ -468,7 +468,7 @@ void FOpenAIProviderChat::Define()
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.ContentArray.Text.Streaming",
                 [this]()
                 {
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
 
                     OpenAIProvider->OnCreateChatCompletionStreamCompleted().AddLambda(
                         [&, Model](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)

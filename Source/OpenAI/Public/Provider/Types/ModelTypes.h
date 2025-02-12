@@ -22,7 +22,6 @@ enum class EAllModelEnum : uint8
     DALL_E_2,
     DALL_E_3,
     GPT_4_1106_Preview,
-    GPT_4_Vision_Preview,
     GPT_3_5_Turbo_1106,
     TTS_1,
     TTS_1_HD,
@@ -38,7 +37,6 @@ enum class EAllModelEnum : uint8
     GPT_4O,
     GPT_4_Turbo_2024_04_09,
     GPT_4_Turbo,
-    GPT_4_1106_Vision_Preview,
     GPT_4O_Mini,
     GPT_4O_Mini_2024_07_18,
     ChatGPT_4O_Latest,
@@ -50,7 +48,21 @@ enum class EAllModelEnum : uint8
     GPT_4O_Audio_Preview,
     GPT_4O_Audio_Preview_2024_10_01,
     GPT_4O_Realtime_Preview,
-    GPT_4O_Realtime_Preview_2024_10_01
+    GPT_4O_Realtime_Preview_2024_10_01,
+    GPT_4O_Mini_Realtime_Preview_2024_12_17,
+    GPT_4O_Mini_Realtime_Preview,
+    GPT_4O_Mini_Audio_Preview_2024_12_17,
+    GPT_4O_Mini_Audio_Preview,
+    Omni_Moderation_Latest,
+    Omni_Moderation_2024_09_26,
+    GPT_4O_Audio_Preview_2024_12_17,
+    O1,
+    O1_2024_12_17,
+    O3_Mini_2025_01_31,
+    O3_Mini,
+    GPT_4O_2024_11_20,
+    GPT_4O_Realtime_Preview_2024_12_17,
+    GPT_3_5_Turbo_16K_0613,
 };
 
 UENUM(BlueprintType)
@@ -59,13 +71,14 @@ enum class EMainModelEnum : uint8
     GPT_4O,
     GPT_4,
     GPT_4_1106_Preview,
-    GPT_4_Vision_Preview,
     GPT_4_0613,
     GPT_4_0314,
     GPT_4O_Mini,
     GPT_3_5_Turbo,
     GPT_3_5_Turbo_Instruct,
-    O1_Mini
+    O1_Mini,
+    O1,
+    O3_Mini
 };
 
 ///////////////////////////////////////////////////////

@@ -26,7 +26,6 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::DALL_E_2: return "dall-e-2";
         case EAllModelEnum::DALL_E_3: return "dall-e-3";
         case EAllModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
-        case EAllModelEnum::GPT_4_Vision_Preview: return "gpt-4-vision-preview";
         case EAllModelEnum::GPT_3_5_Turbo_1106: return "gpt-3.5-turbo-1106";
         case EAllModelEnum::TTS_1: return "tts-1";
         case EAllModelEnum::TTS_1_HD: return "tts-1-hd";
@@ -42,7 +41,6 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4O: return "gpt-4o";
         case EAllModelEnum::GPT_4_Turbo_2024_04_09: return "gpt-4-turbo-2024-04-09";
         case EAllModelEnum::GPT_4_Turbo: return "gpt-4-turbo";
-        case EAllModelEnum::GPT_4_1106_Vision_Preview: return "gpt-4-1106-vision-preview";
         case EAllModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
         case EAllModelEnum::GPT_4O_Mini_2024_07_18: return "gpt-4o-mini-2024-07-18";
         case EAllModelEnum::ChatGPT_4O_Latest: return "chatgpt-4o-latest";
@@ -55,6 +53,20 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01: return "gpt-4o-audio-preview-2024-10-01";
         case EAllModelEnum::GPT_4O_Realtime_Preview: return "gpt-4o-realtime-preview";
         case EAllModelEnum::GPT_4O_Realtime_Preview_2024_10_01: return "gpt-4o-realtime-preview-2024-10-01";
+        case EAllModelEnum::GPT_4O_Mini_Realtime_Preview_2024_12_17: return "gpt-4o-mini-realtime-preview-2024-12-17";
+        case EAllModelEnum::GPT_4O_Mini_Realtime_Preview: return "gpt-4o-mini-realtime-preview";
+        case EAllModelEnum::GPT_4O_Mini_Audio_Preview_2024_12_17: return "gpt-4o-mini-audio-preview-2024-12-17";
+        case EAllModelEnum::GPT_4O_Mini_Audio_Preview: return "gpt-4o-mini-audio-preview";
+        case EAllModelEnum::Omni_Moderation_Latest: return "omni-moderation-latest";
+        case EAllModelEnum::Omni_Moderation_2024_09_26: return "omni-moderation-2024-09-26";
+        case EAllModelEnum::GPT_4O_Audio_Preview_2024_12_17: return "gpt-4o-audio-preview-2024-12-17";
+        case EAllModelEnum::O1: return "o1";
+        case EAllModelEnum::O1_2024_12_17: return "o1-2024-12-17";
+        case EAllModelEnum::O3_Mini_2025_01_31: return "o3-mini-2025-01-31";
+        case EAllModelEnum::O3_Mini: return "o3-mini";
+        case EAllModelEnum::GPT_4O_2024_11_20: return "gpt-4o-2024-11-20";
+        case EAllModelEnum::GPT_4O_Realtime_Preview_2024_12_17: return "gpt-4o-realtim-preview-2024-12-17";
+        case EAllModelEnum::GPT_3_5_Turbo_16K_0613: return "gpt-3.5-turbo-16K-0613";
     }
     checkNoEntry();
     return {};
@@ -66,14 +78,15 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
     {
         case EMainModelEnum::GPT_4O: return "gpt-4o";
         case EMainModelEnum::GPT_4: return "gpt-4";
-        case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
-        case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
         case EMainModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
-        case EMainModelEnum::GPT_4_Vision_Preview: return "gpt-4-vision-preview";
+        case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
+        case EMainModelEnum::GPT_4_0314: return "gpt-4-0314";
+        case EMainModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
         case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
         case EMainModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
-        case EMainModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
         case EMainModelEnum::O1_Mini: return "o1-mini";
+        case EMainModelEnum::O1: return "o1";
+        case EMainModelEnum::O3_Mini: return "o3-mini";
     }
     checkNoEntry();
     return {};
@@ -92,9 +105,10 @@ FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Mode
 
 bool UOpenAIFuncLib::ModelSupportsVision(const FString& Model)
 {
-    return OpenAIAllModelToString(EAllModelEnum::GPT_4_Vision_Preview).Equals(Model) ||
-           OpenAIAllModelToString(EAllModelEnum::GPT_4_1106_Vision_Preview).Equals(Model) ||
-           OpenAIAllModelToString(EAllModelEnum::GPT_4O).Equals(Model);
+    return OpenAIAllModelToString(EAllModelEnum::O1).Equals(Model) ||  //
+           OpenAIAllModelToString(EAllModelEnum::GPT_4O).Equals(Model) ||
+           OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini).Equals(Model) ||
+           OpenAIAllModelToString(EAllModelEnum::GPT_4_Turbo).Equals(Model);
 }
 
 FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel Model)
