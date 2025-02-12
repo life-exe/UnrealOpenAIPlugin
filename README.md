@@ -85,9 +85,9 @@ void AAPIOverview::CreateImage()
 
 # Installation
 
-## Marketplace link
+## FAB link
 
-- [Complete OpenAI API plugin](https://www.unrealengine.com/marketplace/en-US/product/complete-openai-api-plugin)
+- [Complete OpenAI API plugin](https://www.fab.com/listings/8114dbc6-a497-438c-9b26-552534ab68b0)
 
 ## C++
 
