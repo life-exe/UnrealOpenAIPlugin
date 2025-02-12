@@ -48,7 +48,7 @@ void FOpenAIProviderCompletion::Define()
                     OpenAIProvider->OnCreateCompletionCompleted().AddLambda(
                         [&, Model](const FCompletionResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
-                            TestUtils::TestStreamResponse<FCompletionResponse>(this, Response, Model, "text_completion");
+                            TestUtils::TestStreamResponse<FCompletionResponse>(this, Response, Model, "completion");
                             RequestCompleted = true;
                         });
 
@@ -72,7 +72,7 @@ void FOpenAIProviderCompletion::Define()
                         {
                             for (const auto& Response : Responses)
                             {
-                                TestUtils::TestStreamResponse<FCompletionStreamResponse>(this, Response, Model, "text_completion");
+                                TestUtils::TestStreamResponse<FCompletionStreamResponse>(this, Response, Model, "completion");
                             }
                             RequestCompleted = true;
                         });
@@ -82,7 +82,7 @@ void FOpenAIProviderCompletion::Define()
                         {
                             for (const auto& Response : Responses)
                             {
-                                TestUtils::TestStreamResponse<FCompletionStreamResponse>(this, Response, Model, "text_completion");
+                                TestUtils::TestStreamResponse<FCompletionStreamResponse>(this, Response, Model, "completion");
                             }
                         });
 

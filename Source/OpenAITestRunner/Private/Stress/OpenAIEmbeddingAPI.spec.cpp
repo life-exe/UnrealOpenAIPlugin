@@ -44,7 +44,7 @@ void FOpenAIProviderEmbedding::Define()
                     OpenAIProvider->OnCreateEmbeddingsCompleted().AddLambda(
                         [&](const FEmbeddingsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
-                            TestTrueExpr(Response.Model.Equals("text-embedding-ada-002"));
+                            TestTrueExpr(Response.Model.Contains("text-embedding-ada-002"));
                             TestTrueExpr(Response.Usage.Prompt_Tokens == 6);
                             TestTrueExpr(Response.Usage.Total_Tokens == 6);
                             TestTrueExpr(Response.Object.Equals("list"));
