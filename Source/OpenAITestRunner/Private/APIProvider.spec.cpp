@@ -6,7 +6,8 @@
 #include "Misc/AutomationTest.h"
 #include "API/API.h"
 
-DEFINE_SPEC(FAPIProvider, "OpenAI", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
+DEFINE_SPEC(
+    FAPIProvider, "OpenAI", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
 
 void FAPIProvider::Define()
 {

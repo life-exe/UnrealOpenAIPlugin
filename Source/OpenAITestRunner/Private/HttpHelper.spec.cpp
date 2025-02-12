@@ -8,7 +8,8 @@
 #include "Http/HttpHelper.h"
 #include "TestUtils.h"
 
-DEFINE_SPEC(FHttpHelper, "OpenAI", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
+DEFINE_SPEC(
+    FHttpHelper, "OpenAI", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
 
 void FHttpHelper::Define()
 {
