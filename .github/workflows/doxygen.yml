@@ -50,7 +50,7 @@ jobs:
         run: ${{ env.DOXYGEN_EXE_PATH }} ${{ github.workspace }}\Doxygen\Doxyfile
         
       - name: Upload Docs
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: Documentation\html
         
@@ -59,4 +59,4 @@ jobs:
         
       - name: Deploy To GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
