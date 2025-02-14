@@ -137,9 +137,12 @@ FString UOpenAIFuncLib::OpenAIVoiceToString(EVoice Voice)
     switch (Voice)
     {
         case EVoice::Alloy: return "alloy";
+        case EVoice::Ash: return "ash";
+        case EVoice::Coral: return "coral";
         case EVoice::Echo: return "echo";
         case EVoice::Fable: return "fable";
         case EVoice::Nova: return "nova";
+        case EVoice::Sage: return "sage";
         case EVoice::Onyx: return "onyx";
         case EVoice::Shimmer: return "shimmer";
     }

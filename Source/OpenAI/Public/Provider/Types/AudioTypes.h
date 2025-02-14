@@ -22,10 +22,13 @@ UENUM(BlueprintType)
 enum class EVoice : uint8
 {
     Alloy,
+    Ash,
+    Coral,
     Echo,
     Fable,
     Onyx,
     Nova,
+    Sage,
     Shimmer,
 };
 
@@ -150,7 +153,7 @@ struct FSpeech
     FString Voice{"alloy"};
 
     /**
-      The format to audio in. Supported formats are mp3, opus, aac, and flac.
+      The format to audio in. Supported formats are mp3, opus, aac, flac, wav, and pcm.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Response_Format{"mp3"};

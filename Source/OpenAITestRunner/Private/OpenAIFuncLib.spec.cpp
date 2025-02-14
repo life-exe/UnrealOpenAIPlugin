@@ -123,9 +123,12 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Alloy).Equals("alloy"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Ash).Equals("ash"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Coral).Equals("coral"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Echo).Equals("echo"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Fable).Equals("fable"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Nova).Equals("nova"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Sage).Equals("sage"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Onyx).Equals("onyx"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Shimmer).Equals("shimmer"));
                 });
