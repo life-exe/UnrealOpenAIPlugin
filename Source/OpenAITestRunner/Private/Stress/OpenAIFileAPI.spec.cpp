@@ -14,6 +14,7 @@ BEGIN_DEFINE_SPEC(FOpenAIProviderFile, "OpenAI.Provider",
 TObjectPtr<UOpenAIProvider> OpenAIProvider;
 FOpenAIAuth Auth;
 bool RequestCompleted{false};
+FString FileID;
 END_DEFINE_SPEC(FOpenAIProviderFile)
 
 using namespace OpenAI::Tests;
@@ -22,8 +23,18 @@ namespace
 {
 namespace File
 {
-const FString FileID = "file-xm3aonDNpFhE4CMnzUdgoKUU";
-const int32 FileBytes = 3138;
+const FString FileName = "test_file.jsonl";
+constexpr int32 FileBytes = 3138;
+
+FUploadFile makeFileUpload()
+{
+    FUploadFile UploadFile;
+    UploadFile.File = TestUtils::FileFullPath(File::FileName);
+    UploadFile.Purpose = "fine-tune";
+
+    return UploadFile;
+}
+
 }  // namespace File
 }  // namespace
 
@@ -75,12 +86,10 @@ void FOpenAIProviderFile::Define()
             It("File.UploadAndDeleteFileRequestsShouldResponseCorrectly",
                 [this]()
                 {
-                    const FString FileName = "test_file.jsonl";
-
                     OpenAIProvider->OnUploadFileCompleted().AddLambda(
-                        [&, FileName](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
+                        [&](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
-                            TestTrueExpr(File.FileName.Equals(FileName));
+                            TestTrueExpr(File.FileName.Equals(File::FileName));
                             TestTrueExpr(File.Purpose.Equals("fine-tune"));
                             TestTrueExpr(File.Object.Equals("file"));
                             TestTrueExpr(File.Bytes == File::FileBytes);
@@ -100,42 +109,47 @@ void FOpenAIProviderFile::Define()
                             RequestCompleted = true;
                         });
 
-                    FUploadFile UploadFile;
-                    UploadFile.File = TestUtils::FileFullPath(FileName);
-                    UploadFile.Purpose = "fine-tune";
+                    OpenAIProvider->UploadFile(File::makeFileUpload(), Auth);
 
-                    OpenAIProvider->UploadFile(UploadFile, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
             It("File.RetrieveFileRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    const FString FileName = "test_file.jsonl";
-                    const FString _FileID{File::FileID};
+                    OpenAIProvider->OnUploadFileCompleted().AddLambda(
+                        [&](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata) {  //
+                            OpenAIProvider->RetrieveFile(File.ID, Auth);
+                        });
 
                     OpenAIProvider->OnRetrieveFileCompleted().AddLambda(
-                        [&, FileName, _FileID](const FRetrieveFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
+                        [&](const FRetrieveFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
-                            TestTrueExpr(File.FileName.Equals(FileName));
+                            TestTrueExpr(File.FileName.Equals(File::FileName));
                             TestTrueExpr(File.Purpose.Equals("fine-tune"));
                             TestTrueExpr(File.Object.Equals("file"));
                             TestTrueExpr(File.Bytes == File::FileBytes);
                             TestTrueExpr(File.Status.Equals("processed"));
-                            TestTrueExpr(File.ID.Equals(_FileID));
+                            TestTrueExpr(File.ID.Equals(File.ID));
                             TestTrueExpr(File.Created_At > 0);
 
+                            OpenAIProvider->DeleteFile(File.ID, Auth);
+                        });
+
+                    OpenAIProvider->OnDeleteFileCompleted().AddLambda(
+                        [&](const FDeleteFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata) {  //
                             RequestCompleted = true;
                         });
 
-                    OpenAIProvider->RetrieveFile(File::FileID, Auth);
+                    OpenAIProvider->UploadFile(File::makeFileUpload(), Auth);
+
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
             It("File.RetrieveFileContentRequestShouldResponseCorrectly",
                 [this]()
                 {
-                    const FString FilePath = TestUtils::FileFullPath("test_file.jsonl");
+                    const FString FilePath = TestUtils::FileFullPath(File::FileName);
                     FString FileContent;
                     if (!FFileHelper::LoadFileToString(FileContent, *FilePath))
                     {
@@ -143,14 +157,26 @@ void FOpenAIProviderFile::Define()
                         return;
                     }
 
+                    OpenAIProvider->OnUploadFileCompleted().AddLambda(
+                        [&](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata) {  //
+                            FileID = File.ID;
+                            OpenAIProvider->RetrieveFileContent(File.ID, Auth);
+                        });
+
                     OpenAIProvider->OnRetrieveFileContentCompleted().AddLambda(
                         [&, FileContent](const FRetrieveFileContentResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
                             TestTrueExpr(FileContent.Equals(File.Content));
+                            OpenAIProvider->DeleteFile(FileID, Auth);
+                        });
+
+                    OpenAIProvider->OnDeleteFileCompleted().AddLambda(
+                        [&](const FDeleteFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata) {  //
                             RequestCompleted = true;
                         });
 
-                    OpenAIProvider->RetrieveFileContent(File::FileID, Auth);
+                    OpenAIProvider->UploadFile(File::makeFileUpload(), Auth);
+
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
         });

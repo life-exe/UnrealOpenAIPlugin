@@ -92,6 +92,41 @@ void FOpenAIProviderBatch::Define()
             It("Batch.RetrieveRequestShouldResponseCorrectly",
                 [this]()
                 {
+                    // 1. upload file with batch purpose
+                    FUploadFile UploadFile;
+                    UploadFile.File = TestUtils::FileFullPath(BatchFile);
+                    UploadFile.Purpose = UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Batch);
+
+                    const auto Endpoint = UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions);
+
+                    OpenAIProvider->OnUploadFileCompleted().AddLambda(
+                        [&, Endpoint](const FUploadFileResponse& File, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIBatchAPI, Display, "File upload request completed, id={0}", File.ID);
+                            // 2. Create batch
+                            FCreateBatch Batch;
+                            Batch.Input_File_Id = File.ID;
+                            Batch.Endpoint = Endpoint;
+                            Batch.Completion_Window =
+                                UOpenAIFuncLib::OpenAIBatchCompletionWindowToString(EBatchCompletionWindow::Window_24h);
+                            Batch.Metadata.Add("purpose", "plugin test");
+                            Batch.Metadata.Add("user_name", "John Doe");
+                            OpenAIProvider->CreateBatch(Batch, Auth);
+                        });
+
+                    OpenAIProvider->OnCreateBatchCompleted().AddLambda(
+                        [&, Endpoint](const FCreateBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIBatchAPI, Display, "Batch request completed, id={0}", Response.Id);
+                            TestTrueExpr(Response.Metadata["purpose"].Equals("plugin test"));
+                            TestTrueExpr(Response.Metadata["user_name"].Equals("John Doe"));
+                            TestTrueExpr(Response.Object.Equals("batch"));
+                            TestTrueExpr(Response.Endpoint.Equals(Endpoint));
+
+                            // 3. Retrive batch
+                            OpenAIProvider->RetrieveBatch(Response.Id, Auth);
+                        });
+
                     OpenAIProvider->OnRetrieveBatchCompleted().AddLambda(
                         [&](const FRetrieveBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
                         {
@@ -99,10 +134,19 @@ void FOpenAIProviderBatch::Define()
                             TestTrueExpr(Response.Metadata["purpose"].Equals("plugin test"));
                             TestTrueExpr(Response.Metadata["user_name"].Equals("John Doe"));
                             TestTrueExpr(Response.Object.Equals("batch"));
+
+                            // 4. Cancel batch
+                            OpenAIProvider->CancelBatch(Response.Id, Auth);
+                        });
+
+                    OpenAIProvider->OnCancelBatchCompleted().AddLambda(
+                        [&](const FCancelBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIBatchAPI, Display, "CancelBatch request completed!");
                             RequestCompleted = true;
                         });
-                    const FString PersistentBatchId = "batch_66f59b416b448190b5155325219d2f7f";
-                    OpenAIProvider->RetrieveBatch(PersistentBatchId, Auth);
+
+                    OpenAIProvider->UploadFile(UploadFile, Auth);
 
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
