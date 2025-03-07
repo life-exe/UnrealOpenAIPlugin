@@ -48,6 +48,7 @@ FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum PluginEnum)
 
     // special case: gpt-3-5-turbo-0301 -> gpt-3.5-turbo-0301
     EnumElementName = EnumElementName.Replace(TEXT("3-5"), TEXT("3.5"));
+    EnumElementName = EnumElementName.Replace(TEXT("4-5"), TEXT("4.5"));
 
     return EnumElementName;
 }
@@ -59,6 +60,7 @@ FString TestUtils::OpenAIModelNameToPluginEnum(const FString& ModelName)
 
     // special case: gpt-3.5-turbo-0301 -> gpt_3_5_turbo_0301
     EnumName = EnumName.Replace(TEXT("3.5"), TEXT("3_5"));
+    EnumName = EnumName.Replace(TEXT("4.5"), TEXT("4_5"));
 
     // gpt-3.5-turbo-0301 -> GPT_3_5_turbo_0301
     EnumName = EnumName.Replace(TEXT("gpt"), TEXT("GPT"));
