@@ -69,6 +69,17 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_3_5_Turbo_16K_0613: return "gpt-3.5-turbo-16K-0613";
         case EAllModelEnum::GPT_4_5_Preview: return "gpt-4.5-preview";
         case EAllModelEnum::GPT_4_5_Preview_2025_02_27: return "gpt-4.5-preview-2025-02-27";
+        case EAllModelEnum::GPT_4O_Mini_Transcribe: return "gpt-4o-mini-transcribe";
+        case EAllModelEnum::GPT_4O_Mini_TTS: return "gpt-4o-mini-tts";
+        case EAllModelEnum::GPT_4O_Mini_Search_Preview: return "gpt-4o-mini-search-preview";
+        case EAllModelEnum::GPT_4O_Search_Preview: return "gpt-4o-search-preview";
+        case EAllModelEnum::GPT_4O_Mini_Search_Preview_2025_03_11: return "gpt-4o-mini-search-preview-2025-03-11";
+        case EAllModelEnum::GPT_4O_Search_Preview_2025_03_11: return "gpt-4o-search-preview-2025-03-11";
+        case EAllModelEnum::Computer_Use_Preview: return "computer-use-preview";
+        case EAllModelEnum::O1_Pro_2025_03_19: return "o1-pro-2025-03-19";
+        case EAllModelEnum::Computer_Use_Preview_2025_03_11: return "computer-use-preview-2025-03-11";
+        case EAllModelEnum::O1_Pro: return "o1-pro";
+        case EAllModelEnum::GPT_4O_Transcribe: return "gpt-4o-transcribe";
     }
     checkNoEntry();
     return {};
@@ -130,6 +141,7 @@ FString UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel Model)
     {
         case ETTSModel::TTS_1: return "tts-1";
         case ETTSModel::TTS_1_HD: return "tts-1-hd";
+        case ETTSModel::GPT_4O_MINI_TTS: return "gpt-4o-mini-tts";
     }
     checkNoEntry();
     return {};
@@ -141,13 +153,15 @@ FString UOpenAIFuncLib::OpenAIVoiceToString(EVoice Voice)
     {
         case EVoice::Alloy: return "alloy";
         case EVoice::Ash: return "ash";
+        case EVoice::Ballad: return "ballad";
         case EVoice::Coral: return "coral";
         case EVoice::Echo: return "echo";
         case EVoice::Fable: return "fable";
+        case EVoice::Onyx: return "onyx";
         case EVoice::Nova: return "nova";
         case EVoice::Sage: return "sage";
-        case EVoice::Onyx: return "onyx";
         case EVoice::Shimmer: return "shimmer";
+        case EVoice::Verse: return "verse";
     }
     checkNoEntry();
     return {};

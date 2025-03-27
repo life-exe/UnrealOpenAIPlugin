@@ -64,7 +64,18 @@ enum class EAllModelEnum : uint8
     GPT_4O_Realtime_Preview_2024_12_17,
     GPT_3_5_Turbo_16K_0613,
     GPT_4_5_Preview,
-    GPT_4_5_Preview_2025_02_27
+    GPT_4_5_Preview_2025_02_27,
+    GPT_4O_Mini_Transcribe,
+    GPT_4O_Mini_TTS,
+    GPT_4O_Mini_Search_Preview,
+    GPT_4O_Search_Preview,
+    GPT_4O_Mini_Search_Preview_2025_03_11,
+    GPT_4O_Search_Preview_2025_03_11,
+    Computer_Use_Preview,
+    O1_Pro_2025_03_19,
+    Computer_Use_Preview_2025_03_11,
+    O1_Pro,
+    GPT_4O_Transcribe
 };
 
 UENUM(BlueprintType)

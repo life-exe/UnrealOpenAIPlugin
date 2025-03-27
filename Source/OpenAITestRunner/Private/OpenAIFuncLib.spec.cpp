@@ -84,6 +84,18 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_16K_0613, "gpt-3.5-turbo-16K-0613");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_5_Preview, "gpt-4.5-preview");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_5_Preview_2025_02_27, "gpt-4.5-preview-2025-02-27");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Transcribe, "gpt-4o-mini-transcribe");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_TTS, "gpt-4o-mini-tts");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Search_Preview, "gpt-4o-mini-search-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Search_Preview, "gpt-4o-search-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(
+                        EAllModelEnum::GPT_4O_Mini_Search_Preview_2025_03_11, "gpt-4o-mini-search-preview-2025-03-11");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Search_Preview_2025_03_11, "gpt-4o-search-preview-2025-03-11");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Computer_Use_Preview, "computer-use-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Pro_2025_03_19, "o1-pro-2025-03-19");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Computer_Use_Preview_2025_03_11, "computer-use-preview-2025-03-11");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Pro, "o1-pro");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Transcribe, "gpt-4o-transcribe");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -107,9 +119,9 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Latest)
-                                     .Equals("text-moderation-latest"));
+                            .Equals("text-moderation-latest"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Stable)
-                                     .Equals("text-moderation-stable"));
+                            .Equals("text-moderation-stable"));
                 });
 
             It("OpenAIAudioModelToStringShouldReturnCorrectValue",
@@ -127,13 +139,15 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Alloy).Equals("alloy"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Ash).Equals("ash"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Ballad).Equals("ballad"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Coral).Equals("coral"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Echo).Equals("echo"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Fable).Equals("fable"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Onyx).Equals("onyx"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Nova).Equals("nova"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Sage).Equals("sage"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Onyx).Equals("onyx"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Shimmer).Equals("shimmer"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Verse).Equals("verse"));
                 });
 
             It("OpenAITTSAudioFormatToStringShouldReturnCorrectValue",
@@ -407,10 +421,10 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::GetErrorMessage(
                         "{\"error\":{\"message\":\"invalid API key\",\"type\":\"invalid_request_error\",\"param\":null,"
                         "\"code\":\"invalid_api_key\"}}")
-                                     .Equals("invalid API key"));
+                            .Equals("invalid API key"));
                     TestTrueExpr(UOpenAIFuncLib::GetErrorMessage("{\"error\":{\"type\":\"invalid_request_error\",\"param\":null,"
                                                                  "\"code\":\"invalid_api_key\"}}")
-                                     .IsEmpty());
+                            .IsEmpty());
                 });
 
             It("OpenAIResponseErrorToStringShouldReturnCorrectValue",
@@ -532,7 +546,7 @@ void FOpenAIFuncLib::Define()
                         TEXT("openai-organization: my-org"), TEXT("openai-version: v1")};
 
                     TestTrueExpr(UOpenAIFuncLib::FindOpenAIHttpHeaderByType(Metadata, EOpenAIHttpHeaderType::XRequestId)
-                                     .Equals("req_d6d70ef9bcbf2f0e4f74d76bff6dc01a"));
+                            .Equals("req_d6d70ef9bcbf2f0e4f74d76bff6dc01a"));
                     TestTrueExpr(
                         UOpenAIFuncLib::FindOpenAIHttpHeaderByType(Metadata, EOpenAIHttpHeaderType::OpenAIProcessingMS).Equals("9106"));
                     TestTrueExpr(
@@ -549,8 +563,7 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(
                         UFileSystemFuncLib::GetFileExtensions(EFileType::Image).Equals("ImageFiles (png, jpg, jpeg)|*.png;*.jpg;*.jpeg"));
-                    TestTrueExpr(
-                        UFileSystemFuncLib::GetFileExtensions(EFileType::Media)
+                    TestTrueExpr(UFileSystemFuncLib::GetFileExtensions(EFileType::Media)
                             .Equals("MediaFiles (mp3, mp4, mpeg, m4a, mpga, wav, webm)|*.mp3;*.mp4;*.mpeg;*.m4a;*.mpga;*.wav;*.webm"));
                 });
 

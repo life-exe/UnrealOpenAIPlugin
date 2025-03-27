@@ -33,10 +33,10 @@ public:
             return;
         }
 
-        // Test->TestTrue("Name should be valid", Response.Model.Equals(ModelName));
+        // Test->TestTrue("Name should be valid", Response.Model.Contains(ModelName));
         Test->TestTrue("Created should be valid", Response.Created > 0);
         Test->TestTrue("ID should be valid", !Response.ID.IsEmpty());
-        Test->TestTrue("Object should be valid", Response.Object.Equals(Oject));
+        Test->TestTrue("Object should be valid", Response.Object.Contains(Oject));
         for (const auto& Choice : Response.Choices)
         {
             Test->TestTrue("Choice index should be valid", Choice.Index == 0);

@@ -15,7 +15,8 @@ UENUM(BlueprintType)
 enum class ETTSModel : uint8
 {
     TTS_1,
-    TTS_1_HD
+    TTS_1_HD,
+    GPT_4O_MINI_TTS
 };
 
 UENUM(BlueprintType)
@@ -23,6 +24,7 @@ enum class EVoice : uint8
 {
     Alloy,
     Ash,
+    Ballad,
     Coral,
     Echo,
     Fable,
@@ -30,6 +32,7 @@ enum class EVoice : uint8
     Nova,
     Sage,
     Shimmer,
+    Verse,
 };
 
 // Make sure that WMFCodecs plugin is enabled (Edit->Plugins->WMFCodecs)
@@ -134,7 +137,7 @@ struct FSpeech
     GENERATED_BODY()
 
     /**
-      One of the available TTS models: tts-1 or tts-1-hd:
+      One of the available TTS models: tts-1, tts-1-hd or gpt-4o-mini-tts:
       https://platform.openai.com/docs/models/tts
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
@@ -147,10 +150,17 @@ struct FSpeech
     FString Input;
 
     /**
-      The voice to use when generating the audio. Supported voices are alloy, echo, fable, onyx, nova, and shimmer.
+      The voice to use when generating the audio.
+      Supported voices are alloy, ash, ballad, coral, echo, fable, onyx, nova, sage, shimmer, and verse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Voice{"alloy"};
+
+    /**
+       Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Instructions{};
 
     /**
       The format to audio in. Supported formats are mp3, opus, aac, flac, wav, and pcm.
