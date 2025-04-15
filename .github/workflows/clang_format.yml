@@ -18,5 +18,5 @@ jobs:
       - name: Run clang-format
         uses: jidicula/clang-format-action@v4.9.0
         with:
-          clang-format-version: '13'
+          clang-format-version: '19'
           check-path: 'Source'

@@ -171,7 +171,8 @@ void FOpenAIProviderChat::Define()
                                 HistoryMessage.Tool_Calls.Add(ToolCalls);
                                 NewHistory.Add(HistoryMessage);
 
-                                const auto get_current_weather = [&](const FString& Location, const FString& Unit) -> FString {
+                                const auto get_current_weather = [&](const FString& Location, const FString& Unit) -> FString
+                                {
                                     return FString::Format(TEXT("location:{0}, temperature:{1}, unit:{2}, forecast: [sunny, windy]"),
                                         {Location, Temperature, Unit});
                                 };
