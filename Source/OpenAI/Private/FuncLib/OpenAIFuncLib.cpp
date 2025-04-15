@@ -80,6 +80,12 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::Computer_Use_Preview_2025_03_11: return "computer-use-preview-2025-03-11";
         case EAllModelEnum::O1_Pro: return "o1-pro";
         case EAllModelEnum::GPT_4O_Transcribe: return "gpt-4o-transcribe";
+        case EAllModelEnum::GPT_4_1_Nano_2025_04_14: return "gpt-4.1-nano-2025-04-14";
+        case EAllModelEnum::GPT_4_1_2025_04_14: return "gpt-4.1-2025-04-14";
+        case EAllModelEnum::GPT_4_1: return "gpt-4.1";
+        case EAllModelEnum::GPT_4_1_Mini: return "gpt-4.1-mini";
+        case EAllModelEnum::GPT_4_1_Mini_2025_04_14: return "gpt-4.1-mini-2025-04-14";
+        case EAllModelEnum::GPT_4_1_Nano: return "gpt-4.1-nano";
     }
     checkNoEntry();
     return {};
@@ -101,6 +107,9 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::O1: return "o1";
         case EMainModelEnum::O3_Mini: return "o3-mini";
         case EMainModelEnum::GPT_4_5_Preview: return "gpt-4.5-preview";
+        case EMainModelEnum::GPT_4_1: return "gpt-4.1";
+        case EMainModelEnum::GPT_4_1_Mini: return "gpt-4.1-mini";
+        case EMainModelEnum::GPT_4_1_Nano: return "gpt-4.1-nano";
     }
     checkNoEntry();
     return {};
