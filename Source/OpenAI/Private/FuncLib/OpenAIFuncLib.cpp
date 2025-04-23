@@ -86,6 +86,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4_1_Mini: return "gpt-4.1-mini";
         case EAllModelEnum::GPT_4_1_Mini_2025_04_14: return "gpt-4.1-mini-2025-04-14";
         case EAllModelEnum::GPT_4_1_Nano: return "gpt-4.1-nano";
+        case EAllModelEnum::O4_Mini: return "o4-mini";
+        case EAllModelEnum::O4_Mini_2025_04_16: return "o4-mini-2025-04-16";
     }
     checkNoEntry();
     return {};
@@ -110,6 +112,7 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::GPT_4_1: return "gpt-4.1";
         case EMainModelEnum::GPT_4_1_Mini: return "gpt-4.1-mini";
         case EMainModelEnum::GPT_4_1_Nano: return "gpt-4.1-nano";
+        case EMainModelEnum::O4_Mini: return "o4-mini";
     }
     checkNoEntry();
     return {};

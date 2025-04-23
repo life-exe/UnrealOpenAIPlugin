@@ -102,6 +102,8 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_1_Mini, "gpt-4.1-mini");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_1_Mini_2025_04_14, "gpt-4.1-mini-2025-04-14");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_1_Nano, "gpt-4.1-nano");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini, "o4-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini_2025_04_16, "o4-mini-2025-04-16");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -122,6 +124,7 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1, "gpt-4.1");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1_Mini, "gpt-4.1-mini");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1_Nano, "gpt-4.1-nano");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O4_Mini, "o4-mini");
                 });
 
             It("OpenAIModerationModelToStringShouldReturnCorrectValue",
