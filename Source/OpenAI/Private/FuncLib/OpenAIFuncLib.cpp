@@ -88,6 +88,7 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4_1_Nano: return "gpt-4.1-nano";
         case EAllModelEnum::O4_Mini: return "o4-mini";
         case EAllModelEnum::O4_Mini_2025_04_16: return "o4-mini-2025-04-16";
+        case EAllModelEnum::GPT_Image_1: return "gpt-image-1";
     }
     checkNoEntry();
     return {};
@@ -198,6 +199,7 @@ FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
     {
         case EImageModelEnum::DALL_E_2: return "dall-e-2";
         case EImageModelEnum::DALL_E_3: return "dall-e-3";
+        case EImageModelEnum::GPT_Image_1: return "gpt-image-1";
     }
     checkNoEntry();
     return {};
@@ -207,6 +209,7 @@ EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
 {
     if (Model.Equals("dall-e-2")) return EImageModelEnum::DALL_E_2;
     if (Model.Equals("dall-e-3")) return EImageModelEnum::DALL_E_3;
+    if (Model.Equals("gpt-image-1")) return EImageModelEnum::GPT_Image_1;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageModelEnum: {0}", Model);
     checkNoEntry();
@@ -262,6 +265,32 @@ EImageSizeDalle3 UOpenAIFuncLib::StringToOpenAIImageSizeDalle3(const FString& Im
     return {};
 }
 
+FString UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1 ImageSize)
+{
+    switch (ImageSize)
+    {
+        case EImageSizeGptImage1::Auto: return "auto";
+        case EImageSizeGptImage1::Size_1024x1024: return "1024x1024";
+        case EImageSizeGptImage1::Size_1024x1536: return "1024x1536";
+        case EImageSizeGptImage1::Size_1536x1024: return "1536x1024";
+    }
+    checkNoEntry();
+    return {};
+}
+
+EImageSizeGptImage1 UOpenAIFuncLib::StringToOpenAIImageSizeGptImage1(const FString& ImageSize)
+{
+    if (ImageSize.Equals("auto")) return EImageSizeGptImage1::Auto;
+    if (ImageSize.Equals("1024x1024")) return EImageSizeGptImage1::Size_1024x1024;
+    if (ImageSize.Equals("1024x1536")) return EImageSizeGptImage1::Size_1024x1536;
+    if (ImageSize.Equals("1536x1024")) return EImageSizeGptImage1::Size_1536x1024;
+
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageSizeGptImage1: {0}", ImageSize);
+    checkNoEntry();
+
+    return {};
+}
+
 FString UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat ImageFormat)
 {
     switch (ImageFormat)
@@ -290,6 +319,21 @@ FString UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality ImageQual
     {
         case EOpenAIImageQuality::HD: return "hd";
         case EOpenAIImageQuality::Standard: return "standard";
+        case EOpenAIImageQuality::High: return "high";
+        case EOpenAIImageQuality::Medium: return "medium";
+        case EOpenAIImageQuality::Low: return "low";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat ImageOutputFormat)
+{
+    switch (ImageOutputFormat)
+    {
+        case EOpenAIImageOutputFormat::Jpeg: return "jpeg";
+        case EOpenAIImageOutputFormat::Png: return "png";
+        case EOpenAIImageOutputFormat::Webp: return "webp";
     }
     checkNoEntry();
     return {};
@@ -299,6 +343,9 @@ EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& Im
 {
     if (ImageQuality.Equals("hd")) return EOpenAIImageQuality::HD;
     if (ImageQuality.Equals("standard")) return EOpenAIImageQuality::Standard;
+    if (ImageQuality.Equals("high")) return EOpenAIImageQuality::High;
+    if (ImageQuality.Equals("medium")) return EOpenAIImageQuality::Medium;
+    if (ImageQuality.Equals("low")) return EOpenAIImageQuality::Low;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageQuality: {0}", ImageQuality);
     checkNoEntry();
@@ -312,6 +359,29 @@ FString UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle ImageStyle)
     {
         case EOpenAIImageStyle::Natural: return "natural";
         case EOpenAIImageStyle::Vivid: return "vivid";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground ImageBackground)
+{
+    switch (ImageBackground)
+    {
+        case EOpenAIImageBackground::Auto: return "auto";
+        case EOpenAIImageBackground::Transparent: return "transparent";
+        case EOpenAIImageBackground::Opaque: return "opaque";
+    }
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration ImageModeration)
+{
+    switch (ImageModeration)
+    {
+        case EOpenAIImageModeration::Auto: return "auto";
+        case EOpenAIImageModeration::Low: return "low";
     }
     checkNoEntry();
     return {};

@@ -83,7 +83,8 @@ enum class EAllModelEnum : uint8
     GPT_4_1_Mini_2025_04_14,
     GPT_4_1_Nano,
     O4_Mini,
-    O4_Mini_2025_04_16
+    O4_Mini_2025_04_16,
+    GPT_Image_1
 };
 
 UENUM(BlueprintType)

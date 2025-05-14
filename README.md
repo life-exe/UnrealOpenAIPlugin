@@ -9,7 +9,7 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Models](https://platform.openai.com/docs/api-reference/models)
  - [Completions](https://platform.openai.com/docs/api-reference/completions)
  - [Chat](https://platform.openai.com/docs/api-reference/chat)
- - [Images (DALL·E 3, DALL·E 2)](https://platform.openai.com/docs/api-reference/images)
+ - [Images (GPT-Image-1, DALL·E 3, DALL·E 2)](https://platform.openai.com/docs/api-reference/images)
  - [Vision](https://platform.openai.com/docs/guides/vision)
  - [Embeddings](https://platform.openai.com/docs/api-reference/embeddings)
  - [Batch](https://platform.openai.com/docs/api-reference/batch)
@@ -35,14 +35,15 @@ void AAPIOverview::CreateImage()
             UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Data[0].B64_JSON);
         });
 
-    FOpenAIImage Image;
-    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
-    Image.N = 1;
-    Image.Prompt = "Bear with beard drinking beer";
-    Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
-    Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON);
-    Image.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
-    Image.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
+    FOpenAIImage OpenAIImage;
+    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+    OpenAIImage.N = 1;
+    OpenAIImage.Prompt = "Bear with beard drinking beer";
+    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
+    OpenAIImage.Background.Set(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Transparent));
+    OpenAIImage.Moderation.Set(UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration::Low));
+    OpenAIImage.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low));
+    OpenAIImage.Output_Format.Set(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Png));
 
     Provider->CreateImage(Image, Auth);
 }
@@ -60,6 +61,7 @@ void AAPIOverview::CreateImage()
  - [DALLE 3 | Text To Speech | Vision](https://youtu.be/l4hcCbAceXs) [English subtitles].
 
 ## Updates
+ - [Add gpt-image-1 model, image API update](https://openai.com/index/image-generation-api)
  - [Add gpt-4o models](https://openai.com/index/hello-gpt-4o)
  - [Vision & Text To Speech Demo](https://life-exe.itch.io/openai-vision-demo)
 
@@ -384,6 +386,7 @@ LogOpenAIFuncLib: Error: Failed loading file: C:/_Projects/UE5/OpenAICpp/Build/W
 ## Limitations
 
  - OpenAI hosts a variety of different models. Please [check the models](https://platform.openai.com/docs/models/model-endpoint-compatibility) that are compatible with the particular request.
+ - Some developers may need to [verify](https://help.openai.com/en/articles/10910291-api-organization-verification) their organization before being able to use the gpt-image-1 model. Please check the [organization settings⁠](https://platform.openai.com/settings/organization/general) to see if you already have access.
 
 ## Miscellaneous
 

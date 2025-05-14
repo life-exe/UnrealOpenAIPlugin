@@ -104,6 +104,7 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_1_Nano, "gpt-4.1-nano");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini, "o4-mini");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini_2025_04_16, "o4-mini-2025-04-16");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_1, "gpt-image-1");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -201,6 +202,15 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle3("1792x1024") == EImageSizeDalle3::Size_1792x1024);
                 });
 
+            It("StringToOpenAIImageSizeGptImage1ShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeGptImage1("auto") == EImageSizeGptImage1::Auto);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeGptImage1("1024x1024") == EImageSizeGptImage1::Size_1024x1024);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeGptImage1("1024x1536") == EImageSizeGptImage1::Size_1024x1536);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeGptImage1("1536x1024") == EImageSizeGptImage1::Size_1536x1024);
+                });
+
             It("StringToOpenAIImageFormatShouldReturnCorrectValue",
                 [this]()
                 {
@@ -238,6 +248,15 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1792x1024).Equals("1792x1024"));
                 });
 
+            It("OpenAIImageSizeGptImage1ToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Auto).Equals("auto"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024).Equals("1024x1024"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1536).Equals("1024x1536"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1536x1024).Equals("1536x1024"));
+                });
+
             It("OpenAIImageFormatToStringShouldReturnCorrectValue",
                 [this]()
                 {
@@ -252,11 +271,37 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Vivid).Equals("vivid"));
                 });
 
+            It("OpenAIImageBackgroundToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Auto).Equals("auto"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Opaque).Equals("opaque"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Transparent).Equals("transparent"));
+                });
+
+            It("OpenAIImageModerationToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration::Auto).Equals("auto"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration::Low).Equals("low"));
+                });
+
             It("OpenAIImageQualityToStringShouldReturnCorrectValue",
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::HD).Equals("hd"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard).Equals("standard"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low).Equals("low"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::High).Equals("high"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Medium).Equals("medium"));
+                });
+
+            It("OpenAIImageOutputFormatToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Jpeg).Equals("jpeg"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Png).Equals("png"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Webp).Equals("webp"));
                 });
 
             It("OpenAIRoleToStringShouldReturnCorrectValue",

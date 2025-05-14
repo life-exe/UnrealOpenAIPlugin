@@ -94,6 +94,9 @@ void UOpenAIProvider::CreateImage(const FOpenAIImage& Image, const FOpenAIAuth& 
     check(!Image.Prompt.IsEmpty());
 
     auto HttpRequest = MakeRequest(Image, API->ImageGenerations(), "POST", Auth);
+    // @todo: make this an API parameter
+    const float timeoutSeconds = 60.0f * 5.0f;  // 5 mins
+    HttpRequest->SetActivityTimeout(timeoutSeconds);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateImageCompleted);
     ProcessRequest(HttpRequest);
 }
@@ -487,6 +490,16 @@ void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Reque
 
 void UOpenAIProvider::OnCreateImageCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
+    if (!Request.IsValid())
+    {
+        LogError("OnCreateImageCompleted: Request object is invalid!");
+        Log(FString::Format(TEXT("OnCreateImageCompleted: Request URL: {0}"), {Request->GetURL()}));
+        Log(FString::Format(TEXT("OnCreateImageCompleted: Request Verb: {0}"), {Request->GetVerb()}));
+        Log(FString::Format(TEXT("OnCreateImageCompleted: Request Status: {0}"), {EHttpRequestStatus::ToString(Request->GetStatus())}));
+        Log(FString::Format(TEXT("OnCreateImageCompleted: Request Elapsed Time: {0} seconds"), {Request->GetElapsedTime()}));
+        return;
+    }
+
     if (!Success(Response, WasSuccessful)) return;
 
     FImageResponse ImageResponse;
@@ -696,7 +709,7 @@ void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
 
     if (!HttpRequest->ProcessRequest())
     {
-        LogError(FString::Printf(TEXT("Can't process %s"), *HttpRequest->GetURL()));
+        LogError(FString::Format(TEXT("Can't process: {0}"), {HttpRequest->GetURL()}));
         RequestError.Broadcast(HttpRequest->GetURL(), {});
     }
 }
@@ -705,27 +718,25 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
 {
     if (!Response.IsValid())
     {
-        LogError("Response is nullptr");
+        LogError(FString::Format(TEXT("Response is nullptr, WasSuccessful: {0}"), {WasSuccessful ? TEXT("true") : TEXT("false")}));
         RequestError.Broadcast("null", "null");
         return false;
     }
 
-    const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
-
+    const FString Content = Response->GetContentAsString();
     TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Content);
     TSharedPtr<FJsonObject> JsonObject;
     if (!FJsonSerializer::Deserialize(JsonReader, JsonObject))
     {
-        LogError("JSON deserialization error");
-        RequestError.Broadcast(ResponseURL, Content);
+        LogError(FString::Format(TEXT("JSON deserialization error: {0}"), {Content}));
+        RequestError.Broadcast(Response->GetURL(), Content);
         return false;
     }
 
     if (!WasSuccessful || !JsonObject.IsValid() || UJsonFuncLib::OpenAIResponseContainsError(JsonObject))
     {
         LogError(Content);
-        RequestError.Broadcast(ResponseURL, Content);
+        RequestError.Broadcast(Response->GetURL(), Content);
         return false;
     }
 

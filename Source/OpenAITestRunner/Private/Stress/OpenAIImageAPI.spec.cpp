@@ -74,7 +74,7 @@ void FOpenAIProviderImage::Define()
                     OpenAIImage.N = 2;
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
                     OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-                    OpenAIImage.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
+                    OpenAIImage.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
 
                     OpenAIProvider->CreateImage(OpenAIImage, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -97,10 +97,36 @@ void FOpenAIProviderImage::Define()
                     OpenAIImage.N = 1;  // only one image is now supported.
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
                     OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
-                    OpenAIImage.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(
-                        EOpenAIImageFormat::URL);  // B64_JSON is not currently supported by the plugin.
-                    OpenAIImage.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
-                    OpenAIImage.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
+                    OpenAIImage.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(
+                        EOpenAIImageFormat::URL));  // B64_JSON is not currently supported by the plugin.
+                    OpenAIImage.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard));
+                    OpenAIImage.Style.Set(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural));
+
+                    OpenAIProvider->CreateImage(OpenAIImage, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateImageCompleted().AddLambda(
+                        [&](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
+                        {
+                            TestTrueExpr(Response.Created > 0);
+                            TestTrue("Images amount should be valid", Response.Data.Num() == 1);
+                            TestTrueExpr(!Response.Data[0].B64_JSON.IsEmpty());
+                            RequestCompleted = true;
+                        });
+
+                    FOpenAIImage OpenAIImage;
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+                    OpenAIImage.N = 1;  // gpt-image-1 only supports one image at the moment.
+                    OpenAIImage.Prompt = "Bear with beard drinking beer";
+                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
+                    OpenAIImage.Background.Set(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Transparent));
+                    OpenAIImage.Moderation.Set(UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration::Low));
+                    OpenAIImage.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low));
+                    OpenAIImage.Output_Format.Set(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Png));
 
                     OpenAIProvider->CreateImage(OpenAIImage, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));

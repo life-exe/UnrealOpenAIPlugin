@@ -19,6 +19,7 @@ enum class EAPIOverviewAction : uint8
     CreateChatCompletionRequest,
     CreateImageDALLE2,
     CreateImageDALLE3,
+    CreateImageGptImage1,
     CreateImageEdit,
     CreateImageVariation,
     CreateModerations,
@@ -86,6 +87,7 @@ private:
 
     void CreateImageDALLE2();
     void CreateImageDALLE3();
+    void CreateImageGptImage1();
     void CreateImageEdit();
     void CreateImageVariation();
 

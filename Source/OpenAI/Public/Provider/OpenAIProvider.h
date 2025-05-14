@@ -449,7 +449,7 @@ private:
         }
         else
         {
-            LogError("JSON deserialization error");
+            LogError(FString::Format(TEXT("JSON deserialization error: {0}"), {Content}));
             RequestError.Broadcast(ResponseURL, Content);
         }
     }
@@ -547,7 +547,7 @@ private:
             const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
             const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
 
-            LogError("JSON deserialization error");
+            LogError(FString::Format(TEXT("JSON deserialization error: {0}"), {Content}));
             LogError(Content);
             RequestError.Broadcast(ResponseURL, Content);
         }

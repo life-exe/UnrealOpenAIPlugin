@@ -27,6 +27,7 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::CreateChatCompletionRequest, [&]() { CreateChatCompletionRequest(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageDALLE2, [&]() { CreateImageDALLE2(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageDALLE3, [&]() { CreateImageDALLE3(); });
+    ActionMap.Add(EAPIOverviewAction::CreateImageGptImage1, [&]() { CreateImageGptImage1(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageEdit, [&]() { CreateImageEdit(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageVariation, [&]() { CreateImageVariation(); });
     ActionMap.Add(EAPIOverviewAction::CreateModerations, [&]() { CreateModerations(); });
@@ -211,7 +212,7 @@ void AAPIOverview::CreateImageDALLE2()
     Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2);
     Image.Prompt = "Tiger is eating pizza";
     Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_512x512);
-    Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
+    Image.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
     Image.N = 2;
 
     Provider->CreateImage(Image, Auth);
@@ -233,9 +234,34 @@ void AAPIOverview::CreateImageDALLE3()
     Image.N = 1;  // DALLE3 only supports one image at the moment.
     Image.Prompt = "Bear with beard drinking beer";
     Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
-    Image.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON);
-    Image.Quality = UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard);
-    Image.Style = UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural);
+    Image.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON));
+    Image.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard));
+    Image.Style.Set(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural));
+
+    Provider->CreateImage(Image, Auth);
+}
+
+void AAPIOverview::CreateImageGptImage1()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateImageCompleted().AddLambda(
+        [](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
+        {
+            auto* ArtTexture = UImageFuncLib::Texture2DFromBytes(Response.Data[0].B64_JSON);
+            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Data[0].B64_JSON);
+        });
+
+    FOpenAIImage Image;
+    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+    Image.N = 1;  // gpt-image-1 only supports one image at the moment.
+    Image.Prompt = "Bear with beard drinking beer";
+    Image.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
+    Image.Background.Set(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Transparent));
+    Image.Moderation.Set(UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration::Low));
+    Image.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low));
+    Image.Output_Format.Set(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Png));
+    // Image.Output_Compression.Set(60);
 
     Provider->CreateImage(Image, Auth);
 }
