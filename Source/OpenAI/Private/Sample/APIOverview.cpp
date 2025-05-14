@@ -288,7 +288,7 @@ void AAPIOverview::CreateImageEdit()
     const FString ImageMaskFilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
         TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "whale_mask.png");
 
-    ImageEdit.Image = FPaths::ConvertRelativePathToFull(ImageFilePath);
+    ImageEdit.Image.Add(FPaths::ConvertRelativePathToFull(ImageFilePath));
     ImageEdit.Mask = FPaths::ConvertRelativePathToFull(ImageMaskFilePath);
     ImageEdit.N = 1;
     ImageEdit.Prompt = "Draw a hat";

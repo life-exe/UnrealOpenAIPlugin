@@ -112,7 +112,11 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(ImageEdit.Image, "image", BeginBoundary));
+    for (const auto& Image : ImageEdit.Image)
+    {
+        RequestContent.Append(HttpHelper::AddMIMEFile(Image, "image", BeginBoundary));
+    }
+
     if (!ImageEdit.Mask.IsEmpty())
     {
         RequestContent.Append(HttpHelper::AddMIMEFile(ImageEdit.Mask, "mask", BeginBoundary));

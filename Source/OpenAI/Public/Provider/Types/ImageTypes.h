@@ -203,9 +203,8 @@ struct FOpenAIImageEdit
       For gpt-image-1, each image should be a png, webp, or jpg file less than 25MB.
       For dall-e-2, you can only provide one image, and it should be a square png file less than 4MB.
     */
-    // @todo -  to array
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
-    FString Image;
+    TArray<FString> Image;
 
     /**
       A text description of the desired image(s).
@@ -213,6 +212,16 @@ struct FOpenAIImageEdit
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Prompt;
+
+    /**
+      Allows to set transparency for the background of the generated image(s).
+      This parameter is only supported for gpt-image-1.
+      Must be one of transparent, opaque or auto (default value).
+      When auto is used, the model will automatically determine the best background for the image.
+      If transparent, the output format needs to support transparency, so it should be set to either png (default value) or webp.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalString Background;
 
     /**
       An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where image should be edited. If there are
