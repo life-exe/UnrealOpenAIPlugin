@@ -18,7 +18,6 @@ enum class EAllModelEnum : uint8
     Davinci_002,
     GPT_4,
     GPT_4_0613,
-    GPT_4_0314,
     DALL_E_2,
     DALL_E_3,
     GPT_4_1106_Preview,
@@ -28,7 +27,6 @@ enum class EAllModelEnum : uint8
     TTS_1_1106,
     TTS_1_HD_1106,
     Text_Embedding_3_Large,
-    GPT_4_32K_0314,
     GPT_3_5_Turbo_0125,
     Text_Embedding_3_Small,
     GPT_4_0125_Preview,
@@ -62,7 +60,6 @@ enum class EAllModelEnum : uint8
     O3_Mini,
     GPT_4O_2024_11_20,
     GPT_4O_Realtime_Preview_2024_12_17,
-    GPT_3_5_Turbo_16K_0613,
     GPT_4_5_Preview,
     GPT_4_5_Preview_2025_02_27,
     GPT_4O_Mini_Transcribe,
@@ -71,9 +68,7 @@ enum class EAllModelEnum : uint8
     GPT_4O_Search_Preview,
     GPT_4O_Mini_Search_Preview_2025_03_11,
     GPT_4O_Search_Preview_2025_03_11,
-    Computer_Use_Preview,
     O1_Pro_2025_03_19,
-    Computer_Use_Preview_2025_03_11,
     O1_Pro,
     GPT_4O_Transcribe,
     GPT_4_1_Nano_2025_04_14,
@@ -84,7 +79,9 @@ enum class EAllModelEnum : uint8
     GPT_4_1_Nano,
     O4_Mini,
     O4_Mini_2025_04_16,
-    GPT_Image_1
+    GPT_Image_1,
+    O3,
+    O3_2025_04_16
 };
 
 UENUM(BlueprintType)
@@ -94,12 +91,12 @@ enum class EMainModelEnum : uint8
     GPT_4,
     GPT_4_1106_Preview,
     GPT_4_0613,
-    GPT_4_0314,
     GPT_4O_Mini,
     GPT_3_5_Turbo,
     GPT_3_5_Turbo_Instruct,
     O1_Mini,
     O1,
+    O3,
     O3_Mini,
     GPT_4_5_Preview,
     GPT_4_1,
