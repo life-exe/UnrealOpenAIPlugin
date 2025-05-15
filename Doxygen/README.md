@@ -62,6 +62,11 @@ void AAPIOverview::CreateImage()
 
 ## Updates
  - [Add gpt-image-1 model, image API update](https://openai.com/index/image-generation-api)
+
+ ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/gpt_image_1.png)
+
+ ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/gpt_image_2.png)
+
  - [Add gpt-4o models](https://openai.com/index/hello-gpt-4o)
  - [Vision & Text To Speech Demo](https://life-exe.itch.io/openai-vision-demo)
 
