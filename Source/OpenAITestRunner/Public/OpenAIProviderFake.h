@@ -12,7 +12,7 @@ public:
     FFakeHttpResponse(const FString& ResponseStr) : ReponseData(ResponseStr) {}
     virtual int32 GetResponseCode() const override { return static_cast<int32>(EHttpResponseCodes::Ok); }
     virtual FString GetContentAsString() const override { return ReponseData; }
-    virtual FString GetURL() const override { return FString(); }
+    virtual const FString& GetURL() const override { return _URL; }
     virtual FString GetURLParameter(const FString& ParameterName) const override { return FString(); }
     virtual FString GetHeader(const FString& HeaderName) const override { return FString(); }
     virtual TArray<FString> GetAllHeaders() const override { return TArray<FString>(); }
@@ -26,17 +26,19 @@ public:
     virtual const FString& GetEffectiveURL() const override { return EffectiveURL; }
     virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::Succeeded; }
     virtual EHttpFailureReason GetFailureReason() const override { return EHttpFailureReason::None; }
+    virtual FUtf8StringView GetContentAsUtf8StringView() const override { return FUtf8StringView{}; }
 
 private:
     FString ReponseData;
     FString EffectiveURL;
+    FString _URL;
 };
 
 class FFakeHttpRequest : public IHttpRequest
 {
 public:
     FFakeHttpRequest(const FString& ResponseStr) : ReponseData(ResponseStr) {}
-    virtual FString GetURL() const override { return FString(); }
+    virtual const FString& GetURL() const override { return _URL; }
     virtual FHttpRequestWillRetryDelegate& OnRequestWillRetry() override { return HttpRequestWillRetryDelegate; }
     virtual FString GetURLParameter(const FString& ParameterName) const override { return FString(); }
     virtual FString GetHeader(const FString& HeaderName) const override { return FString(); }
@@ -100,6 +102,7 @@ public:
 private:
     FString ReponseData;
     FString EffectiveURL;
+    FString _URL;
 };
 
 UCLASS()
