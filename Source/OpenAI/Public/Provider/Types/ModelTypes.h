@@ -60,8 +60,8 @@ enum class EAllModelEnum : uint8
     O3_Mini,
     GPT_4O_2024_11_20,
     GPT_4O_Realtime_Preview_2024_12_17,
-    GPT_4_5_Preview,
-    GPT_4_5_Preview_2025_02_27,
+    O4_Mini_Deep_Research,
+    GPT_4O_Audio_Preview_2025_06_03,
     GPT_4O_Mini_Transcribe,
     GPT_4O_Mini_TTS,
     GPT_4O_Mini_Search_Preview,
@@ -80,8 +80,12 @@ enum class EAllModelEnum : uint8
     O4_Mini,
     O4_Mini_2025_04_16,
     GPT_Image_1,
-    O3,
-    O3_2025_04_16
+    Computer_Use_Preview,
+    Computer_Use_Preview_2025_03_11,
+    GPT_4O_Realtime_Preview_2025_06_03,
+    Codex_Mini_Latest,
+    O4_Mini_Deep_Research_2025_06_26,
+    GPT_4_0314
 };
 
 UENUM(BlueprintType)

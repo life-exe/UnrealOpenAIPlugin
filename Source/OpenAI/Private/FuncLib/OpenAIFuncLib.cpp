@@ -64,8 +64,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::O3_Mini: return "o3-mini";
         case EAllModelEnum::GPT_4O_2024_11_20: return "gpt-4o-2024-11-20";
         case EAllModelEnum::GPT_4O_Realtime_Preview_2024_12_17: return "gpt-4o-realtim-preview-2024-12-17";
-        case EAllModelEnum::GPT_4_5_Preview: return "gpt-4.5-preview";
-        case EAllModelEnum::GPT_4_5_Preview_2025_02_27: return "gpt-4.5-preview-2025-02-27";
+        case EAllModelEnum::O4_Mini_Deep_Research: return "o4-mini-deep-research";
+        case EAllModelEnum::GPT_4O_Audio_Preview_2025_06_03: return "gpt-4o-audio-preview-2025-06-03";
         case EAllModelEnum::GPT_4O_Mini_Transcribe: return "gpt-4o-mini-transcribe";
         case EAllModelEnum::GPT_4O_Mini_TTS: return "gpt-4o-mini-tts";
         case EAllModelEnum::GPT_4O_Mini_Search_Preview: return "gpt-4o-mini-search-preview";
@@ -84,8 +84,12 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::O4_Mini: return "o4-mini";
         case EAllModelEnum::O4_Mini_2025_04_16: return "o4-mini-2025-04-16";
         case EAllModelEnum::GPT_Image_1: return "gpt-image-1";
-        case EAllModelEnum::O3: return "o3";
-        case EAllModelEnum::O3_2025_04_16: return "o3-2025-04-16";
+        case EAllModelEnum::Computer_Use_Preview: return "computer-use-preview";
+        case EAllModelEnum::Computer_Use_Preview_2025_03_11: return "computer-use-preview-2025-03-11";
+        case EAllModelEnum::GPT_4O_Realtime_Preview_2025_06_03: return "gpt-4o-realtime-preview-2025-06-03";
+        case EAllModelEnum::Codex_Mini_Latest: return "codex-mini-latest";
+        case EAllModelEnum::O4_Mini_Deep_Research_2025_06_26: return "o4-mini-deep-research-2025-06-26";
+        case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
     }
     checkNoEntry();
     return {};
