@@ -53,7 +53,7 @@ void AAPIOverview::CreateImage()
 
 ## Supported Unreal Engine Versions
 
- - Unreal Engine 5.6 (master), 5.5, 5.4, 5.3, 5.2
+ - Unreal Engine 5.7 (master), 5.6, 5.5, 5.4, 5.3, 5.2
 
 ## Tutorials
  - [Plugin overview and usage example](https://youtu.be/SkiWQXHjk30) [English subtitles].

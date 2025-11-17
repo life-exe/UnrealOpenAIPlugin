@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "ChatCommonTypes.h"
 #include "ChatCompletionChunkTypes.generated.h"
 

@@ -1,7 +1,7 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "ChatGPT/Services/News/NewsService.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/JsonFuncLib.h"
 #include "Algo/ForEach.h"

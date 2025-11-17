@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "Provider/Types/Chat/ChatTypesHeader.h"
 #include "CompletionTypes.generated.h"
 
@@ -124,7 +124,7 @@ struct FCompletion
       (the one with the highest log probability per token).
       Results cannot be streamed.
       When used with n, best_of controls the number of candidate completions
-      and n specifies how many to return – best_of must be greater than n.
+      and n specifies how many to return ï¿½ best_of must be greater than n.
 
       Note: Because this parameter generates many completions, it can quickly consume your token quota.
       Use carefully and ensure that you have reasonable settings for max_tokens and stop.

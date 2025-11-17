@@ -90,6 +90,8 @@ public:
     virtual FString GetOption(const FName Option) const override { return {}; }
     virtual void SetOption(const FName Option, const FString& OptionValue) override {}
     virtual void ResetTimeoutStatus() override {}
+    virtual void SetPriority(EHttpRequestPriority InPriority) override { Priority = InPriority; }
+    virtual EHttpRequestPriority GetPriority() const override { return Priority; }
 
 public:
     FHttpRequestProgressDelegate HttpRequestProgressDelegate;
@@ -103,6 +105,7 @@ private:
     FString ReponseData;
     FString EffectiveURL;
     FString _URL;
+    EHttpRequestPriority Priority = EHttpRequestPriority::Normal;
 };
 
 UCLASS()

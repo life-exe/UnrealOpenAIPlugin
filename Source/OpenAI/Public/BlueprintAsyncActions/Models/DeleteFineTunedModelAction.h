@@ -5,7 +5,7 @@
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Provider/Types/ModelTypes.h"
 #include "Provider/Types/FineTuneTypes.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "DeleteFineTunedModelAction.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnDeleteFineTunedModel, const FDeleteFineTunedModelResponse&, Response,

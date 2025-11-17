@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ToolsTypes.h"
-#include "CommonTypes.generated.h"
+#include "OpenAICommonTypes.generated.h"
 
 USTRUCT(BlueprintType)
 struct FOpenAIAuth

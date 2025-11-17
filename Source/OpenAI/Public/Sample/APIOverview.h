@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Info.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "APIOverview.generated.h"
 
 class UOpenAIProvider;

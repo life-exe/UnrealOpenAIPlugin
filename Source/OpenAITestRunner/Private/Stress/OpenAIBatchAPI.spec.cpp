@@ -6,7 +6,7 @@
 #include "Misc/AutomationTest.h"
 #include "Provider/Types/FileTypes.h"
 #include "Provider/Types/BatchTypes.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "Provider/OpenAIProvider.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "TestUtils.h"

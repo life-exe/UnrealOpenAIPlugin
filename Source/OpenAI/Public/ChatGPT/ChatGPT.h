@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "Provider/Types/Chat/ChatCommonTypes.h"
 #include "Logging/LogVerbosity.h"
 #include "Runtime/CoreUObject/Public/Templates/SubclassOf.h"

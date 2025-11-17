@@ -6,7 +6,7 @@
 #include "Misc/AutomationTest.h"
 #include "OpenAIProviderFake.h"
 #include "Provider/Types/ModelTypes.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 
 DEFINE_SPEC(FOpenAIProviderFake, "OpenAI.Provider",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)

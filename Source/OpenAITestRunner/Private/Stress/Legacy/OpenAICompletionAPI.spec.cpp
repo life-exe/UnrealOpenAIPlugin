@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
 #include "Provider/Types/Legacy/CompletionTypes.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "Provider/OpenAIProvider.h"
 #include "TestUtils.h"
 

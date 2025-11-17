@@ -6,7 +6,7 @@
 #include "EditorUtilityWidget.h"
 #include "UI/ChatMessageWidget.h"
 #include "Provider/Types/ModelTypes.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "ChatGPT/BaseService.h"
 #include "ChatGPTWidget.generated.h"
 

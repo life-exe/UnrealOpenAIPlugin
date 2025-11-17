@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Info.h"
-#include "Provider/Types/CommonTypes.h"
+#include "Provider/Types/OpenAICommonTypes.h"
 #include "Provider/Types/ModelTypes.h"
 #include "Provider/Types/Chat/ChatCompletionChunkTypes.h"
 #include "ChatGPTWorld.generated.h"
