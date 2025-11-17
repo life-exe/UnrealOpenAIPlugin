@@ -19,6 +19,29 @@
    \ \_______\/  /\   \    \ \_______\
     \|_______/__/ /\ __\    \|_______|
              |__|/ \|__|
+
+Watch:
+https://youtube.com/@LifeEXECode
+
+Code:
+https://github.com/life-exe
+
+Support:
+https://boosty.to/life-exe
+https://patreon.com/lifeexecode
+
+Wiki:
+https://lifeexe-art.gitbook.io/lifeexe
+
+Medium:
+https://medium.com/@lifeexe
+
+Itch:
+https://life-exe.itch.io
+
+X:
+https://x.com/lifeExeCode
+
 */
 
 #pragma once

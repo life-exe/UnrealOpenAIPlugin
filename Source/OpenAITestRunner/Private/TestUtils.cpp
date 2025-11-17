@@ -47,13 +47,18 @@ FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum PluginEnum)
     EnumElementName = EnumElementName.ToLower().Replace(TEXT("_"), TEXT("-"));
 
     // special case: gpt-3-5-turbo-0301 -> gpt-3.5-turbo-0301
-    EnumElementName = EnumElementName.Replace(TEXT("3-5"), TEXT("3.5"));
-    EnumElementName = EnumElementName.Replace(TEXT("4-5"), TEXT("4.5"));
+    EnumElementName = EnumElementName.Replace(TEXT("gpt-3-5"), TEXT("gpt-3.5"));
+    EnumElementName = EnumElementName.Replace(TEXT("gpt-4-5"), TEXT("gpt-4.5"));
     // don't like it, but there are a problems with model names like GPT_4_1106_Preview .... facepalm naming conventions...
     EnumElementName = EnumElementName.Replace(TEXT("gpt-4-1-"), TEXT("gpt-4.1-"));
     if (EnumElementName.Equals(TEXT("gpt-4-1")))
     {
         EnumElementName = TEXT("gpt-4.1");
+    }
+    EnumElementName = EnumElementName.Replace(TEXT("gpt-5-1-"), TEXT("gpt-5.1-"));
+    if (EnumElementName.Equals(TEXT("gpt-5-1")))
+    {
+        EnumElementName = TEXT("gpt-5.1");
     }
 
     return EnumElementName;
@@ -65,13 +70,18 @@ FString TestUtils::OpenAIModelNameToPluginEnum(const FString& ModelName)
     FString EnumName = ModelName.ToLower().Replace(TEXT("-"), TEXT("_"));
 
     // special case: gpt-3.5-turbo-0301 -> gpt_3_5_turbo_0301
-    EnumName = EnumName.Replace(TEXT("3.5"), TEXT("3_5"));
-    EnumName = EnumName.Replace(TEXT("4.5"), TEXT("4_5"));
+    EnumName = EnumName.Replace(TEXT("gpt_3.5"), TEXT("gpt_3_5"));
+    EnumName = EnumName.Replace(TEXT("gpt_4.5"), TEXT("gpt_4_5"));
     // don't like it, but there are a problems with model names like GPT_4_1106_Preview .... facepalm naming conventions...
     EnumName = EnumName.Replace(TEXT("gpt_4.1_"), TEXT("gpt_4_1_"));
     if (EnumName.Equals(TEXT("gpt_4.1")))
     {
         EnumName = TEXT("gpt_4_1");
+    }
+    EnumName = EnumName.Replace(TEXT("gpt_5.1_"), TEXT("gpt_5_1_"));
+    if (EnumName.Equals(TEXT("gpt_5.1")))
+    {
+        EnumName = TEXT("gpt_5_1");
     }
 
     // gpt-3.5-turbo-0301 -> GPT_3_5_turbo_0301

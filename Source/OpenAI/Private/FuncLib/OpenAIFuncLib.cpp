@@ -43,10 +43,6 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4O_Mini_2024_07_18: return "gpt-4o-mini-2024-07-18";
         case EAllModelEnum::ChatGPT_4O_Latest: return "chatgpt-4o-latest";
         case EAllModelEnum::GPT_4O_2024_08_06: return "gpt-4o-2024-08-06";
-        case EAllModelEnum::O1_Preview: return "o1-preview";
-        case EAllModelEnum::O1_Preview_2024_09_12: return "o1-preview-2024-09-12";
-        case EAllModelEnum::O1_Mini: return "o1-mini";
-        case EAllModelEnum::O1_Mini_2024_09_12: return "o1-mini-2024-09-12";
         case EAllModelEnum::GPT_4O_Audio_Preview: return "gpt-4o-audio-preview";
         case EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01: return "gpt-4o-audio-preview-2024-10-01";
         case EAllModelEnum::GPT_4O_Realtime_Preview: return "gpt-4o-realtime-preview";
@@ -90,6 +86,37 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::Codex_Mini_Latest: return "codex-mini-latest";
         case EAllModelEnum::O4_Mini_Deep_Research_2025_06_26: return "o4-mini-deep-research-2025-06-26";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
+        case EAllModelEnum::GPT_5_Nano_2025_08_07: return "gpt-5-nano-2025-08-07";
+        case EAllModelEnum::Sora_2: return "sora-2";
+        case EAllModelEnum::Sora_2_Pro: return "sora-2-pro";
+        case EAllModelEnum::GPT_Realtime_Mini: return "gpt-realtime-mini";
+        case EAllModelEnum::O3_2025_04_16: return "o3-2025-04-16";
+        case EAllModelEnum::O3: return "o3";
+        case EAllModelEnum::GPT_5_Nano: return "gpt-5-nano";
+        case EAllModelEnum::GPT_5_Mini: return "gpt-5-mini";
+        case EAllModelEnum::GPT_5_Mini_2025_08_07: return "gpt-5-mini-2025-08-07";
+        case EAllModelEnum::GPT_5: return "gpt-5";
+        case EAllModelEnum::GPT_5_1_2025_11_13: return "gpt-5.1-2025-11-13";
+        case EAllModelEnum::GPT_5_Codex: return "gpt-5-codex";
+        case EAllModelEnum::GPT_5_2025_08_07: return "gpt-5-2025-08-07";
+        case EAllModelEnum::GPT_5_1_Codex_Mini: return "gpt-5.1-codex-mini";
+        case EAllModelEnum::GPT_5_Search_Api: return "gpt-5-search-api";
+        case EAllModelEnum::GPT_5_1_Chat_Latest: return "gpt-5.1-chat-latest";
+        case EAllModelEnum::GPT_Realtime_Mini_2025_10_06: return "gpt-realtime-mini-2025-10-06";
+        case EAllModelEnum::GPT_4O_Transcribe_Diarize: return "gpt-4o-transcribe-diarize";
+        case EAllModelEnum::GPT_5_Search_Api_2025_10_14: return "gpt-5-search-api-2025-10-14";
+        case EAllModelEnum::GPT_5_1_Codex: return "gpt-5.1-codex";
+        case EAllModelEnum::GPT_5_Pro: return "gpt-5-pro";
+        case EAllModelEnum::GPT_5_Pro_2025_10_06: return "gpt-5-pro-2025-10-06";
+        case EAllModelEnum::GPT_5_Chat_Latest: return "gpt-5-chat-latest";
+        case EAllModelEnum::GPT_Audio_Mini: return "gpt-audio-mini";
+        case EAllModelEnum::GPT_Audio_Mini_2025_10_06: return "gpt-audio-mini-2025-10-06";
+        case EAllModelEnum::GPT_5_1: return "gpt-5.1";
+        case EAllModelEnum::GPT_Realtime_2025_08_28: return "gpt-realtime-2025-08-28";
+        case EAllModelEnum::GPT_Realtime: return "gpt-realtime";
+        case EAllModelEnum::GPT_Audio: return "gpt-audio";
+        case EAllModelEnum::GPT_Audio_2025_08_28: return "gpt-audio-2025-08-28";
+        case EAllModelEnum::GPT_Image_1_Mini: return "gpt-image-1-mini";
     }
     checkNoEntry();
     return {};
@@ -101,20 +128,20 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
     {
         case EMainModelEnum::GPT_4O: return "gpt-4o";
         case EMainModelEnum::GPT_4: return "gpt-4";
-        case EMainModelEnum::GPT_4_1106_Preview: return "gpt-4-1106-preview";
-        case EMainModelEnum::GPT_4_0613: return "gpt-4-0613";
         case EMainModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
-        case EMainModelEnum::GPT_3_5_Turbo: return "gpt-3.5-turbo";
-        case EMainModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
-        case EMainModelEnum::O1_Mini: return "o1-mini";
         case EMainModelEnum::O1: return "o1";
+        case EMainModelEnum::O3: return "o3";
         case EMainModelEnum::O3_Mini: return "o3-mini";
-        case EMainModelEnum::GPT_4_5_Preview: return "gpt-4.5-preview";
         case EMainModelEnum::GPT_4_1: return "gpt-4.1";
         case EMainModelEnum::GPT_4_1_Mini: return "gpt-4.1-mini";
         case EMainModelEnum::GPT_4_1_Nano: return "gpt-4.1-nano";
         case EMainModelEnum::O4_Mini: return "o4-mini";
-        case EMainModelEnum::O3: return "o3";
+        case EMainModelEnum::GPT_5_Nano: return "gpt-5-nano";
+        case EMainModelEnum::GPT_5_Mini: return "gpt-5-mini";
+        case EMainModelEnum::GPT_5: return "gpt-5";
+        case EMainModelEnum::GPT_5_1: return "gpt-5.1";
+        case EMainModelEnum::GPT_5_Pro: return "gpt-5-pro";
+        case EMainModelEnum::GPT_5_Codex: return "gpt-5-codex";
     }
     checkNoEntry();
     return {};
@@ -125,7 +152,8 @@ FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Mode
     switch (Model)
     {
         case EModerationsModelEnum::Text_Moderation_Latest: return "text-moderation-latest";
-        case EModerationsModelEnum::Text_Moderation_Stable: return "text-moderation-stable";
+        case EModerationsModelEnum::Omni_Moderation_Latest: return "omni-moderation-latest";
+        case EModerationsModelEnum::Omni_Moderation_2024_09_26: return "omni-moderation-2024-09-26";
     }
     checkNoEntry();
     return {};

@@ -55,10 +55,6 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_2024_07_18, "gpt-4o-mini-2024-07-18");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::ChatGPT_4O_Latest, "chatgpt-4o-latest");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_08_06, "gpt-4o-2024-08-06");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Preview, "o1-preview");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Preview_2024_09_12, "o1-preview-2024-09-12");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Mini, "o1-mini");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_Mini_2024_09_12, "o1-mini-2024-09-12");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview, "gpt-4o-audio-preview");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01, "gpt-4o-audio-preview-2024-10-01");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Realtime_Preview, "gpt-4o-realtime-preview");
@@ -107,6 +103,37 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Codex_Mini_Latest, "codex-mini-latest");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini_Deep_Research_2025_06_26, "o4-mini-deep-research-2025-06-26");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0314, "gpt-4-0314");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Nano_2025_08_07, "gpt-5-nano-2025-08-07");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Sora_2, "sora-2");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Sora_2_Pro, "sora-2-pro");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Realtime_Mini, "gpt-realtime-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_2025_04_16, "o3-2025-04-16");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3, "o3");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Nano, "gpt-5-nano");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Mini, "gpt-5-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Mini_2025_08_07, "gpt-5-mini-2025-08-07");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5, "gpt-5");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_2025_11_13, "gpt-5.1-2025-11-13");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Codex, "gpt-5-codex");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_2025_08_07, "gpt-5-2025-08-07");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_Codex_Mini, "gpt-5.1-codex-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Search_Api, "gpt-5-search-api");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_Chat_Latest, "gpt-5.1-chat-latest");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Realtime_Mini_2025_10_06, "gpt-realtime-mini-2025-10-06");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Transcribe_Diarize, "gpt-4o-transcribe-diarize");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Search_Api_2025_10_14, "gpt-5-search-api-2025-10-14");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_Codex, "gpt-5.1-codex");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Pro, "gpt-5-pro");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Pro_2025_10_06, "gpt-5-pro-2025-10-06");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Chat_Latest, "gpt-5-chat-latest");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Audio_Mini, "gpt-audio-mini");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Audio_Mini_2025_10_06, "gpt-audio-mini-2025-10-06");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1, "gpt-5.1");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Realtime_2025_08_28, "gpt-realtime-2025-08-28");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Realtime, "gpt-realtime");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Audio, "gpt-audio");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Audio_2025_08_28, "gpt-audio-2025-08-28");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_1_Mini, "gpt-image-1-mini");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -114,20 +141,20 @@ void FOpenAIFuncLib::Define()
                 {
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4O, "gpt-4o");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4, "gpt-4");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1106_Preview, "gpt-4-1106-preview");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_0613, "gpt-4-0613");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4O_Mini, "gpt-4o-mini");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_3_5_Turbo, "gpt-3.5-turbo");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_3_5_Turbo_Instruct, "gpt-3.5-turbo-instruct");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O1_Mini, "o1-mini");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O1, "o1");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O3, "o3");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O3_Mini, "o3-mini");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_5_Preview, "gpt-4.5-preview");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1, "gpt-4.1");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1_Mini, "gpt-4.1-mini");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_4_1_Nano, "gpt-4.1-nano");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O4_Mini, "o4-mini");
-                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::O3, "o3");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_Nano, "gpt-5-nano");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_Mini, "gpt-5-mini");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5, "gpt-5");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_1, "gpt-5.1");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_Pro, "gpt-5-pro");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_Codex, "gpt-5-codex");
                 });
 
             It("OpenAIModerationModelToStringShouldReturnCorrectValue",
@@ -135,8 +162,10 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Latest)
                             .Equals("text-moderation-latest"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Stable)
-                            .Equals("text-moderation-stable"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Omni_Moderation_Latest)
+                            .Equals("omni-moderation-latest"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Omni_Moderation_2024_09_26)
+                            .Equals("omni-moderation-2024-09-26"));
                 });
 
             It("OpenAIAudioModelToStringShouldReturnCorrectValue",

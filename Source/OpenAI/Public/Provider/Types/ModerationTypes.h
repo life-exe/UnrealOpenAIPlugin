@@ -8,8 +8,9 @@
 UENUM(BlueprintType)
 enum class EModerationsModelEnum : uint8
 {
-    Text_Moderation_Stable,
-    Text_Moderation_Latest
+    Text_Moderation_Latest,
+    Omni_Moderation_Latest,
+    Omni_Moderation_2024_09_26
 };
 
 ///////////////////////////////////////////////////////
@@ -28,15 +29,16 @@ struct FModerations
     TArray<FString> Input;
 
     /**
-      Two content moderations models are available: text-moderation-stable and text-moderation-latest.
+      Content moderation models available: omni-moderation-latest, omni-moderation-2024-09-26, text-moderation-latest.
 
-      The default is text-moderation-latest which will be automatically upgraded over time.
+      The default is omni-moderation-latest which will be automatically upgraded over time.
       This ensures you are always using our most accurate model.
-      If you use text-moderation-stable, we will provide advanced notice before updating the model.
-      Accuracy of text-moderation-stable may be slightly lower than for text-moderation-latest.
+
+      The omni-moderation models can process both text and images.
+      Note: text-moderation-latest is deprecated, use omni-moderation-latest instead.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Model{"text-moderation-stable"};
+    FString Model{"omni-moderation-latest"};
 };
 
 ///////////////////////////////////////////////////////

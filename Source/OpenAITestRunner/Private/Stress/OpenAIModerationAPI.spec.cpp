@@ -55,7 +55,7 @@ void FOpenAIProviderModeration::Define()
 
                     FModerations Moderations;
                     Moderations.Input = {"I love you.", "I despise you fiercely."};
-                    Moderations.Model = UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Latest);
+                    Moderations.Model = UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Omni_Moderation_Latest);
 
                     OpenAIProvider->CreateModerations(Moderations, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
