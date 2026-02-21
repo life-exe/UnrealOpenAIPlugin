@@ -62,7 +62,7 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
                     ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
-                    TestTrueExpr(ResultString.Equals("{\"array\": [ 10 ]}"));
+                    TestTrueExpr(ResultString.Equals("{\"array\": [10]}"));
                 });
 
             It("RemoveEmptyArrays.NestedEmptyArraysShouldBeRemoved",
@@ -82,7 +82,7 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
                     ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
-                    TestTrueExpr(ResultString.Equals("{\"nestedarray\": [ 10 ]}"));
+                    TestTrueExpr(ResultString.Equals("{\"nestedarray\": [10]}"));
                 });
 
             It("RemoveEmptyArrays.MultipleNestedEmptyArraysShouldBeRemoved",
@@ -106,7 +106,7 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
                     ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
-                    TestTrueExpr(ResultString.Equals("{\"multiplenestedemptyarrays\": [ 25 ]}"));
+                    TestTrueExpr(ResultString.Equals("{\"multiplenestedemptyarrays\": [25]}"));
                 });
 
             It("RemoveEmptyArrays.MixedNestedArraysShouldRetainNonEmptyArrays",
@@ -132,7 +132,7 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
                     ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
-                    TestTrueExpr(ResultString.Equals("{\"mixednestedarrays\": [[ 5 ],42 ]}"));
+                    TestTrueExpr(ResultString.Equals("{\"mixednestedarrays\": [[5],42]}"));
                 });
 
             It("RemoveEmptyArrays.DeeplyNestedEmptyArraysShouldBeRemoved",
@@ -156,7 +156,7 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
                     ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
-                    TestTrueExpr(ResultString.Equals("{\"deeplynestedemptyarrays\": [ 100 ]}"));
+                    TestTrueExpr(ResultString.Equals("{\"deeplynestedemptyarrays\": [100]}"));
                 });
 
             It("RemoveEmptyArrays.MultipleLevelsOfNestingShouldHandleComplexStructures",
@@ -181,7 +181,7 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
 
                     ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
-                    TestTrueExpr(ResultString.Equals("{\"multiplelevelsofnesting\": [[[ 15 ]],50 ]}"));
+                    TestTrueExpr(ResultString.Equals("{\"multiplelevelsofnesting\": [[[15]],50]}"));
                 });
 
             It("OptionalValuesThatIsNotSetShouldBeRemoved",
