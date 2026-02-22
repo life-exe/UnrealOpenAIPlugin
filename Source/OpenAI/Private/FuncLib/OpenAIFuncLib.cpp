@@ -41,12 +41,9 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_4_Turbo: return "gpt-4-turbo";
         case EAllModelEnum::GPT_4O_Mini: return "gpt-4o-mini";
         case EAllModelEnum::GPT_4O_Mini_2024_07_18: return "gpt-4o-mini-2024-07-18";
-        case EAllModelEnum::ChatGPT_4O_Latest: return "chatgpt-4o-latest";
         case EAllModelEnum::GPT_4O_2024_08_06: return "gpt-4o-2024-08-06";
         case EAllModelEnum::GPT_4O_Audio_Preview: return "gpt-4o-audio-preview";
-        case EAllModelEnum::GPT_4O_Audio_Preview_2024_10_01: return "gpt-4o-audio-preview-2024-10-01";
         case EAllModelEnum::GPT_4O_Realtime_Preview: return "gpt-4o-realtime-preview";
-        case EAllModelEnum::GPT_4O_Realtime_Preview_2024_10_01: return "gpt-4o-realtime-preview-2024-10-01";
         case EAllModelEnum::GPT_4O_Mini_Realtime_Preview_2024_12_17: return "gpt-4o-mini-realtime-preview-2024-12-17";
         case EAllModelEnum::GPT_4O_Mini_Realtime_Preview: return "gpt-4o-mini-realtime-preview";
         case EAllModelEnum::GPT_4O_Mini_Audio_Preview_2024_12_17: return "gpt-4o-mini-audio-preview-2024-12-17";
@@ -83,7 +80,6 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::Computer_Use_Preview: return "computer-use-preview";
         case EAllModelEnum::Computer_Use_Preview_2025_03_11: return "computer-use-preview-2025-03-11";
         case EAllModelEnum::GPT_4O_Realtime_Preview_2025_06_03: return "gpt-4o-realtime-preview-2025-06-03";
-        case EAllModelEnum::Codex_Mini_Latest: return "codex-mini-latest";
         case EAllModelEnum::O4_Mini_Deep_Research_2025_06_26: return "o4-mini-deep-research-2025-06-26";
         case EAllModelEnum::GPT_4_0314: return "gpt-4-0314";
         case EAllModelEnum::GPT_5_Nano_2025_08_07: return "gpt-5-nano-2025-08-07";
@@ -117,6 +113,21 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_Audio: return "gpt-audio";
         case EAllModelEnum::GPT_Audio_2025_08_28: return "gpt-audio-2025-08-28";
         case EAllModelEnum::GPT_Image_1_Mini: return "gpt-image-1-mini";
+        case EAllModelEnum::GPT_5_2_Codex: return "gpt-5.2-codex";
+        case EAllModelEnum::GPT_4O_Mini_TTS_2025_12_15: return "gpt-4o-mini-tts-2025-12-15";
+        case EAllModelEnum::GPT_Realtime_Mini_2025_12_15: return "gpt-realtime-mini-2025-12-15";
+        case EAllModelEnum::GPT_Audio_Mini_2025_12_15: return "gpt-audio-mini-2025-12-15";
+        case EAllModelEnum::ChatGPT_Image_Latest: return "chatgpt-image-latest";
+        case EAllModelEnum::GPT_5_1_Codex_Max: return "gpt-5.1-codex-max";
+        case EAllModelEnum::GPT_Image_1_5: return "gpt-image-1.5";
+        case EAllModelEnum::GPT_5_2_2025_12_11: return "gpt-5.2-2025-12-11";
+        case EAllModelEnum::GPT_5_2: return "gpt-5.2";
+        case EAllModelEnum::GPT_5_2_Pro_2025_12_11: return "gpt-5.2-pro-2025-12-11";
+        case EAllModelEnum::GPT_5_2_Pro: return "gpt-5.2-pro";
+        case EAllModelEnum::GPT_5_2_Chat_Latest: return "gpt-5.2-chat-latest";
+        case EAllModelEnum::GPT_4O_Mini_Transcribe_2025_12_15: return "gpt-4o-mini-transcribe-2025-12-15";
+        case EAllModelEnum::GPT_4O_Mini_Transcribe_2025_03_20: return "gpt-4o-mini-transcribe-2025-03-20";
+        case EAllModelEnum::GPT_4O_Mini_TTS_2025_03_20: return "gpt-4o-mini-tts-2025-03-20";
     }
     checkNoEntry();
     return {};

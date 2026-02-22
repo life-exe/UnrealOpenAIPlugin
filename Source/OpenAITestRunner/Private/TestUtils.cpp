@@ -60,6 +60,12 @@ FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum PluginEnum)
     {
         EnumElementName = TEXT("gpt-5.1");
     }
+    EnumElementName = EnumElementName.Replace(TEXT("gpt-5-2-"), TEXT("gpt-5.2-"));
+    if (EnumElementName.Equals(TEXT("gpt-5-2")))
+    {
+        EnumElementName = TEXT("gpt-5.2");
+    }
+    EnumElementName = EnumElementName.Replace(TEXT("image-1-5"), TEXT("image-1.5"));
 
     return EnumElementName;
 }
@@ -83,6 +89,13 @@ FString TestUtils::OpenAIModelNameToPluginEnum(const FString& ModelName)
     {
         EnumName = TEXT("gpt_5_1");
     }
+    EnumName = EnumName.Replace(TEXT("gpt_5.2_"), TEXT("gpt_5_2_"));
+    if (EnumName.Equals(TEXT("gpt_5.2")))
+    {
+        EnumName = TEXT("gpt_5_2");
+    }
+    // Replace remaining dots (e.g. gpt_image_1.5 -> gpt_image_1_5)
+    EnumName = EnumName.Replace(TEXT("."), TEXT("_"));
 
     // gpt-3.5-turbo-0301 -> GPT_3_5_turbo_0301
     EnumName = EnumName.Replace(TEXT("gpt"), TEXT("GPT"));
