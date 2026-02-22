@@ -40,6 +40,8 @@ enum class EAPIOverviewAction : uint8
     ListFineTuningCheckpoints,
     RetriveFineTuningJob,
     CancelFineTuningJob,
+    PauseFineTuningJob,
+    ResumeFineTuningJob,
     ListBatch,
     CreateBatch,
     RetrieveBatch,
@@ -113,6 +115,8 @@ private:
     void ListFineTuningCheckpoints();
     void RetriveFineTuningJob();
     void CancelFineTuningJob();
+    void PauseFineTuningJob();
+    void ResumeFineTuningJob();
 
     void ListBatch();
     void CreateBatch();

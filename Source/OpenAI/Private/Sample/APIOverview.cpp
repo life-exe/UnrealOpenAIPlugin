@@ -48,6 +48,8 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::CreateFineTuningJob, [&]() { CreateFineTuningJob(); });
     ActionMap.Add(EAPIOverviewAction::RetriveFineTuningJob, [&]() { RetriveFineTuningJob(); });
     ActionMap.Add(EAPIOverviewAction::CancelFineTuningJob, [&]() { CancelFineTuningJob(); });
+    ActionMap.Add(EAPIOverviewAction::PauseFineTuningJob, [&]() { PauseFineTuningJob(); });
+    ActionMap.Add(EAPIOverviewAction::ResumeFineTuningJob, [&]() { ResumeFineTuningJob(); });
     ActionMap.Add(EAPIOverviewAction::ListBatch, [&]() { ListBatch(); });
     ActionMap.Add(EAPIOverviewAction::CreateBatch, [&]() { CreateBatch(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveBatch, [&]() { RetrieveBatch(); });
@@ -641,6 +643,36 @@ void AAPIOverview::CancelFineTuningJob()
 
     const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
     Provider->CancelFineTuningJob(JobID, Auth);
+}
+
+void AAPIOverview::PauseFineTuningJob()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnPauseFineTuningJobCompleted().AddLambda(
+        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& Metadata)
+        {
+            // decide what to use from the struct by yourself (= (=
+            UE_LOGFMT(LogAPIOverview, Display, "PauseFineTuningJob request completed!");
+        });
+
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->PauseFineTuningJob(JobID, Auth);
+}
+
+void AAPIOverview::ResumeFineTuningJob()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnResumeFineTuningJobCompleted().AddLambda(
+        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& Metadata)
+        {
+            // decide what to use from the struct by yourself (= (=
+            UE_LOGFMT(LogAPIOverview, Display, "ResumeFineTuningJob request completed!");
+        });
+
+    const FString JobID{"ftjob-xxxxxxxxxxxxxxxxxxxxxxxxxx"};
+    Provider->ResumeFineTuningJob(JobID, Auth);
 }
 
 void AAPIOverview::CreateBatch()

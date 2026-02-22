@@ -30,6 +30,7 @@
 #include "FuncLib/OpenAIFuncLib.h"
 #include "FuncLib/JsonFuncLib.h"
 #include "Provider/JsonParsers/ChatParser.h"
+#include "Provider/JsonParsers/FineTuningParser.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
@@ -205,6 +206,8 @@ public:
       https://platform.openai.com/docs/api-reference/fine-tuning/cancel
     */
     void CancelFineTuningJob(const FString& FineTuneID, const FOpenAIAuth& Auth);
+    void PauseFineTuningJob(const FString& FineTuneID, const FOpenAIAuth& Auth);
+    void ResumeFineTuningJob(const FString& FineTuneID, const FOpenAIAuth& Auth);
 
     /**
       Create large batches of API requests for asynchronous processing.
@@ -336,6 +339,8 @@ public:
     DEFINE_EVENT_GETTER(CreateModerationsCompleted)
     DEFINE_EVENT_GETTER(RetrieveFineTuningJobCompleted)
     DEFINE_EVENT_GETTER(CancelFineTuningJobCompleted)
+    DEFINE_EVENT_GETTER(PauseFineTuningJobCompleted)
+    DEFINE_EVENT_GETTER(ResumeFineTuningJobCompleted)
     DEFINE_EVENT_GETTER(ListBatchCompleted)
     DEFINE_EVENT_GETTER(CreateBatchCompleted)
     DEFINE_EVENT_GETTER(RetrieveBatchCompleted)
@@ -387,6 +392,8 @@ private:
     DECLARE_HTTP_CALLBACK(OnListFineTuningCheckpointsCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveFineTuningJobCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelFineTuningJobCompleted)
+    DECLARE_HTTP_CALLBACK(OnPauseFineTuningJobCompleted)
+    DECLARE_HTTP_CALLBACK(OnResumeFineTuningJobCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelBatchCompleted)
@@ -441,6 +448,8 @@ private:
     FHttpRequestRef MakeRequest(const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(
         const FChatCompletion& ChatCompletion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FFineTuningJob& FineTuningJob, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
     template <typename ParsedResponseType, typename DelegateType>
     void HandleResponse(FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)

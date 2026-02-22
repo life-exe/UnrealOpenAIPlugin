@@ -111,6 +111,18 @@ struct FFineTuningJob
     FString Model;
 
     /**
+      Set of key-value pairs that can be attached to the fine-tuning job.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    TMap<FString, FString> Metadata;
+
+    /**
+      The method used for fine-tuning. Supports "supervised", "dpo", and "reinforcement".
+      @todo: implement method struct (SupervisedMethod, DpoMethod, ReinforcementMethod).
+    */
+    // FFineTuningMethod Method;  // @todo: implement
+
+    /**
       The ID of an uploaded file that contains training data.
       See upload file for how to upload a file:
       https://platform.openai.com/docs/api-reference/files/upload
@@ -180,6 +192,11 @@ struct FFineTuningQueryParameters
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FOptionalInt Limit;
 
+    /**
+      Filter by metadata key-value pairs (used for listing jobs).
+    */
+    TMap<FString, FString> Metadata;
+
     FString ToQuery() const
     {
         FString Query{"?"};
@@ -191,6 +208,11 @@ struct FFineTuningQueryParameters
         if (Limit.IsSet)
         {
             Query.Append("limit=").Append(FString::FromInt(Limit.Value)).Append("&");
+        }
+
+        for (const auto& [Key, Value] : Metadata)
+        {
+            Query.Append("metadata[").Append(Key).Append("]=").Append(Value).Append("&");
         }
 
         return Query.LeftChop(1);
@@ -230,6 +252,18 @@ USTRUCT(BlueprintType)
 struct FFineTuningJobHyperparamsResponse
 {
     GENERATED_BODY()
+
+    /**
+      Number of examples in each batch. "auto" or a number.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Batch_Size;
+
+    /**
+      Scaling factor for the learning rate. "auto" or a number.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Learning_Rate_Multiplier;
 
     /**
       The number of epochs to train the model for.
@@ -357,6 +391,18 @@ struct FFineTuningJobObjectResponse
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     int32 Estimated_Finish{};
+
+    /**
+      Set of key-value pairs attached to the fine-tuning job.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TMap<FString, FString> Metadata;
+
+    /**
+      The method used for fine-tuning ("supervised", "dpo", or "reinforcement").
+      @todo: implement method struct.
+    */
+    // FFineTuningMethod Method;  // @todo: implement
 };
 
 USTRUCT(BlueprintType)
@@ -466,6 +512,12 @@ struct FListFineTuningJobsResponse
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<FFineTuningJobObjectResponse> Data;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString First_Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Last_Id;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     bool Has_More{false};

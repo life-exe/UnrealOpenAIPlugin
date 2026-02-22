@@ -163,6 +163,63 @@ void FOpenAIProviderActual::Define()
                         });
                 });
 
+            It("Fine-tuning.PauseFineTuningJobShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was created: {0}", Response.ID);
+                            OpenAIProvider->PauseFineTuningJob(Response.ID, Auth);
+                        });
+
+                    // start new fine tune job and then pause it
+                    FFineTuningJob FineTuningJob;
+                    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
+                    FineTuningJob.Training_File = FileID;
+                    OpenAIProvider->CreateFineTuningJob(FineTuningJob, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+
+                    OpenAIProvider->OnPauseFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was paused: {0}", Response.ID);
+                            RequestCompleted = true;
+                        });
+                });
+
+            It("Fine-tuning.ResumeFineTuningJobShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was created: {0}", Response.ID);
+                            OpenAIProvider->PauseFineTuningJob(Response.ID, Auth);
+                        });
+
+                    OpenAIProvider->OnPauseFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was paused: {0}", Response.ID);
+                            OpenAIProvider->ResumeFineTuningJob(Response.ID, Auth);
+                        });
+
+                    OpenAIProvider->OnResumeFineTuningJobCompleted().AddLambda(
+                        [&](const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            UE_LOGFMT(LogOpenAIFineTuneAPI, Display, "Fine tune job was resumed: {0}", Response.ID);
+                            RequestCompleted = true;
+                        });
+
+                    // start new fine tune job, pause it, then resume it
+                    FFineTuningJob FineTuningJob;
+                    FineTuningJob.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
+                    FineTuningJob.Training_File = FileID;
+                    OpenAIProvider->CreateFineTuningJob(FineTuningJob, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
             It("Fine-tuning.ListFineTuningEventsShouldResponseCorrectly",
                 [this]()
                 {

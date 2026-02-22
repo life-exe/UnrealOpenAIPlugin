@@ -54,6 +54,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
 DECLARE_MULTICAST_DELEGATE_TwoParams(
     FOnRetrieveFineTuningJobCompleted, const FFineTuningJobObjectResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCancelFineTuningJobCompleted, const FFineTuningJobObjectResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPauseFineTuningJobCompleted, const FFineTuningJobObjectResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResumeFineTuningJobCompleted, const FFineTuningJobObjectResponse&, const FOpenAIResponseMetadata&);
 // moderations
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateModerationsCompleted, const FModerationsResponse&, const FOpenAIResponseMetadata&);
 // batches
