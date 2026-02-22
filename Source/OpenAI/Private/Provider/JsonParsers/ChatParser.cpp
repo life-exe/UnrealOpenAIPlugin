@@ -21,10 +21,24 @@ void CleanFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPt
         Json->RemoveField(TEXT("Logit_Bias"));
     }
 
-    if (!Json->HasField(TEXT("Stream_Options")) ||
-        !Json->GetObjectField(TEXT("Stream_Options"))->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset")))
+    if (Json->HasField(TEXT("Stream_Options")))
     {
-        Json->RemoveField(TEXT("Stream_Options"));
+        const auto StreamOpts = Json->GetObjectField(TEXT("Stream_Options"));
+        const bool IncludeUsageSet =
+            StreamOpts->HasField(TEXT("Include_Usage")) &&
+            StreamOpts->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset"));
+        const bool IncludeObfuscationSet =
+            StreamOpts->HasField(TEXT("Include_Obfuscation")) &&
+            StreamOpts->GetObjectField(TEXT("Include_Obfuscation"))->GetBoolField(TEXT("isset"));
+        if (!IncludeUsageSet && !IncludeObfuscationSet)
+        {
+            Json->RemoveField(TEXT("Stream_Options"));
+        }
+    }
+
+    if (ChatCompletion.Metadata.IsEmpty())
+    {
+        Json->RemoveField(TEXT("Metadata"));
     }
 
     for (int32 i = 0; i < ChatCompletion.Messages.Num(); ++i)
