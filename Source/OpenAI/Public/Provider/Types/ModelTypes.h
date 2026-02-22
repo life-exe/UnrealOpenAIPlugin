@@ -216,5 +216,5 @@ struct FDeleteFineTunedModelResponse
     FString Object;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Deleted;
+    bool Deleted{};
 };

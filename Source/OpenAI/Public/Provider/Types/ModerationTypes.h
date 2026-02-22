@@ -63,6 +63,12 @@ struct FModerationCategories
     bool Harassment_Threatening{};
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    bool Illicit{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    bool Illicit_Violent{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     bool Self_Harm{};
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
@@ -100,6 +106,12 @@ struct FModerationCategoryScores
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     double Harassment_Threatening{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    double Illicit{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    double Illicit_Violent{};
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     double Self_Harm{};

@@ -14,7 +14,7 @@ bool ModerationParser::DeserializeResponse(const FString& ResponseString, FModer
     if (!FJsonSerializer::Deserialize(JsonReader, JsonObject)) return false;
 
     ModerationResponse.ID = JsonObject->GetStringField(TEXT("id"));
-    ModerationResponse.Model = JsonObject->GetStringField(TEXT("Model"));
+    ModerationResponse.Model = JsonObject->GetStringField(TEXT("model"));
 
     const auto& ResultsObject = JsonObject->GetArrayField(TEXT("results"));
     for (const auto& ResultObject : ResultsObject)
@@ -25,6 +25,8 @@ bool ModerationParser::DeserializeResponse(const FString& ResponseString, FModer
         Categories.Hate_Threatening = CategoriesObject->GetBoolField(TEXT("hate/threatening"));
         Categories.Harassment = CategoriesObject->GetBoolField(TEXT("harassment"));
         Categories.Harassment_Threatening = CategoriesObject->GetBoolField(TEXT("harassment/threatening"));
+        Categories.Illicit = CategoriesObject->GetBoolField(TEXT("illicit"));
+        Categories.Illicit_Violent = CategoriesObject->GetBoolField(TEXT("illicit/violent"));
         Categories.Self_Harm = CategoriesObject->GetBoolField(TEXT("self-harm"));
         Categories.Self_Harm_Intent = CategoriesObject->GetBoolField(TEXT("self-harm/intent"));
         Categories.Self_Harm_Instructions = CategoriesObject->GetBoolField(TEXT("self-harm/instructions"));
@@ -37,11 +39,13 @@ bool ModerationParser::DeserializeResponse(const FString& ResponseString, FModer
         FModerationCategoryScores CategoryScores;
         CategoryScores.Hate = CategoryScoreObject->GetNumberField(TEXT("hate"));
         CategoryScores.Hate_Threatening = CategoryScoreObject->GetNumberField(TEXT("hate/threatening"));
-        CategoryScores.Harassment = CategoriesObject->GetBoolField(TEXT("harassment"));
-        CategoryScores.Harassment_Threatening = CategoriesObject->GetBoolField(TEXT("harassment/threatening"));
+        CategoryScores.Harassment = CategoryScoreObject->GetNumberField(TEXT("harassment"));
+        CategoryScores.Harassment_Threatening = CategoryScoreObject->GetNumberField(TEXT("harassment/threatening"));
+        CategoryScores.Illicit = CategoryScoreObject->GetNumberField(TEXT("illicit"));
+        CategoryScores.Illicit_Violent = CategoryScoreObject->GetNumberField(TEXT("illicit/violent"));
         CategoryScores.Self_Harm = CategoryScoreObject->GetNumberField(TEXT("self-harm"));
-        CategoryScores.Self_Harm_Intent = CategoriesObject->GetBoolField(TEXT("self-harm/intent"));
-        CategoryScores.Self_Harm_Instructions = CategoriesObject->GetBoolField(TEXT("self-harm/instructions"));
+        CategoryScores.Self_Harm_Intent = CategoryScoreObject->GetNumberField(TEXT("self-harm/intent"));
+        CategoryScores.Self_Harm_Instructions = CategoryScoreObject->GetNumberField(TEXT("self-harm/instructions"));
         CategoryScores.Sexual = CategoryScoreObject->GetNumberField(TEXT("sexual"));
         CategoryScores.Sexual_Minors = CategoryScoreObject->GetNumberField(TEXT("sexual/minors"));
         CategoryScores.Violence = CategoryScoreObject->GetNumberField(TEXT("violence"));

@@ -6,6 +6,7 @@
 #include "Misc/AutomationTest.h"
 #include "OpenAIProviderFake.h"
 #include "Provider/Types/ModelTypes.h"
+#include "Provider/Types/ModerationTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 
 DEFINE_SPEC(FOpenAIProviderFake, "OpenAI.Provider",
@@ -169,6 +170,78 @@ void FOpenAIProviderFake::Define()
                 });
 
             xIt("ChatCompletionStreamShouldBeParsedCorrectly", [this]() { unimplemented(); });
+
+            It("ModerationShouldBeParsedCorrectly",
+                [this]()
+                {
+                    FModerationsResponse ModerationsResponse;
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->OnCreateModerationsCompleted().AddLambda(
+                        [&](const FModerationsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)  //
+                        {                                                                                           //
+                            ModerationsResponse = Response;
+                        });
+                    OpenAIProvider->SetResponse(
+                        "{\"id\":\"modr-test123\",\"model\":\"omni-moderation-latest\",\"results\":[{"
+                        "\"flagged\":true,"
+                        "\"categories\":{"
+                        "\"hate\":false,\"hate/threatening\":false,"
+                        "\"harassment\":true,\"harassment/threatening\":false,"
+                        "\"illicit\":true,\"illicit/violent\":false,"
+                        "\"self-harm\":false,\"self-harm/intent\":false,\"self-harm/instructions\":false,"
+                        "\"sexual\":false,\"sexual/minors\":false,"
+                        "\"violence\":false,\"violence/graphic\":false},"
+                        "\"category_scores\":{"
+                        "\"hate\":0.001,\"hate/threatening\":0.002,"
+                        "\"harassment\":0.95,\"harassment/threatening\":0.45,"
+                        "\"illicit\":0.88,\"illicit/violent\":0.12,"
+                        "\"self-harm\":0.003,\"self-harm/intent\":0.67,\"self-harm/instructions\":0.34,"
+                        "\"sexual\":0.004,\"sexual/minors\":0.005,"
+                        "\"violence\":0.006,\"violence/graphic\":0.007}"
+                        "}]}");
+
+                    FModerations Moderations;
+                    Moderations.Input = {"test input"};
+                    OpenAIProvider->CreateModerations(Moderations, FOpenAIAuth{});
+
+                    // top-level fields
+                    TestTrueExpr(ModerationsResponse.ID.Equals("modr-test123"));
+                    TestTrueExpr(ModerationsResponse.Model.Equals("omni-moderation-latest"));
+                    TestTrueExpr(ModerationsResponse.Results.Num() == 1);
+
+                    const auto& Result = ModerationsResponse.Results[0];
+                    TestTrueExpr(Result.Flagged);
+
+                    // categories (booleans)
+                    TestTrueExpr(!Result.Categories.Hate);
+                    TestTrueExpr(!Result.Categories.Hate_Threatening);
+                    TestTrueExpr(Result.Categories.Harassment);
+                    TestTrueExpr(!Result.Categories.Harassment_Threatening);
+                    TestTrueExpr(Result.Categories.Illicit);
+                    TestTrueExpr(!Result.Categories.Illicit_Violent);
+                    TestTrueExpr(!Result.Categories.Self_Harm);
+                    TestTrueExpr(!Result.Categories.Self_Harm_Intent);
+                    TestTrueExpr(!Result.Categories.Self_Harm_Instructions);
+                    TestTrueExpr(!Result.Categories.Sexual);
+                    TestTrueExpr(!Result.Categories.Sexual_Minors);
+                    TestTrueExpr(!Result.Categories.Violence);
+                    TestTrueExpr(!Result.Categories.Violence_Graphic);
+
+                    // category_scores (doubles) — covers the 4 previously broken fields
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Hate, 0.001, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Hate_Threatening, 0.002, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Harassment, 0.95, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Harassment_Threatening, 0.45, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Illicit, 0.88, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Illicit_Violent, 0.12, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Self_Harm, 0.003, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Self_Harm_Intent, 0.67, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Self_Harm_Instructions, 0.34, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Sexual, 0.004, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Sexual_Minors, 0.005, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Violence, 0.006, 1e-6));
+                    TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Violence_Graphic, 0.007, 1e-6));
+                });
         });
 }
 

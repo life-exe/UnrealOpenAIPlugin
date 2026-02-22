@@ -602,6 +602,8 @@ FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& Mode
     Out.Append(FString::Printf(TEXT("hate/threatening: %s\n"), *BoolToString(ModerationResults.Categories.Hate_Threatening)));
     Out.Append(FString::Printf(TEXT("harassment: %s\n"), *BoolToString(ModerationResults.Categories.Harassment)));
     Out.Append(FString::Printf(TEXT("harassment/threatening: %s\n"), *BoolToString(ModerationResults.Categories.Harassment_Threatening)));
+    Out.Append(FString::Printf(TEXT("illicit: %s\n"), *BoolToString(ModerationResults.Categories.Illicit)));
+    Out.Append(FString::Printf(TEXT("illicit/violent: %s\n"), *BoolToString(ModerationResults.Categories.Illicit_Violent)));
     Out.Append(FString::Printf(TEXT("self-harm: %s\n"), *BoolToString(ModerationResults.Categories.Self_Harm)));
     Out.Append(FString::Printf(TEXT("self-harm/intent: %s\n"), *BoolToString(ModerationResults.Categories.Self_Harm_Intent)));
     Out.Append(FString::Printf(TEXT("self-harm/instructions: %s\n"), *BoolToString(ModerationResults.Categories.Self_Harm_Instructions)));
@@ -614,6 +616,8 @@ FString UOpenAIFuncLib::OpenAIModerationsToString(const FModerationResults& Mode
     Out.Append(FString::Printf(TEXT("hate/threatening: %f\n"), ModerationResults.Category_Scores.Hate_Threatening));
     Out.Append(FString::Printf(TEXT("harassment: %f\n"), ModerationResults.Category_Scores.Harassment));
     Out.Append(FString::Printf(TEXT("harassment/threatening: %f\n"), ModerationResults.Category_Scores.Harassment_Threatening));
+    Out.Append(FString::Printf(TEXT("illicit: %f\n"), ModerationResults.Category_Scores.Illicit));
+    Out.Append(FString::Printf(TEXT("illicit/violent: %f\n"), ModerationResults.Category_Scores.Illicit_Violent));
     Out.Append(FString::Printf(TEXT("self-harm: %f\n"), ModerationResults.Category_Scores.Self_Harm));
     Out.Append(FString::Printf(TEXT("self-harm/intent: %f\n"), ModerationResults.Category_Scores.Self_Harm_Intent));
     Out.Append(FString::Printf(TEXT("self-harm/instructions: %f\n"), ModerationResults.Category_Scores.Self_Harm_Instructions));

@@ -453,14 +453,17 @@ void FOpenAIFuncLib::Define()
                 {
                     FModerationResults ModerationResults;
                     ModerationResults.Categories =
-                        FModerationCategories{true, false, false, false, true, true, true, false, true, false, true};
-                    ModerationResults.Category_Scores = FModerationCategoryScores{0.1, 0.2, 0.1, 0.1, 0.3, 0.33, 0.35, 0.4, 0.5, 0.6, 0.7};
+                        FModerationCategories{true, false, false, false, false, true, true, true, true, false, true, false, true};
+                    ModerationResults.Category_Scores =
+                        FModerationCategoryScores{0.1, 0.2, 0.1, 0.1, 0.15, 0.16, 0.3, 0.33, 0.35, 0.4, 0.5, 0.6, 0.7};
                     ModerationResults.Flagged = true;
 
                     FString ExpectedStr = "hate: true\n";
                     ExpectedStr.Append("hate/threatening: false\n");
                     ExpectedStr.Append("harassment: false\n");
                     ExpectedStr.Append("harassment/threatening: false\n");
+                    ExpectedStr.Append("illicit: false\n");
+                    ExpectedStr.Append("illicit/violent: true\n");
                     ExpectedStr.Append("self-harm: true\n");
                     ExpectedStr.Append("self-harm/intent: true\n");
                     ExpectedStr.Append("self-harm/instructions: true\n");
@@ -473,6 +476,8 @@ void FOpenAIFuncLib::Define()
                     ExpectedStr.Append("hate/threatening: 0.200000\n");
                     ExpectedStr.Append("harassment: 0.100000\n");
                     ExpectedStr.Append("harassment/threatening: 0.100000\n");
+                    ExpectedStr.Append("illicit: 0.150000\n");
+                    ExpectedStr.Append("illicit/violent: 0.160000\n");
                     ExpectedStr.Append("self-harm: 0.300000\n");
                     ExpectedStr.Append("self-harm/intent: 0.330000\n");
                     ExpectedStr.Append("self-harm/instructions: 0.350000\n");
