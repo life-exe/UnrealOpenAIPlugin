@@ -245,6 +245,8 @@ FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
         case EImageModelEnum::DALL_E_2: return "dall-e-2";
         case EImageModelEnum::DALL_E_3: return "dall-e-3";
         case EImageModelEnum::GPT_Image_1: return "gpt-image-1";
+        case EImageModelEnum::GPT_Image_1_Mini: return "gpt-image-1-mini";
+        case EImageModelEnum::GPT_Image_1_5: return "gpt-image-1.5";
     }
     checkNoEntry();
     return {};
@@ -255,6 +257,8 @@ EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
     if (Model.Equals("dall-e-2")) return EImageModelEnum::DALL_E_2;
     if (Model.Equals("dall-e-3")) return EImageModelEnum::DALL_E_3;
     if (Model.Equals("gpt-image-1")) return EImageModelEnum::GPT_Image_1;
+    if (Model.Equals("gpt-image-1-mini")) return EImageModelEnum::GPT_Image_1_Mini;
+    if (Model.Equals("gpt-image-1.5")) return EImageModelEnum::GPT_Image_1_5;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageModelEnum: {0}", Model);
     checkNoEntry();
@@ -362,6 +366,7 @@ FString UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality ImageQual
 {
     switch (ImageQuality)
     {
+        case EOpenAIImageQuality::Auto: return "auto";
         case EOpenAIImageQuality::HD: return "hd";
         case EOpenAIImageQuality::Standard: return "standard";
         case EOpenAIImageQuality::High: return "high";
@@ -386,6 +391,7 @@ FString UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat
 
 EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& ImageQuality)
 {
+    if (ImageQuality.Equals("auto")) return EOpenAIImageQuality::Auto;
     if (ImageQuality.Equals("hd")) return EOpenAIImageQuality::HD;
     if (ImageQuality.Equals("standard")) return EOpenAIImageQuality::Standard;
     if (ImageQuality.Equals("high")) return EOpenAIImageQuality::High;

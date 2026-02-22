@@ -121,6 +121,7 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     {
         RequestContent.Append(HttpHelper::AddMIMEFile(ImageEdit.Mask, "mask", BeginBoundary));
     }
+    RequestContent.Append(HttpHelper::AddMIME("model", ImageEdit.Model, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("prompt", ImageEdit.Prompt, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("n", FString::FromInt(ImageEdit.N), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("size", ImageEdit.Size, BeginBoundary));

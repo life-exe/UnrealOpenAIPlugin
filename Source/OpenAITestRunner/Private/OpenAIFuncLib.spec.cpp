@@ -225,6 +225,9 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2).Equals("dall-e-2"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3).Equals("dall-e-3"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1).Equals("gpt-image-1"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini).Equals("gpt-image-1-mini"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_5).Equals("gpt-image-1.5"));
                 });
 
             It("StringToOpenAIImageModelShouldReturnCorrectValue",
@@ -269,8 +272,12 @@ void FOpenAIFuncLib::Define()
             It("StringToOpenAIImageQualityShouldReturnCorrectValue",
                 [this]()
                 {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("auto") == EOpenAIImageQuality::Auto);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("hd") == EOpenAIImageQuality::HD);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("standard") == EOpenAIImageQuality::Standard);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("high") == EOpenAIImageQuality::High);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("medium") == EOpenAIImageQuality::Medium);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("low") == EOpenAIImageQuality::Low);
                 });
 
             It("StringToOpenAIImageStyleShouldReturnCorrectValue",
@@ -337,6 +344,7 @@ void FOpenAIFuncLib::Define()
             It("OpenAIImageQualityToStringShouldReturnCorrectValue",
                 [this]()
                 {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Auto).Equals("auto"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::HD).Equals("hd"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard).Equals("standard"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low).Equals("low"));
