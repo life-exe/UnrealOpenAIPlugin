@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/EmbeddingTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "EmbeddingsAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
     FOnEmbeddings, const FEmbeddingsResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UEmbeddingsAction : public UBlueprintAsyncActionBase
+class OPENAI_API UEmbeddingsAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -31,13 +29,10 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Embeddings")
     static UEmbeddingsAction* CreateEmbeddings(const FEmbeddings& Embeddings, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnCreateEmbeddingsCompleted(const FEmbeddingsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FEmbeddings Embeddings;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

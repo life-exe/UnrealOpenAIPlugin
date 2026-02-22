@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/FineTuning/CreateFineTuningJobAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UCreateFineTuningJobAction* UCreateFineTuningJobAction::CreateFineTuningJob(
     const FFineTuningJob& FineTuningJob, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,10 +14,8 @@ UCreateFineTuningJobAction* UCreateFineTuningJobAction::CreateFineTuningJob(
 
 void UCreateFineTuningJobAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateFineTuningJobCompleted().AddUObject(this, &ThisClass::OnCreateFineTuningJobCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CreateFineTuningJob(FineTuningJob, Auth);
 }
 
@@ -34,12 +30,7 @@ void UCreateFineTuningJobAction::OnRequestError(const FString& URL, const FStrin
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UCreateFineTuningJobAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UCreateFineTuningJobAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.FineTuningJobs = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.FineTuningJobs = URL;
 }

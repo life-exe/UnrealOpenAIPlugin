@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/BatchTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "CreateBatchAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
     FOnCreateBatch, const FCreateBatchResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UCreateBatchAction : public UBlueprintAsyncActionBase
+class OPENAI_API UCreateBatchAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -31,13 +29,10 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Batches")
     static UCreateBatchAction* CreateBatch(const FCreateBatch CreateBatchData, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnCreateBatchCompleted(const FCreateBatchResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FCreateBatch CreateBatchData;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/FileTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "DeleteFileAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
     FOnDeleteFile, const FDeleteFileResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UDeleteFileAction : public UBlueprintAsyncActionBase
+class OPENAI_API UDeleteFileAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -31,13 +29,10 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Files")
     static UDeleteFileAction* DeleteFile(const FString& FileID, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnDeleteFileCompleted(const FDeleteFileResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FString FileID;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Batches/RetrieveBatchAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 URetrieveBatchAction* URetrieveBatchAction::RetrieveBatch(const FString& BatchID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ URetrieveBatchAction* URetrieveBatchAction::RetrieveBatch(const FString& BatchID
 
 void URetrieveBatchAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnRetrieveBatchCompleted().AddUObject(this, &ThisClass::OnRetrieveBatchCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->RetrieveBatch(BatchID, Auth);
 }
 
@@ -32,12 +28,7 @@ void URetrieveBatchAction::OnRequestError(const FString& URL, const FString& Con
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void URetrieveBatchAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void URetrieveBatchAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Batches = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Batches = URL;
 }

@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Uploads/CancelUploadAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UCancelUploadAction* UCancelUploadAction::CancelUpload(const FString& UploadId, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ UCancelUploadAction* UCancelUploadAction::CancelUpload(const FString& UploadId, 
 
 void UCancelUploadAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCancelUploadCompleted().AddUObject(this, &ThisClass::OnCancelUploadCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CancelUpload(UploadId, Auth);
 }
 
@@ -32,12 +28,7 @@ void UCancelUploadAction::OnRequestError(const FString& URL, const FString& Cont
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UCancelUploadAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UCancelUploadAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Uploads = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Uploads = URL;
 }

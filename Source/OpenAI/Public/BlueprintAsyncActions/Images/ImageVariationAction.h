@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/ImageTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "ImageVariationAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnImageVariation, const FImageVariationResponse&, Response, const FOpenAIResponseMetadata&,
     ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UImageVariationAction : public UBlueprintAsyncActionBase
+class OPENAI_API UImageVariationAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -32,15 +30,10 @@ private:
     static UImageVariationAction* CreateImageVariation(
         const FOpenAIImageVariation& ImageVariation, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL();
-
     void OnCreateImageVariationCompleted(const FImageVariationResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
-    UPROPERTY()
-    TObjectPtr<UOpenAIProvider> Provider;
     FOpenAIImageVariation ImageVariation;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

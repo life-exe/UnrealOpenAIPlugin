@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Images/ImageEditAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UImageEditAction* UImageEditAction::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ UImageEditAction* UImageEditAction::CreateImageEdit(const FOpenAIImageEdit& Imag
 
 void UImageEditAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateImageEditCompleted().AddUObject(this, &ThisClass::OnCreateImageEditCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL();
     Provider->CreateImageEdit(ImageEdit, Auth);
 }
 
@@ -32,12 +28,7 @@ void UImageEditAction::OnRequestError(const FString& URL, const FString& Content
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UImageEditAction::TryToOverrideURL()
+void UImageEditAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.ImageEdits = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.ImageEdits = URL;
 }

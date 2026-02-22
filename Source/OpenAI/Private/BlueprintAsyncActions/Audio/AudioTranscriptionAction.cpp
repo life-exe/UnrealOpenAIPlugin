@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Audio/AudioTranscriptionAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UAudioTranscriptionAction* UAudioTranscriptionAction::CreateAudioTranscription(
     const FAudioTranscription& AudioTranscription, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,9 +14,8 @@ UAudioTranscriptionAction* UAudioTranscriptionAction::CreateAudioTranscription(
 
 void UAudioTranscriptionAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateAudioTranscriptionCompleted().AddUObject(this, &ThisClass::OnCreateAudioTranscriptionCompleted);
-    TryToOverrideURL();
     Provider->CreateAudioTranscription(AudioTranscription, Auth);
 }
 
@@ -33,12 +30,7 @@ void UAudioTranscriptionAction::OnRequestError(const FString& URL, const FString
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UAudioTranscriptionAction::TryToOverrideURL()
+void UAudioTranscriptionAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.AudioTranscriptions = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.AudioTranscriptions = URL;
 }

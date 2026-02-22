@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/Legacy/CompletionTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "CompletionAction.generated.h"
@@ -34,10 +34,8 @@ struct FCompletionPayload
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
     FOnCompletion, const FCompletionPayload&, Payload, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UCompletionAction : public UBlueprintAsyncActionBase
+class OPENAI_API UCompletionAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -55,17 +53,14 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Completion")
     static UCompletionAction* CreateCompletion(const FCompletion& CompletionRequest, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnCreateCompletionCompleted(const FCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnCreateCompletionStreamProgresses(
         const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata);
     void OnCreateCompletionStreamCompleted(
         const TArray<FCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FCompletion Completion;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

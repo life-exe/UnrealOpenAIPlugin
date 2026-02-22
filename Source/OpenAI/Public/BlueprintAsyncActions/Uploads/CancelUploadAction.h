@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/UploadTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "CancelUploadAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCancelUpload, const FUploadObjectResponse&, Response, const FOpenAIResponseMetadata&,
     ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UCancelUploadAction : public UBlueprintAsyncActionBase
+class OPENAI_API UCancelUploadAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -28,16 +26,13 @@ private:
      * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
      * If this functionality is not required, this parameter can be left blank.
      */
-    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Embeddings")
+    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Uploads")
     static UCancelUploadAction* CancelUpload(const FString& UploadId, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnCancelUploadCompleted(const FUploadObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FString UploadId;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

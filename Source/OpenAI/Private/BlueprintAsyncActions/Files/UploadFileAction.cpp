@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Files/UploadFileAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UUploadFileAction* UUploadFileAction::UploadFile(const FUploadFile& File, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ UUploadFileAction* UUploadFileAction::UploadFile(const FUploadFile& File, const 
 
 void UUploadFileAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnUploadFileCompleted().AddUObject(this, &ThisClass::OnUploadFileCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->UploadFile(File, Auth);
 }
 
@@ -32,12 +28,7 @@ void UUploadFileAction::OnRequestError(const FString& URL, const FString& Conten
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UUploadFileAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UUploadFileAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Files = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Files = URL;
 }

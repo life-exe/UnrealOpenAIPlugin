@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Files/RetrieveFileAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 URetrieveFileAction* URetrieveFileAction::RetrieveFile(const FString& FileID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ URetrieveFileAction* URetrieveFileAction::RetrieveFile(const FString& FileID, co
 
 void URetrieveFileAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnRetrieveFileCompleted().AddUObject(this, &ThisClass::OnRetrieveFileCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->RetrieveFile(FileID, Auth);
 }
 
@@ -32,12 +28,7 @@ void URetrieveFileAction::OnRequestError(const FString& URL, const FString& Cont
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void URetrieveFileAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void URetrieveFileAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Files = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Files = URL;
 }

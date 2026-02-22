@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Models/ListModelsAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UListModelsAction* UListModelsAction::ListModels(const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -14,10 +12,8 @@ UListModelsAction* UListModelsAction::ListModels(const FOpenAIAuth& Auth, const 
 
 void UListModelsAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnListModelsCompleted().AddUObject(this, &ThisClass::OnListModelsCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->ListModels(Auth);
 }
 
@@ -31,12 +27,7 @@ void UListModelsAction::OnRequestError(const FString& URL, const FString& Conten
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UListModelsAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UListModelsAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Models = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Models = URL;
 }

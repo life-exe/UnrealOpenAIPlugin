@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Uploads/AddUploadPartAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UAddUploadPartAction* UAddUploadPartAction::AddUploadPart(
     const FString& UploadId, const FAddUploadPart& UploadPartRequest, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -17,10 +15,8 @@ UAddUploadPartAction* UAddUploadPartAction::AddUploadPart(
 
 void UAddUploadPartAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnAddUploadPartCompleted().AddUObject(this, &ThisClass::OnAddUploadPartCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->AddUploadPart(UploadId, UploadPartRequest, Auth);
 }
 
@@ -35,12 +31,7 @@ void UAddUploadPartAction::OnRequestError(const FString& URL, const FString& Con
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UAddUploadPartAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UAddUploadPartAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Uploads = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Uploads = URL;
 }

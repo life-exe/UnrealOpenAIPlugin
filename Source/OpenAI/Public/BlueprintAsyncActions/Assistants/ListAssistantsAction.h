@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/AssistantTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "ListAssistantsAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnListAssistants, const FListAssistantsResponse&, Response, const FOpenAIResponseMetadata&,
     ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UListAssistantsAction : public UBlueprintAsyncActionBase
+class OPENAI_API UListAssistantsAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -28,20 +26,14 @@ private:
      * @param URLOverride Allows for the specification of a custom endpoint. This is beneficial when using a proxy.
      * If this functionality is not required, this parameter can be left blank.
      */
-    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Audio")
+    UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Assistants")
     static UListAssistantsAction* ListAssistantsAction(
         const FListAssistants& ListAssistants, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL();
-
     void OnListAssistantsActionCompleted(const FListAssistantsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
-    UPROPERTY()
-    TObjectPtr<UOpenAIProvider> Provider;
-
     FListAssistants ListAssistants;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

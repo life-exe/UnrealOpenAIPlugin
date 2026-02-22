@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/AudioTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "AudioTranslationAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAudioTranslation, const FAudioTranslationResponse&, Response,
     const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UAudioTranslationAction : public UBlueprintAsyncActionBase
+class OPENAI_API UAudioTranslationAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -32,16 +30,10 @@ private:
     static UAudioTranslationAction* CreateAudioTranslation(
         const FAudioTranslation& AudioTranslation, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL();
-
     void OnCreateAudioTranslationCompleted(const FAudioTranslationResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
-    UPROPERTY()
-    TObjectPtr<UOpenAIProvider> Provider;
-
     FAudioTranslation AudioTranslation;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

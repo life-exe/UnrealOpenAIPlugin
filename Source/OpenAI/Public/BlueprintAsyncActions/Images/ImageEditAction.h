@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/ImageTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "ImageEditAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
     FOnImageEdit, const FImageEditResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UImageEditAction : public UBlueprintAsyncActionBase
+class OPENAI_API UImageEditAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -31,15 +29,10 @@ private:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Images")
     static UImageEditAction* CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL();
-
     void OnCreateImageEditCompleted(const FImageEditResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
-    UPROPERTY()
-    TObjectPtr<UOpenAIProvider> Provider;
     FOpenAIImageEdit ImageEdit;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

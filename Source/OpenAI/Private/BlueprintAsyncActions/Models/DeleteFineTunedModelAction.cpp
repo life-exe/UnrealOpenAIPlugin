@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Models/DeleteFineTunedModelAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UDeleteFineTunedModelAction* UDeleteFineTunedModelAction::DeleteFineTuneModel(
     const FString& ModelID, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,10 +14,8 @@ UDeleteFineTunedModelAction* UDeleteFineTunedModelAction::DeleteFineTuneModel(
 
 void UDeleteFineTunedModelAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnDeleteFineTunedModelCompleted().AddUObject(this, &ThisClass::OnDeleteFineTunedModelCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->DeleteFineTunedModel(ModelID, Auth);
 }
 
@@ -34,12 +30,7 @@ void UDeleteFineTunedModelAction::OnRequestError(const FString& URL, const FStri
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UDeleteFineTunedModelAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UDeleteFineTunedModelAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Models = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Models = URL;
 }

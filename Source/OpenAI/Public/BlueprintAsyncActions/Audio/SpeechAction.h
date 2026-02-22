@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/AudioTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "Misc/Paths.h"
@@ -41,10 +41,8 @@ struct FSpeechSettings
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
     FOnSpeech, const FSpeechPayload&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class USpeechAction : public UBlueprintAsyncActionBase
+class OPENAI_API USpeechAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -63,17 +61,11 @@ private:
     static USpeechAction* CreateSpeech(
         const FSpeech& Speech, const FOpenAIAuth& Auth, const FString& URLOverride, const FSpeechSettings& Settings);
 
-    void TryToOverrideURL();
-
     void OnCreateSpeechCompleted(const FSpeechResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
-    UPROPERTY()
-    TObjectPtr<UOpenAIProvider> Provider;
-
     FSpeech Speech;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
     FSpeechSettings Settings;
 };

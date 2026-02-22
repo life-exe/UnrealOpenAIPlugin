@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Models/RetrieveModelAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 URetrieveModelAction* URetrieveModelAction::RetrieveModel(const FString& ModelName, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ URetrieveModelAction* URetrieveModelAction::RetrieveModel(const FString& ModelNa
 
 void URetrieveModelAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnRetrieveModelCompleted().AddUObject(this, &ThisClass::OnRetrieveModelCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->RetrieveModel(ModelName, Auth);
 }
 
@@ -32,12 +28,7 @@ void URetrieveModelAction::OnRequestError(const FString& URL, const FString& Con
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void URetrieveModelAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void URetrieveModelAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Models = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Models = URL;
 }

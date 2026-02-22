@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/FineTuneTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "CancelFineTuningJobAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCancelFineTuningJob, const FFineTuningJobObjectResponse&, Response,
     const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UCancelFineTuningJobAction : public UBlueprintAsyncActionBase
+class OPENAI_API UCancelFineTuningJobAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -32,13 +30,10 @@ private:
     static UCancelFineTuningJobAction* CancelFineTuningJob(
         const FString& FineTuningJobID, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnCancelFineTuningJobCompleted(const FFineTuningJobObjectResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FString FineTuningJobID;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

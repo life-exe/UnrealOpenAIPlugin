@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Batches/CancelBatchAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UCancelBatchAction* UCancelBatchAction::CancelBatch(const FString& BatchID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ UCancelBatchAction* UCancelBatchAction::CancelBatch(const FString& BatchID, cons
 
 void UCancelBatchAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCancelBatchCompleted().AddUObject(this, &ThisClass::OnCancelBatchCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CancelBatch(BatchID, Auth);
 }
 
@@ -32,12 +28,7 @@ void UCancelBatchAction::OnRequestError(const FString& URL, const FString& Conte
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UCancelBatchAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UCancelBatchAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Batches = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Batches = URL;
 }

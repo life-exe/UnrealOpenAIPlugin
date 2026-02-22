@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Kismet/BlueprintAsyncActionBase.h"
+#include "BlueprintAsyncActions/OpenAIActionBase.h"
 #include "Provider/Types/FineTuneTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "ListFineTuningJobsAction.generated.h"
@@ -10,10 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnListFineTuningJobs, const FListFineTuningJobsResponse&, Response,
     const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
 
-class UOpenAIProvider;
-
 UCLASS()
-class UListFineTuningJobsAction : public UBlueprintAsyncActionBase
+class OPENAI_API UListFineTuningJobsAction : public UOpenAIActionBase
 {
     GENERATED_BODY()
 
@@ -32,13 +30,10 @@ private:
     static UListFineTuningJobsAction* ListFineTuningJobs(
         const FFineTuningQueryParameters& FineTuningQueryParameters, const FOpenAIAuth& Auth, const FString& URLOverride);
 
-    void TryToOverrideURL(UOpenAIProvider* Provider);
-
     void OnListFineTuningJobsCompleted(const FListFineTuningJobsResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
-    void OnRequestError(const FString& URL, const FString& Content);
+    virtual void OnRequestError(const FString& URL, const FString& Content) override;
+    virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
 
 private:
     FFineTuningQueryParameters FineTuningQueryParameters;
-    FOpenAIAuth Auth;
-    FString URLOverride{};
 };

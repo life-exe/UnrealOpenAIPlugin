@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/ModerationsAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UModerationsAction* UModerationsAction::CreateModerations(
     const FModerations& Moderations, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,10 +14,8 @@ UModerationsAction* UModerationsAction::CreateModerations(
 
 void UModerationsAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateModerationsCompleted().AddUObject(this, &ThisClass::OnCreateModerationsCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CreateModerations(Moderations, Auth);
 }
 
@@ -33,12 +29,7 @@ void UModerationsAction::OnRequestError(const FString& URL, const FString& Conte
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UModerationsAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UModerationsAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Moderations = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Moderations = URL;
 }

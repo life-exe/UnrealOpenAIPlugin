@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Assistants/DeleteAssistantAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UDeleteAssistantAction* UDeleteAssistantAction::DeleteAssistantAction(
     const FString& AssistantId, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,9 +14,8 @@ UDeleteAssistantAction* UDeleteAssistantAction::DeleteAssistantAction(
 
 void UDeleteAssistantAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnDeleteAssistantCompleted().AddUObject(this, &ThisClass::OnDeleteAssistantActionCompleted);
-    TryToOverrideURL();
     Provider->DeleteAssistant(AssistantId, Auth);
 }
 
@@ -33,12 +30,7 @@ void UDeleteAssistantAction::OnRequestError(const FString& URL, const FString& C
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UDeleteAssistantAction::TryToOverrideURL()
+void UDeleteAssistantAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.AudioTranscriptions = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Assistants = URL;
 }

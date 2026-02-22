@@ -1,9 +1,7 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Chat/ChatCompletionAction.h"
-#include "Provider/OpenAIProvider.h"
 #include "Algo/ForEach.h"
-#include "API/API.h"
 
 namespace
 {
@@ -31,7 +29,7 @@ UChatCompletionAction* UChatCompletionAction::CreateChatCompletion(
 
 void UChatCompletionAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     if (ChatCompletion.Stream)
     {
         Provider->OnCreateChatCompletionStreamProgresses().AddUObject(this, &ThisClass::OnCreateChatCompletionStreamProgresses);
@@ -41,8 +39,6 @@ void UChatCompletionAction::Activate()
     {
         Provider->OnCreateChatCompletionCompleted().AddUObject(this, &ThisClass::OnCreateChatCompletionCompleted);
     }
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }
 
@@ -83,12 +79,7 @@ void UChatCompletionAction::OnRequestError(const FString& URL, const FString& Co
     OnUpdate.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UChatCompletionAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UChatCompletionAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.ChatCompletions = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.ChatCompletions = URL;
 }

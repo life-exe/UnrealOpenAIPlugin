@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/EmbeddingsAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UEmbeddingsAction* UEmbeddingsAction::CreateEmbeddings(const FEmbeddings& Embeddings, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ UEmbeddingsAction* UEmbeddingsAction::CreateEmbeddings(const FEmbeddings& Embedd
 
 void UEmbeddingsAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateEmbeddingsCompleted().AddUObject(this, &ThisClass::OnCreateEmbeddingsCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CreateEmbeddings(Embeddings, Auth);
 }
 
@@ -32,12 +28,7 @@ void UEmbeddingsAction::OnRequestError(const FString& URL, const FString& Conten
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UEmbeddingsAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UEmbeddingsAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Embeddings = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Embeddings = URL;
 }

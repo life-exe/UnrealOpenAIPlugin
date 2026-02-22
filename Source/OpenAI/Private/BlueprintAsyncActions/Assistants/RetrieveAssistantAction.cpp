@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Assistants/RetrieveAssistantAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 URetrieveAssistantAction* URetrieveAssistantAction::RetrieveAssistantAction(
     const FString& AssistantID, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,9 +14,8 @@ URetrieveAssistantAction* URetrieveAssistantAction::RetrieveAssistantAction(
 
 void URetrieveAssistantAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnRetrieveAssistantCompleted().AddUObject(this, &ThisClass::OnRetrieveAssistantCompleted);
-    TryToOverrideURL();
     Provider->RetrieveAssistant(AssistantID, Auth);
 }
 
@@ -33,12 +30,7 @@ void URetrieveAssistantAction::OnRequestError(const FString& URL, const FString&
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void URetrieveAssistantAction::TryToOverrideURL()
+void URetrieveAssistantAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.AudioTranscriptions = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Assistants = URL;
 }

@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Audio/AudioTranslationAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UAudioTranslationAction* UAudioTranslationAction::CreateAudioTranslation(
     const FAudioTranslation& AudioTranslation, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,9 +14,8 @@ UAudioTranslationAction* UAudioTranslationAction::CreateAudioTranslation(
 
 void UAudioTranslationAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateAudioTranslationCompleted().AddUObject(this, &ThisClass::OnCreateAudioTranslationCompleted);
-    TryToOverrideURL();
     Provider->CreateAudioTranslation(AudioTranslation, Auth);
 }
 
@@ -33,12 +30,7 @@ void UAudioTranslationAction::OnRequestError(const FString& URL, const FString& 
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UAudioTranslationAction::TryToOverrideURL()
+void UAudioTranslationAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.AudioTranslations = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.AudioTranslations = URL;
 }

@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Files/DeleteFileAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UDeleteFileAction* UDeleteFileAction::DeleteFile(const FString& FileID, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
@@ -15,10 +13,8 @@ UDeleteFileAction* UDeleteFileAction::DeleteFile(const FString& FileID, const FO
 
 void UDeleteFileAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnDeleteFileCompleted().AddUObject(this, &ThisClass::OnDeleteFileCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->DeleteFile(FileID, Auth);
 }
 
@@ -32,12 +28,7 @@ void UDeleteFileAction::OnRequestError(const FString& URL, const FString& Conten
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UDeleteFileAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UDeleteFileAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Files = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Files = URL;
 }

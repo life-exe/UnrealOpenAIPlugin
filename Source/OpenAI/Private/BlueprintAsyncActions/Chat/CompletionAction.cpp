@@ -1,9 +1,7 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Chat/CompletionAction.h"
-#include "Provider/OpenAIProvider.h"
 #include "Algo/ForEach.h"
-#include "API/API.h"
 
 namespace
 {
@@ -30,7 +28,7 @@ UCompletionAction* UCompletionAction::CreateCompletion(const FCompletion& Comple
 
 void UCompletionAction::Activate()
 {
-    auto* Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     if (Completion.Stream)
     {
         Provider->OnCreateCompletionStreamProgresses().AddUObject(this, &ThisClass::OnCreateCompletionStreamProgresses);
@@ -41,8 +39,6 @@ void UCompletionAction::Activate()
         Provider->OnCreateCompletionCompleted().AddUObject(this, &ThisClass::OnCreateCompletionCompleted);
     }
 
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL(Provider);
     Provider->CreateCompletion(Completion, Auth);
 }
 
@@ -82,12 +78,7 @@ void UCompletionAction::OnRequestError(const FString& URL, const FString& Conten
     OnUpdate.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UCompletionAction::TryToOverrideURL(UOpenAIProvider* Provider)
+void UCompletionAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.Completions = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Completions = URL;
 }

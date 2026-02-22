@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Audio/SpeechAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 #include "Misc/FileHelper.h"
 #include "Logging/StructuredLog.h"
 
@@ -21,9 +19,8 @@ USpeechAction* USpeechAction::CreateSpeech(
 
 void USpeechAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateSpeechCompleted().AddUObject(this, &ThisClass::OnCreateSpeechCompleted);
-    TryToOverrideURL();
     Provider->CreateSpeech(Speech, Auth);
 }
 
@@ -55,12 +52,7 @@ void USpeechAction::OnRequestError(const FString& URL, const FString& Content)
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void USpeechAction::TryToOverrideURL()
+void USpeechAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.AudioTranslations = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.Speech = URL;
 }

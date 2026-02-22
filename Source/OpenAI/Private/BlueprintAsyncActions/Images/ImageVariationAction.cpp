@@ -1,8 +1,6 @@
 // OpenAI, Copyright LifeEXE. All Rights Reserved.
 
 #include "BlueprintAsyncActions/Images/ImageVariationAction.h"
-#include "Provider/OpenAIProvider.h"
-#include "API/API.h"
 
 UImageVariationAction* UImageVariationAction::CreateImageVariation(
     const FOpenAIImageVariation& ImageVariation, const FOpenAIAuth& Auth, const FString& URLOverride)
@@ -16,10 +14,8 @@ UImageVariationAction* UImageVariationAction::CreateImageVariation(
 
 void UImageVariationAction::Activate()
 {
-    Provider = NewObject<UOpenAIProvider>();
+    auto* Provider = CreateProvider();
     Provider->OnCreateImageVariationCompleted().AddUObject(this, &ThisClass::OnCreateImageVariationCompleted);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    TryToOverrideURL();
     Provider->CreateImageVariation(ImageVariation, Auth);
 }
 
@@ -34,12 +30,7 @@ void UImageVariationAction::OnRequestError(const FString& URL, const FString& Co
     OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true});
 }
 
-void UImageVariationAction::TryToOverrideURL()
+void UImageVariationAction::SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const
 {
-    if (URLOverride.IsEmpty()) return;
-
-    OpenAI::V1::FOpenAIEndpoints Endpoints;
-    Endpoints.ImageVariations = URLOverride;
-    const auto API = MakeShared<OpenAI::V1::GenericAPI>(Endpoints);
-    Provider->SetAPI(API);
+    Endpoints.ImageVariations = URL;
 }
