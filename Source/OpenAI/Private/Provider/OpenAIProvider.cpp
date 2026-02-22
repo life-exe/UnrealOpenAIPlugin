@@ -108,7 +108,7 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     auto HttpRequest = CreateRequest();
     HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     HttpRequest->SetURL(API->ImageEdits());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
@@ -143,7 +143,7 @@ void UOpenAIProvider::CreateImageVariation(const FOpenAIImageVariation& ImageVar
     auto HttpRequest = CreateRequest();
     HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     HttpRequest->SetURL(API->ImageVariations());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
@@ -183,7 +183,7 @@ void UOpenAIProvider::CreateAudioTranscription(const FAudioTranscription& AudioT
     auto HttpRequest = CreateRequest();
     HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     HttpRequest->SetURL(API->AudioTranscriptions());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
@@ -207,7 +207,7 @@ void UOpenAIProvider::CreateAudioTranslation(const FAudioTranslation& AudioTrans
     auto HttpRequest = CreateRequest();
     HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     HttpRequest->SetURL(API->AudioTranslations());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
@@ -236,7 +236,7 @@ void UOpenAIProvider::UploadFile(const FUploadFile& UploadFile, const FOpenAIAut
     auto HttpRequest = CreateRequest();
     HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     HttpRequest->SetURL(API->Files());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
@@ -379,7 +379,7 @@ void UOpenAIProvider::AddUploadPart(const FString& UploadId, const FAddUploadPar
     HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     const FString URL = API->Uploads().Append("/").Append(UploadId).Append("/parts");
     HttpRequest->SetURL(URL);
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary =" + Boundary);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
     HttpRequest->SetVerb("POST");
 
     TArray<uint8> RequestContent;
