@@ -1,7 +1,5 @@
 // OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
 
-#pragma once
-
 #include "Provider/JsonParsers/ChatParser.h"
 #include "JsonObjectConverter.h"
 #include "FuncLib/JsonFuncLib.h"
@@ -23,7 +21,8 @@ void CleanFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPt
         Json->RemoveField(TEXT("Logit_Bias"));
     }
 
-    if (Json->GetObjectField(TEXT("Stream_Options"))->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset")) == false)
+    if (!Json->HasField(TEXT("Stream_Options")) ||
+        !Json->GetObjectField(TEXT("Stream_Options"))->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset")))
     {
         Json->RemoveField(TEXT("Stream_Options"));
     }

@@ -191,7 +191,7 @@ void UOpenAIProvider::CreateAudioTranscription(const FAudioTranscription& AudioT
     RequestContent.Append(HttpHelper::AddMIME("model", AudioTranscription.Model, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("prompt", AudioTranscription.Prompt, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("response_format", AudioTranscription.Response_Format, BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("temperature", FString::FromInt(AudioTranscription.Temperature), BeginBoundary));
+    RequestContent.Append(HttpHelper::AddMIME("temperature", FString::SanitizeFloat(AudioTranscription.Temperature), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("language", AudioTranscription.Language, BeginBoundary));
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
@@ -215,7 +215,7 @@ void UOpenAIProvider::CreateAudioTranslation(const FAudioTranslation& AudioTrans
     RequestContent.Append(HttpHelper::AddMIME("model", AudioTranslation.Model, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("prompt", AudioTranslation.Prompt, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("response_format", AudioTranslation.Response_Format, BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("temperature", FString::FromInt(AudioTranslation.Temperature), BeginBoundary));
+    RequestContent.Append(HttpHelper::AddMIME("temperature", FString::SanitizeFloat(AudioTranslation.Temperature), BeginBoundary));
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
     HttpRequest->SetContent(RequestContent);

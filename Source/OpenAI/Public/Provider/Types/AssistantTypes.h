@@ -196,7 +196,7 @@ struct FDeleteAssistantResponse
     FString Object;  //"assistant.deleted"
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    bool Deleted;
+    bool Deleted{false};
 };
 
 /**
@@ -223,7 +223,7 @@ struct FAssistantObjectResponse
       The Unix timestamp (in seconds) for when the assistant was created.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Created_At;
+    int32 Created_At{0};
 
     /**
       The name of the assistant. The maximum length is 256 characters.
@@ -276,7 +276,7 @@ struct FAssistantObjectResponse
       while lower values like 0.2 will make it more focused and deterministic.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    float Temperature;
+    float Temperature{1.0f};
 
     /**
       An alternative to sampling with temperature, called nucleus sampling,
@@ -285,7 +285,7 @@ struct FAssistantObjectResponse
       We generally recommend altering this or temperature but not both.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    float Top_P;
+    float Top_P{1.0f};
 
     /**
       Specifies the format that the model must output.

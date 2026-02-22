@@ -149,7 +149,6 @@ public:
 
 private:
     const FOpenAIEndpoints OpenAIEndpoints;
-    const FString API_URL;
 
     virtual FString BaseURL() const override { return {}; }
 };
