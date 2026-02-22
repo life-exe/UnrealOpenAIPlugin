@@ -16,7 +16,8 @@ enum class ETTSModel : uint8
 {
     TTS_1,
     TTS_1_HD,
-    GPT_4O_MINI_TTS
+    GPT_4O_MINI_TTS,
+    GPT_4O_MINI_TTS_2025_12_15
 };
 
 UENUM(BlueprintType)
@@ -25,11 +26,13 @@ enum class EVoice : uint8
     Alloy,
     Ash,
     Ballad,
+    Cedar,
     Coral,
     Echo,
     Fable,
-    Onyx,
+    Marin,
     Nova,
+    Onyx,
     Sage,
     Shimmer,
     Verse,
@@ -42,7 +45,9 @@ enum class ETTSAudioFormat : uint8
     MP3,
     OPUS,  // Not supported by UnrealEngine
     AAC,
-    FLAC  // Not supported by UnrealEngine
+    FLAC,  // Not supported by UnrealEngine
+    WAV,
+    PCM  // Not supported by UnrealEngine
 };
 
 UENUM(BlueprintType)
@@ -151,7 +156,7 @@ struct FSpeech
 
     /**
       The voice to use when generating the audio.
-      Supported voices are alloy, ash, ballad, coral, echo, fable, onyx, nova, sage, shimmer, and verse.
+      Supported voices are alloy, ash, ballad, cedar, coral, echo, fable, marin, nova, onyx, sage, shimmer, and verse.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Voice{"alloy"};
@@ -173,6 +178,13 @@ struct FSpeech
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     float Speed{1.0f};
+
+    /**
+      The format to stream the audio in. Supported formats are sse and audio.
+      sse is not supported for tts-1 or tts-1-hd.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FString Stream_Format{};
 };
 
 ///////////////////////////////////////////////////////
@@ -206,13 +218,13 @@ struct FAudioTranscriptionWord
       Start time of the word in seconds.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Start{};
+    float Start{};
 
     /**
       End time of the word in seconds.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 End{};
+    float End{};
 };
 
 USTRUCT(BlueprintType)
@@ -236,13 +248,13 @@ struct FAudioTranscriptionSegment
       Start time of the segment in seconds.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Start{};
+    float Start{};
 
     /**
       End time of the segment in seconds.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 End{};
+    float End{};
 
     /**
       Text content of the segment.
@@ -300,7 +312,7 @@ struct FAudioTranscriptionVerboseResponse
       The duration of the input audio.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Duration;
+    float Duration{};
 
     /**
       The transcribed text.

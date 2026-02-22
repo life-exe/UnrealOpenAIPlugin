@@ -195,6 +195,7 @@ FString UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel Model)
         case ETTSModel::TTS_1: return "tts-1";
         case ETTSModel::TTS_1_HD: return "tts-1-hd";
         case ETTSModel::GPT_4O_MINI_TTS: return "gpt-4o-mini-tts";
+        case ETTSModel::GPT_4O_MINI_TTS_2025_12_15: return "gpt-4o-mini-tts-2025-12-15";
     }
     checkNoEntry();
     return {};
@@ -207,11 +208,13 @@ FString UOpenAIFuncLib::OpenAIVoiceToString(EVoice Voice)
         case EVoice::Alloy: return "alloy";
         case EVoice::Ash: return "ash";
         case EVoice::Ballad: return "ballad";
+        case EVoice::Cedar: return "cedar";
         case EVoice::Coral: return "coral";
         case EVoice::Echo: return "echo";
         case EVoice::Fable: return "fable";
-        case EVoice::Onyx: return "onyx";
+        case EVoice::Marin: return "marin";
         case EVoice::Nova: return "nova";
+        case EVoice::Onyx: return "onyx";
         case EVoice::Sage: return "sage";
         case EVoice::Shimmer: return "shimmer";
         case EVoice::Verse: return "verse";
@@ -228,6 +231,8 @@ FString UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat Format)
         case ETTSAudioFormat::FLAC: return "flac";
         case ETTSAudioFormat::MP3: return "mp3";
         case ETTSAudioFormat::OPUS: return "opus";
+        case ETTSAudioFormat::WAV: return "wav";
+        case ETTSAudioFormat::PCM: return "pcm";
     }
     checkNoEntry();
     return {};

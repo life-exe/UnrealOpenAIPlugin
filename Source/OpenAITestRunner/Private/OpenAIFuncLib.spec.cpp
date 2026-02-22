@@ -186,6 +186,9 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::TTS_1).Equals("tts-1"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::TTS_1_HD).Equals("tts-1-hd"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::GPT_4O_MINI_TTS).Equals("gpt-4o-mini-tts"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAITTSModelToString(ETTSModel::GPT_4O_MINI_TTS_2025_12_15).Equals("gpt-4o-mini-tts-2025-12-15"));
                 });
 
             It("OpenAIVoiceToStringShouldReturnCorrectValue",
@@ -194,11 +197,13 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Alloy).Equals("alloy"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Ash).Equals("ash"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Ballad).Equals("ballad"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Cedar).Equals("cedar"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Coral).Equals("coral"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Echo).Equals("echo"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Fable).Equals("fable"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Onyx).Equals("onyx"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Marin).Equals("marin"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Nova).Equals("nova"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Onyx).Equals("onyx"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Sage).Equals("sage"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Shimmer).Equals("shimmer"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVoiceToString(EVoice::Verse).Equals("verse"));
@@ -211,6 +216,8 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::FLAC).Equals("flac"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::MP3).Equals("mp3"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::OPUS).Equals("opus"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::WAV).Equals("wav"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAITTSAudioFormatToString(ETTSAudioFormat::PCM).Equals("pcm"));
                 });
 
             It("OpenAIImageModelToStringShouldReturnCorrectValue",
