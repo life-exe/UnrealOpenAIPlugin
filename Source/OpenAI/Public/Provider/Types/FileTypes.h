@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Provider/OpenAIOptional.h"
 #include "FileTypes.generated.h"
 
 ///////////////////////////////////////////////////////
@@ -16,6 +17,36 @@ enum class EUploadFilePurpose : uint8
     Vision,
     Batch,
     FineTune
+};
+
+USTRUCT(BlueprintType)
+struct FListFilesParams
+{
+    GENERATED_BODY()
+
+    /**
+      A cursor for use in pagination. After is an object ID that defines your place in the list.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalString After;
+
+    /**
+      A limit on the number of objects to be returned. Limit can range between 1 and 10,000. Default is 10,000.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalInt Limit;
+
+    /**
+      Sort order by the created_at timestamp. "asc" for ascending, "desc" for descending.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalString Order;
+
+    /**
+      Only return files with the given purpose.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOptionalString Purpose;
 };
 
 /**
@@ -87,10 +118,16 @@ struct FOpenAIFileBase
 
     /**
       The intended purpose of the file.
-      Supported values are fine-tune or fine-tune-results.
+      Supported values are assistants, assistants_output, batch, batch_output, fine-tune, fine-tune-results, vision, and user_data.
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Purpose;
+
+    /**
+      The Unix timestamp (in seconds) for when the file will expire.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Expires_At{};
 };
 
 USTRUCT(BlueprintType)
@@ -124,6 +161,15 @@ struct FListFilesResponse
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<FOpenAIFile> Data;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString First_Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Last_Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    bool Has_More{};
 };
 
 USTRUCT(BlueprintType)

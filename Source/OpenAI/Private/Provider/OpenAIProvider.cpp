@@ -223,9 +223,17 @@ void UOpenAIProvider::CreateAudioTranslation(const FAudioTranslation& AudioTrans
     ProcessRequest(HttpRequest);
 }
 
-void UOpenAIProvider::ListFiles(const FOpenAIAuth& Auth)
+void UOpenAIProvider::ListFiles(const FListFilesParams& ListFilesParams, const FOpenAIAuth& Auth)
 {
-    auto HttpRequest = MakeRequest(API->Files(), "GET", Auth);
+    FString URL = API->Files();
+    TArray<FString> QueryParams;
+    if (ListFilesParams.After.IsSet) QueryParams.Add(FString("after=").Append(ListFilesParams.After.Value));
+    if (ListFilesParams.Limit.IsSet) QueryParams.Add(FString("limit=").Append(FString::FromInt(ListFilesParams.Limit.Value)));
+    if (ListFilesParams.Order.IsSet) QueryParams.Add(FString("order=").Append(ListFilesParams.Order.Value));
+    if (ListFilesParams.Purpose.IsSet) QueryParams.Add(FString("purpose=").Append(ListFilesParams.Purpose.Value));
+    if (QueryParams.Num() > 0) URL.Append("?").Append(FString::Join(QueryParams, TEXT("&")));
+
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListFilesCompleted);
     ProcessRequest(HttpRequest);
 }

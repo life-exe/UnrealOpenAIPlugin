@@ -2,9 +2,10 @@
 
 #include "BlueprintAsyncActions/Files/ListFilesAction.h"
 
-UListFilesAction* UListFilesAction::ListFiles(const FOpenAIAuth& Auth, const FString& URLOverride)
+UListFilesAction* UListFilesAction::ListFiles(const FListFilesParams& ListFilesParams, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
     auto* ListFilesAction = NewObject<UListFilesAction>();
+    ListFilesAction->ListFilesParams = ListFilesParams;
     ListFilesAction->Auth = Auth;
     ListFilesAction->URLOverride = URLOverride;
     return ListFilesAction;
@@ -14,7 +15,7 @@ void UListFilesAction::Activate()
 {
     auto* Provider = CreateProvider();
     Provider->OnListFilesCompleted().AddUObject(this, &ThisClass::OnListFilesCompleted);
-    Provider->ListFiles(Auth);
+    Provider->ListFiles(ListFilesParams, Auth);
 }
 
 void UListFilesAction::OnListFilesCompleted(const FListFilesResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)

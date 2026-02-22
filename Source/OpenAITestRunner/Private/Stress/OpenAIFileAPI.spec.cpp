@@ -75,11 +75,13 @@ void FOpenAIProviderFile::Define()
                                 TestTrueExpr(!File.Status.IsEmpty());
                             }
                             TestTrueExpr(Response.Object.Equals("list"));
+                            TestTrueExpr(!Response.First_Id.IsEmpty());
+                            TestTrueExpr(!Response.Last_Id.IsEmpty());
 
                             RequestCompleted = true;
                         });
 
-                    OpenAIProvider->ListFiles(Auth);
+                    OpenAIProvider->ListFiles({}, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 

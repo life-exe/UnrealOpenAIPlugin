@@ -127,7 +127,7 @@ public:
       Returns a list of files that belong to the user's organization.
       https://platform.openai.com/docs/api-reference/files/list
     */
-    void ListFiles(const FOpenAIAuth& Auth);
+    void ListFiles(const FListFilesParams& ListFilesParams, const FOpenAIAuth& Auth);
 
     /**
       Upload a file that contains document(s) to be used across various endpoints/features.

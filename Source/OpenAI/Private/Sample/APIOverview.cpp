@@ -500,7 +500,7 @@ void AAPIOverview::ListFiles()
             UE_LOGFMT(LogAPIOverview, Display, "ListFiles request completed! Files: {0}", OutputString);
         });
 
-    Provider->ListFiles(Auth);
+    Provider->ListFiles({}, Auth);
 }
 
 void AAPIOverview::RetrieveFile()

@@ -27,9 +27,12 @@ private:
      * If this functionality is not required, this parameter can be left blank.
      */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Files")
-    static UListFilesAction* ListFiles(const FOpenAIAuth& Auth, const FString& URLOverride);
+    static UListFilesAction* ListFiles(const FListFilesParams& ListFilesParams, const FOpenAIAuth& Auth, const FString& URLOverride);
 
     void OnListFilesCompleted(const FListFilesResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     virtual void OnRequestError(const FString& URL, const FString& Content) override;
     virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
+
+private:
+    FListFilesParams ListFilesParams;
 };
