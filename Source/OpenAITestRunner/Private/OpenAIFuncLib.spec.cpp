@@ -601,6 +601,11 @@ void FOpenAIFuncLib::Define()
                         UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ChatCompletions).Equals("/v1/chat/completions"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Completions).Equals("/v1/completions"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Embeddings).Equals("/v1/embeddings"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Responses).Equals("/v1/responses"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Moderations).Equals("/v1/moderations"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ImageGenerations).Equals("/v1/images/generations"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ImageEdits).Equals("/v1/images/edits"));
                 });
 
             It("OpenAIBatchCompletionWindowToStringShouldReturnCorrectValue", [this]()

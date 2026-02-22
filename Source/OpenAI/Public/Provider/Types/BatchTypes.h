@@ -15,13 +15,46 @@ enum class EBatchEndpoint : uint8
 {
     ChatCompletions = 0,
     Embeddings,
-    Completions
+    Completions,
+    Responses,
+    Moderations,
+    ImageGenerations,
+    ImageEdits
 };
 
 UENUM(BlueprintType)
 enum class EBatchCompletionWindow : uint8
 {
     Window_24h = 0,
+};
+
+/**
+  The expiration policy for batch output/error files.
+*/
+USTRUCT(BlueprintType)
+struct FOutputExpiresAfter
+{
+    GENERATED_BODY()
+
+    /**
+      Anchor timestamp after which the expiration policy applies. Supported anchors: "created_at".
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    FString Anchor{"created_at"};
+
+    /**
+      The number of seconds after the anchor time that the file will expire.
+      Must be between 3600 (1 hour) and 2592000 (30 days).
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    int32 Seconds{};
+
+    /**
+      Whether the expiration policy is set.
+      Set to true to include this field in the request.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    bool IsSet{false};
 };
 
 USTRUCT(BlueprintType)
@@ -35,15 +68,15 @@ struct FCreateBatch
 
       Your input file must be formatted as a JSONL file,
       and must be uploaded with the purpose batch.
-      The file can contain up to 50,000 requests, and can be up to 100 MB in size.
+      The file can contain up to 50,000 requests, and can be up to 200 MB in size.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Input_File_Id{};
 
     /**
       The endpoint to be used for all requests in the batch.
-      Currently /v1/chat/completions, /v1/embeddings,
-      and /v1/completions are supported.
+      Currently /v1/responses, /v1/chat/completions, /v1/embeddings, /v1/completions,
+      /v1/moderations, /v1/images/generations, and /v1/images/edits are supported.
       Note that /v1/embeddings batches are also restricted
       to a maximum of 50,000 embedding inputs across all requests in the batch.
     */
@@ -51,7 +84,7 @@ struct FCreateBatch
     FString Endpoint{"/v1/chat/completions"};
 
     /**
-      The time frame within which the batch should be processed.Currently only 24h is supported.
+      The time frame within which the batch should be processed. Currently only 24h is supported.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Completion_Window{"24h"};
@@ -61,6 +94,12 @@ struct FCreateBatch
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     TMap<FString, FString> Metadata;
+
+    /**
+      The expiration policy for the output and/or error file generated for this batch.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FOutputExpiresAfter Output_Expires_After;
 };
 
 USTRUCT(BlueprintType)
@@ -104,6 +143,45 @@ struct FListBatch
 ///////////////////////////////////////////////////////
 //                 RESPONSE TYPES
 ///////////////////////////////////////////////////////
+
+USTRUCT(BlueprintType)
+struct FBatchInputTokensDetails
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Cached_Tokens{};
+};
+
+USTRUCT(BlueprintType)
+struct FBatchOutputTokensDetails
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Reasoning_Tokens{};
+};
+
+USTRUCT(BlueprintType)
+struct FBatchUsage
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Input_Tokens{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FBatchInputTokensDetails Input_Tokens_Details;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Output_Tokens{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FBatchOutputTokensDetails Output_Tokens_Details;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Total_Tokens{};
+};
 
 USTRUCT(BlueprintType)
 struct FOpenAIBatchErrorData
@@ -298,6 +376,18 @@ struct FOpenAIBatch
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TMap<FString, FString> Metadata;
+
+    /**
+      Model ID used to process the batch.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Model;
+
+    /**
+      Token usage details. Only populated on batches created after September 7, 2025.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FBatchUsage Usage;
 };
 
 USTRUCT(BlueprintType)

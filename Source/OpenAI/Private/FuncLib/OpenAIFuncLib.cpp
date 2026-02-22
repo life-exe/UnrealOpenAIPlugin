@@ -652,6 +652,10 @@ FString UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint BatchEndpoint
         case EBatchEndpoint::ChatCompletions: return "/v1/chat/completions";
         case EBatchEndpoint::Completions: return "/v1/completions";
         case EBatchEndpoint::Embeddings: return "/v1/embeddings";
+        case EBatchEndpoint::Responses: return "/v1/responses";
+        case EBatchEndpoint::Moderations: return "/v1/moderations";
+        case EBatchEndpoint::ImageGenerations: return "/v1/images/generations";
+        case EBatchEndpoint::ImageEdits: return "/v1/images/edits";
     }
 
     checkNoEntry();
