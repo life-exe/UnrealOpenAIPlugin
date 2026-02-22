@@ -28,6 +28,7 @@ enum class EAPIOverviewAction : uint8
     CreateAudioTranscription,
     CreateAudioTranscriptionVerbose,
     CreateAudioTranslation,
+    CreateVoice,
     UploadFile,
     DeleteFile,
     ListFiles,
@@ -98,6 +99,7 @@ private:
     void CreateAudioTranscription();
     void CreateAudioTranscriptionVerbose();
     void CreateAudioTranslation();
+    void CreateVoice();
 
     void UploadFile();
     void DeleteFile();

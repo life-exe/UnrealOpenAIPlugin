@@ -223,6 +223,27 @@ void UOpenAIProvider::CreateAudioTranslation(const FAudioTranslation& AudioTrans
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateVoice(const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth)
+{
+    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
+
+    auto HttpRequest = CreateRequest();
+    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
+    HttpRequest->SetURL(API->AudioVoices());
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
+    HttpRequest->SetVerb("POST");
+
+    TArray<uint8> RequestContent;
+    RequestContent.Append(HttpHelper::AddMIMEFile(CreateVoice.Audio_Sample, "audio_sample", BeginBoundary));
+    RequestContent.Append(HttpHelper::AddMIME("consent", CreateVoice.Consent, BeginBoundary));
+    RequestContent.Append(HttpHelper::AddMIME("name", CreateVoice.Name, BeginBoundary));
+    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+
+    HttpRequest->SetContent(RequestContent);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVoiceCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 void UOpenAIProvider::ListFiles(const FListFilesParams& ListFilesParams, const FOpenAIAuth& Auth)
 {
     FString URL = API->Files();
@@ -605,6 +626,11 @@ void UOpenAIProvider::OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Reques
 void UOpenAIProvider::OnCreateAudioTranslationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FAudioTranslationResponse>(Response, WasSuccessful, CreateAudioTranslationCompleted);
+}
+
+void UOpenAIProvider::OnCreateVoiceCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FCreateVoiceResponse>(Response, WasSuccessful, CreateVoiceCompleted);
 }
 
 DEFINE_HTTP_CALLBACK(ListFiles)

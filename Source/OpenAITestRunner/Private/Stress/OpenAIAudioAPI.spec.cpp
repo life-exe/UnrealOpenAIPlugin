@@ -103,6 +103,28 @@ void FOpenAIProviderAudio::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
+            It("Audio.CreateVoiceRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateVoiceCompleted().AddLambda(
+                        [&](const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            TestTrueExpr(!Response.Id.IsEmpty());
+                            TestTrueExpr(!Response.Name.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("audio.voice"));
+                            TestTrueExpr(Response.Created_At > 0);
+                            RequestCompleted = true;
+                        });
+
+                    FCreateVoice CreateVoice;
+                    CreateVoice.Audio_Sample = TestUtils::FileFullPath("hello.mp3");
+                    CreateVoice.Consent = "I, the copyright owner of the audio samples, hereby consent to the use of my voice in AI-generated content.";
+                    CreateVoice.Name = "TestVoice";
+
+                    OpenAIProvider->CreateVoice(CreateVoice, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
             It("Audio.CreateSpeechRequestShouldResponseCorrectly",
                 [this]()
                 {

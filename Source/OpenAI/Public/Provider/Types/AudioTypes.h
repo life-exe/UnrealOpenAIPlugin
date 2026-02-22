@@ -187,6 +187,30 @@ struct FSpeech
     FString Stream_Format{};
 };
 
+USTRUCT(BlueprintType)
+struct FCreateVoice
+{
+    GENERATED_BODY()
+
+    /**
+      The audio sample to use for voice cloning.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Audio_Sample;
+
+    /**
+      User consent acknowledgment.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Consent;
+
+    /**
+      The name of the voice.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Name;
+};
+
 ///////////////////////////////////////////////////////
 //                 RESPONSE TYPES
 ///////////////////////////////////////////////////////
@@ -349,4 +373,34 @@ struct FSpeechResponse
 
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
     TArray<uint8> Bytes;
+};
+
+USTRUCT(BlueprintType)
+struct FCreateVoiceResponse
+{
+    GENERATED_BODY()
+
+    /**
+      The voice identifier, which can be referenced in API endpoints.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Id;
+
+    /**
+      The Unix timestamp (in seconds) for when the voice was created.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Created_At{};
+
+    /**
+      The name of the voice.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Name;
+
+    /**
+      The object type, which is always "audio.voice".
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
 };

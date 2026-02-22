@@ -118,6 +118,12 @@ public:
     void CreateAudioTranscription(const FAudioTranscription& AudioTranscription, const FOpenAIAuth& Auth);
 
     /**
+      Creates a custom voice.
+      https://platform.openai.com/docs/api-reference/audio/createVoice
+    */
+    void CreateVoice(const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth);
+
+    /**
       Translates audio into into English.
       https://platform.openai.com/docs/api-reference/audio/create
     */
@@ -316,6 +322,7 @@ public:
     DEFINE_EVENT_GETTER(CreateAudioTranscriptionCompleted)
     DEFINE_EVENT_GETTER(CreateAudioTranscriptionVerboseCompleted)
     DEFINE_EVENT_GETTER(CreateAudioTranslationCompleted)
+    DEFINE_EVENT_GETTER(CreateVoiceCompleted)
     DEFINE_EVENT_GETTER(ListFilesCompleted)
     DEFINE_EVENT_GETTER(UploadFileCompleted)
     DEFINE_EVENT_GETTER(DeleteFileCompleted)
@@ -366,6 +373,7 @@ private:
     DECLARE_HTTP_CALLBACK(OnCreateSpeechCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateAudioTranscriptionCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateAudioTranslationCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateVoiceCompleted)
     DECLARE_HTTP_CALLBACK(OnListFilesCompleted)
     DECLARE_HTTP_CALLBACK(OnUploadFileCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteFileCompleted)

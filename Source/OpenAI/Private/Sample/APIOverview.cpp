@@ -36,6 +36,7 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::CreateAudioTranscription, [&]() { CreateAudioTranscription(); });
     ActionMap.Add(EAPIOverviewAction::CreateAudioTranscriptionVerbose, [&]() { CreateAudioTranscriptionVerbose(); });
     ActionMap.Add(EAPIOverviewAction::CreateAudioTranslation, [&]() { CreateAudioTranslation(); });
+    ActionMap.Add(EAPIOverviewAction::CreateVoice, [&]() { CreateVoice(); });
     ActionMap.Add(EAPIOverviewAction::UploadFile, [&]() { UploadFile(); });
     ActionMap.Add(EAPIOverviewAction::DeleteFile, [&]() { DeleteFile(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveFile, [&]() { RetrieveFile(); });
@@ -451,6 +452,26 @@ void AAPIOverview::CreateAudioTranslation()
     Provider->CreateAudioTranslation(AudioTranslation, Auth);
 }
 
+void AAPIOverview::CreateVoice()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateVoiceCompleted().AddLambda(
+        [](const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& Metadata)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "CreateVoice request completed! Id:{0} Name:{1}", Response.Id, Response.Name);
+        });
+
+    FCreateVoice CreateVoiceParams;
+    // absolute path to your audio sample file (mp3, wav, etc.)
+    CreateVoiceParams.Audio_Sample = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
+        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), TEXT("hello.mp3"));
+    CreateVoiceParams.Consent =
+        "I, the copyright owner of the audio samples, hereby consent to the use of my voice in AI-generated content.";
+    CreateVoiceParams.Name = "MyCustomVoice";
+    Provider->CreateVoice(CreateVoiceParams, Auth);
+}
+
 void AAPIOverview::UploadFile()
 {
     Provider->SetLogEnabled(true);
@@ -857,6 +878,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Speech() const override { return API_URL + "/v1/audio/speech"; }
         virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
         virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
+        virtual FString AudioVoices() const override { return API_URL + "/v1/audio/voices"; }
         virtual FString Files() const override { return API_URL + "/v1/files"; }
         virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }
