@@ -676,6 +676,7 @@ FString UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus UploadStatus)
         case EUploadStatus::Pending: return "pending";
         case EUploadStatus::Completed: return "completed";
         case EUploadStatus::Cancelled: return "cancelled";
+        case EUploadStatus::Expired: return "expired";
     }
 
     checkNoEntry();

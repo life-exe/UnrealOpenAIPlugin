@@ -157,9 +157,19 @@ void UJsonFuncLib::RemoveOptionalValuesInJsonObject(const TSharedPtr<FJsonObject
             {
                 if (const bool IsSet = FieldObject->Get()->GetBoolField(TEXT("isset")))
                 {
-                    const auto Value = FieldObject->Get()->TryGetField(TEXT("value"));
-                    JsonObject->RemoveField(FieldName);
-                    JsonObject->SetField(FieldName, Value);
+                    const TSharedPtr<FJsonValue> Value = FieldObject->Get()->TryGetField(TEXT("value"));
+                    if (Value)
+                    {
+                        // Scalar optional (FOptionalString, FOptionalInt, etc.): replace wrapper object with the value.
+                        JsonObject->RemoveField(FieldName);
+                        JsonObject->SetField(FieldName, Value);
+                    }
+                    else
+                    {
+                        // Struct optional: keep the nested object but strip the "isset" sentinel.
+                        FieldObject->Get()->RemoveField(TEXT("isset"));
+                        RemoveOptionalValuesInJsonObject(*FieldObject);
+                    }
                 }
                 else
                 {

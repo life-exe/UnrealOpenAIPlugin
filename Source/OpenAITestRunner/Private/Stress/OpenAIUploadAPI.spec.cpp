@@ -191,7 +191,7 @@ void FOpenAIProviderUpload::Define()
                             TestTrueExpr(Response.Filename.Equals(Filename));
                             TestTrueExpr(Response.Purpose.Equals(Purpose));
                             TestTrueExpr(Response.Status.Equals(UOpenAIFuncLib::OpenAIUploadStatusToString(EUploadStatus::Cancelled)));
-                            TestTrueExpr(Response.Id.Equals(Response.Id));
+                            TestTrueExpr(Response.Id.Equals(UploadId));
                             TestTrueExpr(Response.Bytes == Bytes);
                             RequestCompleted = true;
                         });

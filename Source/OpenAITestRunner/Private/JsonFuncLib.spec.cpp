@@ -221,6 +221,50 @@ void FJsonFuncLib::Define()
 
                     TestTrueExpr(ResultString.Equals("{\"object\": \"string\"}"));
                 });
+
+            It("StructOptionalThatIsNotSetShouldBeRemoved",
+                [this]()
+                {
+                    TSharedPtr<FJsonObject> InnerObject = MakeShareable(new FJsonObject());
+                    InnerObject->SetStringField("anchor", "created_at");
+                    InnerObject->SetNumberField("seconds", 3600);
+                    InnerObject->SetBoolField("isset", false);
+
+                    TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
+                    RootJsonObject->SetObjectField("expires_after", InnerObject);
+
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
+
+                    ResultString = UJsonFuncLib::RemoveOptionalValuesThatNotSet(ResultString);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
+
+                    TestTrueExpr(ResultString.Equals("{}"));
+                });
+
+            It("StructOptionalThatIsSetShouldKeepItsFieldsWithoutIsSet",
+                [this]()
+                {
+                    TSharedPtr<FJsonObject> InnerObject = MakeShareable(new FJsonObject());
+                    InnerObject->SetStringField("anchor", "created_at");
+                    InnerObject->SetNumberField("seconds", 3600);
+                    InnerObject->SetBoolField("isset", true);
+
+                    TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
+                    RootJsonObject->SetObjectField("expires_after", InnerObject);
+
+                    FString ResultString;
+                    TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
+
+                    ResultString = UJsonFuncLib::RemoveOptionalValuesThatNotSet(ResultString);
+                    ResultString = UOpenAIFuncLib::RemoveWhiteSpaces(ResultString);
+
+                    // expires_after should be present with its fields but without the "isset" sentinel
+                    TestTrueExpr(ResultString.Contains(TEXT("\"expires_after\"")));
+                    TestTrueExpr(ResultString.Contains(TEXT("\"anchor\": \"created_at\"")));
+                    TestTrueExpr(ResultString.Contains(TEXT("\"seconds\": 3600")));
+                    TestTrueExpr(!ResultString.Contains(TEXT("\"isset\"")));
+                });
         });
 }
 

@@ -12,12 +12,43 @@ enum class EUploadStatus : uint8
 {
     Pending = 0,
     Completed,
-    Cancelled
+    Cancelled,
+    Expired
 };
 
 ///////////////////////////////////////////////////////
 //                 REQUEST TYPES
 ///////////////////////////////////////////////////////
+
+/**
+  The expiration policy for a file.
+  By default, files with purpose=batch expire after 30 days and all other files are persisted until manually deleted.
+*/
+USTRUCT(BlueprintType)
+struct FExpiresAfter
+{
+    GENERATED_BODY()
+
+    /**
+      Anchor timestamp after which the expiration policy applies. Supported anchors: "created_at".
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    FString Anchor{"created_at"};
+
+    /**
+      The number of seconds after the anchor time that the file will expire.
+      Must be between 3600 (1 hour) and 2592000 (30 days).
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    int32 Seconds{};
+
+    /**
+      Whether the expiration policy is set.
+      Set to true to include this field in the request.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    bool IsSet{false};
+};
 
 USTRUCT(BlueprintType)
 struct FCreateUpload
@@ -51,6 +82,13 @@ struct FCreateUpload
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Mime_Type;
+
+    /**
+      The expiration policy for a file.
+      By default, files with purpose=batch expire after 30 days and all other files are persisted until manually deleted.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
+    FExpiresAfter Expires_After;
 };
 
 USTRUCT(BlueprintType)
@@ -80,7 +118,7 @@ struct FCompleteUpload
       The optional md5 checksum for the file contents to verify
       if the bytes uploaded matches what you expect.
     */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FOptionalString Md5;
 };
 
