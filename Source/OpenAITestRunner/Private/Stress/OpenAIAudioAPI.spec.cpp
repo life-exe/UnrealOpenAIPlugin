@@ -118,7 +118,8 @@ void FOpenAIProviderAudio::Define()
 
                     FCreateVoice CreateVoice;
                     CreateVoice.Audio_Sample = TestUtils::FileFullPath("hello.mp3");
-                    CreateVoice.Consent = "I, the copyright owner of the audio samples, hereby consent to the use of my voice in AI-generated content.";
+                    CreateVoice.Consent =
+                        "I, the copyright owner of the audio samples, hereby consent to the use of my voice in AI-generated content.";
                     CreateVoice.Name = "TestVoice";
 
                     OpenAIProvider->CreateVoice(CreateVoice, Auth);

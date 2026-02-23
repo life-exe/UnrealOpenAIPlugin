@@ -181,24 +181,23 @@ void FOpenAIProviderFake::Define()
                         {                                                                                           //
                             ModerationsResponse = Response;
                         });
-                    OpenAIProvider->SetResponse(
-                        "{\"id\":\"modr-test123\",\"model\":\"omni-moderation-latest\",\"results\":[{"
-                        "\"flagged\":true,"
-                        "\"categories\":{"
-                        "\"hate\":false,\"hate/threatening\":false,"
-                        "\"harassment\":true,\"harassment/threatening\":false,"
-                        "\"illicit\":true,\"illicit/violent\":false,"
-                        "\"self-harm\":false,\"self-harm/intent\":false,\"self-harm/instructions\":false,"
-                        "\"sexual\":false,\"sexual/minors\":false,"
-                        "\"violence\":false,\"violence/graphic\":false},"
-                        "\"category_scores\":{"
-                        "\"hate\":0.001,\"hate/threatening\":0.002,"
-                        "\"harassment\":0.95,\"harassment/threatening\":0.45,"
-                        "\"illicit\":0.88,\"illicit/violent\":0.12,"
-                        "\"self-harm\":0.003,\"self-harm/intent\":0.67,\"self-harm/instructions\":0.34,"
-                        "\"sexual\":0.004,\"sexual/minors\":0.005,"
-                        "\"violence\":0.006,\"violence/graphic\":0.007}"
-                        "}]}");
+                    OpenAIProvider->SetResponse("{\"id\":\"modr-test123\",\"model\":\"omni-moderation-latest\",\"results\":[{"
+                                                "\"flagged\":true,"
+                                                "\"categories\":{"
+                                                "\"hate\":false,\"hate/threatening\":false,"
+                                                "\"harassment\":true,\"harassment/threatening\":false,"
+                                                "\"illicit\":true,\"illicit/violent\":false,"
+                                                "\"self-harm\":false,\"self-harm/intent\":false,\"self-harm/instructions\":false,"
+                                                "\"sexual\":false,\"sexual/minors\":false,"
+                                                "\"violence\":false,\"violence/graphic\":false},"
+                                                "\"category_scores\":{"
+                                                "\"hate\":0.001,\"hate/threatening\":0.002,"
+                                                "\"harassment\":0.95,\"harassment/threatening\":0.45,"
+                                                "\"illicit\":0.88,\"illicit/violent\":0.12,"
+                                                "\"self-harm\":0.003,\"self-harm/intent\":0.67,\"self-harm/instructions\":0.34,"
+                                                "\"sexual\":0.004,\"sexual/minors\":0.005,"
+                                                "\"violence\":0.006,\"violence/graphic\":0.007}"
+                                                "}]}");
 
                     FModerations Moderations;
                     Moderations.Input = {"test input"};

@@ -27,8 +27,7 @@ private:
      * If this functionality is not required, this parameter can be left blank.
      */
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Audio")
-    static UCreateVoiceAction* CreateVoice(
-        const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth, const FString& URLOverride);
+    static UCreateVoiceAction* CreateVoice(const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth, const FString& URLOverride);
 
     void OnCreateVoiceCompleted(const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
     virtual void OnRequestError(const FString& URL, const FString& Content) override;

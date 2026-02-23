@@ -25,11 +25,9 @@ void CleanFieldsThatCantBeEmpty(const FChatCompletion& ChatCompletion, TSharedPt
     {
         const auto StreamOpts = Json->GetObjectField(TEXT("Stream_Options"));
         const bool IncludeUsageSet =
-            StreamOpts->HasField(TEXT("Include_Usage")) &&
-            StreamOpts->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset"));
-        const bool IncludeObfuscationSet =
-            StreamOpts->HasField(TEXT("Include_Obfuscation")) &&
-            StreamOpts->GetObjectField(TEXT("Include_Obfuscation"))->GetBoolField(TEXT("isset"));
+            StreamOpts->HasField(TEXT("Include_Usage")) && StreamOpts->GetObjectField(TEXT("Include_Usage"))->GetBoolField(TEXT("isset"));
+        const bool IncludeObfuscationSet = StreamOpts->HasField(TEXT("Include_Obfuscation")) &&
+                                           StreamOpts->GetObjectField(TEXT("Include_Obfuscation"))->GetBoolField(TEXT("isset"));
         if (!IncludeUsageSet && !IncludeObfuscationSet)
         {
             Json->RemoveField(TEXT("Stream_Options"));

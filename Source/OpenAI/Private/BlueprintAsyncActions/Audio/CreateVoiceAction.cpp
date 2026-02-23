@@ -2,8 +2,7 @@
 
 #include "BlueprintAsyncActions/Audio/CreateVoiceAction.h"
 
-UCreateVoiceAction* UCreateVoiceAction::CreateVoice(
-    const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth, const FString& URLOverride)
+UCreateVoiceAction* UCreateVoiceAction::CreateVoice(const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth, const FString& URLOverride)
 {
     auto* Action = NewObject<UCreateVoiceAction>();
     Action->CreateVoiceParams = CreateVoice;
@@ -19,8 +18,7 @@ void UCreateVoiceAction::Activate()
     Provider->CreateVoice(CreateVoiceParams, Auth);
 }
 
-void UCreateVoiceAction::OnCreateVoiceCompleted(
-    const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+void UCreateVoiceAction::OnCreateVoiceCompleted(const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
 {
     OnCompleted.Broadcast(Response, ResponseMetadata, {});
 }

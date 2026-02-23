@@ -329,8 +329,7 @@ public:
       Download video content (video, thumbnail, or spritesheet).
       https://platform.openai.com/docs/api-reference/videos/download-content
     */
-    void DownloadVideoContent(
-        const FString& VideoId, const FDownloadVideoContent& DownloadVideoContent, const FOpenAIAuth& Auth);
+    void DownloadVideoContent(const FString& VideoId, const FDownloadVideoContent& DownloadVideoContent, const FOpenAIAuth& Auth);
 
     /**
       Create the structure of an evaluation that can be used to test a model's performance.
@@ -437,7 +436,6 @@ public:
     DEFINE_EVENT_GETTER(UpdateEvalCompleted)
     DEFINE_EVENT_GETTER(DeleteEvalCompleted)
 
-
 private:
     TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
@@ -502,7 +500,6 @@ private:
     DECLARE_HTTP_CALLBACK(OnUpdateEvalCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteEvalCompleted)
 
-
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
@@ -545,10 +542,8 @@ private:
         const FChatCompletion& ChatCompletion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(
         const FFineTuningJob& FineTuningJob, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
-    FHttpRequestRef MakeRequest(
-        const FCreateEval& CreateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
-    FHttpRequestRef MakeRequest(
-        const FUpdateEval& UpdateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(const FCreateEval& CreateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(const FUpdateEval& UpdateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
     template <typename ParsedResponseType, typename DelegateType>
     void HandleResponse(FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)
