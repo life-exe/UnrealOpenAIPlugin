@@ -63,6 +63,20 @@ enum class EAPIOverviewAction : uint8
     RemixVideo,
     DownloadVideoContent,
 
+    CreateVectorStore,
+    ListVectorStores,
+    RetrieveVectorStore,
+    UpdateVectorStore,
+    DeleteVectorStore,
+    CreateVectorStoreFile,
+    ListVectorStoreFiles,
+    RetrieveVectorStoreFile,
+    DeleteVectorStoreFile,
+    CreateVectorStoreFileBatch,
+    RetrieveVectorStoreFileBatch,
+    CancelVectorStoreFileBatch,
+    SearchVectorStore,
+
     SetYourOwnAPI
 };
 
@@ -147,6 +161,20 @@ private:
     void DeleteVideo();
     void RemixVideo();
     void DownloadVideoContent();
+
+    void CreateVectorStore();
+    void ListVectorStores();
+    void RetrieveVectorStore();
+    void UpdateVectorStore();
+    void DeleteVectorStore();
+    void CreateVectorStoreFile();
+    void ListVectorStoreFiles();
+    void RetrieveVectorStoreFile();
+    void DeleteVectorStoreFile();
+    void CreateVectorStoreFileBatch();
+    void RetrieveVectorStoreFileBatch();
+    void CancelVectorStoreFileBatch();
+    void SearchVectorStore();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

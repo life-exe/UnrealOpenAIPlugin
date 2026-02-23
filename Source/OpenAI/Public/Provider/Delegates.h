@@ -88,3 +88,19 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListEvalsCompleted, const FListEvalsResp
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveEvalCompleted, const FRetrieveEvalResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUpdateEvalCompleted, const FUpdateEvalResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteEvalCompleted, const FDeleteEvalResponse&, const FOpenAIResponseMetadata&);
+// vector stores
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateVectorStoreCompleted, const FVectorStore&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListVectorStoresCompleted, const FListVectorStoresResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveVectorStoreCompleted, const FVectorStore&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUpdateVectorStoreCompleted, const FVectorStore&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteVectorStoreCompleted, const FVectorStoreDeletedResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateVectorStoreFileCompleted, const FVectorStoreFile&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+    FOnListVectorStoreFilesCompleted, const FListVectorStoreFilesResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveVectorStoreFileCompleted, const FVectorStoreFile&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteVectorStoreFileCompleted, const FVectorStoreDeletedResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateVectorStoreFileBatchCompleted, const FVectorStoreFileBatch&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+    FOnRetrieveVectorStoreFileBatchCompleted, const FVectorStoreFileBatch&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCancelVectorStoreFileBatchCompleted, const FVectorStoreFileBatch&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSearchVectorStoreCompleted, const FVectorStoreSearchResponse&, const FOpenAIResponseMetadata&);

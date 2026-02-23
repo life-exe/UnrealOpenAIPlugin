@@ -70,6 +70,20 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::DeleteVideo, [&]() { DeleteVideo(); });
     ActionMap.Add(EAPIOverviewAction::RemixVideo, [&]() { RemixVideo(); });
     ActionMap.Add(EAPIOverviewAction::DownloadVideoContent, [&]() { DownloadVideoContent(); });
+
+    ActionMap.Add(EAPIOverviewAction::CreateVectorStore, [&]() { CreateVectorStore(); });
+    ActionMap.Add(EAPIOverviewAction::ListVectorStores, [&]() { ListVectorStores(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveVectorStore, [&]() { RetrieveVectorStore(); });
+    ActionMap.Add(EAPIOverviewAction::UpdateVectorStore, [&]() { UpdateVectorStore(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteVectorStore, [&]() { DeleteVectorStore(); });
+    ActionMap.Add(EAPIOverviewAction::CreateVectorStoreFile, [&]() { CreateVectorStoreFile(); });
+    ActionMap.Add(EAPIOverviewAction::ListVectorStoreFiles, [&]() { ListVectorStoreFiles(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveVectorStoreFile, [&]() { RetrieveVectorStoreFile(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteVectorStoreFile, [&]() { DeleteVectorStoreFile(); });
+    ActionMap.Add(EAPIOverviewAction::CreateVectorStoreFileBatch, [&]() { CreateVectorStoreFileBatch(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveVectorStoreFileBatch, [&]() { RetrieveVectorStoreFileBatch(); });
+    ActionMap.Add(EAPIOverviewAction::CancelVectorStoreFileBatch, [&]() { CancelVectorStoreFileBatch(); });
+    ActionMap.Add(EAPIOverviewAction::SearchVectorStore, [&]() { SearchVectorStore(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -993,6 +1007,195 @@ void AAPIOverview::DownloadVideoContent()
     Provider->ListVideos(ListVideosRequest, Auth);
 }
 
+void AAPIOverview::CreateVectorStore()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateVectorStoreCompleted().AddLambda([](const FVectorStore& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Vector Store created: {0}", Response.Id); });
+
+    FCreateVectorStore CreateRequest;
+    CreateRequest.Name = "Example Vector Store";
+    Provider->CreateVectorStore(CreateRequest, Auth);
+}
+
+void AAPIOverview::ListVectorStores()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListVectorStoresCompleted().AddLambda(
+        [](const FListVectorStoresResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            FString OutputString{};
+            Algo::ForEach(Response.Data, [&](const FVectorStore& VS) { OutputString.Append(VS.Id).Append(LINE_TERMINATOR); });
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Stores:{0}{1}", LINE_TERMINATOR, OutputString);
+        });
+
+    Provider->ListVectorStores(FVectorStoreQueryParams{}, Auth);
+}
+
+void AAPIOverview::RetrieveVectorStore()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveVectorStoreCompleted().AddLambda([](const FVectorStore& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Vector Store retrieved: {0}, Name: {1}", Response.Id, Response.Name); });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    Provider->RetrieveVectorStore(VectorStoreId, Auth);
+}
+
+void AAPIOverview::UpdateVectorStore()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnUpdateVectorStoreCompleted().AddLambda([](const FVectorStore& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Vector Store updated: {0}, New Name: {1}", Response.Id, Response.Name); });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    FUpdateVectorStore UpdateRequest;
+    UpdateRequest.Name = "Updated Vector Store Name";
+    Provider->UpdateVectorStore(VectorStoreId, UpdateRequest, Auth);
+}
+
+void AAPIOverview::DeleteVectorStore()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteVectorStoreCompleted().AddLambda(
+        [](const FVectorStoreDeletedResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Store deleted: {0}, Success: {1}", Response.Id,
+                Response.Deleted ? TEXT("true") : TEXT("false"));
+        });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    Provider->DeleteVectorStore(VectorStoreId, Auth);
+}
+
+void AAPIOverview::CreateVectorStoreFile()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateVectorStoreFileCompleted().AddLambda([](const FVectorStoreFile& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Vector Store File created: {0}", Response.Id); });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    const FString FileId = "file-xxxxxxxxxxxx";
+    Provider->CreateVectorStoreFile(VectorStoreId, FileId, Auth);
+}
+
+void AAPIOverview::ListVectorStoreFiles()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListVectorStoreFilesCompleted().AddLambda(
+        [](const FListVectorStoreFilesResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            FString OutputString{};
+            Algo::ForEach(Response.Data, [&](const FVectorStoreFile& File) { OutputString.Append(File.Id).Append(LINE_TERMINATOR); });
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Store Files:{0}{1}", LINE_TERMINATOR, OutputString);
+        });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    Provider->ListVectorStoreFiles(VectorStoreId, FVectorStoreFileQueryParams{}, Auth);
+}
+
+void AAPIOverview::RetrieveVectorStoreFile()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveVectorStoreFileCompleted().AddLambda(
+        [](const FVectorStoreFile& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Store File retrieved: {0}, Status: {1}", Response.Id,
+                UEnum::GetValueAsString(Response.Status));
+        });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    const FString FileId = "file-xxxxxxxxxxxx";
+    Provider->RetrieveVectorStoreFile(VectorStoreId, FileId, Auth);
+}
+
+void AAPIOverview::DeleteVectorStoreFile()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteVectorStoreFileCompleted().AddLambda(
+        [](const FVectorStoreDeletedResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Store File deleted: {0}, Success: {1}", Response.Id,
+                Response.Deleted ? TEXT("true") : TEXT("false"));
+        });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    const FString FileId = "file-xxxxxxxxxxxx";
+    Provider->DeleteVectorStoreFile(VectorStoreId, FileId, Auth);
+}
+
+void AAPIOverview::CreateVectorStoreFileBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateVectorStoreFileBatchCompleted().AddLambda(
+        [](const FVectorStoreFileBatch& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Vector Store File Batch created: {0}", Response.Id); });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    FCreateVectorStoreFileBatch BatchRequest;
+    BatchRequest.File_Ids = {"file-1", "file-2"};
+    Provider->CreateVectorStoreFileBatch(VectorStoreId, BatchRequest, Auth);
+}
+
+void AAPIOverview::RetrieveVectorStoreFileBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveVectorStoreFileBatchCompleted().AddLambda(
+        [](const FVectorStoreFileBatch& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Store File Batch retrieved: {0}, Status: {1}", Response.Id,
+                UEnum::GetValueAsString(Response.Status));
+        });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    const FString BatchId = "vsfb_xxxxxxxxxxxx";
+    Provider->RetrieveVectorStoreFileBatch(VectorStoreId, BatchId, Auth);
+}
+
+void AAPIOverview::CancelVectorStoreFileBatch()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCancelVectorStoreFileBatchCompleted().AddLambda(
+        [](const FVectorStoreFileBatch& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Vector Store File Batch cancelled: {0}", Response.Id); });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    const FString BatchId = "vsfb_xxxxxxxxxxxx";
+    Provider->CancelVectorStoreFileBatch(VectorStoreId, BatchId, Auth);
+}
+
+void AAPIOverview::SearchVectorStore()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnSearchVectorStoreCompleted().AddLambda(
+        [](const FVectorStoreSearchResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "Vector Store Search completed. Results: {0}", Response.Data.Num());
+            for (const auto& Item : Response.Data)
+            {
+                UE_LOGFMT(LogAPIOverview, Display, "Result: {0}, Score: {1}", Item.File_Id, Item.Score);
+            }
+        });
+
+    const FString VectorStoreId = "vs_xxxxxxxxxxxx";
+    FVectorStoreSearch SearchRequest;
+    SearchRequest.Query = "Unreal Engine 5 features";
+    Provider->SearchVectorStore(VectorStoreId, SearchRequest, Auth);
+}
+
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
 {
     UE_LOGFMT(LogAPIOverview, Error, "URL: {0}, Content: {1}", URL, Content);
@@ -1029,6 +1232,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Assistants() const override { return API_URL + "/v1/assistants"; }
         virtual FString Videos() const override { return API_URL + "/v1/videos"; }
         virtual FString Evals() const override { return API_URL + "/v1/evals"; }
+        virtual FString VectorStores() const override { return API_URL + "/v1/vector_stores"; }
 
     private:
         const FString API_URL;

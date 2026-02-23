@@ -1,0 +1,5 @@
+This is a test file for vector store automation tests.
+It contains sample text that can be indexed and searched.
+Paris is the capital of France.
+William Shakespeare wrote Romeo and Juliet.
+The Moon is approximately 384,400 kilometers from Earth.

@@ -31,6 +31,8 @@
 #include "FuncLib/JsonFuncLib.h"
 #include "Provider/JsonParsers/ChatParser.h"
 #include "Provider/JsonParsers/FineTuningParser.h"
+#include "Provider/JsonParsers/EvalParser.h"
+#include "Provider/JsonParsers/VectorStoreParser.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
@@ -362,6 +364,85 @@ public:
     void DeleteEval(const FString& EvalId, const FOpenAIAuth& Auth);
 
     /**
+      Create a vector store.
+      https://platform.openai.com/docs/api-reference/vector-stores/create
+    */
+    void CreateVectorStore(const FCreateVectorStore& CreateVectorStore, const FOpenAIAuth& Auth);
+
+    /**
+      Returns a list of vector stores.
+      https://platform.openai.com/docs/api-reference/vector-stores/list
+    */
+    void ListVectorStores(const FVectorStoreQueryParams& QueryParams, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves a vector store.
+      https://platform.openai.com/docs/api-reference/vector-stores/retrieve
+    */
+    void RetrieveVectorStore(const FString& VectorStoreId, const FOpenAIAuth& Auth);
+
+    /**
+      Modifies a vector store.
+      https://platform.openai.com/docs/api-reference/vector-stores/update
+    */
+    void UpdateVectorStore(const FString& VectorStoreId, const FUpdateVectorStore& UpdateVectorStore, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a vector store.
+      https://platform.openai.com/docs/api-reference/vector-stores/delete
+    */
+    void DeleteVectorStore(const FString& VectorStoreId, const FOpenAIAuth& Auth);
+
+    /**
+      Create a vector store file by attaching a File to a vector store.
+      https://platform.openai.com/docs/api-reference/vector-stores-files/create
+    */
+    void CreateVectorStoreFile(const FString& VectorStoreId, const FString& FileId, const FOpenAIAuth& Auth);
+
+    /**
+      Returns a list of vector store files.
+      https://platform.openai.com/docs/api-reference/vector-stores-files/list
+    */
+    void ListVectorStoreFiles(const FString& VectorStoreId, const FVectorStoreFileQueryParams& QueryParams, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves a vector store file.
+      https://platform.openai.com/docs/api-reference/vector-stores-files/retrieve
+    */
+    void RetrieveVectorStoreFile(const FString& VectorStoreId, const FString& FileId, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a vector store file. This will remove the file from the vector store but the file itself will not be deleted.
+      To delete the file, use the delete file endpoint.
+      https://platform.openai.com/docs/api-reference/vector-stores-files/delete
+    */
+    void DeleteVectorStoreFile(const FString& VectorStoreId, const FString& FileId, const FOpenAIAuth& Auth);
+
+    /**
+      Create a vector store file batch.
+      https://platform.openai.com/docs/api-reference/vector-stores-file-batches/create
+    */
+    void CreateVectorStoreFileBatch(const FString& VectorStoreId, const FCreateVectorStoreFileBatch& CreateBatch, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves a vector store file batch.
+      https://platform.openai.com/docs/api-reference/vector-stores-file-batches/retrieve
+    */
+    void RetrieveVectorStoreFileBatch(const FString& VectorStoreId, const FString& BatchId, const FOpenAIAuth& Auth);
+
+    /**
+      Cancel a vector store file batch. This can only be done for batches that are in_progress.
+      https://platform.openai.com/docs/api-reference/vector-stores-file-batches/cancel
+    */
+    void CancelVectorStoreFileBatch(const FString& VectorStoreId, const FString& BatchId, const FOpenAIAuth& Auth);
+
+    /**
+      Search a vector store for relevant chunks based on a query and file attributes filter.
+      https://platform.openai.com/docs/api-reference/vector-stores/search
+    */
+    void SearchVectorStore(const FString& VectorStoreId, const FVectorStoreSearch& Search, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -436,6 +517,20 @@ public:
     DEFINE_EVENT_GETTER(UpdateEvalCompleted)
     DEFINE_EVENT_GETTER(DeleteEvalCompleted)
 
+    DEFINE_EVENT_GETTER(CreateVectorStoreCompleted)
+    DEFINE_EVENT_GETTER(ListVectorStoresCompleted)
+    DEFINE_EVENT_GETTER(RetrieveVectorStoreCompleted)
+    DEFINE_EVENT_GETTER(UpdateVectorStoreCompleted)
+    DEFINE_EVENT_GETTER(DeleteVectorStoreCompleted)
+    DEFINE_EVENT_GETTER(CreateVectorStoreFileCompleted)
+    DEFINE_EVENT_GETTER(ListVectorStoreFilesCompleted)
+    DEFINE_EVENT_GETTER(RetrieveVectorStoreFileCompleted)
+    DEFINE_EVENT_GETTER(DeleteVectorStoreFileCompleted)
+    DEFINE_EVENT_GETTER(CreateVectorStoreFileBatchCompleted)
+    DEFINE_EVENT_GETTER(RetrieveVectorStoreFileBatchCompleted)
+    DEFINE_EVENT_GETTER(CancelVectorStoreFileBatchCompleted)
+    DEFINE_EVENT_GETTER(SearchVectorStoreCompleted)
+
 private:
     TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
@@ -500,6 +595,20 @@ private:
     DECLARE_HTTP_CALLBACK(OnUpdateEvalCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteEvalCompleted)
 
+    DECLARE_HTTP_CALLBACK(OnCreateVectorStoreCompleted)
+    DECLARE_HTTP_CALLBACK(OnListVectorStoresCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveVectorStoreCompleted)
+    DECLARE_HTTP_CALLBACK(OnUpdateVectorStoreCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteVectorStoreCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateVectorStoreFileCompleted)
+    DECLARE_HTTP_CALLBACK(OnListVectorStoreFilesCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveVectorStoreFileCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteVectorStoreFileCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateVectorStoreFileBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveVectorStoreFileBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnCancelVectorStoreFileBatchCompleted)
+    DECLARE_HTTP_CALLBACK(OnSearchVectorStoreCompleted)
+
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
@@ -544,6 +653,13 @@ private:
         const FFineTuningJob& FineTuningJob, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(const FCreateEval& CreateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(const FUpdateEval& UpdateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FCreateVectorStore& CreateVectorStore, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FUpdateVectorStore& UpdateVectorStore, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FCreateVectorStoreFileBatch& CreateBatch, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(const FVectorStoreSearch& Search, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
     template <typename ParsedResponseType, typename DelegateType>
     void HandleResponse(FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)

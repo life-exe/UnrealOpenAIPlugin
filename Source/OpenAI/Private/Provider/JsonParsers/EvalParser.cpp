@@ -51,6 +51,21 @@ void CleanTestingCriteria(const TArray<FEvalGrader>& Criteria, TArray<TSharedPtr
             GraderObj->RemoveField(TEXT("Operation"));
             GraderObj->RemoveField(TEXT("Reference"));
             GraderObj->RemoveField(TEXT("Pass_Threshold"));
+
+            // API expects SimpleInputMessage format (no "type" field) in Input array
+            if (GraderObj->HasField(TEXT("Input")))
+            {
+                auto InputArray = GraderObj->GetArrayField(TEXT("Input"));
+                for (auto& MsgVal : InputArray)
+                {
+                    auto MsgObj = MsgVal->AsObject();
+                    if (MsgObj.IsValid())
+                    {
+                        MsgObj->RemoveField(TEXT("Type"));
+                    }
+                }
+                GraderObj->SetArrayField(TEXT("Input"), InputArray);
+            }
         }
         else if (Grader.Type.Equals("string_check"))
         {

@@ -13,11 +13,13 @@ FString HttpHelper::MIMETypeFromExt(const FString& Ext)
     const FString Audio = "mp3 wav";
     const FString Video = "mp4 mpeg mpga m4a webm";
     const FString JSON = "json jsonl";
+    const FString Text = "txt md";
 
     if (Image.Contains(Ext)) return FString("image/").Append(Ext.ToLower());
     if (Audio.Contains(Ext)) return FString("audio/").Append(Ext.ToLower());
     if (Video.Contains(Ext)) return FString("video/").Append(Ext.ToLower());
     if (JSON.Contains(Ext)) return FString("application/").Append(Ext.ToLower());
+    if (Text.Contains(Ext)) return TEXT("text/plain");
 
     checkNoEntry();
     return {};

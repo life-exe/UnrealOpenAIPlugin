@@ -585,6 +585,133 @@ void UOpenAIProvider::DeleteEval(const FString& EvalId, const FOpenAIAuth& Auth)
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateVectorStore(const FCreateVectorStore& CreateVectorStore, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateVectorStore, API->VectorStores(), "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVectorStoreCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListVectorStores(const FVectorStoreQueryParams& QueryParams, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append(QueryParams.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListVectorStoresCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveVectorStore(const FString& VectorStoreId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveVectorStoreCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::UpdateVectorStore(const FString& VectorStoreId, const FUpdateVectorStore& UpdateVectorStore, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId);
+    auto HttpRequest = MakeRequest(UpdateVectorStore, URL, "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnUpdateVectorStoreCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteVectorStore(const FString& VectorStoreId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteVectorStoreCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CreateVectorStoreFile(const FString& VectorStoreId, const FString& FileId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/files");
+    TSharedPtr<FJsonObject> Json = MakeShareable(new FJsonObject());
+    Json->SetStringField("file_id", FileId);
+    FString RequestBodyStr;
+    UJsonFuncLib::JsonToString(Json, RequestBodyStr);
+
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb("POST");
+    HttpRequest->SetContentAsString(RequestBodyStr);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVectorStoreFileCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListVectorStoreFiles(
+    const FString& VectorStoreId, const FVectorStoreFileQueryParams& QueryParams, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/files").Append(QueryParams.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListVectorStoreFilesCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveVectorStoreFile(const FString& VectorStoreId, const FString& FileId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/files/").Append(FileId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveVectorStoreFileCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteVectorStoreFile(const FString& VectorStoreId, const FString& FileId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/files/").Append(FileId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteVectorStoreFileCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CreateVectorStoreFileBatch(
+    const FString& VectorStoreId, const FCreateVectorStoreFileBatch& CreateBatch, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/file_batches");
+    auto HttpRequest = MakeRequest(CreateBatch, URL, "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVectorStoreFileBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveVectorStoreFileBatch(const FString& VectorStoreId, const FString& BatchId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/file_batches/").Append(BatchId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveVectorStoreFileBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CancelVectorStoreFileBatch(const FString& VectorStoreId, const FString& BatchId, const FOpenAIAuth& Auth)
+{
+    const auto URL =
+        FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/file_batches/").Append(BatchId).Append("/cancel");
+    auto HttpRequest = MakeRequest(URL, "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCancelVectorStoreFileBatchCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::SearchVectorStore(const FString& VectorStoreId, const FVectorStoreSearch& Search, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/search");
+    auto HttpRequest = MakeRequest(Search, URL, "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "assistants=v2");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnSearchVectorStoreCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 #define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
@@ -874,6 +1001,71 @@ void UOpenAIProvider::OnRemixVideoCompleted(FHttpRequestPtr Request, FHttpRespon
     HandleResponse<FVideoObject>(Response, WasSuccessful, RemixVideoCompleted);
 }
 
+void UOpenAIProvider::OnCreateVectorStoreCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStore>(Response, WasSuccessful, CreateVectorStoreCompleted);
+}
+
+void UOpenAIProvider::OnListVectorStoresCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FListVectorStoresResponse>(Response, WasSuccessful, ListVectorStoresCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveVectorStoreCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStore>(Response, WasSuccessful, RetrieveVectorStoreCompleted);
+}
+
+void UOpenAIProvider::OnUpdateVectorStoreCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStore>(Response, WasSuccessful, UpdateVectorStoreCompleted);
+}
+
+void UOpenAIProvider::OnDeleteVectorStoreCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreDeletedResponse>(Response, WasSuccessful, DeleteVectorStoreCompleted);
+}
+
+void UOpenAIProvider::OnCreateVectorStoreFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreFile>(Response, WasSuccessful, CreateVectorStoreFileCompleted);
+}
+
+void UOpenAIProvider::OnListVectorStoreFilesCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FListVectorStoreFilesResponse>(Response, WasSuccessful, ListVectorStoreFilesCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveVectorStoreFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreFile>(Response, WasSuccessful, RetrieveVectorStoreFileCompleted);
+}
+
+void UOpenAIProvider::OnDeleteVectorStoreFileCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreDeletedResponse>(Response, WasSuccessful, DeleteVectorStoreFileCompleted);
+}
+
+void UOpenAIProvider::OnCreateVectorStoreFileBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreFileBatch>(Response, WasSuccessful, CreateVectorStoreFileBatchCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveVectorStoreFileBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreFileBatch>(Response, WasSuccessful, RetrieveVectorStoreFileBatchCompleted);
+}
+
+void UOpenAIProvider::OnCancelVectorStoreFileBatchCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreFileBatch>(Response, WasSuccessful, CancelVectorStoreFileBatchCompleted);
+}
+
+void UOpenAIProvider::OnSearchVectorStoreCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVectorStoreSearchResponse>(Response, WasSuccessful, SearchVectorStoreCompleted);
+}
+
 void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
@@ -1054,6 +1246,62 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     HttpRequest->SetVerb(Method);
 
     const FString RequestBodyStr = EvalParser::UpdateEvalToJsonRepresentation(UpdateEval);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FCreateVectorStore& CreateVectorStore, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = VectorStoreParser::CreateVectorStoreToJsonRepresentation(CreateVectorStore);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FUpdateVectorStore& UpdateVectorStore, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = VectorStoreParser::UpdateVectorStoreToJsonRepresentation(UpdateVectorStore);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FCreateVectorStoreFileBatch& CreateBatch, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = VectorStoreParser::CreateVectorStoreFileBatchToJsonRepresentation(CreateBatch);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FVectorStoreSearch& Search, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = VectorStoreParser::SearchVectorStoreToJsonRepresentation(Search);
     Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
     HttpRequest->SetContentAsString(RequestBodyStr);
 
