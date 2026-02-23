@@ -75,6 +75,7 @@ public:
     virtual FString Uploads() const = 0;
     virtual FString Assistants() const = 0;
     virtual FString Videos() const = 0;
+    virtual FString Evals() const = 0;
 };
 
 namespace V1
@@ -103,6 +104,7 @@ public:
     virtual FString Uploads() const override { return API_URL + "/v1/uploads"; }
     virtual FString Assistants() const override { return API_URL + "/v1/assistants"; }
     virtual FString Videos() const override { return API_URL + "/v1/videos"; }
+    virtual FString Evals() const override { return API_URL + "/v1/evals"; }
 
 private:
     const FString API_URL;
@@ -129,6 +131,7 @@ struct FOpenAIEndpoints
     FString Uploads;
     FString Assistants;
     FString Videos;
+    FString Evals;
 };
 
 class GenericAPI : public OpenAI::IAPI
@@ -154,6 +157,7 @@ public:
     virtual FString Uploads() const override { return OpenAIEndpoints.Uploads; }
     virtual FString Assistants() const override { return OpenAIEndpoints.Assistants; }
     virtual FString Videos() const override { return OpenAIEndpoints.Videos; }
+    virtual FString Evals() const override { return OpenAIEndpoints.Evals; }
 
 private:
     const FOpenAIEndpoints OpenAIEndpoints;

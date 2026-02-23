@@ -76,3 +76,27 @@ struct FOptionalBool
         IsSet = false;
     }
 };
+
+USTRUCT(BlueprintType)
+struct FOptionalFloat
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    float Value{};
+
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    bool IsSet{false};
+
+    void Set(float InValue)
+    {
+        Value = InValue;
+        IsSet = true;
+    }
+
+    void UnSet()
+    {
+        Value = {};
+        IsSet = false;
+    }
+};

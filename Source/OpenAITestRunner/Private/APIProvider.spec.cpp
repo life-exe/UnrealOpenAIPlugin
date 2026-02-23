@@ -35,6 +35,7 @@ void FAPIProvider::Define()
                     TestTrueExpr(API->Files().Equals(BaseURL + "/v1/files"));
                     TestTrueExpr(API->FineTuningJobs().Equals(BaseURL + "/v1/fine_tuning/jobs"));
                     TestTrueExpr(API->Moderations().Equals(BaseURL + "/v1/moderations"));
+                    TestTrueExpr(API->Evals().Equals(BaseURL + "/v1/evals"));
                 });
         });
 }

@@ -74,7 +74,8 @@ enum class ERole : uint8
     User,
     Assistant,
     Function,
-    Tool
+    Tool,
+    Developer
 };
 
 UENUM(BlueprintType)

@@ -333,6 +333,36 @@ public:
         const FString& VideoId, const FDownloadVideoContent& DownloadVideoContent, const FOpenAIAuth& Auth);
 
     /**
+      Create the structure of an evaluation that can be used to test a model's performance.
+      https://platform.openai.com/docs/api-reference/evals/create
+    */
+    void CreateEval(const FCreateEval& CreateEval, const FOpenAIAuth& Auth);
+
+    /**
+      List evaluations for a project.
+      https://platform.openai.com/docs/api-reference/evals/list
+    */
+    void ListEvals(const FEvalQueryParams& QueryParams, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves an evaluation.
+      https://platform.openai.com/docs/api-reference/evals/retrieve
+    */
+    void RetrieveEval(const FString& EvalId, const FOpenAIAuth& Auth);
+
+    /**
+      Update an evaluation.
+      https://platform.openai.com/docs/api-reference/evals/update
+    */
+    void UpdateEval(const FString& EvalId, const FUpdateEval& UpdateEval, const FOpenAIAuth& Auth);
+
+    /**
+      Delete an evaluation.
+      https://platform.openai.com/docs/api-reference/evals/delete
+    */
+    void DeleteEval(const FString& EvalId, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -346,6 +376,10 @@ private:                                   \
 
 public:
     FOnRequestError& OnRequestError() { return RequestError; };
+
+#define DECLARE_HTTP_CALLBACK(Callback) virtual void Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
+#define DECLARE_HTTP_CALLBACK_PROGRESS(Callback) virtual void Callback(FHttpRequestPtr Request, uint64 BytesSent, uint64 BytesReceived);
+
     DEFINE_EVENT_GETTER(ListModelsCompleted)
     DEFINE_EVENT_GETTER(RetrieveModelCompleted)
     DEFINE_EVENT_GETTER(CreateCompletionCompleted)
@@ -397,6 +431,12 @@ public:
     DEFINE_EVENT_GETTER(DeleteVideoCompleted)
     DEFINE_EVENT_GETTER(RemixVideoCompleted)
     DEFINE_EVENT_GETTER(DownloadVideoContentCompleted)
+    DEFINE_EVENT_GETTER(CreateEvalCompleted)
+    DEFINE_EVENT_GETTER(ListEvalsCompleted)
+    DEFINE_EVENT_GETTER(RetrieveEvalCompleted)
+    DEFINE_EVENT_GETTER(UpdateEvalCompleted)
+    DEFINE_EVENT_GETTER(DeleteEvalCompleted)
+
 
 private:
     TSharedPtr<OpenAI::IAPI> API;
@@ -456,6 +496,12 @@ private:
     DECLARE_HTTP_CALLBACK(OnDeleteVideoCompleted)
     DECLARE_HTTP_CALLBACK(OnRemixVideoCompleted)
     DECLARE_HTTP_CALLBACK(OnDownloadVideoContentCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateEvalCompleted)
+    DECLARE_HTTP_CALLBACK(OnListEvalsCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveEvalCompleted)
+    DECLARE_HTTP_CALLBACK(OnUpdateEvalCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteEvalCompleted)
+
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
@@ -499,6 +545,10 @@ private:
         const FChatCompletion& ChatCompletion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(
         const FFineTuningJob& FineTuningJob, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FCreateEval& CreateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FUpdateEval& UpdateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
     template <typename ParsedResponseType, typename DelegateType>
     void HandleResponse(FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)

@@ -15,5 +15,6 @@
 #include "Provider/Types/UploadTypes.h"
 #include "Provider/Types/AssistantTypes.h"
 #include "Provider/Types/VideoTypes.h"
+#include "Provider/Types/EvalTypes.h"
 
 #include "Provider/Types/Legacy/CompletionTypes.h"

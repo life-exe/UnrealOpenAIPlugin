@@ -1028,6 +1028,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Uploads() const override { return API_URL + "/v1/uploads"; }
         virtual FString Assistants() const override { return API_URL + "/v1/assistants"; }
         virtual FString Videos() const override { return API_URL + "/v1/videos"; }
+        virtual FString Evals() const override { return API_URL + "/v1/evals"; }
 
     private:
         const FString API_URL;

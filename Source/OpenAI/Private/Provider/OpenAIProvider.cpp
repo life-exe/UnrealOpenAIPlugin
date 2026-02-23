@@ -4,6 +4,7 @@
 #include "Provider/JsonParsers/ModerationParser.h"
 #include "Provider/JsonParsers/ImageParser.h"
 #include "Provider/JsonParsers/AudioParser.h"
+#include "Provider/JsonParsers/EvalParser.h"
 #include "API/API.h"
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonReader.h"
@@ -545,6 +546,45 @@ void UOpenAIProvider::DownloadVideoContent(
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateEval(const FCreateEval& CreateEval, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateEval, API->Evals(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateEvalCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListEvals(const FEvalQueryParams& QueryParams, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Evals()).Append(QueryParams.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListEvalsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveEval(const FString& EvalId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Evals()).Append("/").Append(EvalId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveEvalCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::UpdateEval(const FString& EvalId, const FUpdateEval& UpdateEval, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Evals()).Append("/").Append(EvalId);
+    auto HttpRequest = MakeRequest(UpdateEval, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnUpdateEvalCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteEval(const FString& EvalId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Evals()).Append("/").Append(EvalId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteEvalCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 #define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
@@ -823,6 +863,11 @@ void UOpenAIProvider::OnRetrieveVideoCompleted(FHttpRequestPtr Request, FHttpRes
 
 DEFINE_HTTP_CALLBACK(ListVideos)
 DEFINE_HTTP_CALLBACK(DeleteVideo)
+DEFINE_HTTP_CALLBACK(CreateEval)
+DEFINE_HTTP_CALLBACK(ListEvals)
+DEFINE_HTTP_CALLBACK(RetrieveEval)
+DEFINE_HTTP_CALLBACK(UpdateEval)
+DEFINE_HTTP_CALLBACK(DeleteEval)
 
 void UOpenAIProvider::OnRemixVideoCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
@@ -981,6 +1026,34 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     HttpRequest->SetVerb(Method);
 
     const FString RequestBodyStr = FineTuningParser::FineTuningJobToJsonRepresentation(FineTuningJob);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FCreateEval& CreateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = EvalParser::CreateEvalToJsonRepresentation(CreateEval);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FUpdateEval& UpdateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = EvalParser::UpdateEvalToJsonRepresentation(UpdateEval);
     Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
     HttpRequest->SetContentAsString(RequestBodyStr);
 

@@ -458,6 +458,7 @@ FString UOpenAIFuncLib::OpenAIRoleToString(ERole Role)
         case ERole::Assistant: return "assistant";
         case ERole::Function: return "function";
         case ERole::Tool: return "tool";
+        case ERole::Developer: return "developer";
     }
     checkNoEntry();
     return {};
@@ -497,6 +498,7 @@ ERole UOpenAIFuncLib::StringToOpenAIRole(const FString& Role)
     if (Role.ToLower().Equals("assistant")) return ERole::Assistant;
     if (Role.ToLower().Equals("function")) return ERole::Function;
     if (Role.ToLower().Equals("tool")) return ERole::Tool;
+    if (Role.ToLower().Equals("developer")) return ERole::Developer;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown OpenAIRole: {0}", Role);
     checkNoEntry();
