@@ -64,6 +64,12 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::ListAssistants, [&]() { ListAssistants(); });
     ActionMap.Add(EAPIOverviewAction::ModifyAssistant, [&]() { ModifyAssistant(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveAssistant, [&]() { RetrieveAssistant(); });
+    ActionMap.Add(EAPIOverviewAction::CreateVideo, [&]() { CreateVideo(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveVideo, [&]() { RetrieveVideo(); });
+    ActionMap.Add(EAPIOverviewAction::ListVideos, [&]() { ListVideos(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteVideo, [&]() { DeleteVideo(); });
+    ActionMap.Add(EAPIOverviewAction::RemixVideo, [&]() { RemixVideo(); });
+    ActionMap.Add(EAPIOverviewAction::DownloadVideoContent, [&]() { DownloadVideoContent(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -458,11 +464,8 @@ void AAPIOverview::CreateVoice()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCreateVoiceCompleted().AddLambda(
-        [](const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& Metadata)
-        {
-            UE_LOGFMT(LogAPIOverview, Display, "CreateVoice request completed! Id:{0} Name:{1}", Response.Id, Response.Name);
-        });
+    Provider->OnCreateVoiceCompleted().AddLambda([](const FCreateVoiceResponse& Response, const FOpenAIResponseMetadata& Metadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "CreateVoice request completed! Id:{0} Name:{1}", Response.Id, Response.Name); });
 
     FCreateVoice CreateVoiceParams;
     // absolute path to your audio sample file (mp3, wav, etc.)
@@ -883,6 +886,113 @@ void AAPIOverview::RetrieveAssistant()
     Provider->RetrieveAssistant(AssistantId, Auth);
 }
 
+void AAPIOverview::CreateVideo()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateVideoCompleted().AddLambda([&](const FVideoObject& VideoObject, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Video was created! id: {0}", VideoObject.Id); });
+
+    FCreateVideo CreateVideoRequest;
+    CreateVideoRequest.Prompt = "A serene mountain lake at sunset with golden reflections";
+    CreateVideoRequest.Model = UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2);
+    CreateVideoRequest.Seconds.Set(4);
+    CreateVideoRequest.Size.Set(UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize::Size_720x1280));
+    // CreateVideoRequest.Input_Reference.Set("https://example.com/reference-image.jpg");
+    Provider->CreateVideo(CreateVideoRequest, Auth);
+}
+
+void AAPIOverview::RetrieveVideo()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveVideoCompleted().AddLambda([&](const FVideoObject& VideoObject, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Video retrieved: id={0} status={1}", VideoObject.Id, VideoObject.Status); });
+
+    const FString VideoId = "videoId_xxxxxxxxxxxx";
+    Provider->RetrieveVideo(VideoId, Auth);
+}
+
+void AAPIOverview::ListVideos()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListVideosCompleted().AddLambda(
+        [&](const FListVideosResponse& ListVideosResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Videos count: {0}", ListVideosResponse.Data.Num()); });
+
+    FListVideos ListVideosRequest;
+    ListVideosRequest.Limit.IsSet = true;
+    ListVideosRequest.Limit.Value = 10;
+    Provider->ListVideos(ListVideosRequest, Auth);
+}
+
+void AAPIOverview::DeleteVideo()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteVideoCompleted().AddLambda(
+        [&](const FDeleteVideoResponse& DeleteVideoResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Video deleted: id={0}", DeleteVideoResponse.Id); });
+
+    const FString VideoId = "videoId_xxxxxxxxxxxx";
+    Provider->DeleteVideo(VideoId, Auth);
+}
+
+void AAPIOverview::RemixVideo()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRemixVideoCompleted().AddLambda([&](const FVideoObject& VideoObject, const FOpenAIResponseMetadata& ResponseMetadata)
+        { UE_LOGFMT(LogAPIOverview, Display, "Video remixed: id={0}", VideoObject.Id); });
+
+    FRemixVideo RemixVideoRequest;
+    RemixVideoRequest.Prompt = "The same mountain lake but during a dramatic thunderstorm";
+    const FString VideoId = "videoId_xxxxxxxxxxxx";
+    Provider->RemixVideo(VideoId, RemixVideoRequest, Auth);
+}
+
+void AAPIOverview::DownloadVideoContent()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+
+    Provider->OnListVideosCompleted().AddLambda(
+        [&](const FListVideosResponse& ListVideosResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        {
+            const FVideoObject* CompletedVideo =
+                ListVideosResponse.Data.FindByPredicate([](const FVideoObject& V) { return V.Status.Equals(TEXT("completed")); });
+
+            if (!CompletedVideo)
+            {
+                UE_LOGFMT(LogAPIOverview, Warning, "No completed videos available to download");
+                return;
+            }
+
+            UE_LOGFMT(LogAPIOverview, Display, "Downloading video: id={0}", CompletedVideo->Id);
+            Provider->DownloadVideoContent(CompletedVideo->Id, FDownloadVideoContent{}, Auth);
+        });
+
+    Provider->OnDownloadVideoContentCompleted().AddLambda(
+        [](const FDownloadVideoContentResponse& DownloadVideoContentResponse, const FOpenAIResponseMetadata& ResponseMetadata)
+        {
+            const FString Date = FDateTime::Now().ToString();
+            const FString FilePath = FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("OpenAI"), TEXT("Saved"));
+            const FString FileName = FString("video_").Append(Date).Append(".mp4");
+            const FString FileFullName = FPaths::Combine(FilePath, FileName);
+            if (FFileHelper::SaveArrayToFile(DownloadVideoContentResponse.Content, *FileFullName))
+            {
+                UE_LOGFMT(LogAPIOverview, Display, "Video was successfully saved to: {0}", FileFullName);
+            }
+        });
+
+    // const FString VideoId = "videoId_xxxxxxxxxxxx";
+    // Provider->DownloadVideoContent(VideoId, FDownloadVideoContent{}, Auth);
+
+    FListVideos ListVideosRequest;
+    Provider->ListVideos(ListVideosRequest, Auth);
+}
+
 void AAPIOverview::OnRequestError(const FString& URL, const FString& Content)
 {
     UE_LOGFMT(LogAPIOverview, Error, "URL: {0}, Content: {1}", URL, Content);
@@ -917,6 +1027,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Batches() const override { return API_URL + "/v1/batches"; }
         virtual FString Uploads() const override { return API_URL + "/v1/uploads"; }
         virtual FString Assistants() const override { return API_URL + "/v1/assistants"; }
+        virtual FString Videos() const override { return API_URL + "/v1/videos"; }
 
     private:
         const FString API_URL;

@@ -74,3 +74,10 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListAssistantsCompleted, const FListAssi
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveAssistantCompleted, const FAssistantObjectResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnModifyAssistantCompleted, const FAssistantObjectResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteAssistantCompleted, const FDeleteAssistantResponse&, const FOpenAIResponseMetadata&);
+// videos
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateVideoCompleted, const FVideoObject&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveVideoCompleted, const FVideoObject&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListVideosCompleted, const FListVideosResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteVideoCompleted, const FDeleteVideoResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRemixVideoCompleted, const FVideoObject&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDownloadVideoContentCompleted, const FDownloadVideoContentResponse&, const FOpenAIResponseMetadata&);

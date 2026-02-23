@@ -22,6 +22,7 @@ public:
         TSharedPtr<FJsonObject> JsonObject;
         if (!UJsonFuncLib::StringToJson(Data, JsonObject)) return false;
 
+        RemoveNullFields(JsonObject);
         FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), OutStruct, 0, 0);
         return true;
     }
@@ -39,6 +40,7 @@ private:
     static const FString START_FUNCTION_OBJECT_MARKER;
     static const FString END_FUNCTION_OBJECT_MARKER;
 
+    static void RemoveNullFields(const TSharedPtr<FJsonObject>& JsonObject);
     static void RemoveOptionalValuesInJsonObject(const TSharedPtr<FJsonObject>& JsonObject);
     static void ProcessJsonArrayRemovingEmptyArrays(TArray<TSharedPtr<FJsonValue>>& JsonArray);
 };

@@ -296,6 +296,43 @@ public:
     void DeleteAssistant(const FString& AssistantId, const FOpenAIAuth& Auth);
 
     /**
+      Creates a video generation job.
+      https://platform.openai.com/docs/api-reference/videos/create
+    */
+    void CreateVideo(const FCreateVideo& CreateVideo, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieves a video generation job.
+      https://platform.openai.com/docs/api-reference/videos/retrieve
+    */
+    void RetrieveVideo(const FString& VideoId, const FOpenAIAuth& Auth);
+
+    /**
+      List recently generated videos.
+      https://platform.openai.com/docs/api-reference/videos/list
+    */
+    void ListVideos(const FListVideos& ListVideos, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a video generation job.
+      https://platform.openai.com/docs/api-reference/videos/delete
+    */
+    void DeleteVideo(const FString& VideoId, const FOpenAIAuth& Auth);
+
+    /**
+      Create a remix of a completed video using a refreshed prompt.
+      https://platform.openai.com/docs/api-reference/videos/remix
+    */
+    void RemixVideo(const FString& VideoId, const FRemixVideo& RemixVideo, const FOpenAIAuth& Auth);
+
+    /**
+      Download video content (video, thumbnail, or spritesheet).
+      https://platform.openai.com/docs/api-reference/videos/download-content
+    */
+    void DownloadVideoContent(
+        const FString& VideoId, const FDownloadVideoContent& DownloadVideoContent, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -354,6 +391,12 @@ public:
     DEFINE_EVENT_GETTER(RetrieveAssistantCompleted)
     DEFINE_EVENT_GETTER(ModifyAssistantCompleted)
     DEFINE_EVENT_GETTER(DeleteAssistantCompleted)
+    DEFINE_EVENT_GETTER(CreateVideoCompleted)
+    DEFINE_EVENT_GETTER(RetrieveVideoCompleted)
+    DEFINE_EVENT_GETTER(ListVideosCompleted)
+    DEFINE_EVENT_GETTER(DeleteVideoCompleted)
+    DEFINE_EVENT_GETTER(RemixVideoCompleted)
+    DEFINE_EVENT_GETTER(DownloadVideoContentCompleted)
 
 private:
     TSharedPtr<OpenAI::IAPI> API;
@@ -407,6 +450,12 @@ private:
     DECLARE_HTTP_CALLBACK(OnRetrieveAssistantCompleted)
     DECLARE_HTTP_CALLBACK(OnModifyAssistantCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteAssistantCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateVideoCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveVideoCompleted)
+    DECLARE_HTTP_CALLBACK(OnListVideosCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteVideoCompleted)
+    DECLARE_HTTP_CALLBACK(OnRemixVideoCompleted)
+    DECLARE_HTTP_CALLBACK(OnDownloadVideoContentCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
 

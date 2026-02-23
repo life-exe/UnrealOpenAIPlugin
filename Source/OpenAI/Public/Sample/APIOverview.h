@@ -56,6 +56,13 @@ enum class EAPIOverviewAction : uint8
     ModifyAssistant,
     RetrieveAssistant,
 
+    CreateVideo,
+    RetrieveVideo,
+    ListVideos,
+    DeleteVideo,
+    RemixVideo,
+    DownloadVideoContent,
+
     SetYourOwnAPI
 };
 
@@ -133,6 +140,13 @@ private:
     void ListAssistants();
     void ModifyAssistant();
     void RetrieveAssistant();
+
+    void CreateVideo();
+    void RetrieveVideo();
+    void ListVideos();
+    void DeleteVideo();
+    void RemixVideo();
+    void DownloadVideoContent();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

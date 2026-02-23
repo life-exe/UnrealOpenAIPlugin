@@ -497,6 +497,54 @@ void UOpenAIProvider::DeleteAssistant(const FString& AssistantId, const FOpenAIA
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateVideo(const FCreateVideo& CreateVideo, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateVideo, API->Videos(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVideoCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveVideo(const FString& VideoId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Videos()).Append("/").Append(VideoId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveVideoCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListVideos(const FListVideos& ListVideos, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Videos()).Append(ListVideos.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListVideosCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteVideo(const FString& VideoId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Videos()).Append("/").Append(VideoId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteVideoCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RemixVideo(const FString& VideoId, const FRemixVideo& RemixVideo, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Videos()).Append("/").Append(VideoId).Append("/remix");
+    auto HttpRequest = MakeRequest(RemixVideo, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRemixVideoCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DownloadVideoContent(
+    const FString& VideoId, const FDownloadVideoContent& DownloadVideoContent, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Videos()).Append("/").Append(VideoId).Append("/content").Append(DownloadVideoContent.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDownloadVideoContentCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 #define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
@@ -762,6 +810,40 @@ void UOpenAIProvider::OnModifyAssistantCompleted(FHttpRequestPtr Request, FHttpR
 }
 
 DEFINE_HTTP_CALLBACK(DeleteAssistant)
+
+void UOpenAIProvider::OnCreateVideoCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVideoObject>(Response, WasSuccessful, CreateVideoCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveVideoCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVideoObject>(Response, WasSuccessful, RetrieveVideoCompleted);
+}
+
+DEFINE_HTTP_CALLBACK(ListVideos)
+DEFINE_HTTP_CALLBACK(DeleteVideo)
+
+void UOpenAIProvider::OnRemixVideoCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVideoObject>(Response, WasSuccessful, RemixVideoCompleted);
+}
+
+void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
+    const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
+
+    if (!WasSuccessful)
+    {
+        RequestError.Broadcast(ResponseURL, Content);
+        return;
+    }
+
+    FDownloadVideoContentResponse ParsedResponse;
+    ParsedResponse.Content = Response->GetContent();
+    DownloadVideoContentCompleted.Broadcast(ParsedResponse, GetResponseHeaders(Response));
+}
 
 ///////////////////////////// HELPER FUNCTIONS /////////////////////////////
 

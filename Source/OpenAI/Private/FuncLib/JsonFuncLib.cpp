@@ -111,14 +111,12 @@ FString UJsonFuncLib::CleanUpFunctionsObject(const FString& Input)
 
 bool UJsonFuncLib::OpenAIResponseContainsError(const TSharedPtr<FJsonObject>& JsonObject)
 {
-    if (JsonObject->HasField(TEXT("error")))
-    {
-        const auto ErrorObject = JsonObject->GetObjectField(TEXT("error"));
-        return ErrorObject->HasField(TEXT("type"))        //
-               && ErrorObject->HasField(TEXT("message"))  //
-               && ErrorObject->HasField(TEXT("code"));
-    }
-    return false;
+    const TSharedPtr<FJsonObject>* ErrorObject = nullptr;
+    if (!JsonObject->TryGetObjectField(FStringView(TEXT("error")), ErrorObject) || !ErrorObject) return false;
+
+    return (*ErrorObject)->HasField(TEXT("type"))        //
+           && (*ErrorObject)->HasField(TEXT("message"))  //
+           && (*ErrorObject)->HasField(TEXT("code"));
 }
 
 FString UJsonFuncLib::RemoveOptionalValuesThatNotSet(const FString& JsonString)
@@ -138,6 +136,38 @@ FString UJsonFuncLib::RemoveOptionalValuesThatNotSet(const FString& JsonString)
 
     UE_LOGFMT(LogJsonFuncLib, Error, "Error in JSON when removing optional values: {0}", JsonString);
     return {};
+}
+
+void UJsonFuncLib::RemoveNullFields(const TSharedPtr<FJsonObject>& JsonObject)
+{
+    TArray<FString> KeysToRemove;
+
+    for (const auto& [Key, Value] : JsonObject->Values)
+    {
+        if (Value->Type == EJson::Null)
+        {
+            KeysToRemove.Add(Key);
+        }
+        else if (Value->Type == EJson::Object)
+        {
+            RemoveNullFields(Value->AsObject());
+        }
+        else if (Value->Type == EJson::Array)
+        {
+            for (const auto& Element : Value->AsArray())
+            {
+                if (Element->Type == EJson::Object)
+                {
+                    RemoveNullFields(Element->AsObject());
+                }
+            }
+        }
+    }
+
+    for (const FString& Key : KeysToRemove)
+    {
+        JsonObject->RemoveField(Key);
+    }
 }
 
 void UJsonFuncLib::RemoveOptionalValuesInJsonObject(const TSharedPtr<FJsonObject>& JsonObject)

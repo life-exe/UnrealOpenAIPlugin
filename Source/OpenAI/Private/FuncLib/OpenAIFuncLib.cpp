@@ -711,6 +711,104 @@ FString UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType Assis
     return {};
 }
 
+FString UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel VideoModel)
+{
+    switch (VideoModel)
+    {
+        case EVideoModel::Sora_2: return "sora-2";
+        case EVideoModel::Sora_2_Pro: return "sora-2-pro";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+EVideoModel UOpenAIFuncLib::StringToOpenAIVideoModel(const FString& VideoModel)
+{
+    if (VideoModel.Equals("sora-2")) return EVideoModel::Sora_2;
+    if (VideoModel.Equals("sora-2-pro")) return EVideoModel::Sora_2_Pro;
+
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EVideoModel: {0}", VideoModel);
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIVideoStatusToString(EVideoStatus VideoStatus)
+{
+    switch (VideoStatus)
+    {
+        case EVideoStatus::Queued: return "queued";
+        case EVideoStatus::InProgress: return "in_progress";
+        case EVideoStatus::Completed: return "completed";
+        case EVideoStatus::Failed: return "failed";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+EVideoStatus UOpenAIFuncLib::StringToOpenAIVideoStatus(const FString& VideoStatus)
+{
+    if (VideoStatus.Equals("queued")) return EVideoStatus::Queued;
+    if (VideoStatus.Equals("in_progress")) return EVideoStatus::InProgress;
+    if (VideoStatus.Equals("completed")) return EVideoStatus::Completed;
+    if (VideoStatus.Equals("failed")) return EVideoStatus::Failed;
+
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EVideoStatus: {0}", VideoStatus);
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIVideoVariantToString(EVideoVariant VideoVariant)
+{
+    switch (VideoVariant)
+    {
+        case EVideoVariant::Video: return "video";
+        case EVideoVariant::Thumbnail: return "thumbnail";
+        case EVideoVariant::Spritesheet: return "spritesheet";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+EVideoVariant UOpenAIFuncLib::StringToOpenAIVideoVariant(const FString& VideoVariant)
+{
+    if (VideoVariant.Equals("video")) return EVideoVariant::Video;
+    if (VideoVariant.Equals("thumbnail")) return EVideoVariant::Thumbnail;
+    if (VideoVariant.Equals("spritesheet")) return EVideoVariant::Spritesheet;
+
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EVideoVariant: {0}", VideoVariant);
+    checkNoEntry();
+    return {};
+}
+
+FString UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize VideoSize)
+{
+    switch (VideoSize)
+    {
+        case EVideoSize::Size_720x1280: return "720x1280";
+        case EVideoSize::Size_1280x720: return "1280x720";
+        case EVideoSize::Size_1024x1792: return "1024x1792";
+        case EVideoSize::Size_1792x1024: return "1792x1024";
+    }
+
+    checkNoEntry();
+    return {};
+}
+
+EVideoSize UOpenAIFuncLib::StringToOpenAIVideoSize(const FString& VideoSize)
+{
+    if (VideoSize.Equals("720x1280")) return EVideoSize::Size_720x1280;
+    if (VideoSize.Equals("1280x720")) return EVideoSize::Size_1280x720;
+    if (VideoSize.Equals("1024x1792")) return EVideoSize::Size_1024x1792;
+    if (VideoSize.Equals("1792x1024")) return EVideoSize::Size_1792x1024;
+
+    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EVideoSize: {0}", VideoSize);
+    checkNoEntry();
+    return {};
+}
+
 FString UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier ServiceTier)
 {
     switch (ServiceTier)

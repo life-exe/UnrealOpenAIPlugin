@@ -124,6 +124,31 @@ public:
     UFUNCTION(BlueprintPure, Category = "OpenAI | Upload")
     static FString OpenAIAssistantToolTypeToString(EAssistantToolType AssistantToolType);
 
+    // video
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static FString OpenAIVideoModelToString(EVideoModel VideoModel);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static EVideoModel StringToOpenAIVideoModel(const FString& VideoModel);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static FString OpenAIVideoStatusToString(EVideoStatus VideoStatus);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static EVideoStatus StringToOpenAIVideoStatus(const FString& VideoStatus);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static FString OpenAIVideoVariantToString(EVideoVariant VideoVariant);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static EVideoVariant StringToOpenAIVideoVariant(const FString& VideoVariant);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static FString OpenAIVideoSizeToString(EVideoSize VideoSize);
+
+    UFUNCTION(BlueprintPure, Category = "OpenAI | Video")
+    static EVideoSize StringToOpenAIVideoSize(const FString& VideoSize);
+
     // common
     UFUNCTION(BlueprintPure, Category = "OpenAI | Common")
     static FString OpenAIRoleToString(ERole Role);

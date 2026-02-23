@@ -650,6 +650,72 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAssistantToolTypeToString(EAssistantToolType::Function).Equals("function"));
                 });
 
+            It("OpenAIVideoModelToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2).Equals("sora-2"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2_Pro).Equals("sora-2-pro"));
+                });
+
+            It("StringToOpenAIVideoModelShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2") == EVideoModel::Sora_2);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2-pro") == EVideoModel::Sora_2_Pro);
+                });
+
+            It("OpenAIVideoStatusToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoStatusToString(EVideoStatus::Queued).Equals("queued"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoStatusToString(EVideoStatus::InProgress).Equals("in_progress"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoStatusToString(EVideoStatus::Completed).Equals("completed"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoStatusToString(EVideoStatus::Failed).Equals("failed"));
+                });
+
+            It("StringToOpenAIVideoStatusShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoStatus("queued") == EVideoStatus::Queued);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoStatus("in_progress") == EVideoStatus::InProgress);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoStatus("completed") == EVideoStatus::Completed);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoStatus("failed") == EVideoStatus::Failed);
+                });
+
+            It("OpenAIVideoVariantToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoVariantToString(EVideoVariant::Video).Equals("video"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoVariantToString(EVideoVariant::Thumbnail).Equals("thumbnail"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoVariantToString(EVideoVariant::Spritesheet).Equals("spritesheet"));
+                });
+
+            It("StringToOpenAIVideoVariantShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoVariant("video") == EVideoVariant::Video);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoVariant("thumbnail") == EVideoVariant::Thumbnail);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoVariant("spritesheet") == EVideoVariant::Spritesheet);
+                });
+
+            It("OpenAIVideoSizeToStringShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize::Size_720x1280).Equals("720x1280"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize::Size_1280x720).Equals("1280x720"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize::Size_1024x1792).Equals("1024x1792"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize::Size_1792x1024).Equals("1792x1024"));
+                });
+
+            It("StringToOpenAIVideoSizeShouldReturnCorrectValue",
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoSize("720x1280") == EVideoSize::Size_720x1280);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoSize("1280x720") == EVideoSize::Size_1280x720);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoSize("1024x1792") == EVideoSize::Size_1024x1792);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoSize("1792x1024") == EVideoSize::Size_1792x1024);
+                });
+
             It("OpenAIHeaderTypeToStringShouldReturnCorrectValue",
                 [this]()
                 {
