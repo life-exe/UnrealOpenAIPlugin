@@ -112,3 +112,15 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveChatKitThreadCompleted, const FC
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteChatKitThreadCompleted, const FDeleteChatKitThreadResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(
     FOnListChatKitThreadItemsCompleted, const FChatKitThreadItemListResponse&, const FOpenAIResponseMetadata&);
+// skills
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateSkillCompleted, const FSkillResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListSkillsCompleted, const FListSkillsResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveSkillCompleted, const FSkillResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUpdateSkillCompleted, const FSkillResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteSkillCompleted, const FDeleteSkillResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveSkillContentCompleted, const FSkillContentResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateSkillVersionCompleted, const FSkillVersionResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListSkillVersionsCompleted, const FListSkillVersionsResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveSkillVersionCompleted, const FSkillVersionResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteSkillVersionCompleted, const FDeleteSkillVersionResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveSkillVersionContentCompleted, const FSkillContentResponse&, const FOpenAIResponseMetadata&);

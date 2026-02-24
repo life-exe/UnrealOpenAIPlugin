@@ -34,10 +34,12 @@ void FOpenAIChatKit::Define()
                         [&](const FString& URL, const FString& Content)
                         {
                             RequestCompleted = true;
-                            // If we get a 404 for the specific example workflow, we consider the provider's logic (URL/Headers/Beta) correct.
+                            // If we get a 404 for the specific example workflow, we consider the provider's logic (URL/Headers/Beta)
+                            // correct.
                             if (Content.Contains(TEXT("Workflow with id 'wf_example_stress' not found.")))
                             {
-                                AddInfo(TEXT("Verified: Request reached OpenAI with correct Beta headers and URL, but workflow ID is (predictably) missing."));
+                                AddInfo(TEXT("Verified: Request reached OpenAI with correct Beta headers and URL, but workflow ID is "
+                                             "(predictably) missing."));
                             }
                             else
                             {
@@ -68,15 +70,13 @@ void FOpenAIChatKit::Define()
                             RequestCompleted = true;
                         });
 
-                    // TODO: Replace "wf_example_stress" with a real skill ID obtained via the Skills API.
-                    // The ChatKit workflow.id is a skill ID created through POST /skills (multipart file upload).
-                    // To make this test fully self-contained like other lifecycle tests, implement the Skills API
-                    // (CreateSkill, DeleteSkill) and restructure this test as:
+                    // TODO: Implement the full lifecycle test now that the Skills API is available:
                     //   1. CreateSkill  -> get skill ID
                     //   2. CreateChatKitSession (workflow.id = skill ID)
                     //   3. CancelChatKitSession
                     //   4. DeleteSkill
-                    // Until then, the create->cancel flow is unreachable and only API connectivity is verified.
+                    // Blocker: a valid skill zip/directory must be added to Source/OpenAITestRunner/Data/
+                    // and passed as FCreateSkill::Files. Until then, only API connectivity is verified.
                     FCreateChatKitSession CreateSession;
                     CreateSession.User = "test_user_stress";
                     CreateSession.Workflow.Id = "wf_example_stress";

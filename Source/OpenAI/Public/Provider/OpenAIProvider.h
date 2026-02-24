@@ -474,6 +474,61 @@ public:
     void ListChatKitThreadItems(const FString& ThreadId, const FListChatKitThreadItems& ListItems, const FOpenAIAuth& Auth);
 
     /**
+      Create a new skill.
+    */
+    void CreateSkill(const FCreateSkill& CreateSkill, const FOpenAIAuth& Auth);
+
+    /**
+      List all skills for the current project.
+    */
+    void ListSkills(const FListSkillsParams& ListParams, const FOpenAIAuth& Auth);
+
+    /**
+      Get a skill by its ID.
+    */
+    void RetrieveSkill(const FString& SkillId, const FOpenAIAuth& Auth);
+
+    /**
+      Update the default version pointer for a skill.
+    */
+    void UpdateSkill(const FString& SkillId, const FUpdateSkill& UpdateSkill, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a skill by its ID.
+    */
+    void DeleteSkill(const FString& SkillId, const FOpenAIAuth& Auth);
+
+    /**
+      Download a skill zip bundle by its ID.
+    */
+    void RetrieveSkillContent(const FString& SkillId, const FOpenAIAuth& Auth);
+
+    /**
+      Create a new immutable skill version.
+    */
+    void CreateSkillVersion(const FString& SkillId, const FCreateSkillVersion& CreateVersion, const FOpenAIAuth& Auth);
+
+    /**
+      List skill versions for a skill.
+    */
+    void ListSkillVersions(const FString& SkillId, const FListSkillVersionsParams& ListParams, const FOpenAIAuth& Auth);
+
+    /**
+      Get a specific skill version.
+    */
+    void RetrieveSkillVersion(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a skill version.
+    */
+    void DeleteSkillVersion(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth);
+
+    /**
+      Download a skill version zip bundle.
+    */
+    void RetrieveSkillVersionContent(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -569,6 +624,18 @@ public:
     DEFINE_EVENT_GETTER(DeleteChatKitThreadCompleted)
     DEFINE_EVENT_GETTER(ListChatKitThreadItemsCompleted)
 
+    DEFINE_EVENT_GETTER(CreateSkillCompleted)
+    DEFINE_EVENT_GETTER(ListSkillsCompleted)
+    DEFINE_EVENT_GETTER(RetrieveSkillCompleted)
+    DEFINE_EVENT_GETTER(UpdateSkillCompleted)
+    DEFINE_EVENT_GETTER(DeleteSkillCompleted)
+    DEFINE_EVENT_GETTER(RetrieveSkillContentCompleted)
+    DEFINE_EVENT_GETTER(CreateSkillVersionCompleted)
+    DEFINE_EVENT_GETTER(ListSkillVersionsCompleted)
+    DEFINE_EVENT_GETTER(RetrieveSkillVersionCompleted)
+    DEFINE_EVENT_GETTER(DeleteSkillVersionCompleted)
+    DEFINE_EVENT_GETTER(RetrieveSkillVersionContentCompleted)
+
 private:
     TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
@@ -654,6 +721,18 @@ private:
     DECLARE_HTTP_CALLBACK(OnDeleteChatKitThreadCompleted)
     DECLARE_HTTP_CALLBACK(OnListChatKitThreadItemsCompleted)
 
+    DECLARE_HTTP_CALLBACK(OnCreateSkillCompleted)
+    DECLARE_HTTP_CALLBACK(OnListSkillsCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveSkillCompleted)
+    DECLARE_HTTP_CALLBACK(OnUpdateSkillCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteSkillCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveSkillContentCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateSkillVersionCompleted)
+    DECLARE_HTTP_CALLBACK(OnListSkillVersionsCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveSkillVersionCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteSkillVersionCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveSkillVersionContentCompleted)
+
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
@@ -705,6 +784,9 @@ private:
     FHttpRequestRef MakeRequest(
         const FCreateVectorStoreFileBatch& CreateBatch, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(const FVectorStoreSearch& Search, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(const FCreateSkill& CreateSkill, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FCreateSkillVersion& CreateVersion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
 
     template <typename ParsedResponseType, typename DelegateType>
     void HandleResponse(FHttpResponsePtr Response, bool WasSuccessful, DelegateType& Delegate)

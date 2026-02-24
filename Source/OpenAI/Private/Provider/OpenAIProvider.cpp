@@ -765,6 +765,93 @@ void UOpenAIProvider::ListChatKitThreadItems(const FString& ThreadId, const FLis
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateSkill(const FCreateSkill& CreateSkill, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateSkill, API->Skills(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateSkillCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListSkills(const FListSkillsParams& ListParams, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append(ListParams.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListSkillsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveSkill(const FString& SkillId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveSkillCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::UpdateSkill(const FString& SkillId, const FUpdateSkill& UpdateSkill, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId);
+    auto HttpRequest = MakeRequest(UpdateSkill, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnUpdateSkillCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteSkill(const FString& SkillId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteSkillCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveSkillContent(const FString& SkillId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/content");
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveSkillContentCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CreateSkillVersion(const FString& SkillId, const FCreateSkillVersion& CreateVersion, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/versions");
+    auto HttpRequest = MakeRequest(CreateVersion, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateSkillVersionCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListSkillVersions(const FString& SkillId, const FListSkillVersionsParams& ListParams, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/versions").Append(ListParams.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListSkillVersionsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveSkillVersion(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/versions/").Append(Version);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveSkillVersionCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteSkillVersion(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/versions/").Append(Version);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteSkillVersionCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveSkillVersionContent(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/versions/").Append(Version).Append("/content");
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveSkillVersionContentCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 #define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
@@ -1149,6 +1236,47 @@ void UOpenAIProvider::OnListChatKitThreadItemsCompleted(FHttpRequestPtr Request,
     HandleResponse<FChatKitThreadItemListResponse>(Response, WasSuccessful, ListChatKitThreadItemsCompleted);
 }
 
+DEFINE_HTTP_CALLBACK(CreateSkill)
+DEFINE_HTTP_CALLBACK(ListSkills)
+DEFINE_HTTP_CALLBACK(RetrieveSkill)
+DEFINE_HTTP_CALLBACK(UpdateSkill)
+DEFINE_HTTP_CALLBACK(DeleteSkill)
+
+void UOpenAIProvider::OnRetrieveSkillContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (WasSuccessful && Response.IsValid())
+    {
+        FSkillContentResponse ContentResponse;
+        ContentResponse.Bytes = Response->GetContent();
+        RetrieveSkillContentCompleted.Broadcast(ContentResponse, GetResponseHeaders(Response));
+    }
+    else
+    {
+        LogError("On retrieve skill content error");
+        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+    }
+}
+
+DEFINE_HTTP_CALLBACK(CreateSkillVersion)
+DEFINE_HTTP_CALLBACK(ListSkillVersions)
+DEFINE_HTTP_CALLBACK(RetrieveSkillVersion)
+DEFINE_HTTP_CALLBACK(DeleteSkillVersion)
+
+void UOpenAIProvider::OnRetrieveSkillVersionContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (WasSuccessful && Response.IsValid())
+    {
+        FSkillContentResponse ContentResponse;
+        ContentResponse.Bytes = Response->GetContent();
+        RetrieveSkillVersionContentCompleted.Broadcast(ContentResponse, GetResponseHeaders(Response));
+    }
+    else
+    {
+        LogError("On retrieve skill version content error");
+        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+    }
+}
+
 void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
@@ -1388,6 +1516,48 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
     HttpRequest->SetContentAsString(RequestBodyStr);
 
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FCreateSkill& CreateSkill, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
+
+    auto HttpRequest = CreateRequest();
+    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
+    HttpRequest->SetVerb(Method);
+
+    TArray<uint8> RequestContent;
+    RequestContent.Append(HttpHelper::AddMIMEFile(CreateSkill.Files, "files", BeginBoundary));
+    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+
+    HttpRequest->SetContent(RequestContent);
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FCreateSkillVersion& CreateVersion, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
+
+    auto HttpRequest = CreateRequest();
+    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
+    HttpRequest->SetVerb(Method);
+
+    TArray<uint8> RequestContent;
+    RequestContent.Append(HttpHelper::AddMIMEFile(CreateVersion.Files, "files", BeginBoundary));
+    if (CreateVersion.Default.IsSet)
+    {
+        RequestContent.Append(HttpHelper::AddMIME("default", CreateVersion.Default.Value ? "true" : "false", BeginBoundary));
+    }
+    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+
+    HttpRequest->SetContent(RequestContent);
     return HttpRequest;
 }
 

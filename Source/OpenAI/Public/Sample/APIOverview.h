@@ -84,6 +84,18 @@ enum class EAPIOverviewAction : uint8
     DeleteChatKitThread,
     ListChatKitThreadItems,
 
+    CreateSkill,
+    ListSkills,
+    RetrieveSkill,
+    UpdateSkill,
+    DeleteSkill,
+    RetrieveSkillContent,
+    CreateSkillVersion,
+    ListSkillVersions,
+    RetrieveSkillVersion,
+    DeleteSkillVersion,
+    RetrieveSkillVersionContent,
+
     SetYourOwnAPI
 };
 
@@ -189,6 +201,18 @@ private:
     void RetrieveChatKitThread();
     void DeleteChatKitThread();
     void ListChatKitThreadItems();
+
+    void CreateSkill();
+    void ListSkills();
+    void RetrieveSkill();
+    void UpdateSkill();
+    void DeleteSkill();
+    void RetrieveSkillContent();
+    void CreateSkillVersion();
+    void ListSkillVersions();
+    void RetrieveSkillVersion();
+    void DeleteSkillVersion();
+    void RetrieveSkillVersionContent();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

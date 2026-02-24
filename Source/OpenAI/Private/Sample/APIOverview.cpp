@@ -91,6 +91,18 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::RetrieveChatKitThread, [&]() { RetrieveChatKitThread(); });
     ActionMap.Add(EAPIOverviewAction::DeleteChatKitThread, [&]() { DeleteChatKitThread(); });
     ActionMap.Add(EAPIOverviewAction::ListChatKitThreadItems, [&]() { ListChatKitThreadItems(); });
+
+    ActionMap.Add(EAPIOverviewAction::CreateSkill, [&]() { CreateSkill(); });
+    ActionMap.Add(EAPIOverviewAction::ListSkills, [&]() { ListSkills(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveSkill, [&]() { RetrieveSkill(); });
+    ActionMap.Add(EAPIOverviewAction::UpdateSkill, [&]() { UpdateSkill(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteSkill, [&]() { DeleteSkill(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveSkillContent, [&]() { RetrieveSkillContent(); });
+    ActionMap.Add(EAPIOverviewAction::CreateSkillVersion, [&]() { CreateSkillVersion(); });
+    ActionMap.Add(EAPIOverviewAction::ListSkillVersions, [&]() { ListSkillVersions(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveSkillVersion, [&]() { RetrieveSkillVersion(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteSkillVersion, [&]() { DeleteSkillVersion(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveSkillVersionContent, [&]() { RetrieveSkillVersionContent(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -1242,6 +1254,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString VectorStores() const override { return API_URL + "/v1/vector_stores"; }
         virtual FString ChatKitSessions() const override { return API_URL + "/v1/chatkit/sessions"; }
         virtual FString ChatKitThreads() const override { return API_URL + "/v1/chatkit/threads"; }
+        virtual FString Skills() const override { return API_URL + "/v1/skills"; }
 
     private:
         const FString API_URL;
@@ -1300,8 +1313,12 @@ void AAPIOverview::DeleteChatKitThread()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnDeleteChatKitThreadCompleted().AddLambda([](const FDeleteChatKitThreadResponse& Response, const FOpenAIResponseMetadata& Meta)
-        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Thread deleted: {0}, Success: {1}", Response.Id, Response.Deleted ? TEXT("true") : TEXT("false")); });
+    Provider->OnDeleteChatKitThreadCompleted().AddLambda(
+        [](const FDeleteChatKitThreadResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "ChatKit Thread deleted: {0}, Success: {1}", Response.Id,
+                Response.Deleted ? TEXT("true") : TEXT("false"));
+        });
 
     const FString ThreadId = "thread_xxxxxxxxxxxx";
     Provider->DeleteChatKitThread(ThreadId, Auth);
@@ -1311,9 +1328,148 @@ void AAPIOverview::ListChatKitThreadItems()
 {
     Provider->SetLogEnabled(true);
     Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnListChatKitThreadItemsCompleted().AddLambda([](const FChatKitThreadItemListResponse& Response, const FOpenAIResponseMetadata& Meta)
+    Provider->OnListChatKitThreadItemsCompleted().AddLambda(
+        [](const FChatKitThreadItemListResponse& Response, const FOpenAIResponseMetadata& Meta)
         { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Thread Items count: {0}", Response.Data.Num()); });
 
     const FString ThreadId = "thread_xxxxxxxxxxxx";
     Provider->ListChatKitThreadItems(ThreadId, {}, Auth);
+}
+
+void AAPIOverview::CreateSkill()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateSkillCompleted().AddLambda([](const FCreateSkillResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill created: {0}, Name: {1}", Response.Id, Response.Name); });
+
+    FCreateSkill CreateSkill;
+    CreateSkill.Files = "path/to/skill.zip";  // replace with actual path
+    Provider->CreateSkill(CreateSkill, Auth);
+}
+
+void AAPIOverview::ListSkills()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListSkillsCompleted().AddLambda([](const FListSkillsResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skills count: {0}", Response.Data.Num()); });
+
+    Provider->ListSkills({}, Auth);
+}
+
+void AAPIOverview::RetrieveSkill()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveSkillCompleted().AddLambda([](const FRetrieveSkillResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill retrieved: {0}, Default Version: {1}", Response.Id, Response.Default_Version); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    Provider->RetrieveSkill(SkillId, Auth);
+}
+
+void AAPIOverview::UpdateSkill()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnUpdateSkillCompleted().AddLambda([](const FUpdateSkillResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill updated: {0}, New Default Version: {1}", Response.Id, Response.Default_Version); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    FUpdateSkill UpdateSkill;
+    UpdateSkill.Default_Version = "2";
+    Provider->UpdateSkill(SkillId, UpdateSkill, Auth);
+}
+
+void AAPIOverview::DeleteSkill()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteSkillCompleted().AddLambda(
+        [](const FDeleteSkillResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(
+                LogAPIOverview, Display, "Skill deleted: {0}, Success: {1}", Response.Id, Response.Deleted ? TEXT("true") : TEXT("false"));
+        });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    Provider->DeleteSkill(SkillId, Auth);
+}
+
+void AAPIOverview::RetrieveSkillContent()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveSkillContentCompleted().AddLambda([](const FSkillContentResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill content retrieved, size: {0} bytes", Response.Bytes.Num()); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    Provider->RetrieveSkillContent(SkillId, Auth);
+}
+
+void AAPIOverview::CreateSkillVersion()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateSkillVersionCompleted().AddLambda([](const FCreateSkillVersionResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill Version created: {0}, Version: {1}", Response.Id, Response.Version); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    FCreateSkillVersion CreateVersion;
+    CreateVersion.Files = "path/to/skill_v2.zip";
+    Provider->CreateSkillVersion(SkillId, CreateVersion, Auth);
+}
+
+void AAPIOverview::ListSkillVersions()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListSkillVersionsCompleted().AddLambda([](const FListSkillVersionsResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill Versions count: {0}", Response.Data.Num()); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    Provider->ListSkillVersions(SkillId, {}, Auth);
+}
+
+void AAPIOverview::RetrieveSkillVersion()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveSkillVersionCompleted().AddLambda(
+        [](const FRetrieveSkillVersionResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill Version retrieved: {0}, Name: {1}", Response.Id, Response.Name); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    const FString Version = "1";
+    Provider->RetrieveSkillVersion(SkillId, Version, Auth);
+}
+
+void AAPIOverview::DeleteSkillVersion()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteSkillVersionCompleted().AddLambda(
+        [](const FDeleteSkillVersionResponse& Response, const FOpenAIResponseMetadata& Meta)
+        {
+            UE_LOGFMT(LogAPIOverview, Display, "Skill Version deleted: {0}, Version: {1}, Success: {2}", Response.Id, Response.Version,
+                Response.Deleted ? TEXT("true") : TEXT("false"));
+        });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    const FString Version = "1";
+    Provider->DeleteSkillVersion(SkillId, Version, Auth);
+}
+
+void AAPIOverview::RetrieveSkillVersionContent()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveSkillVersionContentCompleted().AddLambda(
+        [](const FSkillContentResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Skill Version content retrieved, size: {0} bytes", Response.Bytes.Num()); });
+
+    const FString SkillId = "skill_xxxxxxxxxxxx";
+    const FString Version = "1";
+    Provider->RetrieveSkillVersionContent(SkillId, Version, Auth);
 }

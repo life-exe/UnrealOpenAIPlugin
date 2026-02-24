@@ -79,6 +79,7 @@ public:
     virtual FString VectorStores() const = 0;
     virtual FString ChatKitSessions() const = 0;
     virtual FString ChatKitThreads() const = 0;
+    virtual FString Skills() const = 0;
 };
 
 namespace V1
@@ -111,6 +112,7 @@ public:
     virtual FString VectorStores() const override { return API_URL + "/v1/vector_stores"; }
     virtual FString ChatKitSessions() const override { return API_URL + "/v1/chatkit/sessions"; }
     virtual FString ChatKitThreads() const override { return API_URL + "/v1/chatkit/threads"; }
+    virtual FString Skills() const override { return API_URL + "/v1/skills"; }
 
 private:
     const FString API_URL;
@@ -141,6 +143,7 @@ struct FOpenAIEndpoints
     FString VectorStores;
     FString ChatKitSessions;
     FString ChatKitThreads;
+    FString Skills;
 };
 
 class GenericAPI : public OpenAI::IAPI
@@ -170,6 +173,7 @@ public:
     virtual FString VectorStores() const override { return OpenAIEndpoints.VectorStores; }
     virtual FString ChatKitSessions() const override { return OpenAIEndpoints.ChatKitSessions; }
     virtual FString ChatKitThreads() const override { return OpenAIEndpoints.ChatKitThreads; }
+    virtual FString Skills() const override { return OpenAIEndpoints.Skills; }
 
 private:
     const FOpenAIEndpoints OpenAIEndpoints;
