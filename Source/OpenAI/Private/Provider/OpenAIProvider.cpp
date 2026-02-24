@@ -712,6 +712,59 @@ void UOpenAIProvider::SearchVectorStore(const FString& VectorStoreId, const FVec
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateChatKitSession(const FCreateChatKitSession& CreateSession, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateSession, API->ChatKitSessions(), "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "chatkit_beta=v1");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateChatKitSessionCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::CancelChatKitSession(const FString& SessionId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->ChatKitSessions()).Append("/").Append(SessionId).Append("/cancel");
+    auto HttpRequest = MakeRequest(URL, "POST", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "chatkit_beta=v1");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCancelChatKitSessionCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListChatKitThreads(const FListChatKitThreads& ListThreads, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->ChatKitThreads()).Append(ListThreads.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "chatkit_beta=v1");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListChatKitThreadsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RetrieveChatKitThread(const FString& ThreadId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->ChatKitThreads()).Append("/").Append(ThreadId);
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "chatkit_beta=v1");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRetrieveChatKitThreadCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteChatKitThread(const FString& ThreadId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->ChatKitThreads()).Append("/").Append(ThreadId);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "chatkit_beta=v1");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteChatKitThreadCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::ListChatKitThreadItems(const FString& ThreadId, const FListChatKitThreadItems& ListItems, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->ChatKitThreads()).Append("/").Append(ThreadId).Append("/items").Append(ListItems.ToQuery());
+    auto HttpRequest = MakeRequest(URL, "GET", Auth);
+    HttpRequest->SetHeader("OpenAI-Beta", "chatkit_beta=v1");
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnListChatKitThreadItemsCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 #define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
@@ -1066,6 +1119,36 @@ void UOpenAIProvider::OnSearchVectorStoreCompleted(FHttpRequestPtr Request, FHtt
     HandleResponse<FVectorStoreSearchResponse>(Response, WasSuccessful, SearchVectorStoreCompleted);
 }
 
+void UOpenAIProvider::OnCreateChatKitSessionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FChatKitSessionResponse>(Response, WasSuccessful, CreateChatKitSessionCompleted);
+}
+
+void UOpenAIProvider::OnCancelChatKitSessionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FChatKitSessionResponse>(Response, WasSuccessful, CancelChatKitSessionCompleted);
+}
+
+void UOpenAIProvider::OnListChatKitThreadsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FListChatKitThreadsResponse>(Response, WasSuccessful, ListChatKitThreadsCompleted);
+}
+
+void UOpenAIProvider::OnRetrieveChatKitThreadCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FChatKitThread>(Response, WasSuccessful, RetrieveChatKitThreadCompleted);
+}
+
+void UOpenAIProvider::OnDeleteChatKitThreadCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FDeleteChatKitThreadResponse>(Response, WasSuccessful, DeleteChatKitThreadCompleted);
+}
+
+void UOpenAIProvider::OnListChatKitThreadItemsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FChatKitThreadItemListResponse>(Response, WasSuccessful, ListChatKitThreadItemsCompleted);
+}
+
 void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
@@ -1119,7 +1202,7 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
 
     if (!WasSuccessful || !JsonObject.IsValid() || UJsonFuncLib::OpenAIResponseContainsError(JsonObject))
     {
-        LogError(Content);
+        Log(Content);
         RequestError.Broadcast(Response->GetURL(), Content);
         return false;
     }

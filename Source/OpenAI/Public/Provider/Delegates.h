@@ -104,3 +104,11 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
     FOnRetrieveVectorStoreFileBatchCompleted, const FVectorStoreFileBatch&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCancelVectorStoreFileBatchCompleted, const FVectorStoreFileBatch&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSearchVectorStoreCompleted, const FVectorStoreSearchResponse&, const FOpenAIResponseMetadata&);
+// chatkit
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateChatKitSessionCompleted, const FChatKitSessionResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCancelChatKitSessionCompleted, const FChatKitSessionResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListChatKitThreadsCompleted, const FListChatKitThreadsResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveChatKitThreadCompleted, const FChatKitThread&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteChatKitThreadCompleted, const FDeleteChatKitThreadResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+    FOnListChatKitThreadItemsCompleted, const FChatKitThreadItemListResponse&, const FOpenAIResponseMetadata&);

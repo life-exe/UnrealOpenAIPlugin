@@ -17,5 +17,6 @@
 #include "Provider/Types/VideoTypes.h"
 #include "Provider/Types/EvalTypes.h"
 #include "Provider/Types/VectorStoreTypes.h"
+#include "Provider/Types/ChatKitTypes.h"
 
 #include "Provider/Types/Legacy/CompletionTypes.h"

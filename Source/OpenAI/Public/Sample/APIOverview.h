@@ -77,6 +77,13 @@ enum class EAPIOverviewAction : uint8
     CancelVectorStoreFileBatch,
     SearchVectorStore,
 
+    CreateChatKitSession,
+    CancelChatKitSession,
+    ListChatKitThreads,
+    RetrieveChatKitThread,
+    DeleteChatKitThread,
+    ListChatKitThreadItems,
+
     SetYourOwnAPI
 };
 
@@ -175,6 +182,13 @@ private:
     void RetrieveVectorStoreFileBatch();
     void CancelVectorStoreFileBatch();
     void SearchVectorStore();
+
+    void CreateChatKitSession();
+    void CancelChatKitSession();
+    void ListChatKitThreads();
+    void RetrieveChatKitThread();
+    void DeleteChatKitThread();
+    void ListChatKitThreadItems();
 
     void OnRequestError(const FString& URL, const FString& Content);
 

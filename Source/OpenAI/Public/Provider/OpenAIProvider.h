@@ -33,6 +33,7 @@
 #include "Provider/JsonParsers/FineTuningParser.h"
 #include "Provider/JsonParsers/EvalParser.h"
 #include "Provider/JsonParsers/VectorStoreParser.h"
+#include "Provider/JsonParsers/ChatKitParser.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
@@ -443,6 +444,36 @@ public:
     void SearchVectorStore(const FString& VectorStoreId, const FVectorStoreSearch& Search, const FOpenAIAuth& Auth);
 
     /**
+      Create a ChatKit session.
+    */
+    void CreateChatKitSession(const FCreateChatKitSession& CreateSession, const FOpenAIAuth& Auth);
+
+    /**
+      Cancel an active ChatKit session.
+    */
+    void CancelChatKitSession(const FString& SessionId, const FOpenAIAuth& Auth);
+
+    /**
+      List ChatKit threads.
+    */
+    void ListChatKitThreads(const FListChatKitThreads& ListThreads, const FOpenAIAuth& Auth);
+
+    /**
+      Retrieve a ChatKit thread.
+    */
+    void RetrieveChatKitThread(const FString& ThreadId, const FOpenAIAuth& Auth);
+
+    /**
+      Delete a ChatKit thread.
+    */
+    void DeleteChatKitThread(const FString& ThreadId, const FOpenAIAuth& Auth);
+
+    /**
+      List items that belong to a ChatKit thread.
+    */
+    void ListChatKitThreadItems(const FString& ThreadId, const FListChatKitThreadItems& ListItems, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -531,6 +562,13 @@ public:
     DEFINE_EVENT_GETTER(CancelVectorStoreFileBatchCompleted)
     DEFINE_EVENT_GETTER(SearchVectorStoreCompleted)
 
+    DEFINE_EVENT_GETTER(CreateChatKitSessionCompleted)
+    DEFINE_EVENT_GETTER(CancelChatKitSessionCompleted)
+    DEFINE_EVENT_GETTER(ListChatKitThreadsCompleted)
+    DEFINE_EVENT_GETTER(RetrieveChatKitThreadCompleted)
+    DEFINE_EVENT_GETTER(DeleteChatKitThreadCompleted)
+    DEFINE_EVENT_GETTER(ListChatKitThreadItemsCompleted)
+
 private:
     TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
@@ -608,6 +646,13 @@ private:
     DECLARE_HTTP_CALLBACK(OnRetrieveVectorStoreFileBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnCancelVectorStoreFileBatchCompleted)
     DECLARE_HTTP_CALLBACK(OnSearchVectorStoreCompleted)
+
+    DECLARE_HTTP_CALLBACK(OnCreateChatKitSessionCompleted)
+    DECLARE_HTTP_CALLBACK(OnCancelChatKitSessionCompleted)
+    DECLARE_HTTP_CALLBACK(OnListChatKitThreadsCompleted)
+    DECLARE_HTTP_CALLBACK(OnRetrieveChatKitThreadCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteChatKitThreadCompleted)
+    DECLARE_HTTP_CALLBACK(OnListChatKitThreadItemsCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
 

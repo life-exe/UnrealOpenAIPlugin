@@ -84,6 +84,13 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::RetrieveVectorStoreFileBatch, [&]() { RetrieveVectorStoreFileBatch(); });
     ActionMap.Add(EAPIOverviewAction::CancelVectorStoreFileBatch, [&]() { CancelVectorStoreFileBatch(); });
     ActionMap.Add(EAPIOverviewAction::SearchVectorStore, [&]() { SearchVectorStore(); });
+
+    ActionMap.Add(EAPIOverviewAction::CreateChatKitSession, [&]() { CreateChatKitSession(); });
+    ActionMap.Add(EAPIOverviewAction::CancelChatKitSession, [&]() { CancelChatKitSession(); });
+    ActionMap.Add(EAPIOverviewAction::ListChatKitThreads, [&]() { ListChatKitThreads(); });
+    ActionMap.Add(EAPIOverviewAction::RetrieveChatKitThread, [&]() { RetrieveChatKitThread(); });
+    ActionMap.Add(EAPIOverviewAction::DeleteChatKitThread, [&]() { DeleteChatKitThread(); });
+    ActionMap.Add(EAPIOverviewAction::ListChatKitThreadItems, [&]() { ListChatKitThreadItems(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -1233,6 +1240,8 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString Videos() const override { return API_URL + "/v1/videos"; }
         virtual FString Evals() const override { return API_URL + "/v1/evals"; }
         virtual FString VectorStores() const override { return API_URL + "/v1/vector_stores"; }
+        virtual FString ChatKitSessions() const override { return API_URL + "/v1/chatkit/sessions"; }
+        virtual FString ChatKitThreads() const override { return API_URL + "/v1/chatkit/threads"; }
 
     private:
         const FString API_URL;
@@ -1240,4 +1249,71 @@ void AAPIOverview::SetYourOwnAPI()
 
     const auto API = MakeShared<MyAPI>();
     Provider->SetAPI(API);
+}
+
+void AAPIOverview::CreateChatKitSession()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateChatKitSessionCompleted().AddLambda([](const FChatKitSessionResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Session created: {0}, User: {1}", Response.Id, Response.User); });
+
+    FCreateChatKitSession CreateSession;
+    CreateSession.User = "unreal_user";
+    CreateSession.Workflow.Id = "wf_example";
+    Provider->CreateChatKitSession(CreateSession, Auth);
+}
+
+void AAPIOverview::CancelChatKitSession()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCancelChatKitSessionCompleted().AddLambda([](const FChatKitSessionResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Session cancelled: {0}, Status: {1}", Response.Id, Response.Status); });
+
+    const FString SessionId = "sess_xxxxxxxxxxxx";
+    Provider->CancelChatKitSession(SessionId, Auth);
+}
+
+void AAPIOverview::ListChatKitThreads()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListChatKitThreadsCompleted().AddLambda([](const FListChatKitThreadsResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Threads count: {0}", Response.Data.Num()); });
+
+    Provider->ListChatKitThreads({}, Auth);
+}
+
+void AAPIOverview::RetrieveChatKitThread()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRetrieveChatKitThreadCompleted().AddLambda([](const FChatKitThread& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Thread retrieved: {0}, Title: {1}", Response.Id, Response.Title); });
+
+    const FString ThreadId = "thread_xxxxxxxxxxxx";
+    Provider->RetrieveChatKitThread(ThreadId, Auth);
+}
+
+void AAPIOverview::DeleteChatKitThread()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnDeleteChatKitThreadCompleted().AddLambda([](const FDeleteChatKitThreadResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Thread deleted: {0}, Success: {1}", Response.Id, Response.Deleted ? TEXT("true") : TEXT("false")); });
+
+    const FString ThreadId = "thread_xxxxxxxxxxxx";
+    Provider->DeleteChatKitThread(ThreadId, Auth);
+}
+
+void AAPIOverview::ListChatKitThreadItems()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnListChatKitThreadItemsCompleted().AddLambda([](const FChatKitThreadItemListResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "ChatKit Thread Items count: {0}", Response.Data.Num()); });
+
+    const FString ThreadId = "thread_xxxxxxxxxxxx";
+    Provider->ListChatKitThreadItems(ThreadId, {}, Auth);
 }
