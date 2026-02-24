@@ -103,6 +103,12 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::RetrieveSkillVersion, [&]() { RetrieveSkillVersion(); });
     ActionMap.Add(EAPIOverviewAction::DeleteSkillVersion, [&]() { DeleteSkillVersion(); });
     ActionMap.Add(EAPIOverviewAction::RetrieveSkillVersionContent, [&]() { RetrieveSkillVersionContent(); });
+
+    ActionMap.Add(EAPIOverviewAction::CreateRealtimeClientSecret, [&]() { CreateRealtimeClientSecret(); });
+    ActionMap.Add(EAPIOverviewAction::RealtimeAcceptCall, [&]() { RealtimeAcceptCall(); });
+    ActionMap.Add(EAPIOverviewAction::RealtimeHangupCall, [&]() { RealtimeHangupCall(); });
+    ActionMap.Add(EAPIOverviewAction::RealtimeReferCall, [&]() { RealtimeReferCall(); });
+    ActionMap.Add(EAPIOverviewAction::RealtimeRejectCall, [&]() { RealtimeRejectCall(); });
 }
 
 void AAPIOverview::BeginPlay()
@@ -1255,6 +1261,8 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString ChatKitSessions() const override { return API_URL + "/v1/chatkit/sessions"; }
         virtual FString ChatKitThreads() const override { return API_URL + "/v1/chatkit/threads"; }
         virtual FString Skills() const override { return API_URL + "/v1/skills"; }
+        virtual FString RealtimeClientSecrets() const override { return API_URL + "/v1/realtime/client_secrets"; }
+        virtual FString RealtimeCalls() const override { return API_URL + "/v1/realtime/calls"; }
 
     private:
         const FString API_URL;
@@ -1472,4 +1480,65 @@ void AAPIOverview::RetrieveSkillVersionContent()
     const FString SkillId = "skill_xxxxxxxxxxxx";
     const FString Version = "1";
     Provider->RetrieveSkillVersionContent(SkillId, Version, Auth);
+}
+
+void AAPIOverview::CreateRealtimeClientSecret()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnCreateRealtimeClientSecretCompleted().AddLambda(
+        [](const FCreateRealtimeClientSecretResponse& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Realtime Client Secret created: {0}", Response.Value); });
+
+    FCreateRealtimeClientSecret CreateSecret;
+    CreateSecret.Expires_After.Seconds = 600;
+    Provider->CreateRealtimeClientSecret(CreateSecret, Auth);
+}
+
+void AAPIOverview::RealtimeAcceptCall()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRealtimeAcceptCallCompleted().AddLambda([](const FString& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Realtime Accept Call completed: {0}", Response); });
+
+    const FString CallId = "call_xxxxxxxxxxxx";
+    FRealtimeAcceptCall AcceptCall;
+    Provider->RealtimeAcceptCall(CallId, AcceptCall, Auth);
+}
+
+void AAPIOverview::RealtimeHangupCall()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRealtimeHangupCallCompleted().AddLambda([](const FString& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Realtime Hangup Call completed: {0}", Response); });
+
+    const FString CallId = "call_xxxxxxxxxxxx";
+    Provider->RealtimeHangupCall(CallId, Auth);
+}
+
+void AAPIOverview::RealtimeReferCall()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRealtimeReferCallCompleted().AddLambda([](const FString& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Realtime Refer Call completed: {0}", Response); });
+
+    const FString CallId = "call_xxxxxxxxxxxx";
+    FRealtimeReferCall ReferCall;
+    ReferCall.Target_Uri = "tel:+14155550123";
+    Provider->RealtimeReferCall(CallId, ReferCall, Auth);
+}
+
+void AAPIOverview::RealtimeRejectCall()
+{
+    Provider->SetLogEnabled(true);
+    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
+    Provider->OnRealtimeRejectCallCompleted().AddLambda([](const FString& Response, const FOpenAIResponseMetadata& Meta)
+        { UE_LOGFMT(LogAPIOverview, Display, "Realtime Reject Call completed: {0}", Response); });
+
+    const FString CallId = "call_xxxxxxxxxxxx";
+    FRealtimeRejectCall RejectCall;
+    Provider->RealtimeRejectCall(CallId, RejectCall, Auth);
 }

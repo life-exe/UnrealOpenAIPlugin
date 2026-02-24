@@ -19,5 +19,6 @@
 #include "Provider/Types/VectorStoreTypes.h"
 #include "Provider/Types/ChatKitTypes.h"
 #include "Provider/Types/SkillTypes.h"
+#include "Provider/Types/RealtimeTypes.h"
 
 #include "Provider/Types/Legacy/CompletionTypes.h"

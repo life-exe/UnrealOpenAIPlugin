@@ -529,6 +529,31 @@ public:
     void RetrieveSkillVersionContent(const FString& SkillId, const FString& Version, const FOpenAIAuth& Auth);
 
     /**
+      Create a Realtime client secret.
+    */
+    void CreateRealtimeClientSecret(const FCreateRealtimeClientSecret& CreateSecret, const FOpenAIAuth& Auth);
+
+    /**
+      Accept an incoming SIP call.
+    */
+    void RealtimeAcceptCall(const FString& CallId, const FRealtimeAcceptCall& AcceptCall, const FOpenAIAuth& Auth);
+
+    /**
+      End an active Realtime API call.
+    */
+    void RealtimeHangupCall(const FString& CallId, const FOpenAIAuth& Auth);
+
+    /**
+      Transfer an active SIP call.
+    */
+    void RealtimeReferCall(const FString& CallId, const FRealtimeReferCall& ReferCall, const FOpenAIAuth& Auth);
+
+    /**
+      Decline an incoming SIP call.
+    */
+    void RealtimeRejectCall(const FString& CallId, const FRealtimeRejectCall& RejectCall, const FOpenAIAuth& Auth);
+
+    /**
       Print response to console
     */
     void SetLogEnabled(bool LogEnabled) { bLogEnabled = LogEnabled; }
@@ -636,6 +661,12 @@ public:
     DEFINE_EVENT_GETTER(DeleteSkillVersionCompleted)
     DEFINE_EVENT_GETTER(RetrieveSkillVersionContentCompleted)
 
+    DEFINE_EVENT_GETTER(CreateRealtimeClientSecretCompleted)
+    DEFINE_EVENT_GETTER(RealtimeAcceptCallCompleted)
+    DEFINE_EVENT_GETTER(RealtimeHangupCallCompleted)
+    DEFINE_EVENT_GETTER(RealtimeReferCallCompleted)
+    DEFINE_EVENT_GETTER(RealtimeRejectCallCompleted)
+
 private:
     TSharedPtr<OpenAI::IAPI> API;
     bool bLogEnabled{true};
@@ -732,6 +763,12 @@ private:
     DECLARE_HTTP_CALLBACK(OnRetrieveSkillVersionCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteSkillVersionCompleted)
     DECLARE_HTTP_CALLBACK(OnRetrieveSkillVersionContentCompleted)
+
+    DECLARE_HTTP_CALLBACK(OnCreateRealtimeClientSecretCompleted)
+    DECLARE_HTTP_CALLBACK(OnRealtimeAcceptCallCompleted)
+    DECLARE_HTTP_CALLBACK(OnRealtimeHangupCallCompleted)
+    DECLARE_HTTP_CALLBACK(OnRealtimeReferCallCompleted)
+    DECLARE_HTTP_CALLBACK(OnRealtimeRejectCallCompleted)
 
     void ProcessRequest(FHttpRequestRef HttpRequest);
 

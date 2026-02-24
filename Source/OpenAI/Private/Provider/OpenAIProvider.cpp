@@ -852,6 +852,45 @@ void UOpenAIProvider::RetrieveSkillVersionContent(const FString& SkillId, const 
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateRealtimeClientSecret(const FCreateRealtimeClientSecret& CreateSecret, const FOpenAIAuth& Auth)
+{
+    auto HttpRequest = MakeRequest(CreateSecret, API->RealtimeClientSecrets(), "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateRealtimeClientSecretCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RealtimeAcceptCall(const FString& CallId, const FRealtimeAcceptCall& AcceptCall, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->RealtimeCalls()).Append("/").Append(CallId).Append("/accept");
+    auto HttpRequest = MakeRequest(AcceptCall, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRealtimeAcceptCallCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RealtimeHangupCall(const FString& CallId, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->RealtimeCalls()).Append("/").Append(CallId).Append("/hangup");
+    auto HttpRequest = MakeRequest(URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRealtimeHangupCallCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RealtimeReferCall(const FString& CallId, const FRealtimeReferCall& ReferCall, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->RealtimeCalls()).Append("/").Append(CallId).Append("/refer");
+    auto HttpRequest = MakeRequest(ReferCall, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRealtimeReferCallCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::RealtimeRejectCall(const FString& CallId, const FRealtimeRejectCall& RejectCall, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->RealtimeCalls()).Append("/").Append(CallId).Append("/reject");
+    auto HttpRequest = MakeRequest(RejectCall, URL, "POST", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnRealtimeRejectCallCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 ///////////////////////////// CALLBACKS /////////////////////////////
 
 #define DEFINE_HTTP_CALLBACK(Name)                                                                                    \
@@ -1275,6 +1314,32 @@ void UOpenAIProvider::OnRetrieveSkillVersionContentCompleted(FHttpRequestPtr Req
         LogError("On retrieve skill version content error");
         RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
     }
+}
+
+DEFINE_HTTP_CALLBACK(CreateRealtimeClientSecret)
+
+void UOpenAIProvider::OnRealtimeAcceptCallCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (!Success(Response, WasSuccessful)) return;
+    RealtimeAcceptCallCompleted.Broadcast(Response->GetContentAsString(), GetResponseHeaders(Response));
+}
+
+void UOpenAIProvider::OnRealtimeHangupCallCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (!Success(Response, WasSuccessful)) return;
+    RealtimeHangupCallCompleted.Broadcast(Response->GetContentAsString(), GetResponseHeaders(Response));
+}
+
+void UOpenAIProvider::OnRealtimeReferCallCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (!Success(Response, WasSuccessful)) return;
+    RealtimeReferCallCompleted.Broadcast(Response->GetContentAsString(), GetResponseHeaders(Response));
+}
+
+void UOpenAIProvider::OnRealtimeRejectCallCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    if (!Success(Response, WasSuccessful)) return;
+    RealtimeRejectCallCompleted.Broadcast(Response->GetContentAsString(), GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)

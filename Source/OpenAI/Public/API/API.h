@@ -80,6 +80,8 @@ public:
     virtual FString ChatKitSessions() const = 0;
     virtual FString ChatKitThreads() const = 0;
     virtual FString Skills() const = 0;
+    virtual FString RealtimeClientSecrets() const = 0;
+    virtual FString RealtimeCalls() const = 0;
 };
 
 namespace V1
@@ -113,6 +115,8 @@ public:
     virtual FString ChatKitSessions() const override { return API_URL + "/v1/chatkit/sessions"; }
     virtual FString ChatKitThreads() const override { return API_URL + "/v1/chatkit/threads"; }
     virtual FString Skills() const override { return API_URL + "/v1/skills"; }
+    virtual FString RealtimeClientSecrets() const override { return API_URL + "/v1/realtime/client_secrets"; }
+    virtual FString RealtimeCalls() const override { return API_URL + "/v1/realtime/calls"; }
 
 private:
     const FString API_URL;
@@ -144,6 +148,8 @@ struct FOpenAIEndpoints
     FString ChatKitSessions;
     FString ChatKitThreads;
     FString Skills;
+    FString RealtimeClientSecrets;
+    FString RealtimeCalls;
 };
 
 class GenericAPI : public OpenAI::IAPI
@@ -174,6 +180,8 @@ public:
     virtual FString ChatKitSessions() const override { return OpenAIEndpoints.ChatKitSessions; }
     virtual FString ChatKitThreads() const override { return OpenAIEndpoints.ChatKitThreads; }
     virtual FString Skills() const override { return OpenAIEndpoints.Skills; }
+    virtual FString RealtimeClientSecrets() const override { return OpenAIEndpoints.RealtimeClientSecrets; }
+    virtual FString RealtimeCalls() const override { return OpenAIEndpoints.RealtimeCalls; }
 
 private:
     const FOpenAIEndpoints OpenAIEndpoints;

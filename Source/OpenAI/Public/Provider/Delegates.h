@@ -124,3 +124,10 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListSkillVersionsCompleted, const FListS
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveSkillVersionCompleted, const FSkillVersionResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteSkillVersionCompleted, const FDeleteSkillVersionResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRetrieveSkillVersionContentCompleted, const FSkillContentResponse&, const FOpenAIResponseMetadata&);
+// realtime
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+    FOnCreateRealtimeClientSecretCompleted, const FRealtimeClientSecretResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRealtimeAcceptCallCompleted, const FString&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRealtimeHangupCallCompleted, const FString&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRealtimeReferCallCompleted, const FString&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRealtimeRejectCallCompleted, const FString&, const FOpenAIResponseMetadata&);

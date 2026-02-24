@@ -96,6 +96,12 @@ enum class EAPIOverviewAction : uint8
     DeleteSkillVersion,
     RetrieveSkillVersionContent,
 
+    CreateRealtimeClientSecret,
+    RealtimeAcceptCall,
+    RealtimeHangupCall,
+    RealtimeReferCall,
+    RealtimeRejectCall,
+
     SetYourOwnAPI
 };
 
@@ -213,6 +219,12 @@ private:
     void RetrieveSkillVersion();
     void DeleteSkillVersion();
     void RetrieveSkillVersionContent();
+
+    void CreateRealtimeClientSecret();
+    void RealtimeAcceptCall();
+    void RealtimeHangupCall();
+    void RealtimeReferCall();
+    void RealtimeRejectCall();
 
     void OnRequestError(const FString& URL, const FString& Content);
 
