@@ -9,54 +9,57 @@ permissions:
   pages: write
   deployments: write
   id-token: write
-  
+
 env:
   CONAN_REVISIONS_ENABLED: 1
 
 jobs:
   docs:
     runs-on: windows-latest
-
     environment:
-     name: github-pages
-     url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Check Installed Software
         run: where git & where python & where pip
         shell: cmd
-        
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
       - name: Install Conan
-        run: pip install conan==1.61
+        run: pip install conan>=2.0
 
-      - name: Set Conan Folder
-        run: conan config set storage.path=${{ github.workspace }}\packages
-        
+      - name: Set Conan Home
+        run: echo "CONAN_HOME=${{ github.workspace }}\packages" | Out-File -Append $env:GITHUB_ENV
+        shell: powershell
+
+      - name: Detect Conan Profile
+        run: conan profile detect
+
       - name: Install Doxygen
-        run: conan download doxygen/1.9.4@#19fe2ac34109f3119190869a4d0ffbcb --remote conancenter
+        run: conan install --requires="doxygen/1.16.1" --deployer=full_deploy --deployer-folder="${{ github.workspace }}\packages" -r conancenter
 
       - name: Find Doxygen Executable Path
         run: |
           $doxygenPath = Get-ChildItem -Path "${{ github.workspace }}\packages" -Recurse -Filter doxygen.exe | Select-Object -First 1 -ExpandProperty FullName
           echo "DOXYGEN_EXE_PATH=$doxygenPath" | Out-File -Append $env:GITHUB_ENV
         shell: powershell
-        
+
       - name: Run Doxygen
         run: ${{ env.DOXYGEN_EXE_PATH }} ${{ github.workspace }}\Doxygen\Doxyfile
-        
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v3
         with:
           path: Documentation\html
-        
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
-        
+
       - name: Deploy To GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
