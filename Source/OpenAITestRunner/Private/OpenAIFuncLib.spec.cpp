@@ -34,9 +34,6 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_Ada_002, "text-embedding-ada-002");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4, "gpt-4");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0613, "gpt-4-0613");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::DALL_E_2, "dall-e-2");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::DALL_E_3, "dall-e-3");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_1106_Preview, "gpt-4-1106-preview");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_1106, "gpt-3.5-turbo-1106");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::TTS_1, "tts-1");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::TTS_1_HD, "tts-1-hd");
@@ -45,8 +42,6 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_3_Large, "text-embedding-3-large");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_0125, "gpt-3.5-turbo-0125");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_3_Small, "text-embedding-3-small");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0125_Preview, "gpt-4-0125-preview");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_Turbo_Preview, "gpt-4-turbo-preview");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_05_13, "gpt-4o-2024-05-13");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O, "gpt-4o");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_Turbo_2024_04_09, "gpt-4-turbo-2024-04-09");
@@ -54,25 +49,14 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini, "gpt-4o-mini");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_2024_07_18, "gpt-4o-mini-2024-07-18");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_08_06, "gpt-4o-2024-08-06");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview, "gpt-4o-audio-preview");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Realtime_Preview, "gpt-4o-realtime-preview");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(
-                        EAllModelEnum::GPT_4O_Mini_Realtime_Preview_2024_12_17, "gpt-4o-mini-realtime-preview-2024-12-17");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Realtime_Preview, "gpt-4o-mini-realtime-preview");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(
-                        EAllModelEnum::GPT_4O_Mini_Audio_Preview_2024_12_17, "gpt-4o-mini-audio-preview-2024-12-17");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Audio_Preview, "gpt-4o-mini-audio-preview");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Omni_Moderation_Latest, "omni-moderation-latest");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Omni_Moderation_2024_09_26, "omni-moderation-2024-09-26");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview_2024_12_17, "gpt-4o-audio-preview-2024-12-17");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1, "o1");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O1_2024_12_17, "o1-2024-12-17");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Mini_2025_01_31, "o3-mini-2025-01-31");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Mini, "o3-mini");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_2024_11_20, "gpt-4o-2024-11-20");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Realtime_Preview_2024_12_17, "gpt-4o-realtim-preview-2024-12-17");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini_Deep_Research, "o4-mini-deep-research");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Audio_Preview_2025_06_03, "gpt-4o-audio-preview-2025-06-03");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Transcribe, "gpt-4o-mini-transcribe");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_TTS, "gpt-4o-mini-tts");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Search_Preview, "gpt-4o-mini-search-preview");
@@ -94,10 +78,7 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_1, "gpt-image-1");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Computer_Use_Preview, "computer-use-preview");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Computer_Use_Preview_2025_03_11, "computer-use-preview-2025-03-11");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(
-                        EAllModelEnum::GPT_4O_Realtime_Preview_2025_06_03, "gpt-4o-realtime-preview-2025-06-03");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O4_Mini_Deep_Research_2025_06_26, "o4-mini-deep-research-2025-06-26");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0314, "gpt-4-0314");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Nano_2025_08_07, "gpt-5-nano-2025-08-07");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Sora_2, "sora-2");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Sora_2_Pro, "sora-2-pro");
