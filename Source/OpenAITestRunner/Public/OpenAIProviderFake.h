@@ -23,6 +23,7 @@ public:
         static TArray<uint8> None;
         return None;
     }
+    virtual TArray<uint8> TakeContent() override { return TArray<uint8>(); }
     virtual const FString& GetEffectiveURL() const override { return EffectiveURL; }
     virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::Succeeded; }
     virtual EHttpFailureReason GetFailureReason() const override { return EHttpFailureReason::None; }

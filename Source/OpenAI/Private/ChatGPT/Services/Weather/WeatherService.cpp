@@ -56,33 +56,33 @@ FString UWeatherService::MakeFunction() const
     */
 
     TSharedPtr<FJsonObject> MainObj = MakeShareable(new FJsonObject());
-    MainObj->SetStringField("type", "object");
+    MainObj->SetStringField(TEXT("type"), "object");
 
     TSharedPtr<FJsonObject> Props = MakeShareable(new FJsonObject());
 
     // location
     TSharedPtr<FJsonObject> LocationObj = MakeShareable(new FJsonObject());
-    LocationObj->SetStringField("type", "string");
-    LocationObj->SetStringField("description",
+    LocationObj->SetStringField(TEXT("type"), "string");
+    LocationObj->SetStringField(TEXT("description"),
         "The city and state, e.g. SanFrancisco, CA; Convert city name to English if necessary; don't use spaces in the parameter");
-    Props->SetObjectField("location", LocationObj);
+    Props->SetObjectField(TEXT("location"), LocationObj);
 
     // unit
     TSharedPtr<FJsonObject> UnitObj = MakeShareable(new FJsonObject());
-    UnitObj->SetStringField("type", "string");
+    UnitObj->SetStringField(TEXT("type"), "string");
     TArray<TSharedPtr<FJsonValue>> EnumArray;
     EnumArray.Add(MakeShareable(new FJsonValueString("celsius")));
     EnumArray.Add(MakeShareable(new FJsonValueString("fahrenheit")));
-    UnitObj->SetArrayField("enum", EnumArray);
-    Props->SetObjectField("unit", UnitObj);
+    UnitObj->SetArrayField(TEXT("enum"), EnumArray);
+    Props->SetObjectField(TEXT("unit"), UnitObj);
 
-    MainObj->SetObjectField("properties", Props);
+    MainObj->SetObjectField(TEXT("properties"), Props);
 
     // required params
     TArray<TSharedPtr<FJsonValue>> RequiredArray;
     RequiredArray.Add(MakeShareable(new FJsonValueString("location")));
     RequiredArray.Add(MakeShareable(new FJsonValueString("unit")));
-    MainObj->SetArrayField("required", RequiredArray);
+    MainObj->SetArrayField(TEXT("required"), RequiredArray);
 
     return UJsonFuncLib::MakeFunctionsString(MainObj);
 }

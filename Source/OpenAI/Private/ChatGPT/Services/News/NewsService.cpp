@@ -68,25 +68,25 @@ FString UNewsService::MakeFunction() const
     */
 
     TSharedPtr<FJsonObject> MainObj = MakeShareable(new FJsonObject());
-    MainObj->SetStringField("type", "object");
+    MainObj->SetStringField(TEXT("type"), "object");
 
     TSharedPtr<FJsonObject> Props = MakeShareable(new FJsonObject());
 
     // query
     TSharedPtr<FJsonObject> QueryObj = MakeShareable(new FJsonObject());
-    QueryObj->SetStringField("type", "string");
-    QueryObj->SetStringField("description", "Freeform keywords or a phrase to search for. Convert to English if necessary");
-    Props->SetObjectField("query", QueryObj);
+    QueryObj->SetStringField(TEXT("type"), "string");
+    QueryObj->SetStringField(TEXT("description"), "Freeform keywords or a phrase to search for. Convert to English if necessary");
+    Props->SetObjectField(TEXT("query"), QueryObj);
 
     // country
     TSharedPtr<FJsonObject> CountryObj = MakeShareable(new FJsonObject());
-    CountryObj->SetStringField("type", "string");
-    CountryObj->SetStringField("description", "The 2-letter ISO 3166-1 code of the country you want to get headlines for");
-    Props->SetObjectField("country", CountryObj);
+    CountryObj->SetStringField(TEXT("type"), "string");
+    CountryObj->SetStringField(TEXT("description"), "The 2-letter ISO 3166-1 code of the country you want to get headlines for");
+    Props->SetObjectField(TEXT("country"), CountryObj);
 
     // category
     TSharedPtr<FJsonObject> CategoryObj = MakeShareable(new FJsonObject());
-    CategoryObj->SetStringField("type", "string");
+    CategoryObj->SetStringField(TEXT("type"), "string");
 
     TArray<TSharedPtr<FJsonValue>> EnumArray;
     EnumArray.Add(MakeShareable(new FJsonValueString("entertainment")));
@@ -95,15 +95,15 @@ FString UNewsService::MakeFunction() const
     EnumArray.Add(MakeShareable(new FJsonValueString("technology")));
     EnumArray.Add(MakeShareable(new FJsonValueString("sports")));
     EnumArray.Add(MakeShareable(new FJsonValueString("arts")));
-    CategoryObj->SetStringField("description", "The category you want to get headlines for");
-    CategoryObj->SetArrayField("enum", EnumArray);
-    Props->SetObjectField("category", CategoryObj);
+    CategoryObj->SetStringField(TEXT("description"), "The category you want to get headlines for");
+    CategoryObj->SetArrayField(TEXT("enum"), EnumArray);
+    Props->SetObjectField(TEXT("category"), CategoryObj);
 
-    MainObj->SetObjectField("properties", Props);
+    MainObj->SetObjectField(TEXT("properties"), Props);
 
     // required params
     TArray<TSharedPtr<FJsonValue>> RequiredArray;
-    MainObj->SetArrayField("required", RequiredArray);
+    MainObj->SetArrayField(TEXT("required"), RequiredArray);
 
     return UJsonFuncLib::MakeFunctionsString(MainObj);
 }

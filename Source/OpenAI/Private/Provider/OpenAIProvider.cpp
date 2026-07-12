@@ -633,7 +633,7 @@ void UOpenAIProvider::CreateVectorStoreFile(const FString& VectorStoreId, const 
 {
     const auto URL = FString(API->VectorStores()).Append("/").Append(VectorStoreId).Append("/files");
     TSharedPtr<FJsonObject> Json = MakeShareable(new FJsonObject());
-    Json->SetStringField("file_id", FileId);
+    Json->SetStringField(TEXT("file_id"), FileId);
     FString RequestBodyStr;
     UJsonFuncLib::JsonToString(Json, RequestBodyStr);
 

@@ -18,7 +18,7 @@ void ConvertObjectKeysToLowercase(TSharedPtr<FJsonObject> JsonObject)
 
     for (const auto& Elem : JsonObject->Values)
     {
-        const FString LowerKey = Elem.Key.ToLower();
+        const FString LowerKey = FString(Elem.Key.ToView()).ToLower();
         ConvertKeysToLowercaseRecursive(Elem.Value);
         NewJsonObject->SetField(LowerKey, Elem.Value);
     }
@@ -146,7 +146,7 @@ void UJsonFuncLib::RemoveNullFields(const TSharedPtr<FJsonObject>& JsonObject)
     {
         if (Value->Type == EJson::Null)
         {
-            KeysToRemove.Add(Key);
+            KeysToRemove.Add(FString(Key.ToView()));
         }
         else if (Value->Type == EJson::Object)
         {
@@ -173,7 +173,10 @@ void UJsonFuncLib::RemoveNullFields(const TSharedPtr<FJsonObject>& JsonObject)
 void UJsonFuncLib::RemoveOptionalValuesInJsonObject(const TSharedPtr<FJsonObject>& JsonObject)
 {
     TArray<FString> FieldNames;
-    JsonObject->Values.GetKeys(FieldNames);
+    for (const auto& Elem : JsonObject->Values)
+    {
+        FieldNames.Add(FString(Elem.Key.ToView()));
+    }
 
     for (const FString& FieldName : FieldNames)
     {
@@ -246,11 +249,11 @@ void UJsonFuncLib::RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject)
             ProcessJsonArrayRemovingEmptyArrays(MutableArray);
             if (MutableArray.Num() == 0)
             {
-                KeysToRemove.Add(Key);
+                KeysToRemove.Add(FString(Key.ToView()));
             }
             else
             {
-                UpdatedNotEmptyAtrrays.Add(Key, MutableArray);
+                UpdatedNotEmptyAtrrays.Add(FString(Key.ToView()), MutableArray);
             }
         }
         else if (JsonValue->Type == EJson::Object)

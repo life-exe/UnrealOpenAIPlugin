@@ -42,21 +42,21 @@ FString UWorldTimeService::MakeFunction() const
     */
 
     TSharedPtr<FJsonObject> ParamsObj = MakeShareable(new FJsonObject());
-    ParamsObj->SetStringField("type", "object");
+    ParamsObj->SetStringField(TEXT("type"), "object");
 
     TSharedPtr<FJsonObject> PropsObj = MakeShareable(new FJsonObject());
 
     // location
     TSharedPtr<FJsonObject> LocationObj = MakeShareable(new FJsonObject());
-    LocationObj->SetStringField("type", "string");
-    LocationObj->SetStringField("description", "Location in format /:area/:location[/:region], for example: America/Argentina/Salta or "
+    LocationObj->SetStringField(TEXT("type"), "string");
+    LocationObj->SetStringField(TEXT("description"), "Location in format /:area/:location[/:region], for example: America/Argentina/Salta or "
                                                "Europe/London. Location should be empty if you don't know where the user is.");
-    PropsObj->SetObjectField("location", LocationObj);
+    PropsObj->SetObjectField(TEXT("location"), LocationObj);
 
-    ParamsObj->SetObjectField("properties", PropsObj);
+    ParamsObj->SetObjectField(TEXT("properties"), PropsObj);
 
     TArray<TSharedPtr<FJsonValue>> RequiredArray;
-    ParamsObj->SetArrayField("required", RequiredArray);
+    ParamsObj->SetArrayField(TEXT("required"), RequiredArray);
 
     return UJsonFuncLib::MakeFunctionsString(ParamsObj);
 }

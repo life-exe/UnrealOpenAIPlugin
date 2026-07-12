@@ -30,12 +30,12 @@ void FJsonFuncLib::Define()
                 [this]()
                 {
                     TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
-                    JsonObject->SetStringField("String", "value");
-                    JsonObject->SetStringField("STrinG_NEW", "VALUE");
+                    JsonObject->SetStringField(TEXT("String"), "value");
+                    JsonObject->SetStringField(TEXT("STrinG_NEW"), "VALUE");
 
                     TSharedPtr<FJsonObject> JsonSubObject = MakeShareable(new FJsonObject());
-                    JsonSubObject->SetStringField("SUBObJect", "vaLue");
-                    JsonObject->SetObjectField("ObjecT_NEW", JsonSubObject);
+                    JsonSubObject->SetStringField(TEXT("SUBObJect"), "vaLue");
+                    JsonObject->SetObjectField(TEXT("ObjecT_NEW"), JsonSubObject);
 
                     FString ResultString;
                     TestTrueExpr(UJsonFuncLib::JsonToString(JsonObject, ResultString));
@@ -50,11 +50,11 @@ void FJsonFuncLib::Define()
                 {
                     TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
                     TArray<TSharedPtr<FJsonValue>> Array;
-                    JsonObject->SetArrayField("EmptyArray", Array);
+                    JsonObject->SetArrayField(TEXT("EmptyArray"), Array);
 
                     TSharedPtr<FJsonValue> ArrayElem = MakeShareable(new FJsonValueNumber(10));
                     Array.Add(ArrayElem);
-                    JsonObject->SetArrayField("Array", Array);
+                    JsonObject->SetArrayField(TEXT("Array"), Array);
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
@@ -74,7 +74,7 @@ void FJsonFuncLib::Define()
 
                     OuterArray.Add(MakeShareable(new FJsonValueArray(InnerArray)));
                     OuterArray.Add(MakeShareable(new FJsonValueNumber(10)));
-                    JsonObject->SetArrayField("NestedArray", OuterArray);
+                    JsonObject->SetArrayField(TEXT("NestedArray"), OuterArray);
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
@@ -98,7 +98,7 @@ void FJsonFuncLib::Define()
                     OuterArray.Add(MakeShareable(new FJsonValueArray(InnerArray2)));  // Empty inner array 2
                     OuterArray.Add(MakeShareable(new FJsonValueNumber(25)));          // Number element
 
-                    JsonObject->SetArrayField("MultipleNestedEmptyArrays", OuterArray);
+                    JsonObject->SetArrayField(TEXT("MultipleNestedEmptyArrays"), OuterArray);
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
@@ -124,7 +124,7 @@ void FJsonFuncLib::Define()
                     OuterArray.Add(MakeShareable(new FJsonValueArray(InnerArray2)));  // Non-empty inner array 2
                     OuterArray.Add(MakeShareable(new FJsonValueNumber(42)));          // Number element
 
-                    JsonObject->SetArrayField("MixedNestedArrays", OuterArray);
+                    JsonObject->SetArrayField(TEXT("MixedNestedArrays"), OuterArray);
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
@@ -148,7 +148,7 @@ void FJsonFuncLib::Define()
                     OuterArray.Add(MakeShareable(new FJsonValueArray(InnerArray)));    // Nested empty array
                     OuterArray.Add(MakeShareable(new FJsonValueNumber(100)));          // Number element
 
-                    JsonObject->SetArrayField("DeeplyNestedEmptyArrays", OuterArray);
+                    JsonObject->SetArrayField(TEXT("DeeplyNestedEmptyArrays"), OuterArray);
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
@@ -173,7 +173,7 @@ void FJsonFuncLib::Define()
                     OuterArray.Add(MakeShareable(new FJsonValueArray(MidArray)));  // Nested arrays
                     OuterArray.Add(MakeShareable(new FJsonValueNumber(50)));       // Number element
 
-                    JsonObject->SetArrayField("MultipleLevelsOfNesting", OuterArray);
+                    JsonObject->SetArrayField(TEXT("MultipleLevelsOfNesting"), OuterArray);
 
                     UJsonFuncLib::RemoveEmptyArrays(JsonObject);
 
@@ -188,11 +188,11 @@ void FJsonFuncLib::Define()
                 [this]()
                 {
                     TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
-                    JsonObject->SetStringField("value", "string");
-                    JsonObject->SetStringField("isset", "false");
+                    JsonObject->SetStringField(TEXT("value"), "string");
+                    JsonObject->SetStringField(TEXT("isset"), "false");
 
                     TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
-                    RootJsonObject->SetObjectField("object", JsonObject);
+                    RootJsonObject->SetObjectField(TEXT("object"), JsonObject);
 
                     FString ResultString;
                     TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
@@ -207,11 +207,11 @@ void FJsonFuncLib::Define()
                 [this]()
                 {
                     TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
-                    JsonObject->SetStringField("value", "string");
-                    JsonObject->SetStringField("isset", "true");
+                    JsonObject->SetStringField(TEXT("value"), "string");
+                    JsonObject->SetStringField(TEXT("isset"), "true");
 
                     TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
-                    RootJsonObject->SetObjectField("object", JsonObject);
+                    RootJsonObject->SetObjectField(TEXT("object"), JsonObject);
 
                     FString ResultString;
                     TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
@@ -226,12 +226,12 @@ void FJsonFuncLib::Define()
                 [this]()
                 {
                     TSharedPtr<FJsonObject> InnerObject = MakeShareable(new FJsonObject());
-                    InnerObject->SetStringField("anchor", "created_at");
-                    InnerObject->SetNumberField("seconds", 3600);
-                    InnerObject->SetBoolField("isset", false);
+                    InnerObject->SetStringField(TEXT("anchor"), "created_at");
+                    InnerObject->SetNumberField(TEXT("seconds"), 3600);
+                    InnerObject->SetBoolField(TEXT("isset"), false);
 
                     TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
-                    RootJsonObject->SetObjectField("expires_after", InnerObject);
+                    RootJsonObject->SetObjectField(TEXT("expires_after"), InnerObject);
 
                     FString ResultString;
                     TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));
@@ -246,12 +246,12 @@ void FJsonFuncLib::Define()
                 [this]()
                 {
                     TSharedPtr<FJsonObject> InnerObject = MakeShareable(new FJsonObject());
-                    InnerObject->SetStringField("anchor", "created_at");
-                    InnerObject->SetNumberField("seconds", 3600);
-                    InnerObject->SetBoolField("isset", true);
+                    InnerObject->SetStringField(TEXT("anchor"), "created_at");
+                    InnerObject->SetNumberField(TEXT("seconds"), 3600);
+                    InnerObject->SetBoolField(TEXT("isset"), true);
 
                     TSharedPtr<FJsonObject> RootJsonObject = MakeShareable(new FJsonObject());
-                    RootJsonObject->SetObjectField("expires_after", InnerObject);
+                    RootJsonObject->SetObjectField(TEXT("expires_after"), InnerObject);
 
                     FString ResultString;
                     TestTrueExpr(UJsonFuncLib::JsonToString(RootJsonObject, ResultString));

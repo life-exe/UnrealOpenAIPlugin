@@ -36,28 +36,28 @@ FString UQuestService::MakeFunction() const
     */
 
     TSharedPtr<FJsonObject> ParamsObj = MakeShareable(new FJsonObject());
-    ParamsObj->SetStringField("type", "object");
+    ParamsObj->SetStringField(TEXT("type"), "object");
 
     TSharedPtr<FJsonObject> PropsObj = MakeShareable(new FJsonObject());
 
     // character name
     TSharedPtr<FJsonObject> NameObj = MakeShareable(new FJsonObject());
-    NameObj->SetStringField("type", "string");
-    NameObj->SetStringField("description", "Name of the character of my Alien Rampage Saga.");
-    PropsObj->SetObjectField("name", NameObj);
+    NameObj->SetStringField(TEXT("type"), "string");
+    NameObj->SetStringField(TEXT("description"), "Name of the character of my Alien Rampage Saga.");
+    PropsObj->SetObjectField(TEXT("name"), NameObj);
 
     // ability
     TSharedPtr<FJsonObject> AbilityObj = MakeShareable(new FJsonObject());
-    AbilityObj->SetStringField("type", "boolean");
-    AbilityObj->SetStringField("description", "Set this to true if you want to know what skills the character has.");
-    PropsObj->SetObjectField("ability", AbilityObj);
+    AbilityObj->SetStringField(TEXT("type"), "boolean");
+    AbilityObj->SetStringField(TEXT("description"), "Set this to true if you want to know what skills the character has.");
+    PropsObj->SetObjectField(TEXT("ability"), AbilityObj);
 
-    ParamsObj->SetObjectField("properties", PropsObj);
+    ParamsObj->SetObjectField(TEXT("properties"), PropsObj);
 
     TArray<TSharedPtr<FJsonValue>> RequiredArray;
     RequiredArray.Add(MakeShareable(new FJsonValueString("name")));
 
-    ParamsObj->SetArrayField("required", RequiredArray);
+    ParamsObj->SetArrayField(TEXT("required"), RequiredArray);
 
     return UJsonFuncLib::MakeFunctionsString(ParamsObj);
 }
