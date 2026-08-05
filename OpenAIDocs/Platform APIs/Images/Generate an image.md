@@ -1,4 +1,4 @@
-## Generate
+## Create image
 
 **post** `/images/generations`
 
@@ -30,7 +30,7 @@ Creates an image given a prompt. [Learn more](/docs/guides/images).
 
   The model to use for image generation. One of `dall-e-2`, `dall-e-3`, or a GPT image model (`gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`). Defaults to `dall-e-2` unless a parameter specific to the GPT image models is used.
 
-  - `UnionMember0 = string`
+  - `string`
 
   - `ImageModel = "gpt-image-1.5" or "dall-e-2" or "dall-e-3" or 2 more`
 
@@ -108,25 +108,31 @@ Creates an image given a prompt. [Learn more](/docs/guides/images).
 
   - `"b64_json"`
 
-- `size: optional "auto" or "1024x1024" or "1536x1024" or 5 more`
+- `size: optional string or "auto" or "1024x1024" or "1536x1024" or 5 more`
 
-  The size of the generated images. Must be one of `1024x1024`, `1536x1024` (landscape), `1024x1536` (portrait), or `auto` (default value) for the GPT image models, one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`, and one of `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3`.
+  The size of the generated images. For `gpt-image-2` and `gpt-image-2-2026-04-21`, arbitrary resolutions are supported as `WIDTHxHEIGHT` strings, for example `1536x864`. Width and height must both be divisible by 16 and the requested aspect ratio must be between 1:3 and 3:1. Resolutions above `2560x1440` are experimental, and the maximum supported resolution is `3840x2160`. The requested size must also satisfy the model's current pixel and edge limits. The standard sizes `1024x1024`, `1536x1024`, and `1024x1536` are supported by the GPT image models; `auto` is supported for models that allow automatic sizing. For `dall-e-2`, use one of `256x256`, `512x512`, or `1024x1024`. For `dall-e-3`, use one of `1024x1024`, `1792x1024`, or `1024x1792`.
 
-  - `"auto"`
+  - `string`
 
-  - `"1024x1024"`
+  - `"auto" or "1024x1024" or "1536x1024" or 5 more`
 
-  - `"1536x1024"`
+    The size of the generated images. For `gpt-image-2` and `gpt-image-2-2026-04-21`, arbitrary resolutions are supported as `WIDTHxHEIGHT` strings, for example `1536x864`. Width and height must both be divisible by 16 and the requested aspect ratio must be between 1:3 and 3:1. Resolutions above `2560x1440` are experimental, and the maximum supported resolution is `3840x2160`. The requested size must also satisfy the model's current pixel and edge limits. The standard sizes `1024x1024`, `1536x1024`, and `1024x1536` are supported by the GPT image models; `auto` is supported for models that allow automatic sizing. For `dall-e-2`, use one of `256x256`, `512x512`, or `1024x1024`. For `dall-e-3`, use one of `1024x1024`, `1792x1024`, or `1024x1792`.
 
-  - `"1024x1536"`
+    - `"auto"`
 
-  - `"256x256"`
+    - `"1024x1024"`
 
-  - `"512x512"`
+    - `"1536x1024"`
 
-  - `"1792x1024"`
+    - `"1024x1536"`
 
-  - `"1024x1792"`
+    - `"256x256"`
+
+    - `"512x512"`
+
+    - `"1792x1024"`
+
+    - `"1024x1792"`
 
 - `stream: optional boolean`
 
@@ -148,7 +154,7 @@ Creates an image given a prompt. [Learn more](/docs/guides/images).
 
 ### Returns
 
-- `ImagesResponse = object { created, background, data, 4 more }`
+- `ImagesResponse object { created, background, data, 4 more }`
 
   The response from the image generation endpoint.
 
@@ -266,8 +272,101 @@ curl https://api.openai.com/v1/images/generations \
           "partial_images": 1,
           "quality": "medium",
           "response_format": "url",
-          "size": "1024x1024",
           "style": "vivid",
           "user": "user-1234"
         }'
+```
+
+#### Response
+
+```json
+{
+  "created": 0,
+  "background": "transparent",
+  "data": [
+    {
+      "b64_json": "b64_json",
+      "revised_prompt": "revised_prompt",
+      "url": "https://example.com"
+    }
+  ],
+  "output_format": "png",
+  "quality": "low",
+  "size": "1024x1024",
+  "usage": {
+    "input_tokens": 0,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 0
+    },
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "output_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 0
+    }
+  }
+}
+```
+
+### Generate image
+
+```http
+curl https://api.openai.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+    "model": "gpt-image-1.5",
+    "prompt": "A cute baby sea otter",
+    "n": 1,
+    "size": "1024x1024"
+  }'
+```
+
+#### Response
+
+```json
+{
+  "created": 1713833628,
+  "data": [
+    {
+      "b64_json": "..."
+    }
+  ],
+  "usage": {
+    "total_tokens": 100,
+    "input_tokens": 50,
+    "output_tokens": 50,
+    "input_tokens_details": {
+      "text_tokens": 10,
+      "image_tokens": 40
+    }
+  }
+}
+```
+
+### Streaming
+
+```http
+curl https://api.openai.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+    "model": "gpt-image-1.5",
+    "prompt": "A cute baby sea otter",
+    "n": 1,
+    "size": "1024x1024",
+    "stream": true
+  }' \
+  --no-buffer
+```
+
+#### Response
+
+```json
+event: image_generation.partial_image
+data: {"type":"image_generation.partial_image","b64_json":"...","partial_image_index":0}
+
+event: image_generation.completed
+data: {"type":"image_generation.completed","b64_json":"...","usage":{"total_tokens":100,"input_tokens":50,"output_tokens":50,"input_tokens_details":{"text_tokens":10,"image_tokens":40}}}
 ```
