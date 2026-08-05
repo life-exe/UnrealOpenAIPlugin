@@ -341,7 +341,6 @@ void AAPIOverview::CreateImageEdit()
     ImageEdit.N = 1;
     ImageEdit.Prompt = "Draw a hat";
     ImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-    ImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
 
     Provider->CreateImageEdit(ImageEdit, Auth);
 }
@@ -366,7 +365,7 @@ void AAPIOverview::CreateImageVariation()
     ImageVariation.Image = FPaths::ConvertRelativePathToFull(ImageFilePath);
     ImageVariation.N = 1;
     ImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-    ImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
+    ImageVariation.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
 
     Provider->CreateImageVariation(ImageVariation, Auth);
 }

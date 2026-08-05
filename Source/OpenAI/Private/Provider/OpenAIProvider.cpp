@@ -17,6 +17,12 @@ DEFINE_LOG_CATEGORY_STATIC(LogOpenAIProvider, All, All);
 
 using namespace OpenAI;
 
+namespace
+{
+// @todo: make this an API parameter
+constexpr float LongRunningRequestTimeoutSeconds = 60.0f * 5.0f;  // 5 mins
+}
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 UOpenAIProvider::UOpenAIProvider() : API(MakeShared<OpenAI::V1::OpenAIAPI>())  //
@@ -95,9 +101,7 @@ void UOpenAIProvider::CreateImage(const FOpenAIImage& Image, const FOpenAIAuth& 
     check(!Image.Prompt.IsEmpty());
 
     auto HttpRequest = MakeRequest(Image, API->ImageGenerations(), "POST", Auth);
-    // @todo: make this an API parameter
-    const float timeoutSeconds = 60.0f * 5.0f;  // 5 mins
-    HttpRequest->SetActivityTimeout(timeoutSeconds);
+    HttpRequest->SetActivityTimeout(LongRunningRequestTimeoutSeconds);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateImageCompleted);
     ProcessRequest(HttpRequest);
 }
@@ -126,7 +130,6 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     RequestContent.Append(HttpHelper::AddMIME("prompt", ImageEdit.Prompt, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("n", FString::FromInt(ImageEdit.N), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("size", ImageEdit.Size, BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("response_format", ImageEdit.Response_Format, BeginBoundary));
     if (ImageEdit.User.IsSet)
     {
         RequestContent.Append(HttpHelper::AddMIME("user", ImageEdit.User.Value, BeginBoundary));
@@ -134,6 +137,8 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
     HttpRequest->SetContent(RequestContent);
+    // GPT image models can take noticeably longer than the default HTTP timeout to edit an image.
+    HttpRequest->SetActivityTimeout(LongRunningRequestTimeoutSeconds);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateImageEditCompleted);
     ProcessRequest(HttpRequest);
 }
@@ -152,7 +157,10 @@ void UOpenAIProvider::CreateImageVariation(const FOpenAIImageVariation& ImageVar
     RequestContent.Append(HttpHelper::AddMIMEFile(ImageVariation.Image, "image", BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("n", FString::FromInt(ImageVariation.N), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("size", ImageVariation.Size, BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("response_format", ImageVariation.Response_Format, BeginBoundary));
+    if (ImageVariation.Response_Format.IsSet)
+    {
+        RequestContent.Append(HttpHelper::AddMIME("response_format", ImageVariation.Response_Format.Value, BeginBoundary));
+    }
     if (ImageVariation.User.IsSet)
     {
         RequestContent.Append(HttpHelper::AddMIME("user", ImageVariation.User.Value, BeginBoundary));
@@ -160,6 +168,7 @@ void UOpenAIProvider::CreateImageVariation(const FOpenAIImageVariation& ImageVar
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
     HttpRequest->SetContent(RequestContent);
+    HttpRequest->SetActivityTimeout(LongRunningRequestTimeoutSeconds);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateImageVariationCompleted);
     ProcessRequest(HttpRequest);
 }

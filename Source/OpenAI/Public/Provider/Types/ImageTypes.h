@@ -306,14 +306,6 @@ struct FOpenAIImageEdit
     FString Quality{"auto"};
 
     /**
-      The format in which the generated images are returned. Must be one of url or b64_json.
-      URLs are only valid for 60 minutes after the image has been generated.
-      This parameter is only supported for dall-e-2, as gpt-image-1 will always return base64-encoded images.
-    */
-    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Response_Format{"url"};
-
-    /**
       The size of the generated images.
       Must be one of 1024x1024, 1536x1024 (landscape), 1024x1536 (portrait), or auto (default value) for gpt-image-1,
       and one of 256x256, 512x512, or 1024x1024 for dall-e-2.
@@ -366,7 +358,7 @@ struct FOpenAIImageVariation
       URLs are only valid for 60 minutes after the image has been generated.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FString Response_Format{"url"};
+    FOptionalString Response_Format{};
 
     /**
       The size of the generated images. Must be one of 256x256, 512x512, or 1024x1024.

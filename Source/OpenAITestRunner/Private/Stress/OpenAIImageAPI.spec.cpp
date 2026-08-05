@@ -37,6 +37,22 @@ void TestImageResponse(FAutomationTestBase* Test, const TArray<FImageObject>& Da
         Test->TestTrue("Image url should be valud", TestUtils::IsValidURL(Image.URL));
     }
 }
+
+// GPT image models always return base64-encoded images, never a URL.
+void TestGptImageResponse(FAutomationTestBase* Test, const TArray<FImageObject>& Data, int32 Num)
+{
+    if (!Test)
+    {
+        UE_LOGFMT(LogOpenAIImageAPI, Error, "Automation test object is invalid");
+        return;
+    }
+
+    Test->TestTrue("Images amount should be valid", Data.Num() == Num);
+    for (const auto& Image : Data)
+    {
+        Test->TestFalse("Image b64_json should not be empty", Image.B64_JSON.IsEmpty());
+    }
+}
 }  // namespace
 
 void FOpenAIProviderImage::Define()
@@ -58,49 +74,48 @@ void FOpenAIProviderImage::Define()
                         });
                     RequestCompleted = false;
                 });
-            It("Image.CreateImageRequestShouldResponseCorrectly.Dalle2",
+            // dall-e-2 has been retired from the Images API (OpenAI now returns "The model 'dall-e-2' does not exist"),
+            // so this scenario is covered against gpt-image-1 instead.
+            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1_MultipleImages",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
                         [&](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
-                            TestImageResponse(this, Response.Data, 2);
+                            TestGptImageResponse(this, Response.Data, 2);
                             RequestCompleted = true;
                         });
 
                     FOpenAIImage OpenAIImage;
-                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2);
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
                     OpenAIImage.N = 2;
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
-                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-                    OpenAIImage.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
+                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
 
                     OpenAIProvider->CreateImage(OpenAIImage, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Image.CreateImageRequestShouldResponseCorrectly.Dalle3",
+            // dall-e-3 has been retired from the Images API (OpenAI now returns "The model 'dall-e-3' does not exist"),
+            // so this scenario is covered against gpt-image-1 instead.
+            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1_LandscapeSize",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
                         [&](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
-                            TestImageResponse(this, Response.Data, 1);
-                            TestTrueExpr(!Response.Data[0].Revised_Prompt.IsEmpty());
+                            TestGptImageResponse(this, Response.Data, 1);
                             RequestCompleted = true;
                         });
 
                     FOpenAIImage OpenAIImage;
-                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
-                    OpenAIImage.N = 1;  // only one image is now supported.
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+                    OpenAIImage.N = 1;
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
-                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
-                    OpenAIImage.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(
-                        EOpenAIImageFormat::URL));  // B64_JSON is not currently supported by the plugin.
-                    OpenAIImage.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard));
-                    OpenAIImage.Style.Set(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural));
+                    OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1536x1024);
+                    OpenAIImage.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::High));
 
                     OpenAIProvider->CreateImage(OpenAIImage, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
@@ -132,6 +147,10 @@ void FOpenAIProviderImage::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
+            // KNOWN FAILING: OpenAI has removed the /v1/images/variations route from its API gateway entirely
+            // (a request to it now 404s with the exact same generic, header-less response as a nonexistent path,
+            // regardless of model) even though it is still documented. There is no model swap that fixes this;
+            // the endpoint itself is gone on OpenAI's side.
             It("Image.CreateImageVariationRequestShouldResponseCorrectly.Dalle2",
                 [this]()
                 {
@@ -147,30 +166,32 @@ void FOpenAIProviderImage::Define()
                     OpenAIImageVariation.N = 2;
                     OpenAIImageVariation.Image = TestUtils::FileFullPath("whale.png");
                     OpenAIImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-                    OpenAIImageVariation.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
+                    OpenAIImageVariation.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
 
                     OpenAIProvider->CreateImageVariation(OpenAIImageVariation, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Image.CreateImageEditRequestShouldResponseCorrectly.Dalle2",
+            // dall-e-2 has been retired from the Images API (OpenAI now returns "The model 'dall-e-2' does not exist"),
+            // so this scenario is covered against gpt-image-1 instead.
+            It("Image.CreateImageEditRequestShouldResponseCorrectly.GptImage1",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageEditCompleted().AddLambda(
                         [&](const FImageEditResponse& Response, const FOpenAIResponseMetadata& Metadata)
                         {
                             TestTrueExpr(Response.Created > 0);
-                            TestImageResponse(this, Response.Data, 2);
+                            TestGptImageResponse(this, Response.Data, 2);
                             RequestCompleted = true;
                         });
 
                     FOpenAIImageEdit OpenAIImageEdit;
+                    OpenAIImageEdit.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
                     OpenAIImageEdit.N = 2;
                     OpenAIImageEdit.Image.Add(TestUtils::FileFullPath("whale.png"));
                     OpenAIImageEdit.Mask = TestUtils::FileFullPath("whale_mask.png");
                     OpenAIImageEdit.Prompt = "put the hat on the whale's head";
-                    OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-                    OpenAIImageEdit.Response_Format = UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL);
+                    OpenAIImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
 
                     OpenAIProvider->CreateImageEdit(OpenAIImageEdit, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
