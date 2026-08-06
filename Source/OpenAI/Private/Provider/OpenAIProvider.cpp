@@ -21,7 +21,7 @@ namespace
 {
 // @todo: make this an API parameter
 constexpr float LongRunningRequestTimeoutSeconds = 60.0f * 5.0f;  // 5 mins
-}
+}  // namespace
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 

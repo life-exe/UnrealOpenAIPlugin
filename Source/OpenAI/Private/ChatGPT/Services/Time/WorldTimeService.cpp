@@ -49,8 +49,9 @@ FString UWorldTimeService::MakeFunction() const
     // location
     TSharedPtr<FJsonObject> LocationObj = MakeShareable(new FJsonObject());
     LocationObj->SetStringField(TEXT("type"), "string");
-    LocationObj->SetStringField(TEXT("description"), "Location in format /:area/:location[/:region], for example: America/Argentina/Salta or "
-                                               "Europe/London. Location should be empty if you don't know where the user is.");
+    LocationObj->SetStringField(TEXT("description"),
+        "Location in format /:area/:location[/:region], for example: America/Argentina/Salta or "
+        "Europe/London. Location should be empty if you don't know where the user is.");
     PropsObj->SetObjectField(TEXT("location"), LocationObj);
 
     ParamsObj->SetObjectField(TEXT("properties"), PropsObj);
