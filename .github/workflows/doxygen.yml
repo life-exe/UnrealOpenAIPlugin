@@ -41,7 +41,7 @@ jobs:
         run: conan profile detect
 
       - name: Install Doxygen
-        run: conan install --requires="doxygen/1.16.1" --deployer=full_deploy --deployer-folder="${{ github.workspace }}\packages" -r conancenter -s compiler.cppstd=17
+        run: conan install --requires="doxygen/1.16.1" --deployer=full_deploy --deployer-folder="${{ github.workspace }}\packages" -r conancenter --build=missing
 
       - name: Find Doxygen Executable Path
         run: |
