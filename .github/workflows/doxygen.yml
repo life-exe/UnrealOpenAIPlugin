@@ -12,6 +12,8 @@ permissions:
 
 env:
   CONAN_REVISIONS_ENABLED: 1
+  CPPFLAGS: "-D_HAS_STD_BYTE=0"
+  CXXFLAGS: "-D_HAS_STD_BYTE=0"
 
 jobs:
   docs:
@@ -41,7 +43,7 @@ jobs:
         run: conan profile detect
 
       - name: Install Doxygen
-        run: conan install --requires="doxygen/1.16.1" --deployer=full_deploy --deployer-folder="${{ github.workspace }}\packages" -r conancenter -s compiler.cppstd=17
+        run: conan install --requires="doxygen/1.16.1" -o doxygen/*:enable_search=False --deployer=full_deploy --deployer-folder="${{ github.workspace }}\packages" -r conancenter --build=missing -s compiler.cppstd=17 -c tools.cmake.cmaketoolchain:generator=Ninja -c tools.build:cxxflags='["-D_HAS_STD_BYTE=0"]' -c tools.build:cflags='["-D_HAS_STD_BYTE=0"]'
 
       - name: Find Doxygen Executable Path
         run: |
