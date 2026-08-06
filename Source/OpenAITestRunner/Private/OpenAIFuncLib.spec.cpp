@@ -209,6 +209,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1).Equals("gpt-image-1"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini).Equals("gpt-image-1-mini"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_5).Equals("gpt-image-1.5"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::ChatGPT_Image_Latest).Equals("chatgpt-image-latest"));
                 });
 
             It("StringToOpenAIImageModelShouldReturnCorrectValue",
@@ -216,6 +217,7 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("dall-e-2") == EImageModelEnum::DALL_E_2);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("dall-e-3") == EImageModelEnum::DALL_E_3);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("chatgpt-image-latest") == EImageModelEnum::ChatGPT_Image_Latest);
                 });
 
             It("StringToOpenAIImageSizeDalle2ShouldReturnCorrectValue",

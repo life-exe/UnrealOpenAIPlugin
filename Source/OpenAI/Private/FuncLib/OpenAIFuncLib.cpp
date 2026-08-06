@@ -258,6 +258,7 @@ FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
         case EImageModelEnum::GPT_Image_1: return "gpt-image-1";
         case EImageModelEnum::GPT_Image_1_Mini: return "gpt-image-1-mini";
         case EImageModelEnum::GPT_Image_1_5: return "gpt-image-1.5";
+        case EImageModelEnum::ChatGPT_Image_Latest: return "chatgpt-image-latest";
     }
     checkNoEntry();
     return {};
@@ -270,6 +271,7 @@ EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
     if (Model.Equals("gpt-image-1")) return EImageModelEnum::GPT_Image_1;
     if (Model.Equals("gpt-image-1-mini")) return EImageModelEnum::GPT_Image_1_Mini;
     if (Model.Equals("gpt-image-1.5")) return EImageModelEnum::GPT_Image_1_5;
+    if (Model.Equals("chatgpt-image-latest")) return EImageModelEnum::ChatGPT_Image_Latest;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageModelEnum: {0}", Model);
     checkNoEntry();

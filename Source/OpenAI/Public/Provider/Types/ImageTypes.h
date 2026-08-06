@@ -13,7 +13,8 @@ enum class EImageModelEnum : uint8
     DALL_E_3,
     GPT_Image_1,
     GPT_Image_1_Mini,
-    GPT_Image_1_5
+    GPT_Image_1_5,
+    ChatGPT_Image_Latest
 };
 
 UENUM(BlueprintType)
@@ -256,9 +257,9 @@ struct FOpenAIImageEdit
     FString Mask;
 
     /**
-      The model to use for image generation.
-      Only dall-e-2 and gpt-image-1 are supported.
-      Defaults to dall-e-2 unless a parameter specific to gpt-image-1 is used.
+      The model to use for image editing.
+      One of dall-e-2, gpt-image-1.5, gpt-image-1, gpt-image-1-mini, or chatgpt-image-latest.
+      Defaults to dall-e-2 unless a parameter specific to the GPT image models is used.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
     FString Model{"dall-e-2"};
