@@ -23,7 +23,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
   A text description of the desired image edit.
 
-- `background: optional "transparent" or "opaque" or "auto"`
+- `background: optional "transparent" or "opaque" or "auto" or null`
 
   Background behavior for generated image output.
 
@@ -33,7 +33,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
   - `"auto"`
 
-- `input_fidelity: optional "high" or "low"`
+- `input_fidelity: optional "high" or "low" or null`
 
   Controls fidelity to the original input image(s).
 
@@ -54,7 +54,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
     A fully qualified URL or base64-encoded data URL.
 
-- `model: optional string or "gpt-image-1.5" or "gpt-image-1" or "gpt-image-1-mini" or "chatgpt-image-latest"`
+- `model: optional string or "gpt-image-1.5" or "gpt-image-1" or "gpt-image-1-mini" or "chatgpt-image-latest" or null`
 
   The model to use for image editing.
 
@@ -72,7 +72,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
     - `"chatgpt-image-latest"`
 
-- `moderation: optional "low" or "auto"`
+- `moderation: optional "low" or "auto" or null`
 
   Moderation level for GPT image models.
 
@@ -80,15 +80,15 @@ Creates an edited or extended image given one or more source images and a prompt
 
   - `"auto"`
 
-- `n: optional number`
+- `n: optional number or null`
 
   The number of edited images to generate.
 
-- `output_compression: optional number`
+- `output_compression: optional number or null`
 
   Compression level for `jpeg` or `webp` output.
 
-- `output_format: optional "png" or "jpeg" or "webp"`
+- `output_format: optional "png" or "jpeg" or "webp" or null`
 
   Output image format. Supported for GPT image models.
 
@@ -98,7 +98,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
   - `"webp"`
 
-- `partial_images: optional number`
+- `partial_images: optional number or null`
 
   The number of partial images to generate. This parameter is used for
   streaming responses that return partial images. Value must be between 0 and 3.
@@ -107,7 +107,7 @@ Creates an edited or extended image given one or more source images and a prompt
   Note that the final image may be sent before the full number of partial images
   are generated if the full image is generated more quickly.
 
-- `quality: optional "low" or "medium" or "high" or "auto"`
+- `quality: optional "low" or "medium" or "high" or "auto" or null`
 
   Output quality for GPT image models.
 
@@ -119,7 +119,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
   - `"auto"`
 
-- `size: optional "auto" or "1024x1024" or "1536x1024" or "1024x1536"`
+- `size: optional "auto" or "1024x1024" or "1536x1024" or "1024x1536" or null`
 
   Requested output image size.
 
@@ -131,7 +131,7 @@ Creates an edited or extended image given one or more source images and a prompt
 
   - `"1024x1536"`
 
-- `stream: optional boolean`
+- `stream: optional boolean or null`
 
   Stream partial image results as events.
 
@@ -257,16 +257,9 @@ curl https://api.openai.com/v1/images/edits \
             }
           ],
           "prompt": "Add a watercolor effect to this image",
-          "background": "transparent",
           "model": "gpt-image-1.5",
-          "moderation": "auto",
-          "n": 1,
-          "output_compression": 100,
-          "output_format": "png",
-          "partial_images": 1,
           "quality": "high",
-          "size": "1024x1024",
-          "user": "user-1234"
+          "size": "1024x1024"
         }'
 ```
 
