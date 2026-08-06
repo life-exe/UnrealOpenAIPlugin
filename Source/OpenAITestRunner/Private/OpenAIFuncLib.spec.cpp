@@ -95,7 +95,6 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_Codex_Mini, "gpt-5.1-codex-mini");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Search_Api, "gpt-5-search-api");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_Chat_Latest, "gpt-5.1-chat-latest");
-                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Realtime_Mini_2025_10_06, "gpt-realtime-mini-2025-10-06");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Transcribe_Diarize, "gpt-4o-transcribe-diarize");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_Search_Api_2025_10_14, "gpt-5-search-api-2025-10-14");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_1_Codex, "gpt-5.1-codex");
@@ -125,6 +124,8 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Transcribe_2025_12_15, "gpt-4o-mini-transcribe-2025-12-15");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_Transcribe_2025_03_20, "gpt-4o-mini-transcribe-2025-03-20");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_TTS_2025_03_20, "gpt-4o-mini-tts-2025-03-20");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Transcribe, "gpt-transcribe");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Live_Transcribe, "gpt-live-transcribe");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",

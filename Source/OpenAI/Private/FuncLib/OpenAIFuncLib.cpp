@@ -82,7 +82,6 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_5_1_Codex_Mini: return "gpt-5.1-codex-mini";
         case EAllModelEnum::GPT_5_Search_Api: return "gpt-5-search-api";
         case EAllModelEnum::GPT_5_1_Chat_Latest: return "gpt-5.1-chat-latest";
-        case EAllModelEnum::GPT_Realtime_Mini_2025_10_06: return "gpt-realtime-mini-2025-10-06";
         case EAllModelEnum::GPT_4O_Transcribe_Diarize: return "gpt-4o-transcribe-diarize";
         case EAllModelEnum::GPT_5_Search_Api_2025_10_14: return "gpt-5-search-api-2025-10-14";
         case EAllModelEnum::GPT_5_1_Codex: return "gpt-5.1-codex";
@@ -139,6 +138,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_5_6_Luna: return "gpt-5.6-luna";
         case EAllModelEnum::GPT_Realtime_2_1: return "gpt-realtime-2.1";
         case EAllModelEnum::GPT_Realtime_2_1_Mini: return "gpt-realtime-2.1-mini";
+        case EAllModelEnum::GPT_Transcribe: return "gpt-transcribe";
+        case EAllModelEnum::GPT_Live_Transcribe: return "gpt-live-transcribe";
     }
     checkNoEntry();
     return {};

@@ -78,7 +78,6 @@ enum class EAllModelEnum : uint8
     GPT_5_1_Codex_Mini,
     GPT_5_Search_Api,
     GPT_5_1_Chat_Latest,
-    GPT_Realtime_Mini_2025_10_06,
     GPT_4O_Transcribe_Diarize,
     GPT_5_Search_Api_2025_10_14,
     GPT_5_1_Codex,
@@ -134,7 +133,9 @@ enum class EAllModelEnum : uint8
     GPT_5_6_Terra,
     GPT_5_6_Luna,
     GPT_Realtime_2_1,
-    GPT_Realtime_2_1_Mini
+    GPT_Realtime_2_1_Mini,
+    GPT_Transcribe,
+    GPT_Live_Transcribe
 };
 
 UENUM(BlueprintType)
