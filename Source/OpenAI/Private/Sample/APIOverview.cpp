@@ -25,11 +25,8 @@ AAPIOverview::AAPIOverview()
     ActionMap.Add(EAPIOverviewAction::DeleteFineTunedModel, [&]() { DeleteFinedTuneModel(); });
     ActionMap.Add(EAPIOverviewAction::CreateCompletionRequest, [&]() { CreateCompletionRequest(); });
     ActionMap.Add(EAPIOverviewAction::CreateChatCompletionRequest, [&]() { CreateChatCompletionRequest(); });
-    ActionMap.Add(EAPIOverviewAction::CreateImageDALLE2, [&]() { CreateImageDALLE2(); });
-    ActionMap.Add(EAPIOverviewAction::CreateImageDALLE3, [&]() { CreateImageDALLE3(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageGptImage1, [&]() { CreateImageGptImage1(); });
     ActionMap.Add(EAPIOverviewAction::CreateImageEdit, [&]() { CreateImageEdit(); });
-    ActionMap.Add(EAPIOverviewAction::CreateImageVariation, [&]() { CreateImageVariation(); });
     ActionMap.Add(EAPIOverviewAction::CreateModerations, [&]() { CreateModerations(); });
     ActionMap.Add(EAPIOverviewAction::CreateEmbeddings, [&]() { CreateEmbeddings(); });
     ActionMap.Add(EAPIOverviewAction::CreateSpeech, [&]() { CreateSpeech(); });
@@ -243,52 +240,6 @@ void AAPIOverview::CreateChatCompletionRequest()
     Provider->CreateChatCompletion(ChatCompletion, Auth);
 }
 
-void AAPIOverview::CreateImageDALLE2()
-{
-    Provider->SetLogEnabled(true);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCreateImageCompleted().AddLambda(
-        [&](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
-        {
-            FString OutputString{};
-            Algo::ForEach(
-                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
-        });
-
-    FOpenAIImage Image;
-    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2);
-    Image.Prompt = "Tiger is eating pizza";
-    Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_512x512);
-    Image.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
-    Image.N = 2;
-
-    Provider->CreateImage(Image, Auth);
-}
-
-void AAPIOverview::CreateImageDALLE3()
-{
-    Provider->SetLogEnabled(true);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCreateImageCompleted().AddLambda(
-        [](const FImageResponse& Response, const FOpenAIResponseMetadata& Metadata)
-        {
-            auto* ArtTexture = UImageFuncLib::Texture2DFromBytes(Response.Data[0].B64_JSON);
-            UE_LOGFMT(LogAPIOverview, Display, "{0}", Response.Data[0].B64_JSON);
-        });
-
-    FOpenAIImage Image;
-    Image.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3);
-    Image.N = 1;  // DALLE3 only supports one image at the moment.
-    Image.Prompt = "Bear with beard drinking beer";
-    Image.Size = UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024);
-    Image.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON));
-    Image.Quality.Set(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard));
-    Image.Style.Set(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural));
-
-    Provider->CreateImage(Image, Auth);
-}
-
 void AAPIOverview::CreateImageGptImage1()
 {
     Provider->SetLogEnabled(true);
@@ -340,34 +291,9 @@ void AAPIOverview::CreateImageEdit()
     ImageEdit.Mask = FPaths::ConvertRelativePathToFull(ImageMaskFilePath);
     ImageEdit.N = 1;
     ImageEdit.Prompt = "Draw a hat";
-    ImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
+    ImageEdit.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
 
     Provider->CreateImageEdit(ImageEdit, Auth);
-}
-
-void AAPIOverview::CreateImageVariation()
-{
-    Provider->SetLogEnabled(true);
-    Provider->OnRequestError().AddUObject(this, &ThisClass::OnRequestError);
-    Provider->OnCreateImageVariationCompleted().AddLambda(
-        [](const FImageVariationResponse& Response, const FOpenAIResponseMetadata& Metadata)
-        {
-            FString OutputString{};
-            Algo::ForEach(
-                Response.Data, [&](const FImageObject& ImageObject) { OutputString.Append(ImageObject.URL).Append(LINE_TERMINATOR); });
-            UE_LOGFMT(LogAPIOverview, Display, "{0}", OutputString);
-        });
-
-    FOpenAIImageVariation ImageVariation;
-    // absolute path to your image
-    const FString ImageFilePath = FPaths::Combine(FPaths::ProjectPluginsDir(),  //
-        TEXT("OpenAI"), TEXT("Source"), TEXT("OpenAITestRunner"), TEXT("Data"), "whale.png");
-    ImageVariation.Image = FPaths::ConvertRelativePathToFull(ImageFilePath);
-    ImageVariation.N = 1;
-    ImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-    ImageVariation.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
-
-    Provider->CreateImageVariation(ImageVariation, Auth);
 }
 
 void AAPIOverview::CreateModerations()
@@ -1242,7 +1168,6 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString ChatCompletion() const override { return API_URL + "/v1/chat/completions"; }
         virtual FString ImageGenerations() const override { return API_URL + "/v1/images/generations"; }
         virtual FString ImageEdits() const override { return API_URL + "/v1/images/edits"; }
-        virtual FString ImageVariations() const override { return API_URL + "/v1/images/variations"; }
         virtual FString Embeddings() const override { return API_URL + "/v1/embeddings"; }
         virtual FString Speech() const override { return API_URL + "/v1/audio/speech"; }
         virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }

@@ -27,7 +27,6 @@ using FOnCreateChatCompletionStreamProgresses = FOnCreateChatCompletionStreamCom
 // images
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateImageCompleted, const FImageResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateImageEditCompleted, const FImageEditResponse&, const FOpenAIResponseMetadata&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateImageVariationCompleted, const FImageVariationResponse&, const FOpenAIResponseMetadata&);
 // embeddings
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateEmbeddingsCompleted, const FEmbeddingsResponse&, const FOpenAIResponseMetadata&);
 // audio + speech

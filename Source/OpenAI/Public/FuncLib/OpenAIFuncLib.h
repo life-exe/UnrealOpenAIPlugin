@@ -53,18 +53,6 @@ public:
     static EImageModelEnum StringToOpenAIImageModel(const FString& Model);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
-    static FString OpenAIImageSizeDalle2ToString(EImageSizeDalle2 ImageSize);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
-    static EImageSizeDalle2 StringToOpenAIImageSizeDalle2(const FString& ImageSize);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
-    static FString OpenAIImageSizeDalle3ToString(EImageSizeDalle3 ImageSize);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
-    static EImageSizeDalle3 StringToOpenAIImageSizeDalle3(const FString& ImageSize);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static FString OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1 ImageSize);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
@@ -86,16 +74,10 @@ public:
     static EOpenAIImageQuality StringToOpenAIImageQuality(const FString& ImageQuality);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
-    static FString OpenAIImageStyleToString(EOpenAIImageStyle ImageStyle);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static FString OpenAIImageBackgroundToString(EOpenAIImageBackground ImageBackground);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
     static FString OpenAIImageModerationToString(EOpenAIImageModeration ImageModeration);
-
-    UFUNCTION(BlueprintPure, Category = "OpenAI | Image")
-    static EOpenAIImageStyle StringToOpenAIImageStyle(const FString& ImageStyle);
 
     UFUNCTION(BlueprintPure, Category = "OpenAI | Chat")
     static FString OpenAIChatResponseFormatToString(EChatResponseFormat ChatResponseFormat);

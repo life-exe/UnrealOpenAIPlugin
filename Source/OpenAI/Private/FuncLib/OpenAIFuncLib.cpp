@@ -253,8 +253,6 @@ FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
 {
     switch (Model)
     {
-        case EImageModelEnum::DALL_E_2: return "dall-e-2";
-        case EImageModelEnum::DALL_E_3: return "dall-e-3";
         case EImageModelEnum::GPT_Image_1: return "gpt-image-1";
         case EImageModelEnum::GPT_Image_1_Mini: return "gpt-image-1-mini";
         case EImageModelEnum::GPT_Image_1_5: return "gpt-image-1.5";
@@ -266,62 +264,12 @@ FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
 
 EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
 {
-    if (Model.Equals("dall-e-2")) return EImageModelEnum::DALL_E_2;
-    if (Model.Equals("dall-e-3")) return EImageModelEnum::DALL_E_3;
     if (Model.Equals("gpt-image-1")) return EImageModelEnum::GPT_Image_1;
     if (Model.Equals("gpt-image-1-mini")) return EImageModelEnum::GPT_Image_1_Mini;
     if (Model.Equals("gpt-image-1.5")) return EImageModelEnum::GPT_Image_1_5;
     if (Model.Equals("chatgpt-image-latest")) return EImageModelEnum::ChatGPT_Image_Latest;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageModelEnum: {0}", Model);
-    checkNoEntry();
-
-    return {};
-}
-
-FString UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2 ImageSize)
-{
-    switch (ImageSize)
-    {
-        case EImageSizeDalle2::Size_256x256: return "256x256";
-        case EImageSizeDalle2::Size_512x512: return "512x512";
-        case EImageSizeDalle2::Size_1024x1024: return "1024x1024";
-    }
-    checkNoEntry();
-    return {};
-}
-
-EImageSizeDalle2 UOpenAIFuncLib::StringToOpenAIImageSizeDalle2(const FString& ImageSize)
-{
-    if (ImageSize.Equals("256x256")) return EImageSizeDalle2::Size_256x256;
-    if (ImageSize.Equals("512x512")) return EImageSizeDalle2::Size_512x512;
-    if (ImageSize.Equals("1024x1024")) return EImageSizeDalle2::Size_1024x1024;
-
-    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageSizeDalle2: {0}", ImageSize);
-    checkNoEntry();
-
-    return {};
-}
-
-FString UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3 ImageSize)
-{
-    switch (ImageSize)
-    {
-        case EImageSizeDalle3::Size_1024x1024: return "1024x1024";
-        case EImageSizeDalle3::Size_1024x1792: return "1024x1792";
-        case EImageSizeDalle3::Size_1792x1024: return "1792x1024";
-    }
-    checkNoEntry();
-    return {};
-}
-
-EImageSizeDalle3 UOpenAIFuncLib::StringToOpenAIImageSizeDalle3(const FString& ImageSize)
-{
-    if (ImageSize.Equals("1024x1024")) return EImageSizeDalle3::Size_1024x1024;
-    if (ImageSize.Equals("1024x1792")) return EImageSizeDalle3::Size_1024x1792;
-    if (ImageSize.Equals("1792x1024")) return EImageSizeDalle3::Size_1792x1024;
-
-    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageSizeDalle3: {0}", ImageSize);
     checkNoEntry();
 
     return {};
@@ -380,8 +328,6 @@ FString UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality ImageQual
     switch (ImageQuality)
     {
         case EOpenAIImageQuality::Auto: return "auto";
-        case EOpenAIImageQuality::HD: return "hd";
-        case EOpenAIImageQuality::Standard: return "standard";
         case EOpenAIImageQuality::High: return "high";
         case EOpenAIImageQuality::Medium: return "medium";
         case EOpenAIImageQuality::Low: return "low";
@@ -405,8 +351,6 @@ FString UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat
 EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& ImageQuality)
 {
     if (ImageQuality.Equals("auto")) return EOpenAIImageQuality::Auto;
-    if (ImageQuality.Equals("hd")) return EOpenAIImageQuality::HD;
-    if (ImageQuality.Equals("standard")) return EOpenAIImageQuality::Standard;
     if (ImageQuality.Equals("high")) return EOpenAIImageQuality::High;
     if (ImageQuality.Equals("medium")) return EOpenAIImageQuality::Medium;
     if (ImageQuality.Equals("low")) return EOpenAIImageQuality::Low;
@@ -414,17 +358,6 @@ EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& Im
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageQuality: {0}", ImageQuality);
     checkNoEntry();
 
-    return {};
-}
-
-FString UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle ImageStyle)
-{
-    switch (ImageStyle)
-    {
-        case EOpenAIImageStyle::Natural: return "natural";
-        case EOpenAIImageStyle::Vivid: return "vivid";
-    }
-    checkNoEntry();
     return {};
 }
 
@@ -448,17 +381,6 @@ FString UOpenAIFuncLib::OpenAIImageModerationToString(EOpenAIImageModeration Ima
         case EOpenAIImageModeration::Low: return "low";
     }
     checkNoEntry();
-    return {};
-}
-
-EOpenAIImageStyle UOpenAIFuncLib::StringToOpenAIImageStyle(const FString& ImageStyle)
-{
-    if (ImageStyle.Equals("natural")) return EOpenAIImageStyle::Natural;
-    if (ImageStyle.Equals("vivid")) return EOpenAIImageStyle::Vivid;
-
-    UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageStyle: {0}", ImageStyle);
-    checkNoEntry();
-
     return {};
 }
 

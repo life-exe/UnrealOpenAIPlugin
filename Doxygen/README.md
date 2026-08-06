@@ -9,7 +9,7 @@ This plugin is a comprehensive Unreal Engine wrapper for the OpenAI API. It supp
  - [Models](https://platform.openai.com/docs/api-reference/models)
  - [Completions](https://platform.openai.com/docs/api-reference/completions)
  - [Chat](https://platform.openai.com/docs/api-reference/chat)
- - [Images (GPT-Image-1, DALL·E 3, DALL·E 2)](https://platform.openai.com/docs/api-reference/images)
+ - [Images (GPT Image 1, GPT Image 1 Mini, GPT Image 1.5)](https://platform.openai.com/docs/api-reference/images)
  - [Vision](https://platform.openai.com/docs/guides/vision)
  - [Embeddings](https://platform.openai.com/docs/api-reference/embeddings)
  - [Batch](https://platform.openai.com/docs/api-reference/batch)
@@ -61,6 +61,8 @@ void AAPIOverview::CreateImage()
  - [DALLE 3 | Text To Speech | Vision](https://youtu.be/l4hcCbAceXs) [English subtitles].
 
 ## Updates
+ - OpenAI has removed `dall-e-2` and `dall-e-3` from the Images API. Support for these models (including image variations, which
+   `dall-e-2` was the only model for) has been removed from the plugin. Use `gpt-image-1`, `gpt-image-1-mini`, or `gpt-image-1.5`.
  - [Add gpt-image-1 model, image API update](https://openai.com/index/image-generation-api)
 
  ![](https://raw.githubusercontent.com/life-exe/UnrealOpenAIPlugin/master/Media/gpt_image_1.png)

@@ -23,21 +23,6 @@ using namespace OpenAI::Tests;
 
 namespace
 {
-void TestImageResponse(FAutomationTestBase* Test, const TArray<FImageObject>& Data, int32 Num)
-{
-    if (!Test)
-    {
-        UE_LOGFMT(LogOpenAIImageAPI, Error, "Automation test object is invalid");
-        return;
-    }
-
-    Test->TestTrue("Images amount should be valid", Data.Num() == Num);
-    for (const auto& Image : Data)
-    {
-        Test->TestTrue("Image url should be valud", TestUtils::IsValidURL(Image.URL));
-    }
-}
-
 // GPT image models always return base64-encoded images, never a URL.
 void TestGptImageResponse(FAutomationTestBase* Test, const TArray<FImageObject>& Data, int32 Num)
 {
@@ -144,31 +129,6 @@ void FOpenAIProviderImage::Define()
                     OpenAIImage.Output_Format.Set(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Png));
 
                     OpenAIProvider->CreateImage(OpenAIImage, Auth);
-                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
-                });
-
-            // KNOWN FAILING: OpenAI has removed the /v1/images/variations route from its API gateway entirely
-            // (a request to it now 404s with the exact same generic, header-less response as a nonexistent path,
-            // regardless of model) even though it is still documented. There is no model swap that fixes this;
-            // the endpoint itself is gone on OpenAI's side.
-            It("Image.CreateImageVariationRequestShouldResponseCorrectly.Dalle2",
-                [this]()
-                {
-                    OpenAIProvider->OnCreateImageVariationCompleted().AddLambda(
-                        [&](const FImageVariationResponse& Response, const FOpenAIResponseMetadata& Metadata)
-                        {
-                            TestTrueExpr(Response.Created > 0);
-                            TestImageResponse(this, Response.Data, 2);
-                            RequestCompleted = true;
-                        });
-
-                    FOpenAIImageVariation OpenAIImageVariation;
-                    OpenAIImageVariation.N = 2;
-                    OpenAIImageVariation.Image = TestUtils::FileFullPath("whale.png");
-                    OpenAIImageVariation.Size = UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256);
-                    OpenAIImageVariation.Response_Format.Set(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL));
-
-                    OpenAIProvider->CreateImageVariation(OpenAIImageVariation, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 

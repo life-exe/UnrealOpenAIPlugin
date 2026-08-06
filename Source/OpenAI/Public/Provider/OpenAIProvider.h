@@ -98,12 +98,6 @@ public:
     void CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const FOpenAIAuth& Auth);
 
     /**
-      Creates a variation of a given image.
-      https://platform.openai.com/docs/api-reference/images/create-variation
-    */
-    void CreateImageVariation(const FOpenAIImageVariation& ImageVariation, const FOpenAIAuth& Auth);
-
-    /**
       Creates an embedding vector representing the input text.
       https://platform.openai.com/docs/api-reference/embeddings/create
     */
@@ -581,7 +575,6 @@ public:
     DEFINE_EVENT_GETTER(CreateChatCompletionStreamProgresses)
     DEFINE_EVENT_GETTER(CreateImageCompleted)
     DEFINE_EVENT_GETTER(CreateImageEditCompleted)
-    DEFINE_EVENT_GETTER(CreateImageVariationCompleted)
     DEFINE_EVENT_GETTER(CreateEmbeddingsCompleted)
     DEFINE_EVENT_GETTER(CreateSpeechCompleted)
     DEFINE_EVENT_GETTER(CreateAudioTranscriptionCompleted)
@@ -685,7 +678,6 @@ private:
     DECLARE_HTTP_CALLBACK_PROGRESS(OnCreateChatCompletionStreamProgress)
     DECLARE_HTTP_CALLBACK(OnCreateImageCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateImageEditCompleted)
-    DECLARE_HTTP_CALLBACK(OnCreateImageVariationCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateEmbeddingsCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateSpeechCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateAudioTranscriptionCompleted)

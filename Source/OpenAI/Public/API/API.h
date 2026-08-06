@@ -62,7 +62,6 @@ public:
     virtual FString ChatCompletion() const = 0;
     virtual FString ImageGenerations() const = 0;
     virtual FString ImageEdits() const = 0;
-    virtual FString ImageVariations() const = 0;
     virtual FString Embeddings() const = 0;
     virtual FString Speech() const = 0;
     virtual FString AudioTranscriptions() const = 0;
@@ -97,7 +96,6 @@ public:
     virtual FString ChatCompletion() const override { return API_URL + "/v1/chat/completions"; }
     virtual FString ImageGenerations() const override { return API_URL + "/v1/images/generations"; }
     virtual FString ImageEdits() const override { return API_URL + "/v1/images/edits"; }
-    virtual FString ImageVariations() const override { return API_URL + "/v1/images/variations"; }
     virtual FString Embeddings() const override { return API_URL + "/v1/embeddings"; }
     virtual FString Speech() const override { return API_URL + "/v1/audio/speech"; }
     virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
@@ -130,7 +128,6 @@ struct FOpenAIEndpoints
     FString ChatCompletions;
     FString ImageGenerations;
     FString ImageEdits;
-    FString ImageVariations;
     FString Embeddings;
     FString Speech;
     FString AudioTranscriptions;
@@ -162,7 +159,6 @@ public:
     virtual FString ChatCompletion() const override { return OpenAIEndpoints.ChatCompletions; }
     virtual FString ImageGenerations() const override { return OpenAIEndpoints.ImageGenerations; }
     virtual FString ImageEdits() const override { return OpenAIEndpoints.ImageEdits; }
-    virtual FString ImageVariations() const override { return OpenAIEndpoints.ImageVariations; }
     virtual FString Embeddings() const override { return OpenAIEndpoints.Embeddings; }
     virtual FString Speech() const override { return OpenAIEndpoints.Speech; }
     virtual FString AudioTranscriptions() const override { return OpenAIEndpoints.AudioTranscriptions; }

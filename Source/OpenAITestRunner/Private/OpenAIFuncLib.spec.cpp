@@ -204,8 +204,6 @@ void FOpenAIFuncLib::Define()
             It("OpenAIImageModelToStringShouldReturnCorrectValue",
                 [this]()
                 {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_2).Equals("dall-e-2"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::DALL_E_3).Equals("dall-e-3"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1).Equals("gpt-image-1"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini).Equals("gpt-image-1-mini"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_5).Equals("gpt-image-1.5"));
@@ -215,25 +213,10 @@ void FOpenAIFuncLib::Define()
             It("StringToOpenAIImageModelShouldReturnCorrectValue",
                 [this]()
                 {
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("dall-e-2") == EImageModelEnum::DALL_E_2);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("dall-e-3") == EImageModelEnum::DALL_E_3);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-1") == EImageModelEnum::GPT_Image_1);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-1-mini") == EImageModelEnum::GPT_Image_1_Mini);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-1.5") == EImageModelEnum::GPT_Image_1_5);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("chatgpt-image-latest") == EImageModelEnum::ChatGPT_Image_Latest);
-                });
-
-            It("StringToOpenAIImageSizeDalle2ShouldReturnCorrectValue",
-                [this]()
-                {
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle2("256x256") == EImageSizeDalle2::Size_256x256);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle2("512x512") == EImageSizeDalle2::Size_512x512);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle2("1024x1024") == EImageSizeDalle2::Size_1024x1024);
-                });
-
-            It("StringToOpenAIImageSizeDalle3ShouldReturnCorrectValue",
-                [this]()
-                {
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle3("1024x1024") == EImageSizeDalle3::Size_1024x1024);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle3("1024x1792") == EImageSizeDalle3::Size_1024x1792);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageSizeDalle3("1792x1024") == EImageSizeDalle3::Size_1792x1024);
                 });
 
             It("StringToOpenAIImageSizeGptImage1ShouldReturnCorrectValue",
@@ -256,34 +239,9 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("auto") == EOpenAIImageQuality::Auto);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("hd") == EOpenAIImageQuality::HD);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("standard") == EOpenAIImageQuality::Standard);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("high") == EOpenAIImageQuality::High);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("medium") == EOpenAIImageQuality::Medium);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("low") == EOpenAIImageQuality::Low);
-                });
-
-            It("StringToOpenAIImageStyleShouldReturnCorrectValue",
-                [this]()
-                {
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageStyle("natural") == EOpenAIImageStyle::Natural);
-                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageStyle("vivid") == EOpenAIImageStyle::Vivid);
-                });
-
-            It("OpenAIImageSizeDalle2ToStringShouldReturnCorrectValue",
-                [this]()
-                {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_256x256).Equals("256x256"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_512x512).Equals("512x512"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle2ToString(EImageSizeDalle2::Size_1024x1024).Equals("1024x1024"));
-                });
-
-            It("OpenAIImageSizeDalle3ToStringShouldReturnCorrectValue",
-                [this]()
-                {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1024).Equals("1024x1024"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1024x1792).Equals("1024x1792"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageSizeDalle3ToString(EImageSizeDalle3::Size_1792x1024).Equals("1792x1024"));
                 });
 
             It("OpenAIImageSizeGptImage1ToStringShouldReturnCorrectValue",
@@ -300,13 +258,6 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::URL).Equals("url"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageFormatToString(EOpenAIImageFormat::B64_JSON).Equals("b64_json"));
-                });
-
-            It("OpenAIImageStyleToStringShouldReturnCorrectValue",
-                [this]()
-                {
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Natural).Equals("natural"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageStyleToString(EOpenAIImageStyle::Vivid).Equals("vivid"));
                 });
 
             It("OpenAIImageBackgroundToStringShouldReturnCorrectValue",
@@ -328,8 +279,6 @@ void FOpenAIFuncLib::Define()
                 [this]()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Auto).Equals("auto"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::HD).Equals("hd"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Standard).Equals("standard"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low).Equals("low"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::High).Equals("high"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Medium).Equals("medium"));

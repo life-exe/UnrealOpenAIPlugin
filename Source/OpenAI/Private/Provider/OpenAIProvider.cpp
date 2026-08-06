@@ -143,36 +143,6 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     ProcessRequest(HttpRequest);
 }
 
-void UOpenAIProvider::CreateImageVariation(const FOpenAIImageVariation& ImageVariation, const FOpenAIAuth& Auth)
-{
-    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
-
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(API->ImageVariations());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
-
-    TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(ImageVariation.Image, "image", BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("n", FString::FromInt(ImageVariation.N), BeginBoundary));
-    RequestContent.Append(HttpHelper::AddMIME("size", ImageVariation.Size, BeginBoundary));
-    if (ImageVariation.Response_Format.IsSet)
-    {
-        RequestContent.Append(HttpHelper::AddMIME("response_format", ImageVariation.Response_Format.Value, BeginBoundary));
-    }
-    if (ImageVariation.User.IsSet)
-    {
-        RequestContent.Append(HttpHelper::AddMIME("user", ImageVariation.User.Value, BeginBoundary));
-    }
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
-
-    HttpRequest->SetContent(RequestContent);
-    HttpRequest->SetActivityTimeout(LongRunningRequestTimeoutSeconds);
-    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateImageVariationCompleted);
-    ProcessRequest(HttpRequest);
-}
-
 void UOpenAIProvider::CreateEmbeddings(const FEmbeddings& Embeddings, const FOpenAIAuth& Auth)
 {
     auto HttpRequest = MakeRequest(Embeddings, API->Embeddings(), "POST", Auth);
@@ -989,26 +959,6 @@ void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpR
         return;
     }
     CreateImageEditCompleted.Broadcast(ImageEditResponse, GetResponseHeaders(Response));
-}
-
-void UOpenAIProvider::OnCreateImageVariationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
-{
-    if (!Success(Response, WasSuccessful)) return;
-
-    const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
-
-    FImageVariationResponse ImageVariationResponse;
-    const bool Status = ImageParser::DeserializeResponse(Content, ImageVariationResponse);
-
-    if (!Status || ImageVariationResponse.Data.Num() == 0)
-    {
-        LogError("Failed to parse image variation response");
-        LogError(Content);
-        RequestError.Broadcast(ResponseURL, Content);
-        return;
-    }
-    CreateImageVariationCompleted.Broadcast(ImageVariationResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
