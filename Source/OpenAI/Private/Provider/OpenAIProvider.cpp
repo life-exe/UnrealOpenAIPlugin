@@ -913,14 +913,10 @@ void UOpenAIProvider::OnCreateChatCompletionStreamProgress(FHttpRequestPtr Reque
 
 void UOpenAIProvider::OnCreateImageCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!Request.IsValid())
+    if (!WasSuccessful && Request.IsValid())
     {
-        LogError("OnCreateImageCompleted: Request object is invalid!");
-        Log(FString::Format(TEXT("OnCreateImageCompleted: Request URL: {0}"), {Request->GetURL()}));
-        Log(FString::Format(TEXT("OnCreateImageCompleted: Request Verb: {0}"), {Request->GetVerb()}));
         Log(FString::Format(TEXT("OnCreateImageCompleted: Request Status: {0}"), {EHttpRequestStatus::ToString(Request->GetStatus())}));
         Log(FString::Format(TEXT("OnCreateImageCompleted: Request Elapsed Time: {0} seconds"), {Request->GetElapsedTime()}));
-        return;
     }
 
     if (!Success(Response, WasSuccessful)) return;
@@ -1612,7 +1608,7 @@ FOpenAIResponseMetadata UOpenAIProvider::GetResponseHeaders(FHttpResponsePtr Res
     {
         Metadata.HttpHeaders = Response->GetAllHeaders();
     }
-    return {};
+    return Metadata;
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

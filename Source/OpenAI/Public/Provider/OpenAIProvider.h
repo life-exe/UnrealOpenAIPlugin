@@ -917,6 +917,13 @@ private:
             return;
         }
 
+        // API errors (invalid key, unknown model, ...) come back as a plain JSON body, not as stream chunks
+        if (Response.IsValid() && !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+        {
+            BroadcastRequestError(Response, Request);
+            return;
+        }
+
         TArray<ResponseType> ParsedResponses;
         if (ParseStreamRequest(Response, ParsedResponses))
         {
