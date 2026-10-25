@@ -23,9 +23,12 @@ public:
         if (!UJsonFuncLib::StringToJson(Data, JsonObject)) return false;
 
         RemoveNullFields(JsonObject);
-        FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), OutStruct, 0, 0);
-        return true;
+        return FJsonObjectConverter::JsonObjectToUStruct(
+            JsonObject.ToSharedRef(), OutStruct, 0, 0, false, nullptr, &OptionalFromScalarImportCallback());
     }
+
+    // Lets FOptional* response fields accept plain JSON scalars (e.g. "refusal":"text", "expires_at":123)
+    static const FJsonObjectConverter::CustomImportCallback& OptionalFromScalarImportCallback();
     static FString RemoveOptionalValuesThatNotSet(const FString& JsonString);
     static void RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject);
 

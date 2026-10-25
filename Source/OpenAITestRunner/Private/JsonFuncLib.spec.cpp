@@ -7,6 +7,8 @@
 #include "FuncLib/JsonFuncLib.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "TestUtils.h"
+#include "Provider/Types/Chat/ChatCommonTypes.h"
+#include "Provider/Types/VectorStoreTypes.h"
 #include "Logging/StructuredLog.h"
 
 DEFINE_SPEC(
@@ -264,6 +266,43 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(ResultString.Contains(TEXT("\"anchor\": \"created_at\"")));
                     TestTrueExpr(ResultString.Contains(TEXT("\"seconds\": 3600")));
                     TestTrueExpr(!ResultString.Contains(TEXT("\"isset\"")));
+                });
+
+            It("ParseJSONToStructShouldSetOptionalsFromScalars",
+                [this]()
+                {
+                    FMessage Message;
+                    TestTrueExpr(UJsonFuncLib::ParseJSONToStruct(
+                        TEXT("{\"role\":\"assistant\",\"content\":\"text\",\"refusal\":\"I can't help\"}"), &Message));
+                    TestTrueExpr(Message.Refusal.IsSet);
+                    TestTrueExpr(Message.Refusal.Value.Equals(TEXT("I can't help")));
+                    TestTrueExpr(Message.Content.Equals(TEXT("text")));
+
+                    FVectorStore VectorStore;
+                    TestTrueExpr(UJsonFuncLib::ParseJSONToStruct(
+                        TEXT("{\"id\":\"vs_1\",\"expires_at\":1700000000,\"name\":\"store\"}"), &VectorStore));
+                    TestTrueExpr(VectorStore.Expires_At.IsSet);
+                    TestTrueExpr(VectorStore.Expires_At.Value == 1700000000);
+                    TestTrueExpr(VectorStore.Name.Equals(TEXT("store")));
+                });
+
+            It("ParseJSONToStructShouldKeepOptionalsUnsetForNull",
+                [this]()
+                {
+                    FMessage Message;
+                    TestTrueExpr(UJsonFuncLib::ParseJSONToStruct(TEXT("{\"role\":\"assistant\",\"refusal\":null}"), &Message));
+                    TestTrueExpr(!Message.Refusal.IsSet);
+                });
+
+            It("ParseJSONToStructShouldFailOnTypeMismatch",
+                [this]()
+                {
+                    // FJsonObjectConverter logs the failed import as an error
+                    AddExpectedMessage(TEXT("Unable to import JSON"), EAutomationExpectedErrorFlags::Contains, 0);
+
+                    FVectorStore VectorStore;
+                    TestFalseExpr(UJsonFuncLib::ParseJSONToStruct(TEXT("{\"id\":\"vs_1\",\"file_counts\":[\"bad\"]}"), &VectorStore));
+                    TestFalseExpr(UJsonFuncLib::ParseJSONToStruct(TEXT("not json"), &VectorStore));
                 });
         });
 }

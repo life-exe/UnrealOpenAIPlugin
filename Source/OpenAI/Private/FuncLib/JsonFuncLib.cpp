@@ -5,6 +5,7 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Logging/StructuredLog.h"
+#include "Provider/OpenAIOptional.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogJsonFuncLib, All, All);
 
@@ -48,6 +49,49 @@ void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value)
 
 const FString UJsonFuncLib::START_FUNCTION_OBJECT_MARKER = "START_FUNCTION_OBJECT_MARKER";
 const FString UJsonFuncLib::END_FUNCTION_OBJECT_MARKER = "END_FUNCTION_OBJECT_MARKER";
+
+const FJsonObjectConverter::CustomImportCallback& UJsonFuncLib::OptionalFromScalarImportCallback()
+{
+    static const FJsonObjectConverter::CustomImportCallback Callback = FJsonObjectConverter::CustomImportCallback::CreateLambda(
+        [](const TSharedPtr<FJsonValue>& JsonValue, FProperty* Property, void* Value) -> bool
+        {
+            const FStructProperty* StructProperty = CastField<FStructProperty>(Property);
+            // objects ({"value":..,"isset":..}) go through the default conversion
+            if (!StructProperty || !JsonValue.IsValid() || JsonValue->Type == EJson::Object) return false;
+
+            const UScriptStruct* Struct = StructProperty->Struct;
+            if (Struct == FOptionalString::StaticStruct())
+            {
+                FString StringValue;
+                if (!JsonValue->TryGetString(StringValue)) return false;
+                static_cast<FOptionalString*>(Value)->Set(StringValue);
+                return true;
+            }
+            if (Struct == FOptionalInt::StaticStruct())
+            {
+                int32 IntValue{};
+                if (!JsonValue->TryGetNumber(IntValue)) return false;
+                static_cast<FOptionalInt*>(Value)->Set(IntValue);
+                return true;
+            }
+            if (Struct == FOptionalFloat::StaticStruct())
+            {
+                double NumberValue{};
+                if (!JsonValue->TryGetNumber(NumberValue)) return false;
+                static_cast<FOptionalFloat*>(Value)->Set(static_cast<float>(NumberValue));
+                return true;
+            }
+            if (Struct == FOptionalBool::StaticStruct())
+            {
+                bool BoolValue{};
+                if (!JsonValue->TryGetBool(BoolValue)) return false;
+                static_cast<FOptionalBool*>(Value)->Set(BoolValue);
+                return true;
+            }
+            return false;
+        });
+    return Callback;
+}
 
 bool UJsonFuncLib::StringToJson(const FString& JsonString, TSharedPtr<FJsonObject>& JsonObject)
 {
