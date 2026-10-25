@@ -110,21 +110,17 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
 
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(API->ImageEdits());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
+    auto HttpRequest = MakeMultipartRequest(API->ImageEdits(), Boundary, Auth);
 
     TArray<uint8> RequestContent;
     for (const auto& Image : ImageEdit.Image)
     {
-        RequestContent.Append(HttpHelper::AddMIMEFile(Image, "image", BeginBoundary));
+        if (!AppendMIMEFile(RequestContent, Image, "image", BeginBoundary, HttpRequest->GetURL())) return;
     }
 
     if (!ImageEdit.Mask.IsEmpty())
     {
-        RequestContent.Append(HttpHelper::AddMIMEFile(ImageEdit.Mask, "mask", BeginBoundary));
+        if (!AppendMIMEFile(RequestContent, ImageEdit.Mask, "mask", BeginBoundary, HttpRequest->GetURL())) return;
     }
     RequestContent.Append(HttpHelper::AddMIME("model", ImageEdit.Model, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("prompt", ImageEdit.Prompt, BeginBoundary));
@@ -134,7 +130,7 @@ void UOpenAIProvider::CreateImageEdit(const FOpenAIImageEdit& ImageEdit, const F
     {
         RequestContent.Append(HttpHelper::AddMIME("user", ImageEdit.User.Value, BeginBoundary));
     }
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     // GPT image models can take noticeably longer than the default HTTP timeout to edit an image.
@@ -161,14 +157,10 @@ void UOpenAIProvider::CreateAudioTranscription(const FAudioTranscription& AudioT
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
 
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(API->AudioTranscriptions());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
+    auto HttpRequest = MakeMultipartRequest(API->AudioTranscriptions(), Boundary, Auth);
 
     TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(AudioTranscription.File, "file", BeginBoundary));
+    if (!AppendMIMEFile(RequestContent, AudioTranscription.File, "file", BeginBoundary, HttpRequest->GetURL())) return;
     RequestContent.Append(HttpHelper::AddMIME("model", AudioTranscription.Model, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("prompt", AudioTranscription.Prompt, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("response_format", AudioTranscription.Response_Format, BeginBoundary));
@@ -178,7 +170,7 @@ void UOpenAIProvider::CreateAudioTranscription(const FAudioTranscription& AudioT
     {
         RequestContent.Append(HttpHelper::AddMIME("timestamp_granularities[]", Granularity, BeginBoundary));
     }
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateAudioTranscriptionCompleted);
@@ -189,19 +181,15 @@ void UOpenAIProvider::CreateAudioTranslation(const FAudioTranslation& AudioTrans
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
 
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(API->AudioTranslations());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
+    auto HttpRequest = MakeMultipartRequest(API->AudioTranslations(), Boundary, Auth);
 
     TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(AudioTranslation.File, "file", BeginBoundary));
+    if (!AppendMIMEFile(RequestContent, AudioTranslation.File, "file", BeginBoundary, HttpRequest->GetURL())) return;
     RequestContent.Append(HttpHelper::AddMIME("model", AudioTranslation.Model, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("prompt", AudioTranslation.Prompt, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("response_format", AudioTranslation.Response_Format, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("temperature", FString::SanitizeFloat(AudioTranslation.Temperature), BeginBoundary));
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateAudioTranslationCompleted);
@@ -212,17 +200,13 @@ void UOpenAIProvider::CreateVoice(const FCreateVoice& CreateVoice, const FOpenAI
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
 
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(API->AudioVoices());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
+    auto HttpRequest = MakeMultipartRequest(API->AudioVoices(), Boundary, Auth);
 
     TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(CreateVoice.Audio_Sample, "audio_sample", BeginBoundary));
+    if (!AppendMIMEFile(RequestContent, CreateVoice.Audio_Sample, "audio_sample", BeginBoundary, HttpRequest->GetURL())) return;
     RequestContent.Append(HttpHelper::AddMIME("consent", CreateVoice.Consent, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("name", CreateVoice.Name, BeginBoundary));
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVoiceCompleted);
@@ -247,16 +231,12 @@ void UOpenAIProvider::ListFiles(const FListFilesParams& ListFilesParams, const F
 void UOpenAIProvider::UploadFile(const FUploadFile& UploadFile, const FOpenAIAuth& Auth)
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(API->Files());
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
+    auto HttpRequest = MakeMultipartRequest(API->Files(), Boundary, Auth);
 
     TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(UploadFile.File, "file", BeginBoundary));
+    if (!AppendMIMEFile(RequestContent, UploadFile.File, "file", BeginBoundary, HttpRequest->GetURL())) return;
     RequestContent.Append(HttpHelper::AddMIME("purpose", UploadFile.Purpose, BeginBoundary));
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnUploadFileCompleted);
@@ -405,16 +385,12 @@ void UOpenAIProvider::CreateUpload(const FCreateUpload& CreateUpload, const FOpe
 void UOpenAIProvider::AddUploadPart(const FString& UploadId, const FAddUploadPart& AddUploadPart, const FOpenAIAuth& Auth)
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
     const FString URL = API->Uploads().Append("/").Append(UploadId).Append("/parts");
-    HttpRequest->SetURL(URL);
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
-    HttpRequest->SetVerb("POST");
+    auto HttpRequest = MakeMultipartRequest(URL, Boundary, Auth);
 
     TArray<uint8> RequestContent;
-    RequestContent.Append(HttpHelper::AddMIMEFile(AddUploadPart.Data, "data", BeginBoundary));
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    if (!AppendMIMEFile(RequestContent, AddUploadPart.Data, "data", BeginBoundary, HttpRequest->GetURL())) return;
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnAddUploadPartCompleted);
@@ -750,6 +726,8 @@ void UOpenAIProvider::ListChatKitThreadItems(const FString& ThreadId, const FLis
 
 void UOpenAIProvider::CreateSkill(const FCreateSkill& CreateSkill, const FOpenAIAuth& Auth)
 {
+    if (!FileExists(CreateSkill.Files, API->Skills())) return;
+
     auto HttpRequest = MakeRequest(CreateSkill, API->Skills(), "POST", Auth);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateSkillCompleted);
     ProcessRequest(HttpRequest);
@@ -798,6 +776,8 @@ void UOpenAIProvider::RetrieveSkillContent(const FString& SkillId, const FOpenAI
 void UOpenAIProvider::CreateSkillVersion(const FString& SkillId, const FCreateSkillVersion& CreateVersion, const FOpenAIAuth& Auth)
 {
     const auto URL = FString(API->Skills()).Append("/").Append(SkillId).Append("/versions");
+    if (!FileExists(CreateVersion.Files, URL)) return;
+
     auto HttpRequest = MakeRequest(CreateVersion, URL, "POST", Auth);
     HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateSkillVersionCompleted);
     ProcessRequest(HttpRequest);
@@ -966,21 +946,25 @@ void UOpenAIProvider::OnCreateEmbeddingsCompleted(FHttpRequestPtr Request, FHttp
 
 void UOpenAIProvider::OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (WasSuccessful && Response.IsValid())
-    {
-        FSpeechResponse SpeechResponse;
-        SpeechResponse.Bytes = Response->GetContent();  //@todo move semantics needed
-        CreateSpeechCompleted.Broadcast(SpeechResponse, GetResponseHeaders(Response));
-    }
-    else
-    {
-        LogError("On create speech error");
-        BroadcastRequestError(Response, Request);
-    }
+    if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
+
+    FSpeechResponse SpeechResponse;
+    SpeechResponse.Bytes = Response->GetContent();  //@todo move semantics needed
+    CreateSpeechCompleted.Broadcast(SpeechResponse, GetResponseHeaders(Response));
 }
 
 void UOpenAIProvider::OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
+    if (Response.IsValid() && AudioParser::IsPlainTextContentType(Response->GetContentType()))
+    {
+        if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
+
+        FAudioTranscriptionResponse ParsedResponse;
+        ParsedResponse.Text = Response->GetContentAsString();
+        CreateAudioTranscriptionCompleted.Broadcast(ParsedResponse, GetResponseHeaders(Response));
+        return;
+    }
+
     if (Response.IsValid() && AudioParser::IsVerboseResponse(Response->GetContentAsString()))
     {
         HandleResponse<FAudioTranscriptionVerboseResponse>(Response, WasSuccessful, CreateAudioTranscriptionVerboseCompleted);
@@ -993,6 +977,16 @@ void UOpenAIProvider::OnCreateAudioTranscriptionCompleted(FHttpRequestPtr Reques
 
 void UOpenAIProvider::OnCreateAudioTranslationCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
+    if (Response.IsValid() && AudioParser::IsPlainTextContentType(Response->GetContentType()))
+    {
+        if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
+
+        FAudioTranslationResponse ParsedResponse;
+        ParsedResponse.Text = Response->GetContentAsString();
+        CreateAudioTranslationCompleted.Broadcast(ParsedResponse, GetResponseHeaders(Response));
+        return;
+    }
+
     HandleResponse<FAudioTranslationResponse>(Response, WasSuccessful, CreateAudioTranslationCompleted);
 }
 
@@ -1008,16 +1002,10 @@ DEFINE_HTTP_CALLBACK(RetrieveFile)
 
 void UOpenAIProvider::OnRetrieveFileContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-
-    if (!WasSuccessful)
-    {
-        BroadcastRequestError(Response, Request);
-        return;
-    }
+    if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
 
     FRetrieveFileContentResponse ParsedResponse;
-    ParsedResponse.Content = Content;
+    ParsedResponse.Content = Response->GetContentAsString();
     RetrieveFileContentCompleted.Broadcast(ParsedResponse, GetResponseHeaders(Response));
 }
 
@@ -1238,17 +1226,11 @@ DEFINE_HTTP_CALLBACK(DeleteSkill)
 
 void UOpenAIProvider::OnRetrieveSkillContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (WasSuccessful && Response.IsValid())
-    {
-        FSkillContentResponse ContentResponse;
-        ContentResponse.Bytes = Response->GetContent();
-        RetrieveSkillContentCompleted.Broadcast(ContentResponse, GetResponseHeaders(Response));
-    }
-    else
-    {
-        LogError("On retrieve skill content error");
-        BroadcastRequestError(Response, Request);
-    }
+    if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
+
+    FSkillContentResponse ContentResponse;
+    ContentResponse.Bytes = Response->GetContent();
+    RetrieveSkillContentCompleted.Broadcast(ContentResponse, GetResponseHeaders(Response));
 }
 
 DEFINE_HTTP_CALLBACK(CreateSkillVersion)
@@ -1258,17 +1240,11 @@ DEFINE_HTTP_CALLBACK(DeleteSkillVersion)
 
 void UOpenAIProvider::OnRetrieveSkillVersionContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (WasSuccessful && Response.IsValid())
-    {
-        FSkillContentResponse ContentResponse;
-        ContentResponse.Bytes = Response->GetContent();
-        RetrieveSkillVersionContentCompleted.Broadcast(ContentResponse, GetResponseHeaders(Response));
-    }
-    else
-    {
-        LogError("On retrieve skill version content error");
-        BroadcastRequestError(Response, Request);
-    }
+    if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
+
+    FSkillContentResponse ContentResponse;
+    ContentResponse.Bytes = Response->GetContent();
+    RetrieveSkillVersionContentCompleted.Broadcast(ContentResponse, GetResponseHeaders(Response));
 }
 
 DEFINE_HTTP_CALLBACK(CreateRealtimeClientSecret)
@@ -1299,11 +1275,7 @@ void UOpenAIProvider::OnRealtimeRejectCallCompleted(FHttpRequestPtr Request, FHt
 
 void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    if (!WasSuccessful)
-    {
-        BroadcastRequestError(Response, Request);
-        return;
-    }
+    if (!SuccessRawResponse(Request, Response, WasSuccessful)) return;
 
     FDownloadVideoContentResponse ParsedResponse;
     ParsedResponse.Content = Response->GetContent();
@@ -1324,6 +1296,16 @@ void UOpenAIProvider::ProcessRequest(FHttpRequestRef HttpRequest)
         LogError(FString::Format(TEXT("Can't process: {0}"), {HttpRequest->GetURL()}));
         RequestError.Broadcast(HttpRequest->GetURL(), {});
     }
+}
+
+bool UOpenAIProvider::SuccessRawResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    // WasSuccessful only means that the connection succeeded, errors come with a JSON body and a 4xx/5xx code
+    if (WasSuccessful && Response.IsValid() && EHttpResponseCodes::IsOk(Response->GetResponseCode())) return true;
+
+    // BroadcastRequestError logs the HTTP code
+    BroadcastRequestError(Response, Request);
+    return false;
 }
 
 bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
@@ -1572,15 +1554,12 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
 
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(URL);
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
+    auto HttpRequest = MakeMultipartRequest(URL, Boundary, Auth);
     HttpRequest->SetVerb(Method);
 
     TArray<uint8> RequestContent;
     RequestContent.Append(HttpHelper::AddMIMEFile(CreateSkill.Files, "files", BeginBoundary));
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     return HttpRequest;
@@ -1591,10 +1570,7 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
 {
     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
 
-    auto HttpRequest = CreateRequest();
-    HttpRequest->SetHeader("Authorization", "Bearer " + Auth.APIKey);
-    HttpRequest->SetURL(URL);
-    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
+    auto HttpRequest = MakeMultipartRequest(URL, Boundary, Auth);
     HttpRequest->SetVerb(Method);
 
     TArray<uint8> RequestContent;
@@ -1603,10 +1579,43 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     {
         RequestContent.Append(HttpHelper::AddMIME("default", CreateVersion.Default.Value ? "true" : "false", BeginBoundary));
     }
-    RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
 
     HttpRequest->SetContent(RequestContent);
     return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeMultipartRequest(const FString& URL, const FString& Boundary, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetHeader("Content-Type", "multipart/form-data; boundary=" + Boundary);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb("POST");
+    return HttpRequest;
+}
+
+bool UOpenAIProvider::AppendMIMEFile(
+    TArray<uint8>& Content, const FString& FilePath, const FString& ParamName, const FString& BeginBoundary, const FString& URL)
+{
+    const TArray<uint8> FilePart = HttpHelper::AddMIMEFile(FilePath, ParamName, BeginBoundary);
+    if (FilePart.IsEmpty())
+    {
+        LogError(FString::Format(TEXT("Can't read file: {0}"), {FilePath}));
+        RequestError.Broadcast(URL, FString::Format(TEXT("Can't read file: {0}"), {FilePath}));
+        return false;
+    }
+
+    Content.Append(FilePart);
+    return true;
+}
+
+bool UOpenAIProvider::FileExists(const FString& FilePath, const FString& URL)
+{
+    if (FPaths::FileExists(FilePath)) return true;
+
+    LogError(FString::Format(TEXT("Can't read file: {0}"), {FilePath}));
+    RequestError.Broadcast(URL, FString::Format(TEXT("Can't read file: {0}"), {FilePath}));
+    return false;
 }
 
 FHttpRequestRef UOpenAIProvider::MakeRequestHeaders(const FOpenAIAuth& Auth) const

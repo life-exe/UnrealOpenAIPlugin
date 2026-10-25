@@ -766,6 +766,8 @@ private:
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
+    // for non-JSON responses (audio, files, text): checks the HTTP code
+    bool SuccessRawResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful);
     // Logs the HTTP status code and broadcasts RequestError; an empty response body is replaced with "HTTP <code>"
     void BroadcastRequestError(FHttpResponsePtr Response, FHttpRequestPtr Request = nullptr);
     void Log(const FString& Info) const;
@@ -783,6 +785,12 @@ private:
     }
 
     FHttpRequestRef MakeRequestHeaders(const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeMultipartRequest(const FString& URL, const FString& Boundary, const FOpenAIAuth& Auth) const;
+    // Appends a multipart file part, broadcasts RequestError if the file can't be read
+    bool AppendMIMEFile(
+        TArray<uint8>& Content, const FString& FilePath, const FString& ParamName, const FString& BeginBoundary, const FString& URL);
+    // broadcasts RequestError if the file doesn't exist
+    bool FileExists(const FString& FilePath, const FString& URL);
     FOpenAIResponseMetadata GetResponseHeaders(FHttpResponsePtr Response) const;
 
     template <typename OutStructType>

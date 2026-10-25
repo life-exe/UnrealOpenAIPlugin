@@ -1,8 +1,10 @@
 // OpenAI Sample, Copyright LifeEXE. All Rights Reserved.
 
 #include "FuncLib/FileSystemFuncLib.h"
+#if WITH_EDITOR
 #include "IDesktopPlatform.h"
 #include "DesktopPlatformModule.h"
+#endif
 #include "FuncLib/ImageFuncLib.h"
 #include "FuncLib/OpenAIFuncLib.h"
 #include "Misc/FileHelper.h"
@@ -23,6 +25,7 @@ const FString DefaultFileNameToSave = TEXT("OpenAIImage");
 
 bool UFileSystemFuncLib::OpenFile(const FString& FileExtensions, TArray<FString>& OutFileNames)
 {
+#if WITH_EDITOR
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
     if (!DesktopPlatform) return false;
 
@@ -39,12 +42,17 @@ bool UFileSystemFuncLib::OpenFile(const FString& FileExtensions, TArray<FString>
         FileName = FPaths::ConvertRelativePathToFull(FileName);
     }
     return Success && OutFileNames.Num() > 0;
+#else
+    UE_LOGFMT(LogFileSystemFuncLib, Warning, "File dialogs are available in the editor only");
+    return false;
+#endif
 }
 
 bool UFileSystemFuncLib::SaveImageToFile(UTexture2D* Texture)
 {
     if (!Texture) return false;
 
+#if WITH_EDITOR
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
     if (!DesktopPlatform) return false;
 
@@ -65,6 +73,10 @@ bool UFileSystemFuncLib::SaveImageToFile(UTexture2D* Texture)
     }
 
     return false;
+#else
+    UE_LOGFMT(LogFileSystemFuncLib, Warning, "File dialogs are available in the editor only");
+    return false;
+#endif
 }
 
 FString UFileSystemFuncLib::GetFileExtensions(EFileType FileType)

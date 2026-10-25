@@ -8,6 +8,11 @@
 #include "Provider/Types/ModelTypes.h"
 #include "Provider/Types/ModerationTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
+#include "Provider/Types/AudioTypes.h"
+#include "Provider/Types/FileTypes.h"
+#include "Provider/JsonParsers/AudioParser.h"
+#include "FuncLib/OpenAIFuncLib.h"
+#include "TestUtils.h"
 
 DEFINE_SPEC(FOpenAIProviderFake, "OpenAI.Provider",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
@@ -240,6 +245,126 @@ void FOpenAIProviderFake::Define()
                     TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Sexual_Minors, 0.005, 1e-6));
                     TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Violence, 0.006, 1e-6));
                     TestTrueExpr(FMath::IsNearlyEqual(Result.Category_Scores.Violence_Graphic, 0.007, 1e-6));
+                });
+
+            It("MultipartShouldSendUTF8TextAndAuthHeaders",
+                [this]()
+                {
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->SetResponse(TEXT("{\"text\":\"hello\"}"));
+
+                    FOpenAIAuth Auth;
+                    Auth.APIKey = TEXT("key");
+                    Auth.OrganizationID = TEXT("org-1");
+                    Auth.ProjectID = TEXT("proj-1");
+
+                    // "Privet" in Cyrillic
+                    const FString Prompt = TEXT("Привет");
+                    FAudioTranscription AudioTranscription;
+                    AudioTranscription.File = OpenAI::Tests::TestUtils::FileFullPath("hello.mp3");
+                    AudioTranscription.Model = TEXT("whisper-1");
+                    AudioTranscription.Prompt = Prompt;
+                    OpenAIProvider->CreateAudioTranscription(AudioTranscription, Auth);
+
+                    const auto Request = OpenAIProvider->GetLastRequest();
+                    if (!TestTrue("Request was created", Request.IsValid())) return;
+
+                    TestTrueExpr(Request->bProcessed);
+                    TestTrueExpr(Request->GetHeader(TEXT("OpenAI-Organization")).Equals(TEXT("org-1")));
+                    TestTrueExpr(Request->GetHeader(TEXT("OpenAI-Project")).Equals(TEXT("proj-1")));
+                    TestTrueExpr(Request->GetHeader(TEXT("Content-Type")).StartsWith(TEXT("multipart/form-data; boundary=")));
+
+                    const FTCHARToUTF8 PromptUTF8(*Prompt);
+                    const TArray<uint8> PromptBytes(reinterpret_cast<const uint8*>(PromptUTF8.Get()), PromptUTF8.Length());
+                    const TArray<uint8>& Content = Request->GetContent();
+                    bool ContainsPrompt = false;
+                    for (int32 i = 0; i + PromptBytes.Num() <= Content.Num() && !ContainsPrompt; ++i)
+                    {
+                        ContainsPrompt = FMemory::Memcmp(Content.GetData() + i, PromptBytes.GetData(), PromptBytes.Num()) == 0;
+                    }
+                    TestTrue("Content contains the UTF-8 prompt", ContainsPrompt);
+                });
+
+            It("MultipartShouldNotBeSentIfFileCantBeRead",
+                [this]()
+                {
+                    AddExpectedMessage(TEXT("Failed to load file's bytes"), EAutomationExpectedErrorFlags::Contains, 1);
+                    AddExpectedMessage(TEXT("Can't read file"), EAutomationExpectedErrorFlags::Contains, 1);
+
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->SetResponse(TEXT("{\"id\":\"file-1\"}"));
+
+                    FString ErrorContent;
+                    bool UploadCompleted = false;
+                    OpenAIProvider->OnRequestError().AddLambda([&](const FString& URL, const FString& Content) { ErrorContent = Content; });
+                    OpenAIProvider->OnUploadFileCompleted().AddLambda(
+                        [&](const FUploadFileResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        { UploadCompleted = true; });
+
+                    FUploadFile UploadFile;
+                    UploadFile.File = FPaths::ProjectSavedDir() / TEXT("OpenAITests/missing_file.jsonl");
+                    UploadFile.Purpose = TEXT("batch");
+                    OpenAIProvider->UploadFile(UploadFile, FOpenAIAuth{});
+
+                    TestTrueExpr(ErrorContent.Contains(TEXT("Can't read file")));
+                    TestFalseExpr(UploadCompleted);
+                    TestTrueExpr(OpenAIProvider->GetLastRequest().IsValid() && !OpenAIProvider->GetLastRequest()->bProcessed);
+                });
+
+            It("TranscriptionInTextFormatShouldReturnPlainText",
+                [this]()
+                {
+                    const FString Srt = TEXT("1\n00:00:00,000 --> 00:00:01,000\nHello\n");
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->SetResponse(Srt, 200, TEXT("text/plain; charset=utf-8"));
+
+                    FString Text;
+                    OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
+                        [&](const FAudioTranscriptionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        { Text = Response.Text; });
+
+                    FAudioTranscription AudioTranscription;
+                    AudioTranscription.File = OpenAI::Tests::TestUtils::FileFullPath("hello.mp3");
+                    AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Str);
+                    OpenAIProvider->CreateAudioTranscription(AudioTranscription, FOpenAIAuth{});
+
+                    TestTrueExpr(Text.Equals(Srt));
+                });
+
+            It("VerboseTranscriptionShouldBeDetectedByFields",
+                [this]()
+                {
+                    using OpenAI::AudioParser;
+                    TestFalseExpr(AudioParser::IsVerboseResponse(TEXT("{\"text\":\"segments of the talk\"}")));
+                    TestTrueExpr(
+                        AudioParser::IsVerboseResponse(TEXT("{\"text\":\"hi\",\"language\":\"en\",\"duration\":1.5,\"segments\":[]}")));
+                    TestTrueExpr(AudioParser::IsVerboseResponse(TEXT("{\"text\":\"hi\",\"words\":[]}")));
+                    TestFalseExpr(AudioParser::IsVerboseResponse(TEXT("not json")));
+
+                    TestTrueExpr(AudioParser::IsPlainTextContentType(TEXT("text/plain; charset=utf-8")));
+                    TestTrueExpr(AudioParser::IsPlainTextContentType(TEXT("text/vtt")));
+                    TestFalseExpr(AudioParser::IsPlainTextContentType(TEXT("application/json")));
+                    TestFalseExpr(AudioParser::IsPlainTextContentType(TEXT("")));
+                });
+
+            It("BinaryResponseWithErrorCodeShouldBroadcastError",
+                [this]()
+                {
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->SetResponse(TEXT("{\"error\":{\"message\":\"Incorrect API key\"}}"), 401, TEXT("application/json"));
+
+                    FString ErrorContent;
+                    bool SpeechCompleted = false;
+                    OpenAIProvider->OnRequestError().AddLambda([&](const FString& URL, const FString& Content) { ErrorContent = Content; });
+                    OpenAIProvider->OnCreateSpeechCompleted().AddLambda(
+                        [&](const FSpeechResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata) { SpeechCompleted = true; });
+
+                    FSpeech Speech;
+                    Speech.Input = TEXT("hello");
+                    OpenAIProvider->CreateSpeech(Speech, FOpenAIAuth{});
+
+                    TestFalseExpr(SpeechCompleted);
+                    TestTrueExpr(ErrorContent.Contains(TEXT("Incorrect API key")));
                 });
         });
 }

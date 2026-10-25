@@ -23,5 +23,11 @@ public class OpenAI : ModuleRules
                 "HTTP"
             });
         // clang-format on
+
+        // file dialogs (UFileSystemFuncLib) are editor only, DesktopPlatform is a developer module
+        if (Target.bBuildEditor)
+        {
+            PrivateDependencyModuleNames.Add("DesktopPlatform");
+        }
     }
 }

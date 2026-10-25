@@ -6,24 +6,32 @@
 #include "Provider/OpenAIProvider.h"
 #include "OpenAIProviderFake.generated.h"
 
+struct FFakeResponseData
+{
+    FString Content;
+    int32 ResponseCode{static_cast<int32>(EHttpResponseCodes::Ok)};
+    FString ContentType;
+};
+
 class FFakeHttpResponse : public IHttpResponse
 {
 public:
-    FFakeHttpResponse(const FString& ResponseStr) : ReponseData(ResponseStr) {}
-    virtual int32 GetResponseCode() const override { return static_cast<int32>(EHttpResponseCodes::Ok); }
+    FFakeHttpResponse(const FFakeResponseData& InData)
+        : ReponseData(InData.Content), ResponseCode(InData.ResponseCode), ContentType(InData.ContentType)
+    {
+        const FTCHARToUTF8 Converter(*ReponseData);
+        Bytes.Append(reinterpret_cast<const uint8*>(Converter.Get()), Converter.Length());
+    }
+    virtual int32 GetResponseCode() const override { return ResponseCode; }
     virtual FString GetContentAsString() const override { return ReponseData; }
     virtual const FString& GetURL() const override { return _URL; }
     virtual FString GetURLParameter(const FString& ParameterName) const override { return FString(); }
     virtual FString GetHeader(const FString& HeaderName) const override { return FString(); }
     virtual TArray<FString> GetAllHeaders() const override { return TArray<FString>(); }
-    virtual FString GetContentType() const override { return FString(); }
-    virtual uint64 GetContentLength() const override { return uint64(); }
-    virtual const TArray<uint8>& GetContent() const override
-    {
-        static TArray<uint8> None;
-        return None;
-    }
-    virtual TArray<uint8> TakeContent() override { return TArray<uint8>(); }
+    virtual FString GetContentType() const override { return ContentType; }
+    virtual uint64 GetContentLength() const override { return Bytes.Num(); }
+    virtual const TArray<uint8>& GetContent() const override { return Bytes; }
+    virtual TArray<uint8> TakeContent() override { return Bytes; }
     virtual const FString& GetEffectiveURL() const override { return EffectiveURL; }
     virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::Succeeded; }
     virtual EHttpFailureReason GetFailureReason() const override { return EHttpFailureReason::None; }
@@ -31,6 +39,9 @@ public:
 
 private:
     FString ReponseData;
+    int32 ResponseCode;
+    FString ContentType;
+    TArray<uint8> Bytes;
     FString EffectiveURL;
     FString _URL;
 };
@@ -38,34 +49,39 @@ private:
 class FFakeHttpRequest : public IHttpRequest
 {
 public:
-    FFakeHttpRequest(const FString& ResponseStr) : ReponseData(ResponseStr) {}
+    FFakeHttpRequest(const FFakeResponseData& InResponseData) : ResponseData(InResponseData) {}
     virtual const FString& GetURL() const override { return _URL; }
     virtual FHttpRequestWillRetryDelegate& OnRequestWillRetry() override { return HttpRequestWillRetryDelegate; }
     virtual FString GetURLParameter(const FString& ParameterName) const override { return FString(); }
-    virtual FString GetHeader(const FString& HeaderName) const override { return FString(); }
-    virtual TArray<FString> GetAllHeaders() const override { return TArray<FString>(); }
-    virtual FString GetContentType() const override { return FString(); }
-    virtual uint64 GetContentLength() const override { return uint64(); }
-    virtual const TArray<uint8>& GetContent() const override
+    virtual FString GetHeader(const FString& HeaderName) const override
     {
-        static TArray<uint8> None;
-        return None;
+        const FString* Value = Headers.Find(HeaderName);
+        return Value ? *Value : FString();
     }
-    virtual FString GetVerb() const override { return FString{}; }
-    virtual void SetVerb(const FString& Verb) override {}
-    virtual void SetURL(const FString& URL) override {}
-    virtual void SetContent(const TArray<uint8>& ContentPayload) override {}
-    virtual void SetContent(TArray<uint8>&& ContentPayload) override {}
-    virtual void SetContentAsString(const FString& ContentString) override {}
+    virtual TArray<FString> GetAllHeaders() const override { return TArray<FString>(); }
+    virtual FString GetContentType() const override { return GetHeader(TEXT("Content-Type")); }
+    virtual uint64 GetContentLength() const override { return Content.Num(); }
+    virtual const TArray<uint8>& GetContent() const override { return Content; }
+    virtual FString GetVerb() const override { return Verb; }
+    virtual void SetVerb(const FString& InVerb) override { Verb = InVerb; }
+    virtual void SetURL(const FString& URL) override { _URL = URL; }
+    virtual void SetContent(const TArray<uint8>& ContentPayload) override { Content = ContentPayload; }
+    virtual void SetContent(TArray<uint8>&& ContentPayload) override { Content = MoveTemp(ContentPayload); }
+    virtual void SetContentAsString(const FString& ContentString) override
+    {
+        const FTCHARToUTF8 Converter(*ContentString);
+        Content = TArray<uint8>(reinterpret_cast<const uint8*>(Converter.Get()), Converter.Length());
+    }
     virtual bool SetContentAsStreamedFile(const FString& Filename) override { return false; }
     virtual bool SetContentFromStream(TSharedRef<FArchive, ESPMode::ThreadSafe> Stream) override { return false; }
-    virtual void SetHeader(const FString& HeaderName, const FString& HeaderValue) override {}
+    virtual void SetHeader(const FString& HeaderName, const FString& HeaderValue) override { Headers.Add(HeaderName, HeaderValue); }
     virtual void AppendToHeader(const FString& HeaderName, const FString& AdditionalHeaderValue) override {}
     virtual void SetTimeout(float InTimeoutSecs) override {}
     virtual void ClearTimeout() override {}
     virtual TOptional<float> GetTimeout() const override { return TOptional<float>(); }
     virtual bool ProcessRequest() override
     {
+        bProcessed = true;
         HttpRequestCompleteDelegate.Execute(SharedThis(this), GetResponse(), true);
         return true;
     }
@@ -75,7 +91,7 @@ public:
     virtual FHttpRequestStatusCodeReceivedDelegate& OnStatusCodeReceived() override { return HttpRequestStatusCodeReceivedDelegate; }
     virtual void CancelRequest() override {}
     virtual EHttpRequestStatus::Type GetStatus() const override { return EHttpRequestStatus::Type::NotStarted; }
-    virtual const FHttpResponsePtr GetResponse() const override { return MakeShareable(new FFakeHttpResponse(ReponseData)); }
+    virtual const FHttpResponsePtr GetResponse() const override { return MakeShareable(new FFakeHttpResponse(ResponseData)); }
     virtual void Tick(float DeltaSeconds) override {}
     virtual float GetElapsedTime() const override { return float{}; }
     virtual bool SetResponseBodyReceiveStream(TSharedRef<FArchive> Stream) override { return false; }
@@ -102,8 +118,13 @@ public:
     FHttpRequestWillRetryDelegate HttpRequestWillRetryDelegate;
     FHttpRequestStatusCodeReceivedDelegate HttpRequestStatusCodeReceivedDelegate;
 
+    bool bProcessed{false};
+
 private:
-    FString ReponseData;
+    FFakeResponseData ResponseData;
+    TMap<FString, FString> Headers;
+    TArray<uint8> Content;
+    FString Verb;
     FString EffectiveURL;
     FString _URL;
     EHttpRequestPriority Priority = EHttpRequestPriority::Normal;
@@ -115,13 +136,23 @@ class OPENAITESTRUNNER_API UOpenAIProviderFake : public UOpenAIProvider
     GENERATED_BODY()
 
 public:
-    void SetResponse(const FString& ResponseStr) { ReponseData = ResponseStr; };
+    void SetResponse(
+        const FString& ResponseStr, int32 ResponseCode = static_cast<int32>(EHttpResponseCodes::Ok), const FString& ContentType = {})
+    {
+        ResponseData = {ResponseStr, ResponseCode, ContentType};
+    };
+
+    // the last created request: headers, content and whether it was sent
+    TSharedPtr<FFakeHttpRequest, ESPMode::ThreadSafe> GetLastRequest() const { return LastRequest; }
 
 private:
-    FString ReponseData;
+    FFakeResponseData ResponseData;
+    mutable TSharedPtr<FFakeHttpRequest, ESPMode::ThreadSafe> LastRequest;
 
     virtual TSharedRef<IHttpRequest, ESPMode::ThreadSafe> CreateRequest() const override
-    {  //
-        return MakeShareable(new FFakeHttpRequest(ReponseData));
+    {
+        TSharedRef<FFakeHttpRequest, ESPMode::ThreadSafe> Request = MakeShareable(new FFakeHttpRequest(ResponseData));
+        LastRequest = Request;
+        return Request;
     }
 };

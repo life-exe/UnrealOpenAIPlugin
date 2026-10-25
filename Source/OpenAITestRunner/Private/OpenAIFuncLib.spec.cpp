@@ -359,7 +359,7 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::JSON).Equals("json"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Text).Equals("text"));
-                    TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Str).Equals("str"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Str).Equals("srt"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Verbose_JSON).Equals("verbose_json"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Vtt).Equals("vtt"));
                 });

@@ -59,6 +59,28 @@ void FOpenAIProviderAudio::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
+            It("Audio.CreateTranscriptionSrtRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateAudioTranscriptionCompleted().AddLambda(
+                        [&](const FAudioTranscriptionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            // srt is plain text: "1\n00:00:00,000 --> 00:00:01,500\nHello, what's up?"
+                            TestTrueExpr(Response.Text.Contains(TEXT("-->")));
+                            TestTrueExpr(Response.Text.ToLower().Contains(TEXT("hello")));
+                            RequestCompleted = true;
+                        });
+
+                    FAudioTranscription AudioTranscription;
+                    AudioTranscription.Language = "en";
+                    AudioTranscription.Model = UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1);
+                    AudioTranscription.Response_Format = UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Str);
+                    AudioTranscription.File = TestUtils::FileFullPath("hello.mp3");
+
+                    OpenAIProvider->CreateAudioTranscription(AudioTranscription, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
             It("Audio.CreateTranscriptionVerboseRequestShouldResponseCorrectly",
                 [this]()
                 {

@@ -55,7 +55,7 @@ enum class ETranscriptFormat : uint8
 {
     JSON,
     Text,
-    Str,
+    Str UMETA(DisplayName = "SRT"),  // "srt"; the name is kept for saved Blueprints
     Verbose_JSON,
     Vtt
 };

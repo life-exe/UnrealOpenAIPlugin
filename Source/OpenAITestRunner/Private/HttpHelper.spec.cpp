@@ -55,14 +55,14 @@ void FHttpHelper::Define()
                     TArray<uint8> Content;
                     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary(99999);
 
-                    Content.Append((uint8*)TCHAR_TO_ANSI(*BeginBoundary), BeginBoundary.Len());
+                    Content.Append(HttpHelper::StringToUTF8(BeginBoundary));
 
                     FString Header = "Content-Disposition: form-data;";
                     Header.Append(FString::Printf(TEXT("name=\"randomParamName\";")));
-                    Header.Append("filename=\"test_image.png\"").Append(LINE_TERMINATOR);
-                    Header.Append(FString::Printf(TEXT("Content-Type: image/png"))).Append(LINE_TERMINATOR).Append(LINE_TERMINATOR);
+                    Header.Append("filename=\"test_image.png\"").Append(HttpHelper::CRLF);
+                    Header.Append(FString::Printf(TEXT("Content-Type: image/png"))).Append(HttpHelper::CRLF).Append(HttpHelper::CRLF);
 
-                    Content.Append((uint8*)TCHAR_TO_ANSI(*Header), Header.Len());
+                    Content.Append(HttpHelper::StringToUTF8(Header));
                     Content.Append(FileContent);
 
                     TestTrueExpr(HttpHelper::AddMIMEFile(FilePath, "randomParamName", BeginBoundary) == Content);
@@ -74,12 +74,12 @@ void FHttpHelper::Define()
                     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary(99999);
 
                     TArray<uint8> Content;
-                    Content.Append((uint8*)TCHAR_TO_ANSI(*BeginBoundary), BeginBoundary.Len());
+                    Content.Append(HttpHelper::StringToUTF8(BeginBoundary));
 
                     FString Header = "Content-Disposition: form-data;";
-                    Header.Append(FString::Printf(TEXT("name=\"randomParamName\""))).Append(LINE_TERMINATOR).Append(LINE_TERMINATOR);
+                    Header.Append(FString::Printf(TEXT("name=\"randomParamName\""))).Append(HttpHelper::CRLF).Append(HttpHelper::CRLF);
                     Header.Append(FString::Printf(TEXT("randomParamValue")));
-                    Content.Append((uint8*)TCHAR_TO_ANSI(*Header), Header.Len());
+                    Content.Append(HttpHelper::StringToUTF8(Header));
 
                     TestTrueExpr(HttpHelper::AddMIME("randomParamName", "randomParamValue", BeginBoundary) == Content);
                 });
@@ -89,9 +89,31 @@ void FHttpHelper::Define()
                 {
                     const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary(99999);
                     TestTrueExpr(Boundary.Equals("---------------------------99999"));
-                    TestTrueExpr(BeginBoundary.Equals(FString(LINE_TERMINATOR).Append("--").Append(Boundary).Append(LINE_TERMINATOR)));
+                    TestTrueExpr(BeginBoundary.Equals(FString(HttpHelper::CRLF).Append("--").Append(Boundary).Append(HttpHelper::CRLF)));
                     TestTrueExpr(
-                        EndBoundary.Equals(FString(LINE_TERMINATOR).Append("--").Append(Boundary).Append("--").Append(LINE_TERMINATOR)));
+                        EndBoundary.Equals(FString(HttpHelper::CRLF).Append("--").Append(Boundary).Append("--").Append(HttpHelper::CRLF)));
+                });
+
+            It("AddMIMEShouldEncodeValueAsUTF8",
+                [this]()
+                {
+                    // U+0416 (Cyrillic Zhe) is two bytes in UTF-8, ANSI conversion turned it into '?'
+                    const TArray<uint8> Content = HttpHelper::AddMIME("prompt", TEXT("Ж"), TEXT(""));
+                    TestTrueExpr(Content.Num() >= 2);
+                    if (Content.Num() < 2) return;
+
+                    TestTrueExpr(Content[Content.Num() - 2] == 0xD0);
+                    TestTrueExpr(Content[Content.Num() - 1] == 0x96);
+                });
+
+            It("AddMIMEFileShouldReturnEmptyArrayForMissingFile",
+                [this]()
+                {
+                    AddExpectedMessage(TEXT("Failed to load file's bytes"), EAutomationExpectedErrorFlags::Contains, 1);
+                    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary(99999);
+                    TestTrueExpr(
+                        HttpHelper::AddMIMEFile(FPaths::ProjectSavedDir() / TEXT("OpenAITests/missing.png"), "image", BeginBoundary)
+                            .IsEmpty());
                 });
         });
 }

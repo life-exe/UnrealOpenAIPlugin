@@ -485,7 +485,7 @@ FString UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat Transcri
     {
         case ETranscriptFormat::JSON: return "json";
         case ETranscriptFormat::Text: return "text";
-        case ETranscriptFormat::Str: return "str";
+        case ETranscriptFormat::Str: return "srt";
         case ETranscriptFormat::Verbose_JSON: return "verbose_json";
         case ETranscriptFormat::Vtt: return "vtt";
     }
