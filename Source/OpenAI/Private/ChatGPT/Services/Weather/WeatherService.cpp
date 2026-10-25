@@ -124,7 +124,8 @@ bool UWeatherService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson, FS
 
     const OpenAI::QueryPairs QueryArgs{{"access_key", API_KEY}, {"query", Location}, {"units", Units}};
     WeatherRequestURL = UOpenAIFuncLib::MakeURLWithQuery(Weather::API_URL, QueryArgs);
-    UE_LOGFMT(LogWeatherService, Display, "Weather reqest URL: {0}", WeatherRequestURL);
+    // don't log the URL itself: it contains the access key
+    UE_LOGFMT(LogWeatherService, Display, "Weather request: location={0}, units={1}", Location, Units);
     return true;
 }
 

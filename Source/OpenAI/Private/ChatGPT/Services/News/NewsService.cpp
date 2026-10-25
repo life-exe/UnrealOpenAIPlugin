@@ -139,11 +139,11 @@ FString UNewsService::MakeRequestURL(const TSharedPtr<FJsonObject>& ArgsJson) co
             QueryArgs.Add(MakeTuple(Query, News::ReplaceSpaces(FieldObj->AsString())));
         }
     }
+    // log the URL before the key is appended
+    UE_LOGFMT(LogNewsService, Display, "News request URL: {0}", UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs));
     QueryArgs.Add(MakeTuple("apiKey", API_KEY));
 
-    const FString URL = UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs);
-    UE_LOGFMT(LogNewsService, Display, "News request URL: {0}", URL);
-    return URL;
+    return UOpenAIFuncLib::MakeURLWithQuery(News::API_URL, QueryArgs);
 }
 
 void UNewsService::OnRequestCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
