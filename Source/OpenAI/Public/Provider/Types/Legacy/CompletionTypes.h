@@ -177,8 +177,11 @@ struct FCompletionLogProbs
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     TArray<FString> Tokens;
 
+    /**
+       The most likely tokens and their log probabilities for every position.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Top_Logprobs{};
+    TArray<FNumberMap> Top_Logprobs;
 };
 
 USTRUCT(BlueprintType)

@@ -44,6 +44,34 @@ enum class EVideoSize : uint8
 };
 
 /**
+  Reference image for video generation. Provide exactly one of Image_Url or File_Id.
+*/
+USTRUCT(BlueprintType)
+struct FVideoInputReference
+{
+    GENERATED_BODY()
+
+    /**
+      A fully qualified URL or base64-encoded data URL.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    FOptionalString Image_Url;
+
+    /**
+      The File API ID of an uploaded image.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    FOptionalString File_Id;
+
+    /**
+      Whether the reference is set.
+      Set to true to include this field in the request.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    bool IsSet{false};
+};
+
+/**
   Create a new video generation job.
   https://platform.openai.com/docs/api-reference/videos/create
 */
@@ -66,16 +94,16 @@ struct FCreateVideo
     FString Model{"sora-2"};
 
     /**
-      Optional image reference URL guiding generation.
+      Optional image reference guiding generation.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FOptionalString Input_Reference;
+    FVideoInputReference Input_Reference;
 
     /**
-      Clip duration in seconds. Must be 4, 8, or 12. Defaults to 4.
+      Clip duration in seconds: "4", "8" or "12". Defaults to "4".
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    FOptionalInt Seconds;
+    FOptionalString Seconds;
 
     /**
       Output resolution. Defaults to "720x1280".
@@ -238,9 +266,9 @@ struct FVideoObject
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Remixed_From_Video_Id{};
 
-    /** Duration in seconds of the generated clip. */
+    /** Duration in seconds of the generated clip ("4", "8" or "12"). */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    int32 Seconds{};
+    FString Seconds{};
 
     /** Resolution of the generated video (e.g. "720x1280"). */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")

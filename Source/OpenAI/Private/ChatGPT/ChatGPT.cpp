@@ -29,9 +29,15 @@ bool GatherFunctionResponse(const TArray<FChatCompletionStreamResponse>& Respons
     bool NeedToCallFunction{false};
     Algo::ForEach(Responses, [&](const FChatCompletionStreamResponse& StreamResponse) {  //
         Algo::ForEach(StreamResponse.Choices, [&](const FChatStreamChoice& Choice) {     //
-            ID.Append(Choice.Delta.Tool_Calls.ID);
-            FunctionCall.Arguments.Append(Choice.Delta.Tool_Calls.Function.Arguments);
-            FunctionCall.Name.Append(Choice.Delta.Tool_Calls.Function.Name);
+            for (const auto& ToolCall : Choice.Delta.Tool_Calls)
+            {
+                // only the first tool call is handled
+                if (ToolCall.Index != 0) continue;
+
+                ID.Append(ToolCall.ID);
+                FunctionCall.Arguments.Append(ToolCall.Function.Arguments);
+                FunctionCall.Name.Append(ToolCall.Function.Name);
+            }
             if (UOpenAIFuncLib::StringToOpenAIFinishReason(Choice.Finish_Reason) == EOpenAIFinishReason::Tool_Calls)
             {
                 NeedToCallFunction = true;

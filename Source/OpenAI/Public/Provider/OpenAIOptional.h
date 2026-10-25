@@ -100,3 +100,15 @@ struct FOptionalFloat
         IsSet = false;
     }
 };
+/**
+  JSON object with arbitrary keys and numeric values, e.g. {"token": -0.25}.
+  Filled by UJsonFuncLib::ParseJSONToStruct.
+*/
+USTRUCT(BlueprintType)
+struct FNumberMap
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TMap<FString, double> Values;
+};

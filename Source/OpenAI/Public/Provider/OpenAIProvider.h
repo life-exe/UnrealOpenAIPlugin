@@ -34,6 +34,7 @@
 #include "Provider/JsonParsers/EvalParser.h"
 #include "Provider/JsonParsers/VectorStoreParser.h"
 #include "Provider/JsonParsers/ChatKitParser.h"
+#include "Provider/JsonParsers/RealtimeParser.h"
 #include "JsonObjectConverter.h"
 #include "OpenAIProvider.generated.h"
 
@@ -807,6 +808,8 @@ private:
     FHttpRequestRef MakeRequest(
         const FFineTuningJob& FineTuningJob, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(const FCreateEval& CreateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
+    FHttpRequestRef MakeRequest(
+        const FCreateRealtimeClientSecret& CreateSecret, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(const FUpdateEval& UpdateEval, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;
     FHttpRequestRef MakeRequest(
         const FCreateVectorStore& CreateVectorStore, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const;

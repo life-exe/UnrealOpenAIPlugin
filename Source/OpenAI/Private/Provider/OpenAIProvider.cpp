@@ -174,6 +174,10 @@ void UOpenAIProvider::CreateAudioTranscription(const FAudioTranscription& AudioT
     RequestContent.Append(HttpHelper::AddMIME("response_format", AudioTranscription.Response_Format, BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("temperature", FString::SanitizeFloat(AudioTranscription.Temperature), BeginBoundary));
     RequestContent.Append(HttpHelper::AddMIME("language", AudioTranscription.Language, BeginBoundary));
+    for (const auto& Granularity : AudioTranscription.Timestamp_Granularities)
+    {
+        RequestContent.Append(HttpHelper::AddMIME("timestamp_granularities[]", Granularity, BeginBoundary));
+    }
     RequestContent.Append((uint8*)TCHAR_TO_ANSI(*EndBoundary), EndBoundary.Len());
 
     HttpRequest->SetContent(RequestContent);
@@ -1473,6 +1477,20 @@ FHttpRequestRef UOpenAIProvider::MakeRequest(
     HttpRequest->SetVerb(Method);
 
     const FString RequestBodyStr = EvalParser::CreateEvalToJsonRepresentation(CreateEval);
+    Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
+    HttpRequest->SetContentAsString(RequestBodyStr);
+
+    return HttpRequest;
+}
+
+FHttpRequestRef UOpenAIProvider::MakeRequest(
+    const FCreateRealtimeClientSecret& CreateSecret, const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const
+{
+    auto HttpRequest = MakeRequestHeaders(Auth);
+    HttpRequest->SetURL(URL);
+    HttpRequest->SetVerb(Method);
+
+    const FString RequestBodyStr = RealtimeParser::CreateClientSecretToJsonRepresentation(CreateSecret);
     Log(FString("Postprocessed content was set as: ").Append(RequestBodyStr));
     HttpRequest->SetContentAsString(RequestBodyStr);
 

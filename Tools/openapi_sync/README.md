@@ -60,9 +60,10 @@ Each provider method is matched to a spec operation by verb and path. Its reques
   - `new`: a spec value the plugin doesn't have;
   - `deprecated`: a plugin value the spec marks deprecated.
 - `ignore_fields_everywhere`, `ignore_fields`: plugin-only helper fields such as `IsSet` (stripped before sending) or `FMessage.ContentArray` (renamed by `ChatParser`).
+- `json_string_fields`: `FString` fields that hold a JSON object and are sent as an object, e.g. `FFunctionRequest.Parameters`. They are not reported as type mismatches.
 - `ignore_endpoints`: provider method names to skip.
 
-Some findings are intentional: for example, `FFunctionRequest.Parameters` is a JSON string that `ChatParser` turns into an object. Add those to `ignore_fields` rather than changing the code.
+Some findings are intentional. Add those to `ignore_fields` or `json_string_fields` rather than changing the code.
 
 ## CI
 

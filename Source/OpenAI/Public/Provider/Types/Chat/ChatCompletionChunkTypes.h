@@ -22,8 +22,11 @@ struct FDelta
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Content{};
 
+    /**
+       Tool call chunks. Use Index to match the chunks of the same tool call.
+    */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FToolCallsDelta Tool_Calls;
+    TArray<FToolCallsDelta> Tool_Calls;
 
     /**
        The role of the author of this message.

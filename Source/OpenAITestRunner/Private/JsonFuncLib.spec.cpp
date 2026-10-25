@@ -9,6 +9,9 @@
 #include "TestUtils.h"
 #include "Provider/Types/Chat/ChatCommonTypes.h"
 #include "Provider/Types/VectorStoreTypes.h"
+#include "Provider/Types/VideoTypes.h"
+#include "Provider/Types/Chat/ChatCompletionChunkTypes.h"
+#include "Provider/Types/Legacy/CompletionTypes.h"
 #include "Logging/StructuredLog.h"
 
 DEFINE_SPEC(
@@ -268,6 +271,37 @@ void FJsonFuncLib::Define()
                     TestTrueExpr(!ResultString.Contains(TEXT("\"isset\"")));
                 });
 
+            It("CreateVideoShouldSendSecondsAsStringAndInputReferenceAsObject",
+                [this]()
+                {
+                    const auto Serialize = [](const FCreateVideo& CreateVideo)
+                    {
+                        FString ResultString;
+                        UJsonFuncLib::JsonToString(FJsonObjectConverter::UStructToJsonObject(CreateVideo), ResultString);
+                        TSharedPtr<FJsonObject> Json;
+                        UJsonFuncLib::StringToJson(UJsonFuncLib::RemoveOptionalValuesThatNotSet(ResultString), Json);
+                        return Json;
+                    };
+
+                    FCreateVideo CreateVideo;
+                    CreateVideo.Prompt = "A cat";
+                    const auto DefaultJson = Serialize(CreateVideo);
+                    TestTrueExpr(DefaultJson.IsValid() && !DefaultJson->HasField(TEXT("input_reference")) &&
+                                 !DefaultJson->HasField(TEXT("seconds")));
+
+                    CreateVideo.Seconds.Set("8");
+                    CreateVideo.Input_Reference.File_Id.Set("file-1");
+                    CreateVideo.Input_Reference.IsSet = true;
+                    const auto Json = Serialize(CreateVideo);
+                    if (!TestTrue("JSON is valid", Json.IsValid())) return;
+
+                    TestTrueExpr(Json->GetStringField(TEXT("seconds")).Equals(TEXT("8")));
+                    const auto Reference = Json->GetObjectField(TEXT("input_reference"));
+                    TestTrueExpr(Reference->GetStringField(TEXT("file_id")).Equals(TEXT("file-1")));
+                    TestFalseExpr(Reference->HasField(TEXT("image_url")));
+                    TestFalseExpr(Reference->HasField(TEXT("isset")));
+                });
+
             It("ParseJSONToStructShouldSetOptionalsFromScalars",
                 [this]()
                 {
@@ -303,6 +337,50 @@ void FJsonFuncLib::Define()
                     FVectorStore VectorStore;
                     TestFalseExpr(UJsonFuncLib::ParseJSONToStruct(TEXT("{\"id\":\"vs_1\",\"file_counts\":[\"bad\"]}"), &VectorStore));
                     TestFalseExpr(UJsonFuncLib::ParseJSONToStruct(TEXT("not json"), &VectorStore));
+                });
+
+            It("ParseJSONToStructShouldParseStreamToolCallsArray",
+                [this]()
+                {
+                    FChatCompletionStreamResponse StreamResponse;
+                    TestTrueExpr(UJsonFuncLib::ParseJSONToStruct(
+                        TEXT("{\"id\":\"chatcmpl-1\",\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"call_1\","
+                             "\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\"\"}}]},"
+                             "\"finish_reason\":null}]}"),
+                        &StreamResponse));
+                    TestTrueExpr(StreamResponse.Choices.Num() == 1);
+
+                    const auto& ToolCalls = StreamResponse.Choices[0].Delta.Tool_Calls;
+                    TestTrueExpr(ToolCalls.Num() == 1);
+                    if (ToolCalls.Num() != 1) return;
+
+                    TestTrueExpr(ToolCalls[0].Index == 0);
+                    TestTrueExpr(ToolCalls[0].ID.Equals(TEXT("call_1")));
+                    TestTrueExpr(ToolCalls[0].Function.Name.Equals(TEXT("get_weather")));
+                    TestTrueExpr(ToolCalls[0].Function.Arguments.Equals(TEXT("{\"city\"")));
+                });
+
+            It("ParseJSONToStructShouldFillNumberMaps",
+                [this]()
+                {
+                    FCompletionLogProbs LogProbs;
+                    TestTrueExpr(UJsonFuncLib::ParseJSONToStruct(
+                        TEXT("{\"tokens\":[\"Hi\"],\"top_logprobs\":[{\"Hi\":-0.25,\"Hello\":-1.5}]}"), &LogProbs));
+                    TestTrueExpr(LogProbs.Top_Logprobs.Num() == 1);
+                    if (LogProbs.Top_Logprobs.Num() != 1) return;
+
+                    const auto& Values = LogProbs.Top_Logprobs[0].Values;
+                    TestTrueExpr(Values.Num() == 2);
+                    TestTrueExpr(Values.Contains(TEXT("Hi")) && FMath::IsNearlyEqual(Values[TEXT("Hi")], -0.25));
+                    TestTrueExpr(Values.Contains(TEXT("Hello")) && FMath::IsNearlyEqual(Values[TEXT("Hello")], -1.5));
+                });
+
+            It("ParseJSONToStructShouldParseVideoSecondsAsString",
+                [this]()
+                {
+                    FVideoObject Video;
+                    TestTrueExpr(UJsonFuncLib::ParseJSONToStruct(TEXT("{\"id\":\"video_1\",\"seconds\":\"8\"}"), &Video));
+                    TestTrueExpr(Video.Seconds.Equals(TEXT("8")));
                 });
         });
 }

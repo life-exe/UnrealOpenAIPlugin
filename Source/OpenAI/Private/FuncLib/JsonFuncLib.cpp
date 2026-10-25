@@ -50,16 +50,33 @@ void ConvertKeysToLowercaseRecursive(TSharedPtr<FJsonValue> Value)
 const FString UJsonFuncLib::START_FUNCTION_OBJECT_MARKER = "START_FUNCTION_OBJECT_MARKER";
 const FString UJsonFuncLib::END_FUNCTION_OBJECT_MARKER = "END_FUNCTION_OBJECT_MARKER";
 
-const FJsonObjectConverter::CustomImportCallback& UJsonFuncLib::OptionalFromScalarImportCallback()
+const FJsonObjectConverter::CustomImportCallback& UJsonFuncLib::ResponseImportCallback()
 {
     static const FJsonObjectConverter::CustomImportCallback Callback = FJsonObjectConverter::CustomImportCallback::CreateLambda(
         [](const TSharedPtr<FJsonValue>& JsonValue, FProperty* Property, void* Value) -> bool
         {
             const FStructProperty* StructProperty = CastField<FStructProperty>(Property);
-            // objects ({"value":..,"isset":..}) go through the default conversion
-            if (!StructProperty || !JsonValue.IsValid() || JsonValue->Type == EJson::Object) return false;
+            if (!StructProperty || !JsonValue.IsValid()) return false;
 
             const UScriptStruct* Struct = StructProperty->Struct;
+            if (Struct == FNumberMap::StaticStruct())
+            {
+                const TSharedPtr<FJsonObject>* JsonObject = nullptr;
+                if (!JsonValue->TryGetObject(JsonObject)) return false;
+
+                auto& Values = static_cast<FNumberMap*>(Value)->Values;
+                for (const auto& [Key, FieldValue] : (*JsonObject)->Values)
+                {
+                    double NumberValue{};
+                    if (!FieldValue->TryGetNumber(NumberValue)) return false;
+                    Values.Add(FString(Key.ToView()), NumberValue);
+                }
+                return true;
+            }
+
+            // objects ({"value":..,"isset":..}) go through the default conversion
+            if (JsonValue->Type == EJson::Object) return false;
+
             if (Struct == FOptionalString::StaticStruct())
             {
                 FString StringValue;

@@ -55,6 +55,29 @@ void FOpenAIRealtime::Define()
 
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
+
+            It("Realtime.CreateClientSecretWithToolShouldWork",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateRealtimeClientSecretCompleted().AddLambda(
+                        [&](const FRealtimeClientSecretResponse& Response, const FOpenAIResponseMetadata& Meta)
+                        {
+                            TestTrueExpr(!Response.Value.IsEmpty());
+                            RequestCompleted = true;
+                        });
+
+                    FRealtimeFunctionTool Tool;
+                    Tool.Name = "get_weather";
+                    Tool.Description = "Get the current weather in a city";
+                    Tool.Parameters = TEXT(R"({"type":"object","properties":{"cityName":{"type":"string"}},"required":["cityName"]})");
+
+                    FCreateRealtimeClientSecret CreateSecret;
+                    CreateSecret.Session.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_Realtime_Mini);
+                    CreateSecret.Session.Tools.Add(Tool);
+                    OpenAIProvider->CreateRealtimeClientSecret(CreateSecret, Auth);
+
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
         });
 }
 

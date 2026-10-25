@@ -127,7 +127,7 @@ struct FAudioTranscription : public FAudioBase
       word timestamps incurs additional latency.
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Optional")
-    TArray<int32> Timestamp_Granularities;
+    TArray<FString> Timestamp_Granularities;
 };
 
 USTRUCT(BlueprintType)

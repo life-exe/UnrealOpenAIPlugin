@@ -38,6 +38,13 @@
     "FMessage": ["ContentArray"]
   },
 
+  "_json_string_fields": "Struct -> FString fields that hold a JSON object and are sent as an object (UJsonFuncLib::MakeFunctionsString + CleanUpFunctionsObject).",
+  "json_string_fields": {
+    "FFunctionRequest": ["Parameters"],
+    "FRealtimeFunctionTool": ["Parameters"],
+    "FEvalDataSourceConfig": ["Item_Schema"]
+  },
+
   "_ignore_endpoints": "UOpenAIProvider method names to skip.",
   "ignore_endpoints": []
 }

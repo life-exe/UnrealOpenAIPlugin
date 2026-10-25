@@ -435,6 +435,7 @@ class Checker:
         self.visited: set[tuple[str, int]] = set()
         self.ignored_fields = {k: {name.lower() for name in v} for k, v in config.get("ignore_fields", {}).items()}
         self.global_ignored_fields = {name.lower() for name in config.get("ignore_fields_everywhere", [])}
+        self.json_string_fields = {k: {name.lower() for name in v} for k, v in config.get("json_string_fields", {}).items()}
 
     def add(self, severity: str, category: str, location: str, message: str):
         self.findings.append(Finding(severity, category, location, message))
@@ -504,6 +505,8 @@ class Checker:
             self.add("info", "always sent", location, f"`{field.cpp_type}` is always serialized, but the field is optional in the spec")
 
         if kind == "unknown" or not spec_kinds:
+            return
+        if kind == "string" and "object" in spec_kinds and field.name.lower() in self.json_string_fields.get(struct_name, set()):
             return
         if kind == "map":
             if "object" not in spec_kinds:

@@ -68,6 +68,7 @@ void FOpenAIProviderAudio::Define()
                             TestTrueExpr(TestUtils::RemovePunctuation(Response.Text.ToLower()).Equals("hello whats up"));
                             TestTrueExpr(Response.Segments.Num() > 0);
                             TestTrueExpr(Response.Segments[0].Compression_Ratio > 0.1);
+                            TestTrueExpr(Response.Words.Num() > 0);
                             RequestCompleted = true;
                         });
 
@@ -78,6 +79,7 @@ void FOpenAIProviderAudio::Define()
                         UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Verbose_JSON);
                     AudioTranscriptionVerbose.Temperature = 0.0f;
                     AudioTranscriptionVerbose.File = TestUtils::FileFullPath("hello.mp3");
+                    AudioTranscriptionVerbose.Timestamp_Granularities = {"word", "segment"};
 
                     OpenAIProvider->CreateAudioTranscription(AudioTranscriptionVerbose, Auth);
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));

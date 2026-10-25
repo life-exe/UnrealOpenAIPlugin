@@ -24,11 +24,12 @@ public:
 
         RemoveNullFields(JsonObject);
         return FJsonObjectConverter::JsonObjectToUStruct(
-            JsonObject.ToSharedRef(), OutStruct, 0, 0, false, nullptr, &OptionalFromScalarImportCallback());
+            JsonObject.ToSharedRef(), OutStruct, 0, 0, false, nullptr, &ResponseImportCallback());
     }
 
     // Lets FOptional* response fields accept plain JSON scalars (e.g. "refusal":"text", "expires_at":123)
-    static const FJsonObjectConverter::CustomImportCallback& OptionalFromScalarImportCallback();
+    // and fills FNumberMap from JSON objects with arbitrary keys
+    static const FJsonObjectConverter::CustomImportCallback& ResponseImportCallback();
     static FString RemoveOptionalValuesThatNotSet(const FString& JsonString);
     static void RemoveEmptyArrays(const TSharedPtr<FJsonObject>& JsonObject);
 

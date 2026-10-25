@@ -7,6 +7,7 @@
 #include "Provider/Types/RealtimeTypes.h"
 #include "FuncLib/JsonFuncLib.h"
 #include "JsonObjectConverter.h"
+#include "Provider/JsonParsers/RealtimeParser.h"
 
 DEFINE_SPEC(FRealtimeParserTest, "OpenAI.Parser.Realtime",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
@@ -49,6 +50,42 @@ void FRealtimeParserTest::Define()
                     auto TurnDetection = AudioInput->GetObjectField(TEXT("turn_detection"));
                     TestTrueExpr(TurnDetection->GetBoolField(TEXT("create_response")));
                     TestTrueExpr(TurnDetection->GetNumberField(TEXT("threshold")) == 0.6f);
+                });
+
+            It("ToolParametersShouldBeSentAsObject",
+                [this]()
+                {
+                    FCreateRealtimeClientSecret CreateSecret;
+                    CreateSecret.Session.Model = "gpt-realtime-mini";
+
+                    FRealtimeFunctionTool Tool;
+                    Tool.Name = "get_weather";
+                    Tool.Parameters =
+                        TEXT("{\"type\":\"object\",\"properties\":{\"cityName\":{\"type\":\"string\"}},\"required\":[\"cityName\"]}");
+                    CreateSecret.Session.Tools.Add(Tool);
+
+                    FRealtimeFunctionTool ToolWithoutParameters;
+                    ToolWithoutParameters.Name = "get_time";
+                    CreateSecret.Session.Tools.Add(ToolWithoutParameters);
+
+                    const FString Result = OpenAI::RealtimeParser::CreateClientSecretToJsonRepresentation(CreateSecret);
+                    AddInfo(FString::Format(TEXT("Post-processed JSON: {0}"), {Result}));
+
+                    TSharedPtr<FJsonObject> ParsedJson;
+                    TestTrueExpr(UJsonFuncLib::StringToJson(Result, ParsedJson));
+                    if (!ParsedJson.IsValid()) return;
+
+                    const auto Tools = ParsedJson->GetObjectField(TEXT("session"))->GetArrayField(TEXT("tools"));
+                    TestTrueExpr(Tools.Num() == 2);
+                    if (Tools.Num() != 2) return;
+
+                    const auto Parameters = Tools[0]->AsObject()->GetObjectField(TEXT("parameters"));
+                    TestTrueExpr(Parameters->GetStringField(TEXT("type")).Equals(TEXT("object")));
+                    // user keys keep their case
+                    TestTrueExpr(Result.Contains(TEXT("\"cityName\"")));
+                    TestTrueExpr(Tools[0]->AsObject()->GetStringField(TEXT("name")).Equals(TEXT("get_weather")));
+
+                    TestFalseExpr(Tools[1]->AsObject()->HasField(TEXT("parameters")));
                 });
         });
 }

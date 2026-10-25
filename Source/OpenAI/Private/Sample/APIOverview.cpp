@@ -860,9 +860,10 @@ void AAPIOverview::CreateVideo()
     FCreateVideo CreateVideoRequest;
     CreateVideoRequest.Prompt = "A serene mountain lake at sunset with golden reflections";
     CreateVideoRequest.Model = UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2);
-    CreateVideoRequest.Seconds.Set(4);
+    CreateVideoRequest.Seconds.Set("4");
     CreateVideoRequest.Size.Set(UOpenAIFuncLib::OpenAIVideoSizeToString(EVideoSize::Size_720x1280));
-    // CreateVideoRequest.Input_Reference.Set("https://example.com/reference-image.jpg");
+    // CreateVideoRequest.Input_Reference.Image_Url.Set("https://example.com/reference-image.jpg");
+    // CreateVideoRequest.Input_Reference.IsSet = true;
     Provider->CreateVideo(CreateVideoRequest, Auth);
 }
 
