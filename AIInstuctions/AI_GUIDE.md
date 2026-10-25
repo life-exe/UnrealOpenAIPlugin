@@ -49,6 +49,18 @@ Run tests against real OpenAI endpoints:
 & "<EnginePath>/Binaries/Win64/UnrealEditor.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.Provider.ActualAPI;Quit" -log -nosplash -nullrhi -unattended
 ```
 
+## Keeping APIs in Sync with the OpenAI Spec
+The official spec ([openai/openai-openapi](https://github.com/openai/openai-openapi)) is the source of truth for endpoints, fields, types and enums. `Tools/openapi_sync` compares the plugin with it:
+```powershell
+python Tools/openapi_sync/openapi_sync.py   # report: Saved/OpenAPISync/report.md
+```
+- The report lists spec changes since `Tools/openapi_sync/spec.lock.json`, type mismatches, unknown/missing/deprecated fields, deprecated endpoints and enum values.
+- Resolve findings following the [API Integration Guide](./API_INTEGRATION_GUIDE.md), verify with live API tests, then run `--update-lock` and commit the lock.
+- Intentional differences go to `ignore_fields` in `Tools/openapi_sync/config.json`.
+- A weekly GitHub Action (`.github/workflows/openapi_sync.yml`) opens an `openapi-sync` issue when the spec changes.
+
+Details: [Tools/openapi_sync/README.md](../Tools/openapi_sync/README.md).
+
 ## Adding New APIs
 Follow the architectural steps when implementing new features. A detailed walkthrough is available here: [**API Integration Guide**](./API_INTEGRATION_GUIDE.md).
 

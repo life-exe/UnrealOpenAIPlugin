@@ -1,0 +1,43 @@
+{
+  "spec_repo": "openai/openai-openapi",
+
+  "_enums": "Plugin enum -> spec locations ('Schema.property', '[]' steps into array items). Values come from `case EEnum::X: return \"...\"` in OpenAIFuncLib.cpp. checks: unknown = plugin value not in spec, new = spec value missing in plugin, deprecated = plugin value deprecated in spec.",
+  "enums": {
+    "EAllModelEnum": { "spec": "all_models", "checks": ["deprecated"] },
+    "EMainModelEnum": { "spec": ["ModelIdsShared"], "checks": ["unknown", "deprecated"] },
+    "ETTSModel": { "spec": ["CreateSpeechRequest.model"] },
+    "EVoice": { "spec": ["CreateSpeechRequest.voice"] },
+    "ETTSAudioFormat": { "spec": ["CreateSpeechRequest.response_format"] },
+    "EAudioModel": { "spec": ["CreateTranscriptionRequest.model"] },
+    "ETranscriptFormat": { "spec": ["CreateTranscriptionRequest.response_format"] },
+    "EImageModelEnum": { "spec": ["CreateImageRequest.model"] },
+    "EImageSizeGptImage1": { "spec": ["CreateImageRequest.size"] },
+    "EOpenAIImageQuality": { "spec": ["CreateImageRequest.quality"] },
+    "EOpenAIImageBackground": { "spec": ["CreateImageRequest.background"] },
+    "EOpenAIImageModeration": { "spec": ["CreateImageRequest.moderation"] },
+    "EOpenAIImageOutputFormat": { "spec": ["CreateImageRequest.output_format"] },
+    "EEmbeddingsEncodingFormat": { "spec": ["CreateEmbeddingRequest.encoding_format"] },
+    "EUploadFilePurpose": { "spec": ["CreateFileRequest.purpose", "CreateUploadRequest.purpose"] },
+    "EBatchEndpoint": { "spec": ["CreateBatchRequest.endpoint"] },
+    "EBatchCompletionWindow": { "spec": ["CreateBatchRequest.completion_window"] },
+    "EUploadStatus": { "spec": ["Upload.status"] },
+    "EVideoModel": { "spec": ["VideoModel"] },
+    "EVideoSize": { "spec": ["VideoSize"] },
+    "EVideoStatus": { "spec": ["VideoResource.status"] },
+    "EModerationsModelEnum": { "spec": ["CreateModerationRequest.model"] },
+    "EServiceTier": { "spec": ["CreateChatCompletionRequest.service_tier"] },
+    "EOpenAIFinishReason": { "spec": ["CreateChatCompletionResponse.choices[].finish_reason"] },
+    "ERole": { "spec": ["ChatCompletionRole"] }
+  },
+
+  "_ignore_fields_everywhere": "Plugin-only helper fields that never reach the JSON (IsSet marks optional structs and is stripped by RemoveOptionalValuesThatNotSet).",
+  "ignore_fields_everywhere": ["IsSet"],
+
+  "_ignore_fields": "Struct -> field names to skip, e.g. fields that custom parsers rename before sending.",
+  "ignore_fields": {
+    "FMessage": ["ContentArray"]
+  },
+
+  "_ignore_endpoints": "UOpenAIProvider method names to skip.",
+  "ignore_endpoints": []
+}

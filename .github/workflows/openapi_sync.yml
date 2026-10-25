@@ -1,0 +1,62 @@
+name: OpenAPI Sync
+
+# Weekly comparison of the plugin with https://github.com/openai/openai-openapi.
+# When the spec moved past Tools/openapi_sync/spec.lock.json, the report is posted to an issue labeled "openapi-sync".
+# After the changes are handled locally, run `python Tools/openapi_sync/openapi_sync.py --update-lock` and commit the lock.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  openapi-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compare plugin with OpenAPI spec
+        id: sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python Tools/openapi_sync/openapi_sync.py --report openapi_sync_report.md --github-output "$GITHUB_OUTPUT"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-sync-report
+          path: openapi_sync_report.md
+
+      - name: Create or update issue
+        if: steps.sync.outputs.spec_changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create openapi-sync --color 0E8A16 --description "OpenAI OpenAPI spec drift" 2>/dev/null || true
+
+          # issue bodies are limited to 65536 characters; the full report is in the run artifact
+          {
+            echo "Full report: $RUN_URL (artifact \`openapi-sync-report\`)"
+            echo
+            head -c 60000 openapi_sync_report.md
+          } > issue_body.md
+
+          title="OpenAPI spec changed: ${{ steps.sync.outputs.errors }} errors, ${{ steps.sync.outputs.warnings }} warnings"
+          number=$(gh issue list --label openapi-sync --state open --json number --jq '.[0].number')
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --title "$title" --body-file issue_body.md
+          else
+            gh issue create --title "$title" --label openapi-sync --body-file issue_body.md
+          fi

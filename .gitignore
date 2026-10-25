@@ -9,3 +9,4 @@ Documentation/
 HoloLensEngine.ini
 .vsconfig
 FilterPlugin.ini
+__pycache__/

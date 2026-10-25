@@ -5,7 +5,7 @@ This guide outlines the standard workflow for adding new OpenAI API endpoints to
 ---
 
 ## Step 1: Analyze Documentation
-Review the API reference in `Plugins/OpenAI/OpenAIDocs/` or the official OpenAI documentation. Identify:
+Review the API reference in `Plugins/OpenAI/OpenAIDocs/` or the official OpenAI documentation. The OpenAPI spec is the most precise source: `python Tools/openapi_sync/openapi_sync.py --export-docs <dir>` writes per-endpoint Markdown (fields, types, required, enums) straight from it, and the sync report shows what changed. Identify:
 - **HTTP Methods** (GET, POST, DELETE, etc.)
 - **Request Body Schema** (Required and optional fields)
 - **Response Object Schema**
