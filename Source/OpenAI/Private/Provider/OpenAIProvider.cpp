@@ -927,14 +927,13 @@ void UOpenAIProvider::OnCreateImageCompleted(FHttpRequestPtr Request, FHttpRespo
 
     FImageResponse ImageResponse;
     const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
     const bool Status = ImageParser::DeserializeResponse(Content, ImageResponse);
 
     if (!Status || ImageResponse.Data.Num() == 0)
     {
         LogError("Failed to parse image response");
         LogError(Content);
-        RequestError.Broadcast(ResponseURL, Content);
+        BroadcastRequestError(Response, Request);
         return;
     }
 
@@ -946,7 +945,6 @@ void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpR
     if (!Success(Response, WasSuccessful)) return;
 
     const FString Content = Response ? Response->GetContentAsString() : FString{};
-    const FString ResponseURL = Response ? Response->GetURL() : FString{};
 
     FImageEditResponse ImageEditResponse;
     const bool Status = ImageParser::DeserializeResponse(Content, ImageEditResponse);
@@ -955,7 +953,7 @@ void UOpenAIProvider::OnCreateImageEditCompleted(FHttpRequestPtr Request, FHttpR
     {
         LogError("Failed to parse image edit response");
         LogError(Content);
-        RequestError.Broadcast(ResponseURL, Content);
+        BroadcastRequestError(Response, Request);
         return;
     }
     CreateImageEditCompleted.Broadcast(ImageEditResponse, GetResponseHeaders(Response));
@@ -977,7 +975,7 @@ void UOpenAIProvider::OnCreateSpeechCompleted(FHttpRequestPtr Request, FHttpResp
     else
     {
         LogError("On create speech error");
-        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        BroadcastRequestError(Response, Request);
     }
 }
 
@@ -1011,11 +1009,10 @@ DEFINE_HTTP_CALLBACK(RetrieveFile)
 void UOpenAIProvider::OnRetrieveFileContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
 
     if (!WasSuccessful)
     {
-        RequestError.Broadcast(ResponseURL, Content);
+        BroadcastRequestError(Response, Request);
         return;
     }
 
@@ -1029,14 +1026,13 @@ void UOpenAIProvider::OnCreateModerationsCompleted(FHttpRequestPtr Request, FHtt
     if (!Success(Response, WasSuccessful)) return;
 
     const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
 
     FModerationsResponse ModerationResponse;
     const bool Status = ModerationParser::DeserializeResponse(Content, ModerationResponse);
     if (!Status)
     {
         LogError("Failed to parse moderations response");
-        RequestError.Broadcast(ResponseURL, Content);
+        BroadcastRequestError(Response, Request);
         return;
     }
 
@@ -1251,7 +1247,7 @@ void UOpenAIProvider::OnRetrieveSkillContentCompleted(FHttpRequestPtr Request, F
     else
     {
         LogError("On retrieve skill content error");
-        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        BroadcastRequestError(Response, Request);
     }
 }
 
@@ -1271,7 +1267,7 @@ void UOpenAIProvider::OnRetrieveSkillVersionContentCompleted(FHttpRequestPtr Req
     else
     {
         LogError("On retrieve skill version content error");
-        RequestError.Broadcast(Response->GetURL(), Response->GetContentAsString());
+        BroadcastRequestError(Response, Request);
     }
 }
 
@@ -1303,12 +1299,9 @@ void UOpenAIProvider::OnRealtimeRejectCallCompleted(FHttpRequestPtr Request, FHt
 
 void UOpenAIProvider::OnDownloadVideoContentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
-    const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
-    const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-
     if (!WasSuccessful)
     {
-        RequestError.Broadcast(ResponseURL, Content);
+        BroadcastRequestError(Response, Request);
         return;
     }
 
@@ -1348,19 +1341,49 @@ bool UOpenAIProvider::Success(FHttpResponsePtr Response, bool WasSuccessful)
     if (!FJsonSerializer::Deserialize(JsonReader, JsonObject))
     {
         LogError(FString::Format(TEXT("JSON deserialization error: {0}"), {Content}));
-        RequestError.Broadcast(Response->GetURL(), Content);
+        BroadcastRequestError(Response);
         return false;
     }
 
     if (!WasSuccessful || !JsonObject.IsValid() || UJsonFuncLib::OpenAIResponseContainsError(JsonObject))
     {
         Log(Content);
-        RequestError.Broadcast(Response->GetURL(), Content);
+        BroadcastRequestError(Response);
         return false;
     }
 
     LogResponse(Response);
     return true;
+}
+
+void UOpenAIProvider::BroadcastRequestError(FHttpResponsePtr Response, FHttpRequestPtr Request)
+{
+    const FString URL = Response.IsValid() ? Response->GetURL() : (Request.IsValid() ? Request->GetURL() : FString{});
+    FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
+
+    if (Response.IsValid())
+    {
+        Log(FString::Format(TEXT("Request failed. HTTP {0}, URL: {1}"), {Response->GetResponseCode(), URL}));
+    }
+    else if (Request.IsValid())
+    {
+        Log(FString::Format(TEXT("Request failed. Status: {0}, URL: {1}"), {EHttpRequestStatus::ToString(Request->GetStatus()), URL}));
+    }
+
+    // Some endpoints return an empty body on failure (e.g. 404); pass the code on so the error isn't blank
+    if (Content.IsEmpty())
+    {
+        if (Response.IsValid())
+        {
+            Content = FString::Format(TEXT("HTTP {0}"), {Response->GetResponseCode()});
+        }
+        else if (Request.IsValid())
+        {
+            Content = EHttpRequestStatus::ToString(Request->GetStatus());
+        }
+    }
+
+    RequestError.Broadcast(URL, Content);
 }
 
 void UOpenAIProvider::Log(const FString& Info) const
@@ -1375,7 +1398,8 @@ void UOpenAIProvider::LogResponse(FHttpResponsePtr Response) const
 {
     if (bLogEnabled)
     {
-        UE_LOGFMT(LogOpenAIProvider, Display, "Response. Request URL: {0}", Response.IsValid() ? Response->GetURL() : FString{});
+        UE_LOGFMT(LogOpenAIProvider, Display, "Response. Request URL: {0}, HTTP {1}", Response.IsValid() ? Response->GetURL() : FString{},
+            Response.IsValid() ? Response->GetResponseCode() : 0);
         UE_LOGFMT(LogOpenAIProvider, Display, "Response. Content: {0}", Response.IsValid() ? Response->GetContentAsString() : FString{});
     }
 }
@@ -1407,20 +1431,6 @@ void UOpenAIProvider::SetOptional(TSharedPtr<FJsonObject> RequestBody, const TOp
         JsonValues.Add(MakeShareable(new FJsonValueNumber(Value)));
     }
     RequestBody->SetArrayField(ParamName, JsonValues);
-}
-
-TTuple<FString, FString> UOpenAIProvider::GetErrorData(FHttpRequestPtr Request, FHttpResponsePtr Response) const
-{
-    const auto ResponseContent = Response ? Response->GetContentAsString() : FString{};
-    const auto ResponseURL = Response ? Response->GetURL() : FString{};
-
-    if (!ResponseContent.IsEmpty())
-    {
-        return MakeTuple(ResponseURL, ResponseContent);
-    }
-
-    const auto Status = Request ? EHttpRequestStatus::ToString(Request->GetStatus()) : FString{};
-    return MakeTuple(ResponseURL, Status);
 }
 
 FHttpRequestRef UOpenAIProvider::MakeRequest(const FString& URL, const FString& Method, const FOpenAIAuth& Auth) const

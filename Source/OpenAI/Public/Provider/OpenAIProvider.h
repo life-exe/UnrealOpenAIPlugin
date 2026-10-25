@@ -765,6 +765,8 @@ private:
     void ProcessRequest(FHttpRequestRef HttpRequest);
 
     bool Success(FHttpResponsePtr Response, bool WasSuccessful);
+    // Logs the HTTP status code and broadcasts RequestError; an empty response body is replaced with "HTTP <code>"
+    void BroadcastRequestError(FHttpResponsePtr Response, FHttpRequestPtr Request = nullptr);
     void Log(const FString& Info) const;
     void LogResponse(FHttpResponsePtr Response) const;
     void LogError(const FString& ErrorText) const;
@@ -823,7 +825,6 @@ private:
         if (!Success(Response, WasSuccessful)) return;
 
         const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-        const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
 
         ParsedResponseType ParsedResponse;
         if (UJsonFuncLib::ParseJSONToStruct(Content, &ParsedResponse))
@@ -833,7 +834,7 @@ private:
         else
         {
             LogError(FString::Format(TEXT("JSON deserialization error: {0}"), {Content}));
-            RequestError.Broadcast(ResponseURL, Content);
+            BroadcastRequestError(Response);
         }
     }
 
@@ -852,8 +853,6 @@ private:
     }
 
 private:
-    TTuple<FString, FString> GetErrorData(FHttpRequestPtr Request, FHttpResponsePtr Response) const;
-
     template <typename ResponseType>
     bool ParseStreamRequest(FHttpResponsePtr Response, TArray<ResponseType>& Responses)
     {
@@ -913,9 +912,8 @@ private:
     {
         if (!WasSuccessful)
         {
-            const auto& [URL, Content] = GetErrorData(Request, Response);
-            LogError(Content);
-            RequestError.Broadcast(URL, Content);
+            LogError(FString::Format(TEXT("Stream request failed: {0}"), {Request.IsValid() ? Request->GetURL() : FString{}}));
+            BroadcastRequestError(Response, Request);
             return;
         }
 
@@ -928,11 +926,9 @@ private:
         else
         {
             const FString Content = Response.IsValid() ? Response->GetContentAsString() : FString{};
-            const FString ResponseURL = Response.IsValid() ? Response->GetURL() : FString{};
 
             LogError(FString::Format(TEXT("JSON deserialization error: {0}"), {Content}));
-            LogError(Content);
-            RequestError.Broadcast(ResponseURL, Content);
+            BroadcastRequestError(Response, Request);
         }
     }
 };
