@@ -16,7 +16,7 @@ void UListFineTuningJobsAction::Activate()
 {
     auto* Provider = CreateProvider();
     Provider->OnListFineTuningJobsCompleted().AddUObject(this, &ThisClass::OnListFineTuningJobsCompleted);
-    Provider->ListFineTuningJobs(Auth);
+    Provider->ListFineTuningJobs(Auth, FineTuningQueryParameters);
 }
 
 void UListFineTuningJobsAction::OnListFineTuningJobsCompleted(

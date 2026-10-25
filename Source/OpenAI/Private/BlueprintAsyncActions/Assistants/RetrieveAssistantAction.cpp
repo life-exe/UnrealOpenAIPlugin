@@ -7,7 +7,7 @@ URetrieveAssistantAction* URetrieveAssistantAction::RetrieveAssistantAction(
 {
     auto* RetrieveAssistantAction = NewObject<URetrieveAssistantAction>();
     RetrieveAssistantAction->AssistantID = AssistantID;
-    RetrieveAssistantAction->AssistantID = AssistantID;
+    RetrieveAssistantAction->Auth = Auth;
     RetrieveAssistantAction->URLOverride = URLOverride;
     return RetrieveAssistantAction;
 }

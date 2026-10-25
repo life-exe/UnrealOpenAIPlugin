@@ -16,7 +16,7 @@ void UListFineTuningCheckpointsAction::Activate()
 {
     auto* Provider = CreateProvider();
     Provider->OnListFineTuningCheckpointsCompleted().AddUObject(this, &ThisClass::OnListFineTuningCheckpointsCompleted);
-    Provider->ListFineTuningEvents(FineTuningID, Auth);
+    Provider->ListFineTuningCheckpoints(FineTuningID, Auth);
 }
 
 void UListFineTuningCheckpointsAction::OnListFineTuningCheckpointsCompleted(
