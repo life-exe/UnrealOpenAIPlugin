@@ -135,7 +135,16 @@ enum class EAllModelEnum : uint8
     GPT_Realtime_2_1,
     GPT_Realtime_2_1_Mini,
     GPT_Transcribe,
-    GPT_Live_Transcribe
+    GPT_Live_Transcribe,
+    GPT_Image_2_5_Sunburst,
+    GPT_Image_2_5_Sunburst_2026_09_08,
+    GPT_Image_2_5_Flare,
+    GPT_Image_2_5_Flare_2026_09_08,
+    GPT_Live_1,
+    GPT_6_Sol,
+    GPT_6_Luna,
+    GPT_6_Astra,
+    GPT_6_1_Sol
 };
 
 UENUM(BlueprintType)

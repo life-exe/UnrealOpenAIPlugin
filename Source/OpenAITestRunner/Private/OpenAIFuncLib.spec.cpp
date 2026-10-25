@@ -32,6 +32,8 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_Instruct_0914, "gpt-3.5-turbo-instruct-0914");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_Instruct, "gpt-3.5-turbo-instruct");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Text_Embedding_Ada_002, "text-embedding-ada-002");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Babbage_002, "babbage-002");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::Davinci_002, "davinci-002");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4, "gpt-4");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_0613, "gpt-4-0613");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_3_5_Turbo_1106, "gpt-3.5-turbo-1106");
@@ -126,6 +128,15 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4O_Mini_TTS_2025_03_20, "gpt-4o-mini-tts-2025-03-20");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Transcribe, "gpt-transcribe");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Live_Transcribe, "gpt-live-transcribe");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_2_5_Sunburst, "gpt-image-2.5-sunburst");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_2_5_Sunburst_2026_09_08, "gpt-image-2.5-sunburst-2026-09-08");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_2_5_Flare, "gpt-image-2.5-flare");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_2_5_Flare_2026_09_08, "gpt-image-2.5-flare-2026-09-08");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Live_1, "gpt-live-1");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Sol, "gpt-6-sol");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Luna, "gpt-6-luna");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Astra, "gpt-6-astra");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_1_Sol, "gpt-6.1-sol");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",

@@ -20,6 +20,8 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_3_5_Turbo_Instruct_0914: return "gpt-3.5-turbo-instruct-0914";
         case EAllModelEnum::GPT_3_5_Turbo_Instruct: return "gpt-3.5-turbo-instruct";
         case EAllModelEnum::Text_Embedding_Ada_002: return "text-embedding-ada-002";
+        case EAllModelEnum::Babbage_002: return "babbage-002";
+        case EAllModelEnum::Davinci_002: return "davinci-002";
         case EAllModelEnum::GPT_4: return "gpt-4";
         case EAllModelEnum::GPT_4_0613: return "gpt-4-0613";
         case EAllModelEnum::GPT_3_5_Turbo_1106: return "gpt-3.5-turbo-1106";
@@ -140,6 +142,15 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_Realtime_2_1_Mini: return "gpt-realtime-2.1-mini";
         case EAllModelEnum::GPT_Transcribe: return "gpt-transcribe";
         case EAllModelEnum::GPT_Live_Transcribe: return "gpt-live-transcribe";
+        case EAllModelEnum::GPT_Image_2_5_Sunburst: return "gpt-image-2.5-sunburst";
+        case EAllModelEnum::GPT_Image_2_5_Sunburst_2026_09_08: return "gpt-image-2.5-sunburst-2026-09-08";
+        case EAllModelEnum::GPT_Image_2_5_Flare: return "gpt-image-2.5-flare";
+        case EAllModelEnum::GPT_Image_2_5_Flare_2026_09_08: return "gpt-image-2.5-flare-2026-09-08";
+        case EAllModelEnum::GPT_Live_1: return "gpt-live-1";
+        case EAllModelEnum::GPT_6_Sol: return "gpt-6-sol";
+        case EAllModelEnum::GPT_6_Luna: return "gpt-6-luna";
+        case EAllModelEnum::GPT_6_Astra: return "gpt-6-astra";
+        case EAllModelEnum::GPT_6_1_Sol: return "gpt-6.1-sol";
     }
     checkNoEntry();
     return {};

@@ -73,6 +73,8 @@ FString TestUtils::PluginEnumToOpenAIModelName(EAllModelEnum PluginEnum)
     EnumElementName = EnumElementName.Replace(TEXT("realtime-1-5"), TEXT("realtime-1.5"));
     EnumElementName = EnumElementName.Replace(TEXT("audio-1-5"), TEXT("audio-1.5"));
     EnumElementName = EnumElementName.Replace(TEXT("realtime-2-1"), TEXT("realtime-2.1"));
+    EnumElementName = EnumElementName.Replace(TEXT("image-2-5"), TEXT("image-2.5"));
+    EnumElementName = EnumElementName.Replace(TEXT("gpt-6-1"), TEXT("gpt-6.1"));
 
     return EnumElementName;
 }
