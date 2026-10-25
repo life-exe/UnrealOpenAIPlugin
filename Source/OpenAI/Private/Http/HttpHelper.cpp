@@ -9,20 +9,39 @@ DEFINE_LOG_CATEGORY_STATIC(LogHttpHelper, All, All);
 
 FString HttpHelper::MIMETypeFromExt(const FString& Ext)
 {
-    const FString Image = "png jpeg jpg";
-    const FString Audio = "mp3 wav";
-    const FString Video = "mp4 mpeg mpga m4a webm";
-    const FString JSON = "json jsonl";
-    const FString Text = "txt md";
+    // clang-format off
+    static const TMap<FString, FString> MIMETypes{
+        {TEXT("png"), TEXT("image/png")},
+        {TEXT("jpg"), TEXT("image/jpeg")},
+        {TEXT("jpeg"), TEXT("image/jpeg")},
+        {TEXT("webp"), TEXT("image/webp")},
+        {TEXT("gif"), TEXT("image/gif")},
+        {TEXT("mp3"), TEXT("audio/mpeg")},
+        {TEXT("mpga"), TEXT("audio/mpeg")},
+        {TEXT("mpeg"), TEXT("audio/mpeg")},
+        {TEXT("m4a"), TEXT("audio/m4a")},
+        {TEXT("wav"), TEXT("audio/wav")},
+        {TEXT("ogg"), TEXT("audio/ogg")},
+        {TEXT("flac"), TEXT("audio/flac")},
+        {TEXT("aac"), TEXT("audio/aac")},
+        {TEXT("mp4"), TEXT("video/mp4")},
+        {TEXT("webm"), TEXT("video/webm")},
+        {TEXT("json"), TEXT("application/json")},
+        {TEXT("jsonl"), TEXT("application/jsonl")},
+        {TEXT("pdf"), TEXT("application/pdf")},
+        {TEXT("txt"), TEXT("text/plain")},
+        {TEXT("md"), TEXT("text/plain")},
+    };
+    // clang-format on
 
-    if (Image.Contains(Ext)) return FString("image/").Append(Ext.ToLower());
-    if (Audio.Contains(Ext)) return FString("audio/").Append(Ext.ToLower());
-    if (Video.Contains(Ext)) return FString("video/").Append(Ext.ToLower());
-    if (JSON.Contains(Ext)) return FString("application/").Append(Ext.ToLower());
-    if (Text.Contains(Ext)) return TEXT("text/plain");
+    // TMap<FString, ...> key lookup is case-insensitive
+    if (const FString* MIMEType = MIMETypes.Find(Ext))
+    {
+        return *MIMEType;
+    }
 
-    checkNoEntry();
-    return {};
+    UE_LOGFMT(LogHttpHelper, Warning, "Unknown file extension '{0}', falling back to application/octet-stream", Ext);
+    return TEXT("application/octet-stream");
 }
 
 TArray<uint8> HttpHelper::AddMIMEFile(const FString& FilePath, const FString& ParamName, const FString& BeginBoundary)

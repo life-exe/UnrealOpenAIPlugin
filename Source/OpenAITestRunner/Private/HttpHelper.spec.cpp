@@ -21,20 +21,27 @@ void FHttpHelper::Define()
                 {
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("png").Equals("image/png"));
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("jpeg").Equals("image/jpeg"));
-                    TestTrueExpr(HttpHelper::MIMETypeFromExt("jpg").Equals("image/jpg"));
-                    TestTrueExpr(HttpHelper::MIMETypeFromExt("JpG").Equals("image/jpg"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("jpg").Equals("image/jpeg"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("JpG").Equals("image/jpeg"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("webp").Equals("image/webp"));
 
-                    TestTrueExpr(HttpHelper::MIMETypeFromExt("mp3").Equals("audio/mp3"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("mp3").Equals("audio/mpeg"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("mpga").Equals("audio/mpeg"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("mpeg").Equals("audio/mpeg"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("m4a").Equals("audio/m4a"));
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("wav").Equals("audio/wav"));
 
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("mp4").Equals("video/mp4"));
-                    TestTrueExpr(HttpHelper::MIMETypeFromExt("mpeg").Equals("video/mpeg"));
-                    TestTrueExpr(HttpHelper::MIMETypeFromExt("mpga").Equals("video/mpga"));
-                    TestTrueExpr(HttpHelper::MIMETypeFromExt("m4a").Equals("video/m4a"));
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("webm").Equals("video/webm"));
 
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("json").Equals("application/json"));
                     TestTrueExpr(HttpHelper::MIMETypeFromExt("jsonl").Equals("application/jsonl"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("pdf").Equals("application/pdf"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("txt").Equals("text/plain"));
+
+                    AddExpectedMessage(TEXT("Unknown file extension"), EAutomationExpectedErrorFlags::Contains, 2);
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("xyz").Equals("application/octet-stream"));
+                    TestTrueExpr(HttpHelper::MIMETypeFromExt("").Equals("application/octet-stream"));
                 });
 
             It("AddMIMEFileShouldAddContentCorrectly",
