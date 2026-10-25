@@ -44,7 +44,7 @@ void FOpenAIProviderChat::Define()
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.NonStreaming",
                 [this]()
                 {
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
 
                     OpenAIProvider->OnCreateChatCompletionCompleted().AddLambda(
                         [&, Model](const FChatCompletionResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
@@ -82,7 +82,7 @@ void FOpenAIProviderChat::Define()
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.Streaming",
                 [this]()
                 {
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
 
                     OpenAIProvider->OnCreateChatCompletionStreamCompleted().AddLambda(
                         [&, Model](const TArray<FChatCompletionStreamResponse>& Responses, const FOpenAIResponseMetadata& ResponseMetadata)
@@ -122,7 +122,7 @@ void FOpenAIProviderChat::Define()
             It("Chat.CreateChatCompletionRequestShouldResponseCorrectly.Content.Function",
                 [this]()
                 {
-                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_3_5_Turbo);
+                    const FString Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_4O_Mini);
                     TArray<FMessage> History;
                     FMessage Message;
                     Message.Role = UOpenAIFuncLib::OpenAIRoleToString(ERole::User);

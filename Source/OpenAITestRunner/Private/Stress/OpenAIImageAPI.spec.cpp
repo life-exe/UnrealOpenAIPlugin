@@ -60,8 +60,8 @@ void FOpenAIProviderImage::Define()
                     RequestCompleted = false;
                 });
             // dall-e-2 has been retired from the Images API (OpenAI now returns "The model 'dall-e-2' does not exist"),
-            // so this scenario is covered against gpt-image-1 instead.
-            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1_MultipleImages",
+            // so this scenario is covered against gpt-image-1-mini instead.
+            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1Mini_MultipleImages",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
@@ -73,7 +73,7 @@ void FOpenAIProviderImage::Define()
                         });
 
                     FOpenAIImage OpenAIImage;
-                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini);
                     OpenAIImage.N = 2;
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
                     OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
@@ -83,8 +83,8 @@ void FOpenAIProviderImage::Define()
                 });
 
             // dall-e-3 has been retired from the Images API (OpenAI now returns "The model 'dall-e-3' does not exist"),
-            // so this scenario is covered against gpt-image-1 instead.
-            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1_LandscapeSize",
+            // so this scenario is covered against gpt-image-1-mini instead.
+            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1Mini_LandscapeSize",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
@@ -96,7 +96,7 @@ void FOpenAIProviderImage::Define()
                         });
 
                     FOpenAIImage OpenAIImage;
-                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini);
                     OpenAIImage.N = 1;
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
                     OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1536x1024);
@@ -106,7 +106,7 @@ void FOpenAIProviderImage::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
-            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1",
+            It("Image.CreateImageRequestShouldResponseCorrectly.GptImage1Mini",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageCompleted().AddLambda(
@@ -119,8 +119,8 @@ void FOpenAIProviderImage::Define()
                         });
 
                     FOpenAIImage OpenAIImage;
-                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
-                    OpenAIImage.N = 1;  // gpt-image-1 only supports one image at the moment.
+                    OpenAIImage.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini);
+                    OpenAIImage.N = 1;  // gpt-image-1-mini only supports one image at the moment.
                     OpenAIImage.Prompt = "Bear with beard drinking beer";
                     OpenAIImage.Size = UOpenAIFuncLib::OpenAIImageSizeGptImage1ToString(EImageSizeGptImage1::Size_1024x1024);
                     OpenAIImage.Background.Set(UOpenAIFuncLib::OpenAIImageBackgroundToString(EOpenAIImageBackground::Transparent));
@@ -133,8 +133,8 @@ void FOpenAIProviderImage::Define()
                 });
 
             // dall-e-2 has been retired from the Images API (OpenAI now returns "The model 'dall-e-2' does not exist"),
-            // so this scenario is covered against gpt-image-1 instead.
-            It("Image.CreateImageEditRequestShouldResponseCorrectly.GptImage1",
+            // so this scenario is covered against gpt-image-1-mini instead.
+            It("Image.CreateImageEditRequestShouldResponseCorrectly.GptImage1Mini",
                 [this]()
                 {
                     OpenAIProvider->OnCreateImageEditCompleted().AddLambda(
@@ -146,7 +146,7 @@ void FOpenAIProviderImage::Define()
                         });
 
                     FOpenAIImageEdit OpenAIImageEdit;
-                    OpenAIImageEdit.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1);
+                    OpenAIImageEdit.Model = UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_Mini);
                     OpenAIImageEdit.N = 2;
                     OpenAIImageEdit.Image.Add(TestUtils::FileFullPath("whale.png"));
                     OpenAIImageEdit.Mask = TestUtils::FileFullPath("whale_mask.png");

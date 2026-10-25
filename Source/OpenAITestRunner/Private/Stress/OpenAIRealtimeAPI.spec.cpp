@@ -7,6 +7,7 @@
 #include "Provider/Types/RealtimeTypes.h"
 #include "Provider/Types/OpenAICommonTypes.h"
 #include "Provider/OpenAIProvider.h"
+#include "FuncLib/OpenAIFuncLib.h"
 #include "TestUtils.h"
 
 BEGIN_DEFINE_SPEC(FOpenAIRealtime, "OpenAI.Provider",
@@ -49,7 +50,7 @@ void FOpenAIRealtime::Define()
                         });
 
                     FCreateRealtimeClientSecret CreateSecret;
-                    CreateSecret.Session.Model = "gpt-4o-realtime-preview";
+                    CreateSecret.Session.Model = UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum::GPT_Realtime_Mini);
                     OpenAIProvider->CreateRealtimeClientSecret(CreateSecret, Auth);
 
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
