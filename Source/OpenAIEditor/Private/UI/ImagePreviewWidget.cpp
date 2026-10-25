@@ -10,6 +10,9 @@ void UImagePreviewWidget::SetBase64(const FString& Base64String)
 {
     const auto CleanBase64 = UOpenAIFuncLib::UnWrapBase64(Base64String);
     auto* ImageTexture = UImageFuncLib::Texture2DFromBytes(CleanBase64);
+    // the file may have been moved or isn't a decodable image
+    if (!ImageTexture || ImageTexture->GetSizeY() == 0) return;
+
     PreviewImage->SetBrushFromTexture(ImageTexture, true);
 
     const float AspectRatio = static_cast<float>(ImageTexture->GetSizeX()) / ImageTexture->GetSizeY();
