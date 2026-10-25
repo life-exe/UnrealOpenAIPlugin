@@ -22,7 +22,8 @@ using namespace OpenAI::Tests;
 
 void FOpenAIProviderCompletion::Define()
 {
-    Describe("ActualAPI.Legacy",
+    // Disabled: every model supported by /v1/completions has been deprecated by OpenAI
+    xDescribe("ActualAPI.Legacy",
         [this]()
         {
             BeforeEach(

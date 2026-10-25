@@ -23,7 +23,8 @@ using namespace OpenAI::Tests;
 
 void FOpenAIAssistants::Define()
 {
-    Describe("ActualAPI",
+    // Disabled: /v1/assistants returns 404 (Assistants API has been shut down by OpenAI)
+    xDescribe("ActualAPI",
         [this]()
         {
             BeforeEach(
