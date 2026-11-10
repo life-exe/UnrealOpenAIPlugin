@@ -14,19 +14,27 @@ Keep the following documents updated as the project evolves:
 ## Project Structure
 *Note: All paths are relative to the Plugin Root.*
 
-- `Source/OpenAI`: Core module containing API provider and data types.
+- `Source/OpenAI`: Core module containing API provider, data types, and Blueprint async actions.
+  - `Public/Provider/Types`: USTRUCT and UENUM definitions.
+  - `Public/API`: Endpoint URL definitions (`IAPI`, `OpenAIAPI`, `GenericAPI`, `FOpenAIEndpoints`).
+  - `Public/Provider`: Core provider interface, delegates, error handling.
+  - `Public/BlueprintAsyncActions` & `Private/BlueprintAsyncActions`: Latent Blueprint nodes (`UOpenAIActionBase`).
+  - `Private/Provider/JsonParsers`: JSON serialization/deserialization helpers.
 - `Source/OpenAIEditor`: Unreal Editor extensions (ChatGPT widget).
 - `Source/OpenAITestRunner`: Automation testing module.
-- `Source/OpenAITestRunner/Data`: Test assets and authentication files.
+  - `Private/`: Offline unit tests (`OpenAIProviderFake.spec.cpp`, `OpenAIFuncLib.spec.cpp`, `*Parser.spec.cpp`).
+  - `Private/Stress/`: Live API stress tests (`OpenAI*API.spec.cpp`).
+  - `Data`: Test assets and authentication files.
+- `Tools/openapi_sync`: Automated OpenAPI specification comparison and report tool.
 
 ## Build and Environment
 ### Prerequisites
-- **Engine**: Unreal Engine 5.7+
+- **Engine**: Unreal Engine 5.7+ / 5.8
 - **Toolchain**: Visual Studio 2022
 
 ### Environment Variables
 Replace the following placeholders in the commands below:
-- `<EnginePath>`: Path to your UE 5.7 engine folder (Default: `C:/Program Files/Epic Games/UE_5.7/Engine`)
+- `<EnginePath>`: Path to your Unreal Engine folder (e.g., `C:/Program Files/Epic Games/UE_5.8/Engine`)
 - `<ProjectPath>`: Absolute path to your `.uproject` file.
 - `<ProjectName>`: The name of your project.
 
@@ -37,16 +45,23 @@ cmd /c "<EnginePath>/Build/BatchFiles/Build.bat" <ProjectName>Editor Win64 Devel
 ```
 
 ## Testing Workflow
-### 1. Automation Tests (Internal)
-Run all parser tests to verify JSON serialization:
+### 1. Automation Tests (Internal / Offline)
+Run unit and parser tests (no live API key required):
 ```powershell
-& "<EnginePath>/Binaries/Win64/UnrealEditor.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.Parser;Quit" -log -nosplash -nullrhi -unattended
+# Parser tests (JSON serialization)
+& "<EnginePath>/Binaries/Win64/UnrealEditor-Cmd.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.Parser;Quit" -log -nosplash -nullrhi -unattended
+
+# FuncLib conversion tests
+& "<EnginePath>/Binaries/Win64/UnrealEditor-Cmd.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.OpenAIFuncLib;Quit" -log -nosplash -nullrhi -unattended
+
+# Offline provider tests (mocked HTTP responses)
+& "<EnginePath>/Binaries/Win64/UnrealEditor-Cmd.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.Provider.Fake;Quit" -log -nosplash -nullrhi -unattended
 ```
 
 ### 2. Stress Tests (Live API)
-Run tests against real OpenAI endpoints:
+Run tests against real OpenAI endpoints (requires `OpenAIAuth.ini`):
 ```powershell
-& "<EnginePath>/Binaries/Win64/UnrealEditor.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.Provider.ActualAPI;Quit" -log -nosplash -nullrhi -unattended
+& "<EnginePath>/Binaries/Win64/UnrealEditor-Cmd.exe" "<ProjectPath>.uproject" -ExecCmds="Automation SetFilter All;RunTests OpenAI.Provider.ActualAPI;Quit" -log -nosplash -nullrhi -unattended
 ```
 
 ## Keeping APIs in Sync with the OpenAI Spec
@@ -55,8 +70,11 @@ The official spec ([openai/openai-openapi](https://github.com/openai/openai-open
 python Tools/openapi_sync/openapi_sync.py   # report: Saved/OpenAPISync/report.md
 ```
 - The report lists spec changes since `Tools/openapi_sync/spec.lock.json`, type mismatches, unknown/missing/deprecated fields, deprecated endpoints and enum values.
-- Resolve findings following the [API Integration Guide](./API_INTEGRATION_GUIDE.md), verify with live API tests, then run `--update-lock` and commit the lock.
-- Intentional differences go to `ignore_fields` in `Tools/openapi_sync/config.json`.
+- Resolve findings following the [API Integration Guide](./API_INTEGRATION_GUIDE.md), verify with unit tests, update lock:
+  ```powershell
+  python Tools/openapi_sync/openapi_sync.py --update-lock
+  ```
+- Intentional differences go to `ignore_fields` / `ignore_enum_values` in `Tools/openapi_sync/config.json`.
 - A weekly GitHub Action (`.github/workflows/openapi_sync.yml`) opens an `openapi-sync` issue when the spec changes.
 
 Details: [Tools/openapi_sync/README.md](../Tools/openapi_sync/README.md).
@@ -64,17 +82,20 @@ Details: [Tools/openapi_sync/README.md](../Tools/openapi_sync/README.md).
 ## Adding New APIs
 Follow the architectural steps when implementing new features. A detailed walkthrough is available here: [**API Integration Guide**](./API_INTEGRATION_GUIDE.md).
 
-1.  **Analyze Documentation**: Identify methods, schemas, and headers.
-2.  **Define Types**: Create `USTRUCT`s in `Source/OpenAI/Public/Provider/Types/`. Use `FOptional` types for optional fields.
+1.  **Analyze Documentation**: Identify methods, schemas, query parameters, and headers.
+2.  **Define Types**: Create `USTRUCT`s and `UENUM`s in `Source/OpenAI/Public/Provider/Types/`. Use `FOptional` types for optional fields.
 3.  **Register Delegates**: Add multi-cast delegates in `Delegates.h`.
-4.  **Map Endpoints**: Update `IAPI` and its implementations in `API.h`.
+4.  **Map Endpoints**: Update `IAPI`, `OpenAIAPI`, `FOpenAIEndpoints`, and `GenericAPI` in `API.h`.
 5.  **Local API Update**: Update `AAPIOverview::SetYourOwnAPI::MyAPI` in `APIOverview.cpp`.
-6.  **JSON Serialization**: Implement custom logic in `Source/OpenAI/Private/Provider/JsonParsers/`. **Must include `OPENAI_API` macro.**
-7.  **Provider Integration**: Implement public methods and HTTP callbacks in `OpenAIProvider.cpp`.
-8.  **Add Sample Examples**: Update `AAPIOverview` actor with manual testing options.
-9.  **Write Tests**:
-    - Parser Specs for JSON verification.
-    - API Stress Specs for live validation.
+6.  **JSON Serialization**: Implement custom logic in `Source/OpenAI/Private/Provider/JsonParsers/` (must include `OPENAI_API` macro).
+7.  **Provider Integration**: Implement public methods and HTTP callbacks in `OpenAIProvider.h` and `OpenAIProvider.cpp`.
+8.  **Blueprint Async Action**: Create latent node in `Source/OpenAI/Public/BlueprintAsyncActions/` and `Source/OpenAI/Private/BlueprintAsyncActions/` extending `UOpenAIActionBase`.
+9.  **Add Sample Examples**: Update `AAPIOverview` actor with manual testing options.
+10. **Write Tests**:
+    - Parser Specs (`*Parser.spec.cpp`) for JSON serialization.
+    - Offline Provider Specs (`OpenAIProviderFake.spec.cpp`) for HTTP response parsing.
+    - API Stress Specs (`Stress/OpenAI*API.spec.cpp`) for live validation.
+11. **Code Format & Lock**: Run `format_all_files.bat` and update `spec.lock.json`.
 
 ## Coding Standards
 - **Naming**: Use `F` prefix for structs, `E` for enums, `U` for UObjects.

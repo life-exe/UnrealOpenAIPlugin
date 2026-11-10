@@ -71,16 +71,52 @@ namespace OpenAI {
 ```
 
 ## Step 7: Provider Implementation (`OpenAIProvider.cpp`)
-1.  **Public Methods**: Construct the URL, create the request using `MakeRequest`, set any required Beta headers, and bind the callback.
+1.  **Public Methods**: Construct the URL, create the request using `MakeRequest` (or multipart helper), set any required Beta headers, and bind the callback.
 2.  **Callbacks**: Use `HandleResponse<T>` to deserialize the JSON and broadcast the delegate.
 3.  **Specializations**: Implement any `MakeRequest` specializations declared in the header.
 
-## Step 8: Verification (Tests)
-Always add tests to verify the new integration:
-1.  **Parser Tests** (`Source/OpenAITestRunner/Private/[Feature]Parser.spec.cpp`): Verify that C++ structs convert to the exact JSON expected by OpenAI.
-2.  **Stress Tests** (`Source/OpenAITestRunner/Private/Stress/OpenAI[Feature]API.spec.cpp`): Perform actual CRUD operations against the live API. 
-    - Use `ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted))` for async handling.
-    - Follow the pattern: Create -> Retrieve -> Update -> List -> Delete.
+## Step 8: Blueprint Async Action (`Source/OpenAI/Public/BlueprintAsyncActions/` and `Private/...`)
+Every endpoint must have a corresponding latent Blueprint async node inheriting from `UOpenAIActionBase`.
+
+1. **Header file** (`Source/OpenAI/Public/BlueprintAsyncActions/<Category>/<Name>Action.h`):
+   - Declare dynamic multicast delegate `FOn<Action>` with 3 parameters: `const F<ResponseStruct>& Response, const FOpenAIResponseMetadata& ResponseMetadata, const FOpenAIError& RawError`.
+   - Inherit from `UOpenAIActionBase`.
+   - Static factory function marked `UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | <Category>")`.
+   - Override `Activate()`, `OnRequestError()`, and `SetEndpoint()`.
+
+   ```cpp
+   DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+       FOnDeleteVoice, const FVoiceDeletedResponse&, Response, const FOpenAIResponseMetadata&, ResponseMetadata, const FOpenAIError&, RawError);
+
+   UCLASS()
+   class OPENAI_API UDeleteVoiceAction : public UOpenAIActionBase
+   {
+       GENERATED_BODY()
+   public:
+       UPROPERTY(BlueprintAssignable)
+       FOnDeleteVoice OnCompleted;
+
+       virtual void Activate() override;
+
+   private:
+       UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "OpenAI | Audio")
+       static UDeleteVoiceAction* DeleteVoice(const FString& VoiceID, const FOpenAIAuth& Auth, const FString& URLOverride);
+
+       void OnDeleteVoiceCompleted(const FVoiceDeletedResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata);
+       virtual void OnRequestError(const FString& URL, const FString& Content) override;
+       virtual void SetEndpoint(OpenAI::V1::FOpenAIEndpoints& Endpoints, const FString& URL) const override;
+
+   private:
+       FString VoiceID;
+   };
+   ```
+
+2. **Source file** (`Source/OpenAI/Private/BlueprintAsyncActions/<Category>/<Name>Action.cpp`):
+   - Factory function instantiates action via `NewObject<U...Action>()` and saves params.
+   - `Activate()`: calls `CreateProvider()`, binds callback `Provider->On...Completed().AddUObject(this, &ThisClass::On...Completed)`, calls provider method.
+   - `On...Completed()`: broadcasts `OnCompleted.Broadcast(Response, ResponseMetadata, {})`.
+   - `OnRequestError()`: broadcasts `OnCompleted.Broadcast({}, {}, FOpenAIError{Content, true})`.
+   - `SetEndpoint()`: overrides endpoint in `Endpoints.<CategoryEndpoint> = URL`.
 
 ## Step 9: Add Sample Examples (`Source/OpenAI/Public/Sample/APIOverview.h` & `.cpp`)
 To make the new API accessible for manual testing via the `AAPIOverview` actor:
@@ -92,10 +128,27 @@ To make the new API accessible for manual testing via the `AAPIOverview` actor:
     - Implement the methods, typically using `AddLambda` to handle the response and `UE_LOGFMT` to output the results.
     - Use `UEnum::GetValueAsString` for readable status/enum logging.
 
+## Step 10: Verification (Tests)
+Always add tests to verify the new integration across all layers:
+1.  **Parser Tests** (`Source/OpenAITestRunner/Private/[Feature]Parser.spec.cpp`): Verify that C++ structs convert to the exact JSON expected by OpenAI.
+2.  **Offline Fake Provider Tests** (`Source/OpenAITestRunner/Private/OpenAIProviderFake.spec.cpp`):
+    - Fast, deterministic, runs without internet or API keys (`OpenAI.Provider.Fake`).
+    - Use `UOpenAIProviderFake::SetResponse(MockJson)` to mock HTTP response.
+    - Verify struct parsing, headers, error handling, and delegate callbacks.
+3.  **Stress Tests** (`Source/OpenAITestRunner/Private/Stress/OpenAI[Feature]API.spec.cpp`):
+    - Perform actual operations against live OpenAI API (`OpenAI.Provider.ActualAPI`).
+    - Use `ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted))` for async handling.
+    - If endpoint requires external prerequisites or permissions not available in automated runs, use `xIt(...)` to disable until configured.
+
+## Step 11: Format and Sync Lock
+1. Run `format_all_files.bat` (clang-format) to ensure clean style.
+2. Run `python Tools/openapi_sync/openapi_sync.py --update-lock` to keep `spec.lock.json` in sync.
+
 ---
 
 ## Common Pitfalls
+- **Missing Blueprint Async Action**: Forgetting to create `U...Action` prevents Blueprint users from accessing the new API.
 - **Case Sensitivity**: Response IDs are often mapped as `.ID` in some legacy structs and `.Id` in others. Check the base struct definition.
 - **Beta Headers**: Forgetting `OpenAI-Beta` headers will cause 400 Bad Request or 404 Not Found errors on newer endpoints.
-- **Linker Errors**: Forgetting `OPENAI_API` on a Parser class will cause unresolved external symbol errors in the `OpenAITestRunner` module.
-- **Abstract Class Errors**: Adding a method to `IAPI` without updating `Sample/APIOverview.cpp` will break the build.
+- **Linker Errors**: Forgetting `OPENAI_API` on a Parser class or Blueprint Action will cause unresolved external symbol errors in the test runner or client projects.
+- **Abstract Class Errors**: Adding a method to `IAPI` without updating `Sample/APIOverview.cpp` (`MyAPI`) will break the build.
