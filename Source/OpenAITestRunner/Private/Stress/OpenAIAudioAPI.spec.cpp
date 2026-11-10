@@ -150,6 +150,40 @@ void FOpenAIProviderAudio::Define()
                     ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
                 });
 
+            xIt("Audio.CreateVoiceConsentRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnCreateVoiceConsentCompleted().AddLambda(
+                        [&](const FVoiceConsentResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            TestTrueExpr(!Response.Id.IsEmpty());
+                            TestTrueExpr(Response.Object.Equals("voice.consent"));
+                            RequestCompleted = true;
+                        });
+
+                    FCreateVoiceConsent VoiceConsent;
+                    VoiceConsent.Name = "TestUser";
+                    VoiceConsent.Language = "en";
+                    VoiceConsent.Recording = TestUtils::FileFullPath("hello.mp3");
+
+                    OpenAIProvider->CreateVoiceConsent(VoiceConsent, Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
+            xIt("Audio.DeleteVoiceRequestShouldResponseCorrectly",
+                [this]()
+                {
+                    OpenAIProvider->OnDeleteVoiceCompleted().AddLambda(
+                        [&](const FVoiceDeletedResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        {
+                            TestTrueExpr(Response.Deleted);
+                            RequestCompleted = true;
+                        });
+
+                    OpenAIProvider->DeleteVoice("voice_dummy_id", Auth);
+                    ADD_LATENT_AUTOMATION_COMMAND(FWaitForRequestCompleted(RequestCompleted));
+                });
+
             It("Audio.CreateSpeechRequestShouldResponseCorrectly",
                 [this]()
                 {

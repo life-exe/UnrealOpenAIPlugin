@@ -334,7 +334,7 @@ void FOpenAIProviderFake::Define()
             It("VerboseTranscriptionShouldBeDetectedByFields",
                 [this]()
                 {
-                    using OpenAI::AudioParser;
+                    using AudioParser = OpenAI::AudioParser;
                     TestFalseExpr(AudioParser::IsVerboseResponse(TEXT("{\"text\":\"segments of the talk\"}")));
                     TestTrueExpr(
                         AudioParser::IsVerboseResponse(TEXT("{\"text\":\"hi\",\"language\":\"en\",\"duration\":1.5,\"segments\":[]}")));
@@ -365,6 +365,44 @@ void FOpenAIProviderFake::Define()
 
                     TestFalseExpr(SpeechCompleted);
                     TestTrueExpr(ErrorContent.Contains(TEXT("Incorrect API key")));
+                });
+
+            It("CreateVoiceConsentShouldBeParsedCorrectly",
+                [this]()
+                {
+                    FVoiceConsentResponse VoiceConsentResponse;
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->OnCreateVoiceConsentCompleted().AddLambda(
+                        [&](const FVoiceConsentResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        { VoiceConsentResponse = Response; });
+                    OpenAIProvider->SetResponse(TEXT("{\"id\":\"consent_123\",\"object\":\"voice.consent\",\"created_at\":1710000000}"));
+
+                    FCreateVoiceConsent VoiceConsent;
+                    VoiceConsent.Name = TEXT("Alex");
+                    VoiceConsent.Language = TEXT("en");
+                    VoiceConsent.Recording = OpenAI::Tests::TestUtils::FileFullPath("hello.mp3");
+                    OpenAIProvider->CreateVoiceConsent(VoiceConsent, FOpenAIAuth{});
+
+                    TestTrueExpr(VoiceConsentResponse.Id.Equals(TEXT("consent_123")));
+                    TestTrueExpr(VoiceConsentResponse.Object.Equals(TEXT("voice.consent")));
+                    TestTrueExpr(VoiceConsentResponse.Created_At == 1710000000);
+                });
+
+            It("DeleteVoiceShouldBeParsedCorrectly",
+                [this]()
+                {
+                    FVoiceDeletedResponse VoiceDeletedResponse;
+                    auto* OpenAIProvider = NewObject<UOpenAIProviderFake>();
+                    OpenAIProvider->OnDeleteVoiceCompleted().AddLambda(
+                        [&](const FVoiceDeletedResponse& Response, const FOpenAIResponseMetadata& ResponseMetadata)
+                        { VoiceDeletedResponse = Response; });
+                    OpenAIProvider->SetResponse(TEXT("{\"id\":\"voice_123\",\"object\":\"voice.deleted\",\"deleted\":true}"));
+
+                    OpenAIProvider->DeleteVoice(TEXT("voice_123"), FOpenAIAuth{});
+
+                    TestTrueExpr(VoiceDeletedResponse.Id.Equals(TEXT("voice_123")));
+                    TestTrueExpr(VoiceDeletedResponse.Object.Equals(TEXT("voice.deleted")));
+                    TestTrueExpr(VoiceDeletedResponse.Deleted == true);
                 });
         });
 }
