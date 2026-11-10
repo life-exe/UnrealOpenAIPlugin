@@ -328,10 +328,22 @@ class Spec:
             return properties, set()
         for variant in self.variants(schema):
             variant_required = set(variant.get("required", []))
-            properties.update(variant.get("properties", {}))
+            for k, v in variant.get("properties", {}).items():
+                if k in properties and properties[k] != v:
+                    prev = properties[k]
+                    prev_variants = prev.get("anyOf", [prev]) if isinstance(prev, dict) and "anyOf" in prev else [prev]
+                    properties[k] = {"anyOf": prev_variants + [v]}
+                else:
+                    properties[k] = v
             for part in variant.get("allOf", []):
                 part_properties, part_required = self.properties(part, depth + 1)
-                properties.update(part_properties)
+                for k, v in part_properties.items():
+                    if k in properties and properties[k] != v:
+                        prev = properties[k]
+                        prev_variants = prev.get("anyOf", [prev]) if isinstance(prev, dict) and "anyOf" in prev else [prev]
+                        properties[k] = {"anyOf": prev_variants + [v]}
+                    else:
+                        properties[k] = v
                 variant_required |= part_required
             # with oneOf/anyOf a field is only required if every alternative requires it
             required = variant_required if required is None else required & variant_required
@@ -340,10 +352,13 @@ class Spec:
         return {json_key_to_field(k): v for k, v in properties.items()}, {json_key_to_field(k) for k in required}
 
     def array_items(self, schema: dict) -> dict | None:
+        items = []
         for variant in self.variants(schema):
             if "items" in variant:
-                return variant["items"]
-        return None
+                items.append(variant["items"])
+        if not items:
+            return None
+        return items[0] if len(items) == 1 else {"anyOf": items}
 
     def object_variants(self, schema: dict) -> dict | None:
         props, _ = self.properties(schema)
@@ -554,7 +569,10 @@ class Checker:
         if not spec_values:
             return
         plugin_values = {v.lower() for v in self.uenums[enum_name]}
+        ignored = {str(v).lower() for v in self.config.get("ignore_enum_values", {}).get(enum_name, [])}
         for value in sorted(plugin_values - spec_values):
+            if value in ignored:
+                continue
             self.add("warning", "enum value", f"{location} (`{enum_name}`)", f"`{value}` is not a spec value")
         for value in sorted(spec_values - plugin_values):
             self.add("info", "enum value", f"{location} (`{enum_name}`)", f"spec value `{value}` is missing in the plugin")
@@ -672,8 +690,11 @@ def check(spec: Spec, config: dict) -> tuple[Checker, list[PluginEndpoint], dict
         label = f"`{enum_name}`"
         for value in sorted(plugin_values & set(deprecations)):
             checker.add("warning", "deprecated enum value", label, f"`{value}`: {first_line(deprecations[value])}")
+        ignored = {str(v).lower() for v in config.get("ignore_enum_values", {}).get(enum_name, [])}
         if "unknown" in checks:
             for value in sorted(plugin_values - spec_values):
+                if value.lower() in ignored:
+                    continue
                 checker.add("warning", "enum value", label, f"`{value}` is not accepted by the spec")
         if "new" in checks:
             for value in sorted(spec_values - plugin_values - set(deprecations)):
