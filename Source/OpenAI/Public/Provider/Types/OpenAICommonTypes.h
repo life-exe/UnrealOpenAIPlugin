@@ -85,6 +85,7 @@ enum class EOpenAIFinishReason : uint8
     Length,
     Content_Filter,
     Tool_Calls,
+    Function_Call,
     Null
 };
 

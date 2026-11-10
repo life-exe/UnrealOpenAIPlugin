@@ -213,6 +213,31 @@ void UOpenAIProvider::CreateVoice(const FCreateVoice& CreateVoice, const FOpenAI
     ProcessRequest(HttpRequest);
 }
 
+void UOpenAIProvider::CreateVoiceConsent(const FCreateVoiceConsent& CreateVoiceConsent, const FOpenAIAuth& Auth)
+{
+    const auto& [Boundary, BeginBoundary, EndBoundary] = HttpHelper::MakeBoundary();
+
+    auto HttpRequest = MakeMultipartRequest(API->AudioVoiceConsents(), Boundary, Auth);
+
+    TArray<uint8> RequestContent;
+    if (!AppendMIMEFile(RequestContent, CreateVoiceConsent.Recording, "recording", BeginBoundary, HttpRequest->GetURL())) return;
+    RequestContent.Append(HttpHelper::AddMIME("name", CreateVoiceConsent.Name, BeginBoundary));
+    RequestContent.Append(HttpHelper::AddMIME("language", CreateVoiceConsent.Language, BeginBoundary));
+    RequestContent.Append(HttpHelper::StringToUTF8(EndBoundary));
+
+    HttpRequest->SetContent(RequestContent);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnCreateVoiceConsentCompleted);
+    ProcessRequest(HttpRequest);
+}
+
+void UOpenAIProvider::DeleteVoice(const FString& VoiceID, const FOpenAIAuth& Auth)
+{
+    const auto URL = FString(API->AudioVoices()).Append("/").Append(VoiceID);
+    auto HttpRequest = MakeRequest(URL, "DELETE", Auth);
+    HttpRequest->OnProcessRequestComplete().BindUObject(this, &ThisClass::OnDeleteVoiceCompleted);
+    ProcessRequest(HttpRequest);
+}
+
 void UOpenAIProvider::ListFiles(const FListFilesParams& ListFilesParams, const FOpenAIAuth& Auth)
 {
     FString URL = API->Files();
@@ -993,6 +1018,16 @@ void UOpenAIProvider::OnCreateAudioTranslationCompleted(FHttpRequestPtr Request,
 void UOpenAIProvider::OnCreateVoiceCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
 {
     HandleResponse<FCreateVoiceResponse>(Response, WasSuccessful, CreateVoiceCompleted);
+}
+
+void UOpenAIProvider::OnCreateVoiceConsentCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVoiceConsentResponse>(Response, WasSuccessful, CreateVoiceConsentCompleted);
+}
+
+void UOpenAIProvider::OnDeleteVoiceCompleted(FHttpRequestPtr Request, FHttpResponsePtr Response, bool WasSuccessful)
+{
+    HandleResponse<FVoiceDeletedResponse>(Response, WasSuccessful, DeleteVoiceCompleted);
 }
 
 DEFINE_HTTP_CALLBACK(ListFiles)

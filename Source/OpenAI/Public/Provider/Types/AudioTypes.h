@@ -8,7 +8,8 @@
 UENUM(BlueprintType)
 enum class EAudioModel : uint8
 {
-    Whisper_1
+    Whisper_1,
+    GPT_Transcribe
 };
 
 UENUM(BlueprintType)
@@ -57,7 +58,8 @@ enum class ETranscriptFormat : uint8
     Text,
     Str UMETA(DisplayName = "SRT"),  // "srt"; the name is kept for saved Blueprints
     Verbose_JSON,
-    Vtt
+    Vtt,
+    Diarized_JSON
 };
 
 ///////////////////////////////////////////////////////
@@ -209,6 +211,30 @@ struct FCreateVoice
     */
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
     FString Name;
+};
+
+USTRUCT(BlueprintType)
+struct FCreateVoiceConsent
+{
+    GENERATED_BODY()
+
+    /**
+      The label to use for this consent recording.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Name;
+
+    /**
+      The consent audio recording file path. Maximum size is 10 MiB.
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Recording;
+
+    /**
+      The BCP 47 language tag for the consent phrase (for example, en-US).
+    */
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI | Required")
+    FString Language;
 };
 
 ///////////////////////////////////////////////////////
@@ -403,4 +429,46 @@ struct FCreateVoiceResponse
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FString Object;
+
+    /**
+      How the voice was created.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Type;
+};
+
+USTRUCT(BlueprintType)
+struct FVoiceConsentResponse
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Name;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Language;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    int32 Created_At{};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+};
+
+USTRUCT(BlueprintType)
+struct FVoiceDeletedResponse
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Object;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    bool Deleted{};
 };

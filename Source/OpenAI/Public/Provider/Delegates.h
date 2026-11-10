@@ -37,6 +37,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
     FOnCreateAudioTranscriptionVerboseCompleted, const FAudioTranscriptionVerboseResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateAudioTranslationCompleted, const FAudioTranslationResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateVoiceCompleted, const FCreateVoiceResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreateVoiceConsentCompleted, const FVoiceConsentResponse&, const FOpenAIResponseMetadata&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeleteVoiceCompleted, const FVoiceDeletedResponse&, const FOpenAIResponseMetadata&);
 // files
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnListFilesCompleted, const FListFilesResponse&, const FOpenAIResponseMetadata&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUploadFileCompleted, const FUploadFileResponse&, const FOpenAIResponseMetadata&);

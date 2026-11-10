@@ -19,6 +19,9 @@ struct FEvalDataSourceConfig
     FString Item_Schema;  // JSON string
 
     UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
+    FString Schema;  // JSON string (response)
+
+    UPROPERTY(BlueprintReadWrite, Category = "OpenAI")
     FOptionalBool Include_Sample_Schema;
 
     // Logs / Stored_Completions

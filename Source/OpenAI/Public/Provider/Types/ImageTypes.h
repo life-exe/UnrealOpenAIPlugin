@@ -12,7 +12,15 @@ enum class EImageModelEnum : uint8
     GPT_Image_1,
     GPT_Image_1_Mini,
     GPT_Image_1_5,
-    ChatGPT_Image_Latest
+    ChatGPT_Image_Latest,
+    GPT_Image_2,
+    GPT_Image_2_2026_04_21,
+    GPT_Image_2_5_Flare,
+    GPT_Image_2_5_Flare_2026_09_08,
+    GPT_Image_2_5_Sunburst,
+    GPT_Image_2_5_Sunburst_2026_09_08,
+    GPT_Image_2_6_Flare,
+    GPT_Image_2_6_Sunburst
 };
 
 UENUM(BlueprintType)
@@ -30,7 +38,9 @@ enum class EOpenAIImageQuality : uint8
     Auto,
     High,
     Medium,
-    Low
+    Low,
+    XHigh,
+    Max
 };
 
 UENUM(BlueprintType)
@@ -60,7 +70,9 @@ enum class EOpenAIImageOutputFormat : uint8
 {
     Png,
     Jpeg,
-    Webp
+    Webp,
+    Gif,
+    Svg
 };
 
 ///////////////////////////////////////////////////////

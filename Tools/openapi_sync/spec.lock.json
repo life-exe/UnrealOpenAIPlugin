@@ -1,5 +1,5 @@
 {
-  "sha": "8243cc8fa6f04430fb1f1a6a2cb926fbeb4f7f26",
-  "date": "2026-10-24T04:05:56Z",
-  "message": "Revamp Live API messaging and decision item schemas"
+  "sha": "b50f08617fb0c9952edbba81be2e5ea78f3fa6bd",
+  "date": "2026-11-10T20:39:20Z",
+  "message": "Move environment field in CreateAgentSessionParams for clarity"
 }

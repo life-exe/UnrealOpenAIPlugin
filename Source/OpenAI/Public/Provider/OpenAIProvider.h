@@ -123,6 +123,18 @@ public:
     void CreateVoice(const FCreateVoice& CreateVoice, const FOpenAIAuth& Auth);
 
     /**
+      Upload a voice consent recording.
+      https://platform.openai.com/docs/api-reference/audio/createVoiceConsent
+    */
+    void CreateVoiceConsent(const FCreateVoiceConsent& CreateVoiceConsent, const FOpenAIAuth& Auth);
+
+    /**
+      Deletes a voice.
+      https://platform.openai.com/docs/api-reference/audio/deleteVoice
+    */
+    void DeleteVoice(const FString& VoiceID, const FOpenAIAuth& Auth);
+
+    /**
       Translates audio into into English.
       https://platform.openai.com/docs/api-reference/audio/create
     */
@@ -582,6 +594,8 @@ public:
     DEFINE_EVENT_GETTER(CreateAudioTranscriptionVerboseCompleted)
     DEFINE_EVENT_GETTER(CreateAudioTranslationCompleted)
     DEFINE_EVENT_GETTER(CreateVoiceCompleted)
+    DEFINE_EVENT_GETTER(CreateVoiceConsentCompleted)
+    DEFINE_EVENT_GETTER(DeleteVoiceCompleted)
     DEFINE_EVENT_GETTER(ListFilesCompleted)
     DEFINE_EVENT_GETTER(UploadFileCompleted)
     DEFINE_EVENT_GETTER(DeleteFileCompleted)
@@ -684,6 +698,8 @@ private:
     DECLARE_HTTP_CALLBACK(OnCreateAudioTranscriptionCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateAudioTranslationCompleted)
     DECLARE_HTTP_CALLBACK(OnCreateVoiceCompleted)
+    DECLARE_HTTP_CALLBACK(OnCreateVoiceConsentCompleted)
+    DECLARE_HTTP_CALLBACK(OnDeleteVoiceCompleted)
     DECLARE_HTTP_CALLBACK(OnListFilesCompleted)
     DECLARE_HTTP_CALLBACK(OnUploadFileCompleted)
     DECLARE_HTTP_CALLBACK(OnDeleteFileCompleted)

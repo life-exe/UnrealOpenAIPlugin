@@ -35,14 +35,26 @@
 
   "_ignore_fields": "Struct -> field names to skip, e.g. fields that custom parsers rename before sending.",
   "ignore_fields": {
-    "FMessage": ["ContentArray"]
+    "FMessage": ["ContentArray", "Name", "Tool_Call_ID"],
+    "FEvalGrader": ["Input_String"],
+    "FEvalDataSourceConfig": ["Item_Schema", "Include_Sample_Schema", "Schema"],
+    "FListFineTuningJobsResponse": ["First_Id", "Last_Id"],
+    "FOpenAIImageEdit": ["Moderation"],
+    "FChatKitContent": ["Annotations"]
+  },
+
+  "_ignore_enum_values": "Plugin enum -> values that are valid for the plugin but not present in the checked spec property.",
+  "ignore_enum_values": {
+    "EChunkingStrategyType": ["auto"],
+    "EVectorStoreFileErrorCode": ["none"],
+    "EMainModelEnum": ["gpt-5-codex", "gpt-5-pro", "gpt-6-cyber", "gpt-6-rosalind"]
   },
 
   "_json_string_fields": "Struct -> FString fields that hold a JSON object and are sent as an object (UJsonFuncLib::MakeFunctionsString + CleanUpFunctionsObject).",
   "json_string_fields": {
     "FFunctionRequest": ["Parameters"],
     "FRealtimeFunctionTool": ["Parameters"],
-    "FEvalDataSourceConfig": ["Item_Schema"]
+    "FEvalDataSourceConfig": ["Item_Schema", "Schema"]
   },
 
   "_ignore_endpoints": "UOpenAIProvider method names to skip.",

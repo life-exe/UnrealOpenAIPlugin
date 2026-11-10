@@ -19,7 +19,8 @@ enum class EBatchEndpoint : uint8
     Responses,
     Moderations,
     ImageGenerations,
-    ImageEdits
+    ImageEdits,
+    Videos
 };
 
 UENUM(BlueprintType)

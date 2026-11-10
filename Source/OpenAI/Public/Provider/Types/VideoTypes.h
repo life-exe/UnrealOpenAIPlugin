@@ -13,8 +13,11 @@
 UENUM(BlueprintType)
 enum class EVideoModel : uint8
 {
-    Sora_2 = 0,  // "sora-2"
-    Sora_2_Pro,  // "sora-2-pro"
+    Sora_2 = 0,            // "sora-2"
+    Sora_2_Pro,            // "sora-2-pro"
+    Sora_2_2025_10_06,     // "sora-2-2025-10-06"
+    Sora_2_2025_12_08,     // "sora-2-2025-12-08"
+    Sora_2_Pro_2025_10_06  // "sora-2-pro-2025-10-06"
 };
 
 UENUM(BlueprintType)

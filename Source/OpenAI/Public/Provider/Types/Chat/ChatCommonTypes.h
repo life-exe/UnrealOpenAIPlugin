@@ -26,7 +26,11 @@ UENUM(BlueprintType)
 enum class EServiceTier : uint8
 {
     Auto = 0,
-    Default
+    Default,
+    Fast,
+    Flex,
+    Priority,
+    Scale
 };
 
 USTRUCT(BlueprintType)

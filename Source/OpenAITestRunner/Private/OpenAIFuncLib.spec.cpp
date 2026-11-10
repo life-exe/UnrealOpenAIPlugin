@@ -137,6 +137,21 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Luna, "gpt-6-luna");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Astra, "gpt-6-astra");
                     TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_1_Sol, "gpt-6.1-sol");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_1_Terra, "gpt-6.1-terra");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Rosalind, "gpt-6-rosalind");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_6_Cyber, "gpt-6-cyber");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_5_6_Cyber, "gpt-5.6-cyber");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Daybreak_Blue_Latest, "gpt-daybreak-blue-latest");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Daybreak_Red_Latest, "gpt-daybreak-red-latest");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Rosalind_Research, "gpt-rosalind-research");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Deep_Research, "o3-deep-research");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Deep_Research_2025_06_26, "o3-deep-research-2025-06-26");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Pro, "o3-pro");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::O3_Pro_2025_06_10, "o3-pro-2025-06-10");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_5_Preview, "gpt-4.5-preview");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_4_5_Preview_2025_02_27, "gpt-4.5-preview-2025-02-27");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_2_6_Flare, "gpt-image-2.6-flare");
+                    TEST_OPENAI_ALL_MODEL_TO_STRING(EAllModelEnum::GPT_Image_2_6_Sunburst, "gpt-image-2.6-sunburst");
                 });
 
             It("OpenAIMainModelToStringShouldReturnCorrectValue",
@@ -158,6 +173,13 @@ void FOpenAIFuncLib::Define()
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_1, "gpt-5.1");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_Pro, "gpt-5-pro");
                     TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_5_Codex, "gpt-5-codex");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_Sol, "gpt-6-sol");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_Luna, "gpt-6-luna");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_Astra, "gpt-6-astra");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_1_Sol, "gpt-6.1-sol");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_1_Terra, "gpt-6.1-terra");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_Rosalind, "gpt-6-rosalind");
+                    TEST_OPENAI_MODEL_TO_STRING(EMainModelEnum::GPT_6_Cyber, "gpt-6-cyber");
                 });
 
             It("OpenAIModerationModelToStringShouldReturnCorrectValue",
@@ -169,10 +191,16 @@ void FOpenAIFuncLib::Define()
                             .Equals("omni-moderation-latest"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Omni_Moderation_2024_09_26)
                             .Equals("omni-moderation-2024-09-26"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum::Text_Moderation_Stable)
+                            .Equals("text-moderation-stable"));
                 });
 
             It("OpenAIAudioModelToStringShouldReturnCorrectValue",
-                [this]() { TestTrueExpr(UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1).Equals("whisper-1")); });
+                [this]()
+                {
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::Whisper_1).Equals("whisper-1"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel::GPT_Transcribe).Equals("gpt-transcribe"));
+                });
 
             It("OpenAITTSModelToStringShouldReturnCorrectValue",
                 [this]()
@@ -221,6 +249,21 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_1_5).Equals("gpt-image-1.5"));
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::ChatGPT_Image_Latest).Equals("chatgpt-image-latest"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2).Equals("gpt-image-2"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_2026_04_21).Equals("gpt-image-2-2026-04-21"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_5_Flare).Equals("gpt-image-2.5-flare"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_5_Flare_2026_09_08)
+                            .Equals("gpt-image-2.5-flare-2026-09-08"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_5_Sunburst).Equals("gpt-image-2.5-sunburst"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_5_Sunburst_2026_09_08)
+                            .Equals("gpt-image-2.5-sunburst-2026-09-08"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_6_Flare).Equals("gpt-image-2.6-flare"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum::GPT_Image_2_6_Sunburst).Equals("gpt-image-2.6-sunburst"));
                 });
 
             It("StringToOpenAIImageModelShouldReturnCorrectValue",
@@ -230,6 +273,19 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-1-mini") == EImageModelEnum::GPT_Image_1_Mini);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-1.5") == EImageModelEnum::GPT_Image_1_5);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("chatgpt-image-latest") == EImageModelEnum::ChatGPT_Image_Latest);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2") == EImageModelEnum::GPT_Image_2);
+                    TestTrueExpr(
+                        UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2-2026-04-21") == EImageModelEnum::GPT_Image_2_2026_04_21);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2.5-flare") == EImageModelEnum::GPT_Image_2_5_Flare);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2.5-flare-2026-09-08") ==
+                                 EImageModelEnum::GPT_Image_2_5_Flare_2026_09_08);
+                    TestTrueExpr(
+                        UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2.5-sunburst") == EImageModelEnum::GPT_Image_2_5_Sunburst);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2.5-sunburst-2026-09-08") ==
+                                 EImageModelEnum::GPT_Image_2_5_Sunburst_2026_09_08);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2.6-flare") == EImageModelEnum::GPT_Image_2_6_Flare);
+                    TestTrueExpr(
+                        UOpenAIFuncLib::StringToOpenAIImageModel("gpt-image-2.6-sunburst") == EImageModelEnum::GPT_Image_2_6_Sunburst);
                 });
 
             It("StringToOpenAIImageSizeGptImage1ShouldReturnCorrectValue",
@@ -255,6 +311,8 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("high") == EOpenAIImageQuality::High);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("medium") == EOpenAIImageQuality::Medium);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("low") == EOpenAIImageQuality::Low);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("xhigh") == EOpenAIImageQuality::XHigh);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIImageQuality("max") == EOpenAIImageQuality::Max);
                 });
 
             It("OpenAIImageSizeGptImage1ToStringShouldReturnCorrectValue",
@@ -295,6 +353,8 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Low).Equals("low"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::High).Equals("high"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Medium).Equals("medium"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::XHigh).Equals("xhigh"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality::Max).Equals("max"));
                 });
 
             It("OpenAIImageOutputFormatToStringShouldReturnCorrectValue",
@@ -303,6 +363,8 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Jpeg).Equals("jpeg"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Png).Equals("png"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Webp).Equals("webp"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Gif).Equals("gif"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat::Svg).Equals("svg"));
                 });
 
             It("OpenAIRoleToStringShouldReturnCorrectValue",
@@ -332,6 +394,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Length).Equals("length"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Tool_Calls).Equals("tool_calls"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Content_Filter).Equals("content_filter"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Function_Call).Equals("function_call"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason::Null).Equals(""));
                 });
             It("StringToOpenAIFinishReasonShouldReturnCorrectValue",
@@ -341,6 +404,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("length") == EOpenAIFinishReason::Length);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("tool_calls") == EOpenAIFinishReason::Tool_Calls);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("content_filter") == EOpenAIFinishReason::Content_Filter);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("function_call") == EOpenAIFinishReason::Function_Call);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIFinishReason("") == EOpenAIFinishReason::Null);
                 });
 
@@ -362,6 +426,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Str).Equals("srt"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Verbose_JSON).Equals("verbose_json"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Vtt).Equals("vtt"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat::Diarized_JSON).Equals("diarized_json"));
                 });
 
             It("OpenAIEmbeddingsEncodingFormatToStringShouldReturnCorrectValue",
@@ -552,6 +617,8 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Vision).Equals("vision"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Batch).Equals("batch"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::FineTune).Equals("fine-tune"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::Evals).Equals("evals"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose::User_Data).Equals("user_data"));
                 });
 
             It("OpenAIBatchEndpointToStringShouldReturnCorrectValue",
@@ -566,6 +633,7 @@ void FOpenAIFuncLib::Define()
                     TestTrueExpr(
                         UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ImageGenerations).Equals("/v1/images/generations"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::ImageEdits).Equals("/v1/images/edits"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint::Videos).Equals("/v1/videos"));
                 });
 
             It("OpenAIBatchCompletionWindowToStringShouldReturnCorrectValue", [this]()
@@ -576,6 +644,10 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Auto).Equals("auto"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Default).Equals("default"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Fast).Equals("fast"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Flex).Equals("flex"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Priority).Equals("priority"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier::Scale).Equals("scale"));
                 });
 
             It("OpenAIUploadStatusToStringShouldReturnCorrectValue",
@@ -600,6 +672,10 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2).Equals("sora-2"));
                     TestTrueExpr(UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2_Pro).Equals("sora-2-pro"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2_2025_10_06).Equals("sora-2-2025-10-06"));
+                    TestTrueExpr(UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2_2025_12_08).Equals("sora-2-2025-12-08"));
+                    TestTrueExpr(
+                        UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel::Sora_2_Pro_2025_10_06).Equals("sora-2-pro-2025-10-06"));
                 });
 
             It("StringToOpenAIVideoModelShouldReturnCorrectValue",
@@ -607,6 +683,9 @@ void FOpenAIFuncLib::Define()
                 {
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2") == EVideoModel::Sora_2);
                     TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2-pro") == EVideoModel::Sora_2_Pro);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2-2025-10-06") == EVideoModel::Sora_2_2025_10_06);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2-2025-12-08") == EVideoModel::Sora_2_2025_12_08);
+                    TestTrueExpr(UOpenAIFuncLib::StringToOpenAIVideoModel("sora-2-pro-2025-10-06") == EVideoModel::Sora_2_Pro_2025_10_06);
                 });
 
             It("OpenAIVideoStatusToStringShouldReturnCorrectValue",

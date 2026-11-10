@@ -144,7 +144,22 @@ enum class EAllModelEnum : uint8
     GPT_6_Sol,
     GPT_6_Luna,
     GPT_6_Astra,
-    GPT_6_1_Sol
+    GPT_6_1_Sol,
+    GPT_6_1_Terra,
+    GPT_6_Rosalind,
+    GPT_6_Cyber,
+    GPT_5_6_Cyber,
+    GPT_Daybreak_Blue_Latest,
+    GPT_Daybreak_Red_Latest,
+    GPT_Rosalind_Research,
+    O3_Deep_Research,
+    O3_Deep_Research_2025_06_26,
+    O3_Pro,
+    O3_Pro_2025_06_10,
+    GPT_4_5_Preview,
+    GPT_4_5_Preview_2025_02_27,
+    GPT_Image_2_6_Flare,
+    GPT_Image_2_6_Sunburst
 };
 
 UENUM(BlueprintType)
@@ -165,7 +180,14 @@ enum class EMainModelEnum : uint8
     GPT_5,
     GPT_5_1,
     GPT_5_Pro,
-    GPT_5_Codex
+    GPT_5_Codex,
+    GPT_6_Sol,
+    GPT_6_Luna,
+    GPT_6_Astra,
+    GPT_6_1_Sol,
+    GPT_6_1_Terra,
+    GPT_6_Rosalind,
+    GPT_6_Cyber
 };
 
 ///////////////////////////////////////////////////////

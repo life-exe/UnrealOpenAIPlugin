@@ -32,6 +32,18 @@ enum class EVectorStoreFileErrorCode : uint8
     None
 };
 
+USTRUCT(BlueprintType)
+struct FVectorStoreLastError
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    EVectorStoreFileErrorCode Code{EVectorStoreFileErrorCode::None};
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Message;
+};
+
 UENUM(BlueprintType)
 enum class EChunkingStrategyType : uint8
 {
@@ -253,10 +265,7 @@ struct FVectorStoreFile
     EVectorStoreFileStatus Status{EVectorStoreFileStatus::In_Progress};
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    EVectorStoreFileErrorCode Last_Error_Code{EVectorStoreFileErrorCode::None};
-
-    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
-    FString Last_Error_Message;
+    FVectorStoreLastError Last_Error;
 
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FFileChunkingStrategy Chunking_Strategy;

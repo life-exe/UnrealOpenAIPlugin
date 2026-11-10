@@ -16,7 +16,9 @@ enum class EUploadFilePurpose : uint8
     Assistants = 0,
     Vision,
     Batch,
-    FineTune
+    FineTune,
+    Evals,
+    User_Data
 };
 
 USTRUCT(BlueprintType)

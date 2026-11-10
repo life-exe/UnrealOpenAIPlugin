@@ -151,6 +151,21 @@ FString UOpenAIFuncLib::OpenAIAllModelToString(EAllModelEnum Model)
         case EAllModelEnum::GPT_6_Luna: return "gpt-6-luna";
         case EAllModelEnum::GPT_6_Astra: return "gpt-6-astra";
         case EAllModelEnum::GPT_6_1_Sol: return "gpt-6.1-sol";
+        case EAllModelEnum::GPT_6_1_Terra: return "gpt-6.1-terra";
+        case EAllModelEnum::GPT_6_Rosalind: return "gpt-6-rosalind";
+        case EAllModelEnum::GPT_6_Cyber: return "gpt-6-cyber";
+        case EAllModelEnum::GPT_5_6_Cyber: return "gpt-5.6-cyber";
+        case EAllModelEnum::GPT_Daybreak_Blue_Latest: return "gpt-daybreak-blue-latest";
+        case EAllModelEnum::GPT_Daybreak_Red_Latest: return "gpt-daybreak-red-latest";
+        case EAllModelEnum::GPT_Rosalind_Research: return "gpt-rosalind-research";
+        case EAllModelEnum::O3_Deep_Research: return "o3-deep-research";
+        case EAllModelEnum::O3_Deep_Research_2025_06_26: return "o3-deep-research-2025-06-26";
+        case EAllModelEnum::O3_Pro: return "o3-pro";
+        case EAllModelEnum::O3_Pro_2025_06_10: return "o3-pro-2025-06-10";
+        case EAllModelEnum::GPT_4_5_Preview: return "gpt-4.5-preview";
+        case EAllModelEnum::GPT_4_5_Preview_2025_02_27: return "gpt-4.5-preview-2025-02-27";
+        case EAllModelEnum::GPT_Image_2_6_Flare: return "gpt-image-2.6-flare";
+        case EAllModelEnum::GPT_Image_2_6_Sunburst: return "gpt-image-2.6-sunburst";
     }
     checkNoEntry();
     return {};
@@ -176,6 +191,13 @@ FString UOpenAIFuncLib::OpenAIMainModelToString(EMainModelEnum Model)
         case EMainModelEnum::GPT_5_1: return "gpt-5.1";
         case EMainModelEnum::GPT_5_Pro: return "gpt-5-pro";
         case EMainModelEnum::GPT_5_Codex: return "gpt-5-codex";
+        case EMainModelEnum::GPT_6_Sol: return "gpt-6-sol";
+        case EMainModelEnum::GPT_6_Luna: return "gpt-6-luna";
+        case EMainModelEnum::GPT_6_Astra: return "gpt-6-astra";
+        case EMainModelEnum::GPT_6_1_Sol: return "gpt-6.1-sol";
+        case EMainModelEnum::GPT_6_1_Terra: return "gpt-6.1-terra";
+        case EMainModelEnum::GPT_6_Rosalind: return "gpt-6-rosalind";
+        case EMainModelEnum::GPT_6_Cyber: return "gpt-6-cyber";
     }
     checkNoEntry();
     return {};
@@ -188,6 +210,7 @@ FString UOpenAIFuncLib::OpenAIModerationModelToString(EModerationsModelEnum Mode
         case EModerationsModelEnum::Text_Moderation_Latest: return "text-moderation-latest";
         case EModerationsModelEnum::Omni_Moderation_Latest: return "omni-moderation-latest";
         case EModerationsModelEnum::Omni_Moderation_2024_09_26: return "omni-moderation-2024-09-26";
+        case EModerationsModelEnum::Text_Moderation_Stable: return "text-moderation-stable";
     }
     checkNoEntry();
     return {};
@@ -206,6 +229,7 @@ FString UOpenAIFuncLib::OpenAIAudioModelToString(EAudioModel Model)
     switch (Model)
     {
         case EAudioModel::Whisper_1: return "whisper-1";
+        case EAudioModel::GPT_Transcribe: return "gpt-transcribe";
     }
     checkNoEntry();
     return {};
@@ -269,6 +293,14 @@ FString UOpenAIFuncLib::OpenAIImageModelToString(EImageModelEnum Model)
         case EImageModelEnum::GPT_Image_1_Mini: return "gpt-image-1-mini";
         case EImageModelEnum::GPT_Image_1_5: return "gpt-image-1.5";
         case EImageModelEnum::ChatGPT_Image_Latest: return "chatgpt-image-latest";
+        case EImageModelEnum::GPT_Image_2: return "gpt-image-2";
+        case EImageModelEnum::GPT_Image_2_2026_04_21: return "gpt-image-2-2026-04-21";
+        case EImageModelEnum::GPT_Image_2_5_Flare: return "gpt-image-2.5-flare";
+        case EImageModelEnum::GPT_Image_2_5_Flare_2026_09_08: return "gpt-image-2.5-flare-2026-09-08";
+        case EImageModelEnum::GPT_Image_2_5_Sunburst: return "gpt-image-2.5-sunburst";
+        case EImageModelEnum::GPT_Image_2_5_Sunburst_2026_09_08: return "gpt-image-2.5-sunburst-2026-09-08";
+        case EImageModelEnum::GPT_Image_2_6_Flare: return "gpt-image-2.6-flare";
+        case EImageModelEnum::GPT_Image_2_6_Sunburst: return "gpt-image-2.6-sunburst";
     }
     checkNoEntry();
     return {};
@@ -280,6 +312,14 @@ EImageModelEnum UOpenAIFuncLib::StringToOpenAIImageModel(const FString& Model)
     if (Model.Equals("gpt-image-1-mini")) return EImageModelEnum::GPT_Image_1_Mini;
     if (Model.Equals("gpt-image-1.5")) return EImageModelEnum::GPT_Image_1_5;
     if (Model.Equals("chatgpt-image-latest")) return EImageModelEnum::ChatGPT_Image_Latest;
+    if (Model.Equals("gpt-image-2")) return EImageModelEnum::GPT_Image_2;
+    if (Model.Equals("gpt-image-2-2026-04-21")) return EImageModelEnum::GPT_Image_2_2026_04_21;
+    if (Model.Equals("gpt-image-2.5-flare")) return EImageModelEnum::GPT_Image_2_5_Flare;
+    if (Model.Equals("gpt-image-2.5-flare-2026-09-08")) return EImageModelEnum::GPT_Image_2_5_Flare_2026_09_08;
+    if (Model.Equals("gpt-image-2.5-sunburst")) return EImageModelEnum::GPT_Image_2_5_Sunburst;
+    if (Model.Equals("gpt-image-2.5-sunburst-2026-09-08")) return EImageModelEnum::GPT_Image_2_5_Sunburst_2026_09_08;
+    if (Model.Equals("gpt-image-2.6-flare")) return EImageModelEnum::GPT_Image_2_6_Flare;
+    if (Model.Equals("gpt-image-2.6-sunburst")) return EImageModelEnum::GPT_Image_2_6_Sunburst;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EImageModelEnum: {0}", Model);
     checkNoEntry();
@@ -343,6 +383,8 @@ FString UOpenAIFuncLib::OpenAIImageQualityToString(EOpenAIImageQuality ImageQual
         case EOpenAIImageQuality::High: return "high";
         case EOpenAIImageQuality::Medium: return "medium";
         case EOpenAIImageQuality::Low: return "low";
+        case EOpenAIImageQuality::XHigh: return "xhigh";
+        case EOpenAIImageQuality::Max: return "max";
     }
     checkNoEntry();
     return {};
@@ -355,6 +397,8 @@ FString UOpenAIFuncLib::OpenAIImageOutputFormatToString(EOpenAIImageOutputFormat
         case EOpenAIImageOutputFormat::Jpeg: return "jpeg";
         case EOpenAIImageOutputFormat::Png: return "png";
         case EOpenAIImageOutputFormat::Webp: return "webp";
+        case EOpenAIImageOutputFormat::Gif: return "gif";
+        case EOpenAIImageOutputFormat::Svg: return "svg";
     }
     checkNoEntry();
     return {};
@@ -366,6 +410,8 @@ EOpenAIImageQuality UOpenAIFuncLib::StringToOpenAIImageQuality(const FString& Im
     if (ImageQuality.Equals("high")) return EOpenAIImageQuality::High;
     if (ImageQuality.Equals("medium")) return EOpenAIImageQuality::Medium;
     if (ImageQuality.Equals("low")) return EOpenAIImageQuality::Low;
+    if (ImageQuality.Equals("xhigh")) return EOpenAIImageQuality::XHigh;
+    if (ImageQuality.Equals("max")) return EOpenAIImageQuality::Max;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EOpenAIImageQuality: {0}", ImageQuality);
     checkNoEntry();
@@ -419,6 +465,7 @@ FString UOpenAIFuncLib::OpenAIFinishReasonToString(EOpenAIFinishReason FinishRea
         case EOpenAIFinishReason::Length: return "length";
         case EOpenAIFinishReason::Content_Filter: return "content_filter";
         case EOpenAIFinishReason::Tool_Calls: return "tool_calls";
+        case EOpenAIFinishReason::Function_Call: return "function_call";
         case EOpenAIFinishReason::Null: return "";
     }
     checkNoEntry();
@@ -431,6 +478,7 @@ EOpenAIFinishReason UOpenAIFuncLib::StringToOpenAIFinishReason(const FString& Fi
     if (FinishReason.Equals("length")) return EOpenAIFinishReason::Length;
     if (FinishReason.Equals("content_filter")) return EOpenAIFinishReason::Content_Filter;
     if (FinishReason.Equals("tool_calls")) return EOpenAIFinishReason::Tool_Calls;
+    if (FinishReason.Equals("function_call")) return EOpenAIFinishReason::Function_Call;
     if (FinishReason.IsEmpty()) return EOpenAIFinishReason::Null;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown OpenAIFinishReason: {0}", FinishReason);
@@ -488,6 +536,7 @@ FString UOpenAIFuncLib::OpenAIAudioTranscriptToString(ETranscriptFormat Transcri
         case ETranscriptFormat::Str: return "srt";
         case ETranscriptFormat::Verbose_JSON: return "verbose_json";
         case ETranscriptFormat::Vtt: return "vtt";
+        case ETranscriptFormat::Diarized_JSON: return "diarized_json";
     }
     checkNoEntry();
     return {};
@@ -599,6 +648,8 @@ FString UOpenAIFuncLib::OpenAIUploadFilePurposeToString(EUploadFilePurpose Uploa
         case EUploadFilePurpose::Vision: return "vision";
         case EUploadFilePurpose::Batch: return "batch";
         case EUploadFilePurpose::FineTune: return "fine-tune";
+        case EUploadFilePurpose::Evals: return "evals";
+        case EUploadFilePurpose::User_Data: return "user_data";
     }
 
     checkNoEntry();
@@ -616,6 +667,7 @@ FString UOpenAIFuncLib::OpenAIBatchEndpointToString(EBatchEndpoint BatchEndpoint
         case EBatchEndpoint::Moderations: return "/v1/moderations";
         case EBatchEndpoint::ImageGenerations: return "/v1/images/generations";
         case EBatchEndpoint::ImageEdits: return "/v1/images/edits";
+        case EBatchEndpoint::Videos: return "/v1/videos";
     }
 
     checkNoEntry();
@@ -666,6 +718,9 @@ FString UOpenAIFuncLib::OpenAIVideoModelToString(EVideoModel VideoModel)
     {
         case EVideoModel::Sora_2: return "sora-2";
         case EVideoModel::Sora_2_Pro: return "sora-2-pro";
+        case EVideoModel::Sora_2_2025_10_06: return "sora-2-2025-10-06";
+        case EVideoModel::Sora_2_2025_12_08: return "sora-2-2025-12-08";
+        case EVideoModel::Sora_2_Pro_2025_10_06: return "sora-2-pro-2025-10-06";
     }
 
     checkNoEntry();
@@ -676,6 +731,9 @@ EVideoModel UOpenAIFuncLib::StringToOpenAIVideoModel(const FString& VideoModel)
 {
     if (VideoModel.Equals("sora-2")) return EVideoModel::Sora_2;
     if (VideoModel.Equals("sora-2-pro")) return EVideoModel::Sora_2_Pro;
+    if (VideoModel.Equals("sora-2-2025-10-06")) return EVideoModel::Sora_2_2025_10_06;
+    if (VideoModel.Equals("sora-2-2025-12-08")) return EVideoModel::Sora_2_2025_12_08;
+    if (VideoModel.Equals("sora-2-pro-2025-10-06")) return EVideoModel::Sora_2_Pro_2025_10_06;
 
     UE_LOGFMT(LogOpenAIFuncLib, Error, "Unknown EVideoModel: {0}", VideoModel);
     checkNoEntry();
@@ -764,6 +822,10 @@ FString UOpenAIFuncLib::OpenAIServiceTierToString(EServiceTier ServiceTier)
     {
         case EServiceTier::Auto: return "auto";
         case EServiceTier::Default: return "default";
+        case EServiceTier::Fast: return "fast";
+        case EServiceTier::Flex: return "flex";
+        case EServiceTier::Priority: return "priority";
+        case EServiceTier::Scale: return "scale";
     }
 
     checkNoEntry();

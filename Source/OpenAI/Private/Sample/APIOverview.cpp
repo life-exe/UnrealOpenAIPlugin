@@ -1174,6 +1174,7 @@ void AAPIOverview::SetYourOwnAPI()
         virtual FString AudioTranscriptions() const override { return API_URL + "/v1/audio/transcriptions"; }
         virtual FString AudioTranslations() const override { return API_URL + "/v1/audio/translations"; }
         virtual FString AudioVoices() const override { return API_URL + "/v1/audio/voices"; }
+        virtual FString AudioVoiceConsents() const override { return API_URL + "/v1/audio/voice_consents"; }
         virtual FString Files() const override { return API_URL + "/v1/files"; }
         virtual FString FineTuningJobs() const override { return API_URL + "/v1/fine_tuning/jobs"; }
         virtual FString Moderations() const override { return API_URL + "/v1/moderations"; }

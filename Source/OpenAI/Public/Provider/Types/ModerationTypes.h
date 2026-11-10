@@ -10,7 +10,8 @@ enum class EModerationsModelEnum : uint8
 {
     Text_Moderation_Latest,
     Omni_Moderation_Latest,
-    Omni_Moderation_2024_09_26
+    Omni_Moderation_2024_09_26,
+    Text_Moderation_Stable
 };
 
 ///////////////////////////////////////////////////////
@@ -136,6 +137,51 @@ struct FModerationCategoryScores
 };
 
 USTRUCT(BlueprintType)
+struct FModerationCategoryAppliedInputTypes
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Hate;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Hate_Threatening;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Harassment;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Harassment_Threatening;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Illicit;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Illicit_Violent;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Self_Harm;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Self_Harm_Intent;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Self_Harm_Instructions;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Sexual;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Sexual_Minors;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Violence;
+
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    TArray<FString> Violence_Graphic;
+};
+
+USTRUCT(BlueprintType)
 struct FModerationResults
 {
     GENERATED_BODY()
@@ -157,6 +203,12 @@ struct FModerationResults
     */
     UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
     FModerationCategoryScores Category_Scores;
+
+    /**
+      A list of the categories along with the input type(s) that the score applies to.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FModerationCategoryAppliedInputTypes Category_Applied_Input_Types;
 };
 
 USTRUCT(BlueprintType)

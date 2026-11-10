@@ -232,6 +232,12 @@ struct FAssistantObjectResponse
     FString Name;
 
     /**
+      The description of the assistant. The maximum length is 512 characters.
+    */
+    UPROPERTY(BlueprintReadOnly, Category = "OpenAI")
+    FString Description;
+
+    /**
       ID of the model to use.
       You can use the List models API to see all of your available models,
       or see our Model overview for descriptions of them.
